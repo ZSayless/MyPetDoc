@@ -1,76 +1,54 @@
 import React from 'react';
-import 'aos/dist/aos.css';
-import AOS from 'aos';
 
 export default function Terms() {
-  React.useEffect(() => {
-    AOS.init({ duration: 800 });
-  }, []);
-
   return (
-    <div className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 py-10 px-6 text-gray-800">
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-3xl font-bold mb-8 text-gray-900 text-center">Terms and Conditions</h1>
+    <div className="p-6 bg-gray-100">
+      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8">
+        <h1 className="text-2xl font-bold mb-4 text-center">Terms and Conditions</h1>
 
-        {/* Section for Terms */}
-        <section data-aos="fade-up" className="mb-6 bg-gray-50 shadow-md rounded-lg p-6 hover:bg-blue-50 transition-all duration-300">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            Client Confidentiality
-          </h2>
-          <ul className="list-disc pl-6 text-gray-600 space-y-2">
-            <li>All information relating to both client and patient is held in confidence and in line with the Data Protection Acts.</li>
-            <li>Information will only be disclosed under specific circumstances:</li>
-            <ul className="list-disc pl-6">
-              <li>Where a client provides a confirmed request in writing.</li>
-              <li>To another Veterinary Surgeon for the patient's care.</li>
-              <li>To a court or legal agent as part of a legal process.</li>
-              <li>When using outsource reminder services for treatments or medication reminders.</li>
-            </ul>
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">1. Client Confidentiality</h2>
+          <p className="mb-2">a. All information relating to both client and patient is held in confidence and in line with the Data Protection Acts and will not be disclosed except under the following circumstances:</p>
+          <ul className="list-disc list-inside pl-4">
+            <li>Where a client provides a confirmed request in writing.</li>
+            <li>Where another Veterinary Surgeon requests this in order to continue the patient&#39;s care.</li>
+            <li>To a court or agent of The Pet Health Partnership as part of a legal process.</li>
+            <li>Where The Pet Health Partnership uses outsourced reminder services for treatments, vaccinations, or medication reminders.</li>
           </ul>
-        </section>
+        </div>
 
-        <section data-aos="fade-up" className="mb-6 bg-gray-50 shadow-md rounded-lg p-6 hover:bg-blue-50 transition-all duration-300">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            Ownership of Records
-          </h2>
-          <p className="text-gray-600">
-            Case records and similar documents are the property of The Pet Health Partnership. Copies may be shared upon request with another veterinary surgeon or insurance company.
-          </p>
-        </section>
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">2. Ownership of Records</h2>
+          <p>Case records and similar documents are the property of, and retained by, The Pet Health Partnership. Copies, with a summary of the clinical history, may be passed on request, to another veterinary surgeon taking over the case or at the request of your insurance company.</p>
+        </div>
 
-        <section data-aos="fade-up" className="mb-6 bg-gray-50 shadow-md rounded-lg p-6 hover:bg-blue-50 transition-all duration-300">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            Ownership of Radiographs and Similar Records
-          </h2>
-          <p className="text-gray-600">
-            Specific investigations (e.g., x-rays) remain the property of the practice, although charges are made for conducting and interpreting these investigations.
-          </p>
-        </section>
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">3. Ownership of Radiographs and Similar Records</h2>
+          <p>The care given to your pet may involve making some specific investigations, for example, taking x-rays or performing ultrasound scans. Although we make a charge for performing these investigations and interpreting their results, ownership of the resulting record remains with the practice.</p>
+        </div>
 
-        <section data-aos="fade-up" className="mb-6 bg-gray-50 shadow-md rounded-lg p-6 hover:bg-blue-50 transition-all duration-300">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            Patient Photographs
-          </h2>
-          <p className="text-gray-600">
-            Photographs of pets or their conditions may be used for educational or marketing purposes unless requested otherwise.
-          </p>
-        </section>
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">4. Patient Photographs</h2>
+          <p>Photographs of your pet or their conditions may sometimes be used for educational or marketing purposes. Please let us know if you would prefer this not to happen.</p>
+        </div>
 
-        <section data-aos="fade-up" className="mb-6 bg-gray-50 shadow-md rounded-lg p-6 hover:bg-blue-50 transition-all duration-300">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            PHP Health Care Plan
-          </h2>
-          <ul className="list-disc pl-6 text-gray-600 space-y-2">
-            <li>The plan allows monthly payments for treatments under a 12-month cycle.</li>
-            <li>The Pet Owner may terminate this Agreement with notice, but unpaid balances or discounts may be charged.</li>
-            <li>Direct Debit payments are required for monthly fees.</li>
-            <li>Plan benefits are exclusive to the enrolled pet and cannot be transferred.</li>
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">5. Fees</h2>
+          <ul className="list-disc list-inside pl-4">
+            <li>VAT is charged at the prevailing rate on all fees, diets, and drugs.</li>
+            <li>You will receive a detailed invoice for every consultation, surgical procedure, or transaction with us.</li>
+            <li>Our fee list is available on request.</li>
           </ul>
-        </section>
+        </div>
 
-        <footer className="text-center mt-8 text-gray-500">
-          © 2025 The Pet Health Partnership. All rights reserved.
-        </footer>
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">6. Estimate of Treatment Costs</h2>
+          <p>We endeavor to provide estimates for all procedures. Please ask if one is required.</p>
+        </div>
+
+
+
+       
       </div>
     </div>
   );
