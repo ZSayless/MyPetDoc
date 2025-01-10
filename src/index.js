@@ -11,6 +11,7 @@ import BlogList from "./component/blog/BlogList";
 import BlogDetail from "./component/blog/BlogDetail";
 import Terms from "./component/Terms/Terms";
 
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -23,6 +24,7 @@ root.render(
           <Route path="/bloglist" element={<BlogList />} />
           <Route path="/blogdetail/:id" element={<BlogDetail />} />
           <Route path="/terms" element={<Terms/>} />
+        
         </Routes>
       </App>
     </Router>
