@@ -62,6 +62,9 @@ function Header() {
                     <ButtonLink text="Contact Us" link="/contactus" />
                   </li>
                   <li>
+                    <ButtonLink text="Terms & Conditions" link="/terms" />
+                  </li>
+                  <li>
                     <ButtonLink text="Register" onClick={handleOpenRegister} />
                   </li>
                   <li>

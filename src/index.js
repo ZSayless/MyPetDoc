@@ -9,6 +9,8 @@ import ContactUs from "./component/contactus/ContactUs";
 import AboutUs from "./component/aboutus/AboutUs";
 import BlogList from "./component/blog/BlogList";
 import BlogDetail from "./component/blog/BlogDetail";
+import Terms from "./component/Terms/Terms";
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -21,6 +23,8 @@ root.render(
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/bloglist" element={<BlogList />} />
           <Route path="/blogdetail/:id" element={<BlogDetail />} />
+          <Route path="/terms" element={<Terms/>} />
+        
         </Routes>
       </App>
     </Router>
