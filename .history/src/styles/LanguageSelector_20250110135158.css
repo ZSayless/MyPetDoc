@@ -1,0 +1,23 @@
+.language-selector-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  position: relative;
+}
+
+.language-selector {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 100%;
+  right: 20px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  border-radius: 4px;
+  z-index: 1000;
+} 

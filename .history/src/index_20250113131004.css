@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for form inputs */
+[type="text"],
+[type="email"],
+[type="password"] {
+  @apply border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+/* Swiper styles */
+.swiper {
+  width: 100%;
+  padding: 0 1px; /* Prevent box-shadow cut-off */
+}
+
+.swiper-slide {
+  height: auto; /* Allow slides to have different heights */
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  margin-top: 0 !important;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  display: none;
+}
+
+/* Custom navigation buttons */
+.custom-next-button,
+.custom-prev-button {
+  cursor: pointer;
+  z-index: 10;
+}
+
+.custom-next-button:disabled,
+.custom-prev-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Slick slider custom styles */
+.hospital-slider .slick-track {
+  display: flex !important;
+  gap: 1rem;
+}
+
+.hospital-slider .slick-slide {
+  height: inherit !important;
+}
+
+.hospital-slider .slick-prev,
+.hospital-slider .slick-next {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s;
+}
+
+.hospital-slider .slick-prev:hover,
+.hospital-slider .slick-next:hover {
+  background: #f9fafb;
+}
+
+.hospital-slider .slick-prev {
+  left: -50px;
+}
+
+.hospital-slider .slick-next {
+  right: -50px;
+}
+
+.hospital-slider .slick-prev:before,
+.hospital-slider .slick-next:before {
+  display: none;
+}

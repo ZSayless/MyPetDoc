@@ -1,0 +1,82 @@
+export const translations = {
+  en: {
+    // Header
+    home: "Home",
+    aboutUs: "About Us",
+    contactUs: "Contact Us",
+    services: "Services",
+    login: "Login",
+    logout: "Logout",
+    dashboard: "Dashboard",
+
+    // Blog
+    title: "Title",
+    publish: "PUBLISH",
+    loading: "Loading...",
+    blogNotFound: "Blog post not found",
+    writeHere: "Write content here",
+    contentWillAppear: "Blog content will appear here...",
+    comments: "comments",
+    like: "Like",
+    reply: "Reply",
+    report: "Report",
+    justNow: "Just now",
+    you: "You",
+
+    // Report Modal
+    reportComment: "Report Comment",
+    reportReason: "Reason for Report *",
+    selectReason: "Select a reason",
+    spam: "Spam",
+    harassment: "Harassment",
+    inappropriate: "Inappropriate Content",
+    misinformation: "Misinformation",
+    other: "Other",
+    additionalNotes: "Additional Notes",
+    notesPlaceholder: "Please provide any additional details about this report...",
+    cancel: "Cancel",
+    submitReport: "Submit Report",
+    reportSuccess: "Report submitted!",
+    reportError: "There was an error submitting the report",
+  },
+  vi: {
+    // Header
+    home: "Trang chủ",
+    aboutUs: "Về chúng tôi",
+    contactUs: "Liên hệ",
+    services: "Dịch vụ",
+    login: "Đăng nhập",
+    logout: "Đăng xuất",
+    dashboard: "Bảng điều khiển",
+
+    // Blog
+    title: "Tiêu đề",
+    publish: "XUẤT BẢN",
+    loading: "Đang tải...",
+    blogNotFound: "Không tìm thấy bài viết",
+    writeHere: "Nội dung viết ở đây",
+    contentWillAppear: "Nội dung bài viết sẽ xuất hiện ở đây...",
+    comments: "bình luận",
+    like: "Thích",
+    reply: "Phản hồi",
+    report: "Báo cáo vi phạm",
+    justNow: "Vừa xong",
+    you: "Bạn",
+
+    // Report Modal
+    reportComment: "Báo cáo bình luận",
+    reportReason: "Lý do báo cáo *",
+    selectReason: "Chọn lý do",
+    spam: "Spam",
+    harassment: "Quấy rối",
+    inappropriate: "Nội dung không phù hợp",
+    misinformation: "Thông tin sai lệch",
+    other: "Khác",
+    additionalNotes: "Ghi chú thêm",
+    notesPlaceholder: "Vui lòng cung cấp thêm chi tiết về báo cáo này...",
+    cancel: "Hủy",
+    submitReport: "Gửi báo cáo",
+    reportSuccess: "Báo cáo vi phạm đã được gửi!",
+    reportError: "Có lỗi xảy ra khi gửi báo cáo",
+  }
+}; 
