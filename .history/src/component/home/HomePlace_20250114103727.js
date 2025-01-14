@@ -1,0 +1,130 @@
+import { Star, MapPin, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useRef } from "react";
+
+function HomePlace() {
+  const sliderRef = useRef(null);
+
+  const scroll = (direction) => {
+    if (sliderRef.current) {
+      const scrollAmount = direction === 'left' ? -400 : 400;
+      sliderRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const topHospitals = [
+    {
+      id: 1,
+      name: "Pet Care International",
+      location: "District 1, HCMC",
+      rating: 4.8,
+      reviews: 234,
+      specialties: ["Surgery", "Vaccination", "Emergency"],
+      image: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?ixlib=rb-4.0.3",
+    },
+    {
+      name: "Saigon Pet Hospital",
+      location: "District 7, HCMC",
+      rating: 4.7,
+      reviews: 189,
+      specialties: ["Dentistry", "Internal Medicine"],
+      image:
+        "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?ixlib=rb-4.0.3",
+    },
+    {
+      name: "Pet Health Center",
+      location: "District 3, HCMC",
+      rating: 4.9,
+      reviews: 156,
+      specialties: ["Cardiology", "Neurology"],
+      image:
+        "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?ixlib=rb-4.0.3",
+    },
+    {
+      name: "Animal Care Hospital",
+      location: "District 2, HCMC",
+      rating: 4.6,
+      reviews: 145,
+      specialties: ["Orthopedics", "Rehabilitation"],
+      image:
+        "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?ixlib=rb-4.0.3",
+    },
+  ];
+
+  return (
+    <section className="py-12 bg-white">
+      <div className="container mx-auto px-4">
+        <h2 className="text-2xl font-bold mb-8">Featured Hospitals</h2>
+
+        <div className="relative">
+          <button 
+            onClick={() => scroll('left')}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          </button>
+
+          <div 
+            ref={sliderRef}
+            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth px-4"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {topHospitals.map((hospital) => (
+              <div
+                key={hospital.id}
+                className="flex-none w-[260px] bg-white rounded-lg overflow-hidden"
+              >
+                <div className="relative h-[180px]">
+                  <img
+                    src={hospital.image}
+                    alt={hospital.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md flex items-center gap-1">
+                    <Star className="w-4 h-4 text-green-600 fill-current" />
+                    <span className="text-sm font-medium">{hospital.rating}</span>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <h3 className="font-semibold text-lg">{hospital.name}</h3>
+                  <div className="flex items-center gap-1 mt-2 text-gray-500">
+                    <MapPin className="w-4 h-4" />
+                    <span className="text-sm">{hospital.location}</span>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-1 mt-3">
+                    {hospital.specialties.map((specialty, i) => (
+                      <span
+                        key={i}
+                        className="px-2 py-0.5 bg-gray-100 rounded-md text-xs text-gray-600"
+                      >
+                        {specialty}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-3 text-sm text-gray-500">
+                    {hospital.reviews} verified reviews
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button 
+            onClick={() => scroll('right')}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+          >
+            <ChevronRight className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default HomePlace;
