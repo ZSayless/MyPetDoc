@@ -1,6 +1,6 @@
 import React from "react";
 
-function Terms() {
+export default function Terms() {
   return (
     <div className="p-6 bg-gray-100">
       <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8">
@@ -97,5 +97,3 @@ function Terms() {
     </div>
   );
 }
-
-export default Terms;

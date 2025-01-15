@@ -204,14 +204,6 @@ function App() {
               </MainLayout>
             }
           />
-          <Route
-            path="/terms"
-            element={
-              <MainLayout>
-                <Terms />
-              </MainLayout>
-            }
-          />
         </Routes>
       </AuthProvider>
     </Provider>

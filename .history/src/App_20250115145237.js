@@ -16,7 +16,6 @@ import ContactUs from "./components/contactus/ContactUs";
 import AboutUs from "./components/aboutus/AboutUs";
 import BlogList from "./components/blog/BlogList";
 import BlogDetail from "./components/blog/BlogDetail";
-import Terms from "./components/terms/Terms";
 import Community from "./components/community/Community";
 import Setting from "./components/setting/Setting";
 import HospitalDetail from "./components/hospital/HospitalDetail";
@@ -201,14 +200,6 @@ function App() {
             element={
               <MainLayout>
                 <AddHospital />
-              </MainLayout>
-            }
-          />
-          <Route
-            path="/terms"
-            element={
-              <MainLayout>
-                <Terms />
               </MainLayout>
             }
           />

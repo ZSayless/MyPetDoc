@@ -117,6 +117,14 @@ function App() {
             }
           />
           <Route
+            path="/terms"
+            element={
+              <MainLayout>
+                <Terms />
+              </MainLayout>
+            }
+          />
+          <Route
             path="/community"
             element={
               <MainLayout>
@@ -201,14 +209,6 @@ function App() {
             element={
               <MainLayout>
                 <AddHospital />
-              </MainLayout>
-            }
-          />
-          <Route
-            path="/terms"
-            element={
-              <MainLayout>
-                <Terms />
               </MainLayout>
             }
           />
