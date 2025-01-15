@@ -2,12 +2,7 @@ import React from "react";
 import { MapPin, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const HospitalList = ({
-  hospitals,
-  loading,
-  onHospitalClick,
-  selectedHospital,
-}) => {
+const HospitalList = ({ hospitals, loading }) => {
   const navigate = useNavigate();
 
   return (
@@ -19,10 +14,7 @@ const HospitalList = ({
         {hospitals.map((hospital) => (
           <div
             key={hospital.id}
-            className={`bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
-              selectedHospital?.id === hospital.id ? "ring-2 ring-blue-500" : ""
-            }`}
-            onClick={() => onHospitalClick(hospital)}
+            className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="p-3 lg:p-4">
               <div className="flex gap-3 lg:gap-4">
@@ -58,10 +50,7 @@ const HospitalList = ({
                     </div>
                     <button
                       className="px-3 lg:px-6 py-1.5 text-xs lg:text-base bg-[#98E9E9] hover:bg-[#7CD5D5] text-gray-700 rounded-lg transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/hospital/${hospital.id}`);
-                      }}
+                      onClick={() => navigate(`/hospital/${hospital.id}`)}
                     >
                       Get Directions
                     </button>

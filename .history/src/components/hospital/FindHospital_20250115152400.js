@@ -201,15 +201,15 @@ const FindHospital = () => {
           const address = hospital.address.toLowerCase();
           switch (selectedCity) {
             case "hcm":
-              return (
-                address.includes("hcmc") ||
-                address.includes("ho chi minh") ||
-                address.includes("thu duc")
-              );
+              return address.includes("hcmc") || 
+                     address.includes("ho chi minh") ||
+                     address.includes("thu duc");
             case "hanoi":
-              return address.includes("hanoi") || address.includes("ha noi");
+              return address.includes("hanoi") || 
+                     address.includes("ha noi");
             case "danang":
-              return address.includes("danang") || address.includes("da nang");
+              return address.includes("danang") || 
+                     address.includes("da nang");
             default:
               return true;
           }
@@ -315,10 +315,10 @@ const FindHospital = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header Section */}
-      <div className="bg-gradient-to-br from-[#98E9E9] via-[#DBEAFE] to-[#EFF6FF]">
+      <div className="bg-[#1A3C8E]">
         <div className="container mx-auto px-4 py-6 md:py-8">
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6 text-center">
+            <h1 className="text-xl md:text-3xl font-bold text-white mb-4 md:mb-6">
               Find a Hospital
             </h1>
 
@@ -329,7 +329,7 @@ const FindHospital = () => {
                 <input
                   type="text"
                   placeholder="Search by hospital name..."
-                  className="w-full pl-12 pr-4 py-3 rounded-full bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#98E9E9] text-gray-700 text-sm md:text-base shadow-sm"
+                  className="w-full pl-12 pr-4 py-3 rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-[#98E9E9] text-gray-700 text-sm md:text-base shadow-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -339,7 +339,7 @@ const FindHospital = () => {
               {/* City Dropdown */}
               <div className="relative">
                 <button
-                  className="w-full md:w-60 px-4 py-3 bg-white/80 backdrop-blur-sm rounded-lg flex items-center justify-between hover:bg-white/90 transition-colors"
+                  className="w-full md:w-60 px-4 py-3 bg-white rounded-lg flex items-center justify-between"
                   onClick={() => setShowCityDropdown(!showCityDropdown)}
                 >
                   <span>
@@ -389,8 +389,8 @@ const FindHospital = () => {
                     key={index}
                     className={`px-6 py-2 rounded-full whitespace-nowrap transition-colors ${
                       selectedServices.includes(service)
-                        ? "bg-white text-gray-700 font-medium shadow-sm border-2 border-[#98E9E9]"
-                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90 border border-transparent hover:border-[#98E9E9]"
+                        ? "bg-[#98E9E9] text-gray-700 font-medium shadow-sm"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
@@ -405,8 +405,8 @@ const FindHospital = () => {
                     key={index}
                     className={`px-6 py-2 rounded-full whitespace-nowrap transition-colors ${
                       selectedServices.includes(service)
-                        ? "bg-white text-gray-700 font-medium shadow-sm border-2 border-[#98E9E9]"
-                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90 border border-transparent hover:border-[#98E9E9]"
+                        ? "bg-[#98E9E9] text-gray-700 font-medium shadow-sm"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
@@ -424,8 +424,8 @@ const FindHospital = () => {
                     key={index}
                     className={`px-4 py-1.5 rounded-full whitespace-nowrap transition-colors text-sm ${
                       selectedServices.includes(service)
-                        ? "bg-white text-gray-700 font-medium shadow-sm border-2 border-[#98E9E9]"
-                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90 border border-transparent hover:border-[#98E9E9]"
+                        ? "bg-[#98E9E9] text-gray-700 font-medium shadow-sm"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >

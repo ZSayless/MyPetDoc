@@ -1,57 +1,38 @@
 import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { ArrowLeft, X, Save, Send, FileEdit } from "lucide-react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const WriteBlog = () => {
-  const { id } = useParams(); // Thêm để lấy id từ URL
-  const navigate = useNavigate();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [showPreview, setShowPreview] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [nextPath, setNextPath] = useState(null);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const navigate = useNavigate();
 
-  // Mock data cho drafts
-  const mockDrafts = {
-    1: {
-      id: 1,
-      title: "Essential Vaccinations for Puppies",
-      content: "Draft content here...",
-      status: "draft",
-    },
-  };
-
-  // Load draft content nếu đang edit
-  useEffect(() => {
-    if (id) {
-      const draftContent = mockDrafts[id];
-      if (draftContent) {
-        setTitle(draftContent.title);
-        setContent(draftContent.content);
-      }
-    }
-  }, [id]);
-
-  // Giữ nguyên toàn bộ code cũ
+  // Theo dõi thay đổi của form
   useEffect(() => {
     if (title.trim() || content.trim()) {
       setIsDirty(true);
     }
   }, [title, content]);
 
+  // Xử lý nút back của browser
   useEffect(() => {
     const handlePopState = (event) => {
       if (isDirty) {
         event.preventDefault();
-        setNextPath("/bloglist");
+        setNextPath("/bloglist"); // hoặc window.history.state
         setShowLeaveModal(true);
+        // Push một state mới để giữ user ở trang hiện tại
         window.history.pushState(null, "", window.location.pathname);
       }
     };
 
+    // Push một state ban đầu
     window.history.pushState(null, "", window.location.pathname);
     window.addEventListener("popstate", handlePopState);
 
@@ -60,6 +41,7 @@ const WriteBlog = () => {
     };
   }, [isDirty]);
 
+  // Xử lý khi user muốn rời trang (refresh/close)
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (isDirty) {
@@ -95,6 +77,7 @@ const WriteBlog = () => {
             className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
             onClick={() => {
               setShowLeaveModal(false);
+              // Push state lại để giữ user ở trang hiện tại
               window.history.pushState(null, "", window.location.pathname);
             }}
           >
@@ -138,38 +121,21 @@ const WriteBlog = () => {
     "code-block",
   ];
 
-  // Sửa lại handleSubmit để xử lý cả draft và publish
-  const handleSubmit = async (status) => {
+  const handleSubmit = async () => {
     if (!title.trim() || !content.trim()) {
       alert("Please fill in the title and content completely.");
       return;
     }
 
     try {
-      const blogData = {
-        title,
-        content,
-        status,
-        ...(status === "published" && {
-          publishDate: new Date().toISOString(),
-        }),
-      };
-
       // TODO: Call API to save blog
-      console.log("Blog saved:", blogData);
-
-      alert(
-        status === "draft"
-          ? "Draft saved successfully!"
-          : "Blog published successfully!"
-      );
-      navigate("/my-blogs");
+      alert("Xuất bản bài viết thành công!");
+      navigate("/bloglist");
     } catch (error) {
-      alert("Error occurred while saving the blog");
+      alert("Có lỗi xảy ra khi xuất bản bài viết");
     }
   };
 
-  // Giữ nguyên toàn bộ UI
   return (
     <div className="min-h-screen bg-gray-50">
       {showLeaveModal && <LeaveModal />}
@@ -177,12 +143,11 @@ const WriteBlog = () => {
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-10">
         <div className="container mx-auto px-4">
-          <div className="h-16 flex items-center justify-between">
-            {/* Left side: Back button and Title */}
-            <div className="flex items-center gap-4 flex-1 mr-4">
+          <div className="flex items-center justify-between h-14 md:h-16">
+            <div className="flex items-center gap-4 flex-1">
               <button
                 onClick={() => handleNavigate("/bloglist")}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-600 hover:text-gray-900 -ml-2"
               >
                 <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
               </button>
@@ -194,36 +159,12 @@ const WriteBlog = () => {
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
-
-            {/* Right side: Action buttons */}
-            <div className="flex items-center gap-3 flex-shrink-0">
-              {id ? (
-                <>
-                  <button
-                    onClick={() => handleSubmit("draft")}
-                    className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 flex items-center gap-2"
-                  >
-                    <Save className="w-4 h-4" />
-                    Save Draft
-                  </button>
-                  <button
-                    onClick={() => handleSubmit("published")}
-                    className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] flex items-center gap-2"
-                  >
-                    <Send className="w-4 h-4" />
-                    Publish
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => handleSubmit("published")}
-                  className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] flex items-center gap-2"
-                >
-                  <Send className="w-4 h-4" />
-                  Publish
-                </button>
-              )}
-            </div>
+            <button
+              onClick={handleSubmit}
+              className="ml-4 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] text-sm md:text-base whitespace-nowrap"
+            >
+              PUBLISH
+            </button>
           </div>
         </div>
       </div>

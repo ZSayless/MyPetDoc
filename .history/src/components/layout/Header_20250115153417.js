@@ -1,19 +1,4 @@
-import {
-  ChevronDown,
-  Menu,
-  X,
-  Globe,
-  Settings,
-  Home,
-  Info,
-  Mail,
-  Search,
-  FileText,
-  Users,
-  User,
-  FileEdit,
-  LogOut,
-} from "lucide-react";
+import { ChevronDown, Menu, X, Globe, Settings } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import logo from "../../assets/img/logocustom.png";
 import ButtonLink from "../../core/ButtonLink";
@@ -357,13 +342,6 @@ function Header() {
                         </Link>
 
                         <Link
-                          to="/my-blogs"
-                          className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
-                        >
-                          My Blogs
-                        </Link>
-
-                        <Link
                           to="/write-blog"
                           className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
                         >
@@ -410,145 +388,92 @@ function Header() {
             />
             <div className="fixed inset-y-0 right-0 w-[280px] bg-[#1A1A37] z-50 transform transition-transform duration-300 ease-in-out">
               <button
-                onClick={toggleMenu}
                 className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full"
+                onClick={toggleMenu}
+                aria-label="Close Menu"
               >
                 <X size={24} />
               </button>
 
-              {isLoggedIn && (
-                <div className="p-6 border-b border-white/10">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-[#98E9E9] flex items-center justify-center">
-                      <span className="text-xl font-semibold text-gray-700">
-                        {user?.name?.charAt(0)}
-                      </span>
-                    </div>
-                    <div>
-                      <div className="text-white font-medium">{user?.name}</div>
-                      <div className="text-gray-400 text-sm">{user?.email}</div>
-                    </div>
+              <div className="p-6 pt-16">
+                <nav className="mb-[18px]">
+                  <ul className="space-y-4">
+                    <li>
+                      <ButtonLink
+                        text="Home"
+                        link="/"
+                        className="block w-full"
+                      />
+                    </li>
+                    <li>
+                      <ButtonLink
+                        text="Find a hospital"
+                        link="/find-hospital"
+                        className="block w-full"
+                      />
+                    </li>
+                    <li>
+                      <ButtonLink text="Service" className="block w-full" />
+                    </li>
+                    <li>
+                      <ButtonLink
+                        text="Blog"
+                        link="/bloglist"
+                        className="block w-full"
+                      />
+                    </li>
+                    <li>
+                      <ButtonLink
+                        text="About us"
+                        link="/aboutus"
+                        className="block w-full"
+                      />
+                    </li>
+                    <li>
+                      <ButtonLink
+                        text="Contact us"
+                        link="/contactus"
+                        className="block w-full"
+                      />
+                    </li>
+                    <li>
+                      <ButtonLink
+                        text="Register"
+                        onClick={handleOpenRegister}
+                        className="block w-full"
+                      />
+                    </li>
+                    <li>
+                      <ButtonLink
+                        text="Login"
+                        onClick={handleOpenLogin}
+                        className="block w-full"
+                      />
+                    </li>
+                  </ul>
+                </nav>
+                <div className="space-y-4">
+                  <div className="relative">
+                    <button
+                      className="flex text-[#fff] items-center uppercase w-full xl:text-[16px] md:text-[12px] "
+                      onClick={() => setShowLanguage(!showLanguage)}
+                    >
+                      Language
+                      <ChevronDown className="ml-1 w-4 h-4" />
+                    </button>
+
+                    {showLanguage && (
+                      <div className="absolute top-full left-0 mt-2 bg-white text-gray-800 rounded-md shadow-lg py-2 w-full">
+                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100">
+                          English
+                        </button>
+                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100">
+                          Tiếng Việt
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
-
-              <div className="p-6">
-                <nav className="space-y-6">
-                  <div className="space-y-2">
-                    <Link
-                      to="/"
-                      className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
-                      onClick={toggleMenu}
-                    >
-                      <Home className="w-5 h-5" />
-                      Home
-                    </Link>
-                    <Link
-                      to="/aboutus"
-                      className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
-                      onClick={toggleMenu}
-                    >
-                      <Info className="w-5 h-5" />
-                      About Us
-                    </Link>
-                    <Link
-                      to="/contactus"
-                      className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
-                      onClick={toggleMenu}
-                    >
-                      <Mail className="w-5 h-5" />
-                      Contact Us
-                    </Link>
-                  </div>
-
-                  <div>
-                    <div className="text-gray-400 uppercase text-sm font-medium px-3 mb-2">
-                      Services
-                    </div>
-                    <div className="space-y-2">
-                      <Link
-                        to="/find-hospital"
-                        className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
-                        onClick={toggleMenu}
-                      >
-                        <Search className="w-5 h-5" />
-                        Find Hospital
-                      </Link>
-                      <Link
-                        to="/bloglist"
-                        className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
-                        onClick={toggleMenu}
-                      >
-                        <FileText className="w-5 h-5" />
-                        Blog
-                      </Link>
-                      <Link
-                        to="/community"
-                        className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
-                        onClick={toggleMenu}
-                      >
-                        <Users className="w-5 h-5" />
-                        Community
-                      </Link>
-                    </div>
-                  </div>
-
-                  {isLoggedIn ? (
-                    <div className="space-y-2">
-                      <div className="text-gray-400 uppercase text-sm font-medium px-3 mb-2">
-                        Account
-                      </div>
-                      <Link
-                        to="/profile"
-                        className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
-                        onClick={toggleMenu}
-                      >
-                        <User className="w-5 h-5" />
-                        Profile
-                      </Link>
-                      <Link
-                        to="/my-blogs"
-                        className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
-                        onClick={toggleMenu}
-                      >
-                        <FileEdit className="w-5 h-5" />
-                        My Blogs
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setIsLoggedIn(false);
-                          setUser(null);
-                          toggleMenu();
-                        }}
-                        className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg w-full"
-                      >
-                        <LogOut className="w-5 h-5" />
-                        Sign Out
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <button
-                        onClick={() => {
-                          toggleMenu();
-                          handleOpenLogin();
-                        }}
-                        className="w-full px-4 py-2 text-white border border-white rounded-lg hover:bg-white/10"
-                      >
-                        Login
-                      </button>
-                      <button
-                        onClick={() => {
-                          toggleMenu();
-                          handleOpenRegister();
-                        }}
-                        className="w-full px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
-                      >
-                        Register
-                      </button>
-                    </div>
-                  )}
-                </nav>
               </div>
             </div>
           </>

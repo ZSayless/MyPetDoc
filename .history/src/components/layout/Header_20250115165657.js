@@ -1,19 +1,4 @@
-import {
-  ChevronDown,
-  Menu,
-  X,
-  Globe,
-  Settings,
-  Home,
-  Info,
-  Mail,
-  Search,
-  FileText,
-  Users,
-  User,
-  FileEdit,
-  LogOut,
-} from "lucide-react";
+import { ChevronDown, Menu, X, Globe, Settings, Home, Info, Mail, FileText, Users, User, FileEdit, LogOut } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import logo from "../../assets/img/logocustom.png";
 import ButtonLink from "../../core/ButtonLink";
@@ -444,7 +429,7 @@ function Header() {
                       Home
                     </Link>
                     <Link
-                      to="/aboutus"
+                      to="/about"
                       className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
                       onClick={toggleMenu}
                     >
@@ -452,7 +437,7 @@ function Header() {
                       About Us
                     </Link>
                     <Link
-                      to="/contactus"
+                      to="/contact"
                       className="flex items-center gap-3 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
                       onClick={toggleMenu}
                     >

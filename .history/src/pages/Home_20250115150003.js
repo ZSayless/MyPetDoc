@@ -13,8 +13,7 @@ function Home() {
                 Find the Best Care for Your Pets
               </h1>
               <p className="text-lg md:text-xl text-gray-600 mb-8">
-                Connect with trusted veterinarians and pet care services in your
-                area. Your pet's health is our priority.
+                Connect with trusted veterinarians and pet care services in your area. Your pet's health is our priority.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                 <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
@@ -33,9 +32,9 @@ function Home() {
                 alt="Pet Care"
                 className="w-full h-auto rounded-lg shadow-lg"
                 style={{
-                  maxWidth: "100%",
-                  height: "auto",
-                  objectFit: "cover",
+                  maxWidth: '100%',
+                  height: 'auto',
+                  objectFit: 'cover',
                 }}
               />
             </div>

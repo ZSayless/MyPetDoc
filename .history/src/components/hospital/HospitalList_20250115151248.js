@@ -2,12 +2,7 @@ import React from "react";
 import { MapPin, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const HospitalList = ({
-  hospitals,
-  loading,
-  onHospitalClick,
-  selectedHospital,
-}) => {
+const HospitalList = ({ hospitals, loading, onHospitalClick, selectedHospital }) => {
   const navigate = useNavigate();
 
   return (

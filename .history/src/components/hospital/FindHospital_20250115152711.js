@@ -318,7 +318,7 @@ const FindHospital = () => {
       <div className="bg-gradient-to-br from-[#98E9E9] via-[#DBEAFE] to-[#EFF6FF]">
         <div className="container mx-auto px-4 py-6 md:py-8">
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6 text-center">
+            <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6">
               Find a Hospital
             </h1>
 
@@ -389,8 +389,8 @@ const FindHospital = () => {
                     key={index}
                     className={`px-6 py-2 rounded-full whitespace-nowrap transition-colors ${
                       selectedServices.includes(service)
-                        ? "bg-white text-gray-700 font-medium shadow-sm border-2 border-[#98E9E9]"
-                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90 border border-transparent hover:border-[#98E9E9]"
+                        ? "bg-white text-gray-700 font-medium shadow-sm"
+                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90"
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
@@ -405,8 +405,8 @@ const FindHospital = () => {
                     key={index}
                     className={`px-6 py-2 rounded-full whitespace-nowrap transition-colors ${
                       selectedServices.includes(service)
-                        ? "bg-white text-gray-700 font-medium shadow-sm border-2 border-[#98E9E9]"
-                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90 border border-transparent hover:border-[#98E9E9]"
+                        ? "bg-white text-gray-700 font-medium shadow-sm"
+                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90"
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
@@ -424,8 +424,8 @@ const FindHospital = () => {
                     key={index}
                     className={`px-4 py-1.5 rounded-full whitespace-nowrap transition-colors text-sm ${
                       selectedServices.includes(service)
-                        ? "bg-white text-gray-700 font-medium shadow-sm border-2 border-[#98E9E9]"
-                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90 border border-transparent hover:border-[#98E9E9]"
+                        ? "bg-white text-gray-700 font-medium shadow-sm"
+                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90"
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >

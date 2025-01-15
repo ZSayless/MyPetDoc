@@ -221,14 +221,6 @@ function App() {
               </MainLayout>
             }
           />
-          <Route
-            path="/edit-blog/:id"
-            element={
-              <MainLayout>
-                <WriteBlog />
-              </MainLayout>
-            }
-          />
         </Routes>
       </AuthProvider>
     </Provider>

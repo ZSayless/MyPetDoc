@@ -13,8 +13,7 @@ const MOCK_HOSPITALS = [
     rating: 4.8,
     services: ["Emergency", "Surgery", "Vaccination"],
     image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s"
   },
   {
     id: 2,
@@ -24,8 +23,7 @@ const MOCK_HOSPITALS = [
     rating: 4.5,
     services: ["Dental Care", "Grooming", "Vaccination"],
     image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s"
   },
   {
     id: 3,
@@ -35,8 +33,7 @@ const MOCK_HOSPITALS = [
     rating: 4.9,
     services: ["Surgery", "Laboratory", "Emergency"],
     image: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s"
   },
   {
     id: 4,
@@ -46,8 +43,7 @@ const MOCK_HOSPITALS = [
     rating: 4.7,
     services: ["Internal Medicine", "Radiology", "Pharmacy"],
     image: "https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s"
   },
   {
     id: 5,
@@ -57,8 +53,7 @@ const MOCK_HOSPITALS = [
     rating: 4.6,
     services: ["Surgery", "Vaccination", "Boarding"],
     image: "https://images.unsplash.com/photo-1597914772259-2da2f0eae78b",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s"
   },
   {
     id: 6,
@@ -68,8 +63,7 @@ const MOCK_HOSPITALS = [
     rating: 4.4,
     services: ["Grooming", "Dental Care", "Vaccination"],
     image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s"
   },
   {
     id: 7,
@@ -79,8 +73,7 @@ const MOCK_HOSPITALS = [
     rating: 4.7,
     services: ["Grooming", "Vaccination", "Pet Hotel"],
     image: "https://images.unsplash.com/photo-1576201836106-db1758fd1c97",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s"
   },
   {
     id: 8,
@@ -90,8 +83,7 @@ const MOCK_HOSPITALS = [
     rating: 4.6,
     services: ["Surgery", "Emergency", "Pharmacy"],
     image: "https://images.unsplash.com/photo-1599443015574-be5fe8a05783",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s"
   },
   {
     id: 9,
@@ -101,8 +93,7 @@ const MOCK_HOSPITALS = [
     rating: 4.8,
     services: ["Internal Medicine", "Laboratory", "Vaccination"],
     image: "https://images.unsplash.com/photo-1596272875886-f6313ed6c99f",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s"
   },
   {
     id: 10,
@@ -112,8 +103,7 @@ const MOCK_HOSPITALS = [
     rating: 4.5,
     services: ["Dental Care", "Surgery", "Grooming"],
     image: "https://images.unsplash.com/photo-1599443015574-be5fe8a05783",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s"
   },
 ];
 
@@ -148,26 +138,21 @@ const FindHospital = () => {
   const [selectedServices, setSelectedServices] = useState(["All Hospitals"]);
   const [filteredHospitals, setFilteredHospitals] = useState(MOCK_HOSPITALS);
   const [loading, setLoading] = useState(false);
-  const [selectedCity, setSelectedCity] = useState(() => {
-    return localStorage.getItem("selectedCity") || "all";
-  });
+  const [selectedCity, setSelectedCity] = useState("all");
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const navigate = useNavigate();
-  const [selectedHospital, setSelectedHospital] = useState(null);
 
   const listContainerRef = useRef(null);
   const servicesRef = useRef(null);
 
+  // Set initial city from location state when component mounts
   useEffect(() => {
-    localStorage.setItem("selectedCity", selectedCity);
-  }, [selectedCity]);
-
-  useEffect(() => {
-    if (location.state?.selectedCity && !localStorage.getItem("selectedCity")) {
+    // Kiểm tra city từ location state (khi click từ trang home)
+    if (location.state?.selectedCity) {
       const cityId = location.state.selectedCity;
       setSelectedCity(cityId);
-      localStorage.setItem("selectedCity", cityId);
 
+      // Tự động filter hospitals theo thành phố
       const cityName = CITIES.find((city) => city.id === cityId)?.name;
       if (cityName) {
         const filteredResults = MOCK_HOSPITALS.filter((hospital) =>
@@ -192,29 +177,12 @@ const FindHospital = () => {
       );
     }
 
-    // Filter by city - Chỉ filter khi selectedCity không phải "all"
-    if (selectedCity && selectedCity !== "all") {
+    // Filter by city
+    if (selectedCity !== "all") {
       const cityName = CITIES.find((city) => city.id === selectedCity)?.name;
-      if (cityName) {
-        // Sửa lại logic filter theo thành phố
-        results = results.filter((hospital) => {
-          const address = hospital.address.toLowerCase();
-          switch (selectedCity) {
-            case "hcm":
-              return (
-                address.includes("hcmc") ||
-                address.includes("ho chi minh") ||
-                address.includes("thu duc")
-              );
-            case "hanoi":
-              return address.includes("hanoi") || address.includes("ha noi");
-            case "danang":
-              return address.includes("danang") || address.includes("da nang");
-            default:
-              return true;
-          }
-        });
-      }
+      results = results.filter((hospital) =>
+        hospital.address.includes(cityName)
+      );
     }
 
     // Filter by selected services
@@ -308,17 +276,13 @@ const FindHospital = () => {
     setSelectedServices(newSelected);
   };
 
-  const handleHospitalClick = (hospital) => {
-    setSelectedHospital(hospital);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header Section */}
-      <div className="bg-gradient-to-br from-[#98E9E9] via-[#DBEAFE] to-[#EFF6FF]">
+      <div className="bg-[#1A3C8E]">
         <div className="container mx-auto px-4 py-6 md:py-8">
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6 text-center">
+            <h1 className="text-xl md:text-3xl font-bold text-white mb-4 md:mb-6">
               Find a Hospital
             </h1>
 
@@ -329,7 +293,7 @@ const FindHospital = () => {
                 <input
                   type="text"
                   placeholder="Search by hospital name..."
-                  className="w-full pl-12 pr-4 py-3 rounded-full bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#98E9E9] text-gray-700 text-sm md:text-base shadow-sm"
+                  className="w-full pl-12 pr-4 py-3 rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-[#98E9E9] text-gray-700 text-sm md:text-base shadow-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -339,23 +303,25 @@ const FindHospital = () => {
               {/* City Dropdown */}
               <div className="relative">
                 <button
-                  className="w-full md:w-60 px-4 py-3 bg-white/80 backdrop-blur-sm rounded-lg flex items-center justify-between hover:bg-white/90 transition-colors"
+                  className="w-full md:w-48 px-4 py-3 bg-white rounded-full flex items-center justify-between text-gray-700 text-sm md:text-base shadow-sm hover:bg-gray-50"
                   onClick={() => setShowCityDropdown(!showCityDropdown)}
                 >
                   <span>
-                    {selectedCity === "all"
-                      ? "All Cities"
-                      : CITIES.find((city) => city.id === selectedCity)?.name ||
-                        "All Cities"}
+                    {CITIES.find((city) => city.id === selectedCity)?.name ||
+                      "All Cities"}
                   </span>
-                  <ChevronDown className="w-5 h-5" />
+                  <ChevronDown className="w-5 h-5 text-gray-400" />
                 </button>
 
                 {/* Dropdown Menu */}
                 {showCityDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg z-10">
+                  <div className="absolute z-10 w-full mt-2 bg-white rounded-lg shadow-lg max-h-60 overflow-y-auto">
                     <button
-                      className="w-full px-4 py-2 text-left hover:bg-gray-50"
+                      className={`w-full px-4 py-2 text-left hover:bg-gray-50 text-sm md:text-base ${
+                        selectedCity === "all"
+                          ? "text-[#1A3C8E] font-medium bg-gray-50"
+                          : "text-gray-700"
+                      }`}
                       onClick={() => {
                         setSelectedCity("all");
                         setShowCityDropdown(false);
@@ -366,13 +332,20 @@ const FindHospital = () => {
                     {CITIES.map((city) => (
                       <button
                         key={city.id}
-                        className="w-full px-4 py-2 text-left hover:bg-gray-50"
+                        className={`w-full px-4 py-2 text-left hover:bg-gray-50 text-sm md:text-base ${
+                          selectedCity === city.id
+                            ? "text-[#1A3C8E] font-medium bg-gray-50"
+                            : "text-gray-700"
+                        }`}
                         onClick={() => {
                           setSelectedCity(city.id);
                           setShowCityDropdown(false);
                         }}
                       >
                         {city.name}
+                        <span className="text-gray-500 text-sm ml-2">
+                          {city.hospitalCount}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -389,8 +362,8 @@ const FindHospital = () => {
                     key={index}
                     className={`px-6 py-2 rounded-full whitespace-nowrap transition-colors ${
                       selectedServices.includes(service)
-                        ? "bg-white text-gray-700 font-medium shadow-sm border-2 border-[#98E9E9]"
-                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90 border border-transparent hover:border-[#98E9E9]"
+                        ? "bg-[#98E9E9] text-gray-700 font-medium shadow-sm"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
@@ -405,8 +378,8 @@ const FindHospital = () => {
                     key={index}
                     className={`px-6 py-2 rounded-full whitespace-nowrap transition-colors ${
                       selectedServices.includes(service)
-                        ? "bg-white text-gray-700 font-medium shadow-sm border-2 border-[#98E9E9]"
-                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90 border border-transparent hover:border-[#98E9E9]"
+                        ? "bg-[#98E9E9] text-gray-700 font-medium shadow-sm"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
@@ -424,8 +397,8 @@ const FindHospital = () => {
                     key={index}
                     className={`px-4 py-1.5 rounded-full whitespace-nowrap transition-colors text-sm ${
                       selectedServices.includes(service)
-                        ? "bg-white text-gray-700 font-medium shadow-sm border-2 border-[#98E9E9]"
-                        : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white/90 border border-transparent hover:border-[#98E9E9]"
+                        ? "bg-[#98E9E9] text-gray-700 font-medium shadow-sm"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
@@ -443,18 +416,13 @@ const FindHospital = () => {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Hospital List */}
           <div className="w-full lg:w-3/5">
-            <HospitalList
-              hospitals={currentHospitals}
-              loading={loading}
-              onHospitalClick={handleHospitalClick}
-              selectedHospital={selectedHospital}
-            />
+            <HospitalList hospitals={currentHospitals} loading={loading} />
           </div>
 
           {/* Map */}
-          <div className="w-full lg:w-2/5">
-            <div className="bg-white p-4 rounded-lg shadow-sm sticky top-24">
-              <div className="h-[calc(100vh-150px)] rounded-lg overflow-hidden">
+          <div className="lg:col-span-1">
+            <div className="bg-white p-4 rounded-lg shadow-sm sticky top-8">
+              <div className="h-[600px] rounded-lg overflow-hidden bg-gray-100">
                 {selectedHospital ? (
                   <iframe
                     src={selectedHospital.mapUrl}
@@ -467,8 +435,8 @@ const FindHospital = () => {
                     className="w-full h-full"
                   ></iframe>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
-                    <p>Select a hospital to view its location</p>
+                  <div className="w-full h-full flex items-center justify-center text-gray-500">
+                    Select a hospital to view its location
                   </div>
                 )}
               </div>

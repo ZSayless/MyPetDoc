@@ -213,22 +213,7 @@ function App() {
               </MainLayout>
             }
           />
-          <Route
-            path="/my-blogs"
-            element={
-              <MainLayout>
-                <MyBlogs />
-              </MainLayout>
-            }
-          />
-          <Route
-            path="/edit-blog/:id"
-            element={
-              <MainLayout>
-                <WriteBlog />
-              </MainLayout>
-            }
-          />
+          <Route path="/my-blogs" element={<MyBlogs />} />
         </Routes>
       </AuthProvider>
     </Provider>

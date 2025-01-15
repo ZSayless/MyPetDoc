@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { ArrowLeft, X, Save, Send, FileEdit } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 const WriteBlog = () => {
@@ -178,11 +178,12 @@ const WriteBlog = () => {
       <div className="bg-white border-b sticky top-0 z-10">
         <div className="container mx-auto px-4">
           <div className="h-16 flex items-center justify-between">
-            {/* Left side: Back button and Title */}
-            <div className="flex items-center gap-4 flex-1 mr-4">
+          <div className="flex flex-col gap-4 py-4">
+            {/* Top row: Back button and Title */}
+            <div className="flex items-center gap-4">
               <button
                 onClick={() => handleNavigate("/bloglist")}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-600 hover:text-gray-900 -ml-2"
               >
                 <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
               </button>
@@ -195,31 +196,28 @@ const WriteBlog = () => {
               />
             </div>
 
-            {/* Right side: Action buttons */}
-            <div className="flex items-center gap-3 flex-shrink-0">
+            {/* Bottom row: Action buttons */}
+            <div className="flex justify-end gap-3">
               {id ? (
                 <>
                   <button
                     onClick={() => handleSubmit("draft")}
-                    className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 flex items-center gap-2"
+                    className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                   >
-                    <Save className="w-4 h-4" />
                     Save Draft
                   </button>
                   <button
                     onClick={() => handleSubmit("published")}
-                    className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] flex items-center gap-2"
+                    className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
                   >
-                    <Send className="w-4 h-4" />
                     Publish
                   </button>
                 </>
               ) : (
                 <button
                   onClick={() => handleSubmit("published")}
-                  className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] flex items-center gap-2"
+                  className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
                 >
-                  <Send className="w-4 h-4" />
                   Publish
                 </button>
               )}
