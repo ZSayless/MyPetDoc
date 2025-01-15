@@ -11,7 +11,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (rating === 0) {
-      alert("Vui lòng chọn số sao đánh giá");
+      alert("Please select a rating");
       return;
     }
 
@@ -28,7 +28,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
       onClose();
     } catch (error) {
       console.error("Error submitting review:", error);
-      alert("Có lỗi xảy ra khi gửi đánh giá");
+      alert("Error submitting review");
     } finally {
       setLoading(false);
     }
@@ -37,7 +37,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length + images.length > 5) {
-      alert("Bạn chỉ có thể tải lên tối đa 5 ảnh");
+      alert("You can only upload up to 5 images");
       return;
     }
     setImages([...images, ...files]);
@@ -53,7 +53,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg w-full max-w-2xl">
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-semibold">Viết đánh giá</h2>
+          <h2 className="text-xl font-semibold">Write a Review</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
@@ -64,11 +64,11 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
 
         <form onSubmit={handleSubmit} className="p-6">
           {/* Rating Stars */}
-          <div className="mb-6">
+          <div className="mb-6 text-center">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Đánh giá của bạn
+              Your Rating
             </label>
-            <div className="flex gap-1">
+            <div className="flex gap-1 justify-center">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
@@ -93,14 +93,14 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
           {/* Review Text */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nội dung đánh giá
+              Your Review
             </label>
             <textarea
               value={review}
               onChange={(e) => setReview(e.target.value)}
               rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Chia sẻ trải nghiệm của bạn..."
+              placeholder="Share your experience..."
               required
             />
           </div>
@@ -108,7 +108,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
           {/* Image Upload */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Thêm hình ảnh (tối đa 5 ảnh)
+              Add Photos (max 5)
             </label>
             <input
               type="file"
@@ -123,7 +123,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
               htmlFor="review-images"
               className="block w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-blue-500"
             >
-              Click để tải ảnh lên
+              Click to upload
             </label>
 
             {/* Image Preview */}
@@ -157,14 +157,14 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
               className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               disabled={loading}
             >
-              Hủy
+              Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] disabled:opacity-50"
               disabled={loading || rating === 0}
             >
-              {loading ? "Đang gửi..." : "Gửi đánh giá"}
+              {loading ? "Submitting..." : "Submit Review"}
             </button>
           </div>
         </form>
