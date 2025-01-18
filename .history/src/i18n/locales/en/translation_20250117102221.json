@@ -1,0 +1,87 @@
+{
+  "language": "Language",
+  "nav": {
+    "home": "Home",
+    "findHospital": "Find Hospital",
+    "aboutUs": "About Us",
+    "contactUs": "Contact Us",
+    "services": {
+      "title": "Services",
+      "findHospitalDesc": "Search for nearby veterinary hospitals",
+      "blogDesc": "Read latest news and articles",
+      "communityDesc": "Join our pet lovers community",
+      "termsTitle": "Terms & Conditions",
+      "termsDesc": "Read our terms of service"
+    },
+    "blog": "Blog",
+    "community": "Community"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile",
+    "myBlogs": "My Blogs",
+    "settings": "Settings",
+    "adminDashboard": "Admin Dashboard",
+    "signOut": "Sign Out"
+  },
+  "profile": {
+    "myBlogs": "My Blogs",
+    "settings": "Settings",
+    "adminDashboard": "Admin Dashboard"
+  },
+  "home": {
+    "hero": {
+      "title": "Quality Pet Care",
+      "subtitle": "Professional veterinary services for your beloved pets",
+      "findButton": "Find Hospitals",
+      "joinButton": "Join Community",
+      "listButton": "List Your Hospital"
+    },
+    "features": {
+      "title": "Why Choose Us",
+      "expertVets": "Expert Veterinarians",
+      "modernFacilities": "Modern Facilities",
+      "emergency": "24/7 Emergency"
+    }
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Connecting pet owners with quality veterinary care",
+    "mission": {
+      "title": "Our Mission",
+      "content": "To provide the best healthcare solutions for your pets"
+    },
+    "team": {
+      "title": "Our Team",
+      "subtitle": "Meet our experienced professionals"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with us for any questions",
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "message": "Message",
+      "submit": "Send Message"
+    },
+    "info": {
+      "address": "Visit Us",
+      "phone": "Call Us",
+      "email": "Email Us"
+    }
+  },
+  "findHospital": {
+    "title": "Find Veterinary Hospital",
+    "search": "Search hospitals...",
+    "filters": {
+      "title": "Filters",
+      "services": "Services",
+      "rating": "Rating",
+      "distance": "Distance"
+    }
+  }
+}

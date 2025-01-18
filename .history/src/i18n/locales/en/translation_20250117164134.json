@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "darkMode": "Dark Mode",
+    "notification": "Enable Notifications"
+  }
+}

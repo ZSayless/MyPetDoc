@@ -1,0 +1,33 @@
+{
+  "setting": {
+    "title": "Account Settings",
+    "personal": {
+      "tab": "Personal Info",
+      "title": "Personal Information",
+      "description": "Manage your personal information.",
+      "basic": {
+        "title": "Basic Information",
+        "description": "Manage your display name, username and avatar",
+        "fullName": "Full Name",
+        "username": "Username",
+        "avatar": "Avatar"
+      },
+      "social": {
+        "title": "Social Media Links",
+        "description": "Manage your social media connections",
+        "notUpdated": "Not updated"
+      }
+    },
+    "security": {
+      "tab": "Password & Security",
+      "title": "Password & Security",
+      "description": "Manage your password and security settings",
+      "login": {
+        "title": "Login & Recovery",
+        "description": "Manage your password",
+        "changePassword": "Change Password",
+        "notChanged": "Password not changed"
+      }
+    }
+  }
+} 

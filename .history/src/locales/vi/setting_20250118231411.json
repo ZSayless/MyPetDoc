@@ -1,0 +1,33 @@
+{
+  "setting": {
+    "title": "Cài Đặt Tài Khoản",
+    "personal": {
+      "tab": "Thông Tin Cá Nhân",
+      "title": "Thông Tin Cá Nhân",
+      "description": "Quản lý thông tin cá nhân của bạn.",
+      "basic": {
+        "title": "Thông Tin Cơ Bản",
+        "description": "Quản lý tên hiển thị, tên người dùng và ảnh đại diện",
+        "fullName": "Họ Tên",
+        "username": "Tên người dùng",
+        "avatar": "Ảnh đại diện"
+      },
+      "social": {
+        "title": "Liên Kết Mạng Xã Hội",
+        "description": "Quản lý kết nối mạng xã hội của bạn",
+        "notUpdated": "Chưa cập nhật"
+      }
+    },
+    "security": {
+      "tab": "Mật Khẩu & Bảo Mật",
+      "title": "Mật Khẩu & Bảo Mật",
+      "description": "Quản lý mật khẩu và cài đặt bảo mật",
+      "login": {
+        "title": "Đăng Nhập & Khôi Phục",
+        "description": "Quản lý mật khẩu của bạn",
+        "changePassword": "Đổi Mật Khẩu",
+        "notChanged": "Chưa thay đổi mật khẩu"
+      }
+    }
+  }
+} 

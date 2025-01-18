@@ -1,0 +1,20 @@
+{
+  "nav": {
+    "home": "Trang chủ",
+    "findHospital": "Tìm bệnh viện",
+    "aboutUs": "Về chúng tôi",
+    "contactUs": "Liên hệ",
+    "blog": "Blog",
+    "community": "Cộng đồng"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất"
+  },
+  "profile": {
+    "myBlogs": "Blog của tôi",
+    "settings": "Cài đặt",
+    "adminDashboard": "Quản trị"
+  }
+} 

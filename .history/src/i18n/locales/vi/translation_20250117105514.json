@@ -1,0 +1,101 @@
+{
+  "language": "Ngôn ngữ",
+  "nav": {
+    "home": "Trang chủ",
+    "findHospital": "Tìm bệnh viện",
+    "aboutUs": "Về chúng tôi",
+    "contactUs": "Liên hệ",
+    "services": {
+      "title": "Dịch vụ",
+      "findHospitalDesc": "Tìm kiếm bệnh viện thú y gần bạn",
+      "blogDesc": "Đọc tin tức và bài viết mới nhất",
+      "communityDesc": "Tham gia cộng đồng yêu thú cưng",
+      "termsTitle": "Điều khoản & Điều kiện",
+      "termsDesc": "Đọc điều khoản dịch vụ của chúng tôi"
+    },
+    "blog": "Blog",
+    "community": "Cộng đồng"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất",
+    "profile": "Hồ sơ",
+    "myBlogs": "Blog của tôi",
+    "settings": "Cài đặt",
+    "adminDashboard": "Quản trị viên",
+    "signOut": "Đăng xuất"
+  },
+  "profile": {
+    "myBlogs": "Blog của tôi",
+    "settings": "Cài đặt",
+    "adminDashboard": "Quản trị"
+  },
+  "home": {
+    "banner": {
+      "slide1": {
+        "title": "Chăm Sóc Thú Cưng Chất Lượng",
+        "description": "Dịch vụ thú y chuyên nghiệp cho thú cưng của bạn",
+        "button": "Tìm Bệnh Viện"
+      },
+      "slide2": {
+        "title": "Đội Ngũ Bác Sĩ Chuyên Nghiệp",
+        "description": "Các bác sĩ giàu kinh nghiệm tận tâm với sức khỏe thú cưng",
+        "button": "Tham Gia Cộng Đồng"
+      },
+      "slide3": {
+        "title": "Cơ Sở Vật Chất Hiện Đại",
+        "description": "Trang thiết bị hiện đại cho dịch vụ chăm sóc tốt nhất",
+        "button": "Đăng Ký Bệnh Viện"
+      }
+    },
+    "hospitalList": {
+      "title": "Danh Sách Bệnh Viện Thú Y",
+      "subtitle": "Tìm kiếm dịch vụ chăm sóc thú y tốt nhất cho thú cưng của bạn",
+      "searchPlaceholder": "Tìm kiếm bệnh viện...",
+      "viewDetails": "Xem Chi Tiết",
+      "verifiedReviews": "đánh giá đã xác minh"
+    },
+    "cities": {
+      "title": "Địa Điểm Nổi Bật",
+      "subtitle": "Khám phá các bệnh viện thú y hàng đầu tại các thành phố lớn",
+      "hospitals": "Bệnh viện"
+    },
+    "places": {
+      "title": "Bệnh Viện Nổi Bật",
+      "subtitle": "Khám phá các bệnh viện thú y chất lượng với đội ngũ bác sĩ giàu kinh nghiệm",
+      "reviews": "đánh giá đã xác minh"
+    },
+    "blogs": {
+      "title": "Bài Viết Mới Nhất",
+      "subtitle": "Cập nhật các mẹo và lời khuyên chăm sóc thú cưng mới nhất",
+      "viewAll": "Xem Tất Cả"
+    }
+  },
+  "terms": {
+    "title": "Điều Khoản & Điều Kiện",
+    "lastUpdated": "Cập Nhật Lần Cuối",
+    "sections": {
+      "acceptance": {
+        "title": "1. Chấp Nhận Điều Khoản",
+        "content": "Bằng việc truy cập và sử dụng trang web này, bạn chấp nhận và đồng ý bị ràng buộc bởi các điều khoản và điều kiện của thỏa thuận này."
+      },
+      "services": {
+        "title": "2. Mô Tả Dịch Vụ",
+        "content": "Chúng tôi cung cấp nền tảng kết nối chủ vật nuôi với các bệnh viện thú y và các dịch vụ liên quan. Nền tảng bao gồm danh sách bệnh viện, đánh giá và dịch vụ đặt lịch."
+      },
+      "userAccount": {
+        "title": "3. Tài Khoản Người Dùng",
+        "content": "Bạn phải đăng ký tài khoản để truy cập một số tính năng nhất định. Bạn có trách nhiệm duy trì tính bảo mật thông tin tài khoản của mình."
+      },
+      "privacy": {
+        "title": "4. Chính Sách Bảo Mật",
+        "content": "Việc sử dụng dịch vụ của chúng tôi cũng được điều chỉnh bởi Chính sách Bảo mật. Vui lòng xem xét Chính sách Bảo mật để hiểu các thông lệ của chúng tôi."
+      },
+      "content": {
+        "title": "5. Nội Dung Người Dùng",
+        "content": "Người dùng chịu trách nhiệm về nội dung họ đăng. Nội dung không được trái pháp luật, khiêu dâm, đe dọa, phỉ báng hoặc vi phạm quyền sở hữu trí tuệ."
+      }
+    }
+  }
+}

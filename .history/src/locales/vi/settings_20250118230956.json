@@ -1,0 +1,28 @@
+{
+  "settings": {
+    "title": "Cài đặt",
+    "language": {
+      "title": "Cài đặt ngôn ngữ",
+      "select": "Chọn ngôn ngữ",
+      "english": "Tiếng Anh",
+      "vietnamese": "Tiếng Việt"
+    },
+    "theme": {
+      "title": "Cài đặt giao diện",
+      "light": "Sáng",
+      "dark": "Tối",
+      "system": "Hệ thống"
+    },
+    "notification": {
+      "title": "Cài đặt thông báo",
+      "enable": "Bật thông báo",
+      "sound": "Âm thanh",
+      "email": "Thông báo qua email"
+    },
+    "profile": {
+      "title": "Cài đặt hồ sơ",
+      "save": "Lưu thay đổi",
+      "cancel": "Hủy"
+    }
+  }
+} 

@@ -1,0 +1,20 @@
+{
+  "nav": {
+    "home": "Home",
+    "findHospital": "Find Hospital",
+    "aboutUs": "About Us",
+    "contactUs": "Contact Us",
+    "blog": "Blog",
+    "community": "Community"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "profile": {
+    "myBlogs": "My Blogs",
+    "settings": "Settings",
+    "adminDashboard": "Admin Dashboard"
+  }
+} 

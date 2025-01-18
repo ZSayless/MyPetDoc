@@ -1,0 +1,34 @@
+{
+  "language": "Language",
+  "nav": {
+    "home": "Home",
+    "findHospital": "Find Hospital",
+    "aboutUs": "About Us",
+    "contactUs": "Contact Us",
+    "services": {
+      "title": "Services",
+      "findHospitalDesc": "Search for nearby veterinary hospitals",
+      "blogDesc": "Read latest news and articles",
+      "communityDesc": "Join our pet lovers community",
+      "termsTitle": "Terms & Conditions",
+      "termsDesc": "Read our terms of service"
+    },
+    "blog": "Blog",
+    "community": "Community"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile",
+    "myBlogs": "My Blogs",
+    "settings": "Settings",
+    "adminDashboard": "Admin Dashboard",
+    "signOut": "Sign Out"
+  },
+  "profile": {
+    "myBlogs": "My Blogs",
+    "settings": "Settings",
+    "adminDashboard": "Admin Dashboard"
+  }
+}

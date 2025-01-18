@@ -1,0 +1,28 @@
+{
+  "settings": {
+    "title": "Settings",
+    "language": {
+      "title": "Language Settings",
+      "select": "Select Language",
+      "english": "English",
+      "vietnamese": "Vietnamese"
+    },
+    "theme": {
+      "title": "Theme Settings",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "notification": {
+      "title": "Notification Settings",
+      "enable": "Enable Notifications",
+      "sound": "Sound",
+      "email": "Email Notifications"
+    },
+    "profile": {
+      "title": "Profile Settings",
+      "save": "Save Changes",
+      "cancel": "Cancel"
+    }
+  }
+} 

@@ -1,0 +1,18 @@
+.language-switcher {
+  display: flex;
+  gap: 8px;
+}
+
+.lang-btn {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.lang-btn.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+} 

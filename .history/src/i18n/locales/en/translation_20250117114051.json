@@ -1,0 +1,271 @@
+{
+  "language": "Language",
+  "nav": {
+    "home": "Home",
+    "findHospital": "Find Hospital",
+    "aboutUs": "About Us",
+    "contactUs": "Contact Us",
+    "services": {
+      "title": "Services",
+      "findHospitalDesc": "Search for nearby veterinary hospitals",
+      "blogDesc": "Read latest news and articles",
+      "communityDesc": "Join our pet lovers community",
+      "termsTitle": "Terms & Conditions",
+      "termsDesc": "Read our terms of service"
+    },
+    "blog": "Blog",
+    "community": "Community"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile",
+    "myBlogs": "My Blogs",
+    "settings": "Settings",
+    "adminDashboard": "Admin Dashboard",
+    "signOut": "Sign Out"
+  },
+  "profile": {
+    "myBlogs": "My Blogs",
+    "settings": "Settings",
+    "adminDashboard": "Admin Dashboard"
+  },
+  "home": {
+    "banner": {
+      "slide1": {
+        "title": "Quality Pet Care",
+        "description": "Professional veterinary services for your beloved pets",
+        "button": "Find Hospitals"
+      },
+      "slide2": {
+        "title": "Expert Veterinarians",
+        "description": "Experienced doctors dedicated to pet health",
+        "button": "Join Community"
+      },
+      "slide3": {
+        "title": "Modern Facilities",
+        "description": "State-of-the-art equipment for the best care",
+        "button": "List Your Hospital"
+      }
+    },
+    "hospitalList": {
+      "title": "List of Pet Hospital",
+      "subtitle": "Find the best veterinary care for your beloved pets",
+      "searchPlaceholder": "Search hospitals...",
+      "viewDetails": "View Details",
+      "verifiedReviews": "verified reviews"
+    },
+    "cities": {
+      "title": "Top Locations",
+      "subtitle": "Discover top-rated veterinary hospitals in major cities across Vietnam",
+      "hospitals": "Hospitals"
+    },
+    "places": {
+      "title": "Featured Hospitals",
+      "subtitle": "Discover our top-rated veterinary hospitals with experienced professionals",
+      "reviews": "verified reviews"
+    },
+    "blogs": {
+      "title": "Recent Blog Posts",
+      "subtitle": "Stay updated with the latest pet care tips and advice",
+      "viewAll": "View All"
+    }
+  },
+  "terms": {
+    "title": "Terms & Conditions",
+    "lastUpdated": "Last Updated",
+    "sections": {
+      "confidentiality": {
+        "title": "1. Client Confidentiality",
+        "content": "All information relating to both client and patient is held in confidence and in line with the Data Protection Acts and will not be disclosed except under the following circumstances:",
+        "list": [
+          "Where a client provides a confirmed request in writing.",
+          "Where another Veterinary Surgeon requests this in order to continue the patient's care.",
+          "To a court or agent of The Pet Health Partnership as part of a legal process.",
+          "Where The Pet Health Partnership uses outsourced reminder services for treatments, vaccinations, or medication reminders."
+        ]
+      },
+      "records": {
+        "title": "2. Ownership of Records",
+        "content": "Case records and similar documents are the property of, and retained by, The Pet Health Partnership. Copies, with a summary of the clinical history, may be passed on request, to another veterinary surgeon taking over the case or at the request of your insurance company."
+      },
+      "radiographs": {
+        "title": "3. Ownership of Radiographs and Similar Records",
+        "content": "The care given to your pet may involve making some specific investigations, for example, taking x-rays or performing ultrasound scans. Although we make a charge for performing these investigations and interpreting their results, ownership of the resulting record remains with the practice."
+      },
+      "photos": {
+        "title": "4. Patient Photographs",
+        "content": "Photographs of your pet or their conditions may sometimes be used for educational or marketing purposes. Please let us know if you would prefer this not to happen."
+      },
+      "fees": {
+        "title": "5. Fees",
+        "list": [
+          "VAT is charged at the prevailing rate on all fees, diets, and drugs.",
+          "You will receive a detailed invoice for every consultation, surgical procedure, or transaction with us.",
+          "Our fee list is available on request."
+        ]
+      },
+      "costs": {
+        "title": "6. Estimate of Treatment Costs",
+        "content": "We endeavor to provide estimates for all procedures. Please ask if one is required."
+      }
+    }
+  },
+  "aboutUs": {
+    "title": "About MyPetDoc",
+    "subtitle": "Connecting pet owners with quality veterinary care across Vietnam",
+    "story": {
+      "p1": "Founded in 2024, MyPetDoc emerged from a vision to revolutionize pet healthcare in Vietnam. We recognized the challenges pet owners face in finding reliable veterinary care and set out to create a solution.",
+      "p2": "Our platform connects pet owners with verified veterinary hospitals, making quality pet care accessible to all. We're committed to supporting both pet owners and veterinary professionals in providing the best possible care for our furry friends.",
+      "p3": "Today, we're proud to partner with leading veterinary hospitals across Vietnam, serving thousands of pet owners and their beloved companions."
+    },
+    "team": {
+      "title": "Our Team",
+      "members": [
+        {
+          "name": "Dr. Nguyen Van A",
+          "role": "Founder & CEO",
+          "bio": "With over 15 years of veterinary experience, Dr. Nguyen leads our mission to transform pet healthcare."
+        },
+        {
+          "name": "Dr. Tran Thi B",
+          "role": "Chief Medical Officer",
+          "bio": "Specializing in small animal medicine, Dr. Tran ensures the highest quality of care across our network."
+        },
+        {
+          "name": "Le Van C",
+          "role": "Technical Director",
+          "bio": "Leading our tech team in developing innovative solutions for pet healthcare accessibility."
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "What People Say",
+      "list": [
+        {
+          "name": "Mai Anh",
+          "role": "Pet Owner",
+          "content": "MyPetDoc made finding the right vet for my cat so easy. Excellent service!"
+        },
+        {
+          "name": "Dr. Hoang",
+          "role": "Veterinarian",
+          "content": "The platform helps us connect with pet owners efficiently. Great technology!"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Start Your Search Today",
+      "subtitle": "Find the perfect veterinary hospital for your pet",
+      "button": "Find a Hospital"
+    }
+  },
+  "blog": {
+    "list": {
+      "title": "Pet Care Blog",
+      "subtitle": "Discover tips, stories and expert advice for your beloved pets",
+      "shareStory": "Share Your Story",
+      "search": {
+        "placeholder": "Search articles...",
+        "button": "Search"
+      },
+      "categories": {
+        "allPosts": "All Posts",
+        "healthTips": "Health Tips",
+        "petCare": "Pet Care",
+        "nutrition": "Nutrition",
+        "training": "Training",
+        "behavior": "Behavior",
+        "grooming": "Grooming"
+      },
+      "card": {
+        "readTime": "min read",
+        "likes": "likes",
+        "comments": "comments"
+      }
+    },
+    "write": {
+      "title": "Write Blog Post",
+      "editTitle": "Edit Blog Post",
+      "form": {
+        "title": {
+          "label": "Post Title",
+          "placeholder": "Enter post title..."
+        },
+        "content": {
+          "label": "Content",
+          "placeholder": "Write your post content..."
+        },
+        "category": {
+          "label": "Category",
+          "placeholder": "Select a category"
+        },
+        "tags": {
+          "label": "Tags",
+          "placeholder": "Add tags...",
+          "hint": "Press enter to add tag"
+        },
+        "thumbnail": {
+          "label": "Thumbnail Image",
+          "dropzone": "Drag and drop image here or click to select",
+          "maxSize": "Maximum file size: 5MB"
+        }
+      },
+      "buttons": {
+        "publish": "Publish Post",
+        "saveDraft": "Save as Draft",
+        "update": "Update Post",
+        "preview": "Preview"
+      },
+      "leaveModal": {
+        "title": "Leave without saving?",
+        "message": "You have unsaved changes. Are you sure you want to leave? Your changes will be lost.",
+        "stay": "Stay",
+        "leave": "Leave"
+      },
+      "validation": {
+        "required": "Please fill in the title and content completely."
+      },
+      "success": {
+        "draft": "Draft saved successfully!",
+        "publish": "Blog published successfully!"
+      },
+      "error": {
+        "save": "Error occurred while saving the blog"
+      },
+      "preview": {
+        "title": "Preview",
+        "defaultTitle": "Your Title",
+        "defaultContent": "<p>The article content will appear here...</p>"
+      }
+    },
+    "report": {
+      "title": "Report Comment",
+      "form": {
+        "reason": {
+          "label": "Reason for Report",
+          "placeholder": "Select a reason",
+          "options": {
+            "spam": "Spam",
+            "harassment": "Harassment",
+            "inappropriate": "Inappropriate Content",
+            "other": "Other"
+          }
+        },
+        "description": {
+          "label": "Additional Details",
+          "placeholder": "Please provide more details about your report..."
+        }
+      },
+      "buttons": {
+        "submit": "Submit Report",
+        "cancel": "Cancel"
+      },
+      "messages": {
+        "success": "Comment reported successfully",
+        "error": "Failed to submit report. Please try again."
+      }
+    }
+  }
+}

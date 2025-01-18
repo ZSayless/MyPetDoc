@@ -1,0 +1,247 @@
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Search, Plus, Edit, Trash2, Eye } from "lucide-react";
+import { deleteBlog, updateBlogStatus } from "../../../redux/slices/adminSlice";
+import { useTranslation } from "react-i18next";
+
+function BlogsManagement() {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const { blogs } = useSelector((state) => state.admin);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBlog, setSelectedBlog] = useState(null);
+
+  const handleDelete = (blogId) => {
+    if (window.confirm("Are you sure you want to delete this blog?")) {
+      dispatch(deleteBlog(blogId));
+    }
+  };
+
+  const handleView = (blog) => {
+    setSelectedBlog(blog);
+  };
+
+  const handleEdit = (blog) => {
+    setSelectedBlog(blog);
+  };
+
+  const handlePublish = (blogId) => {
+    dispatch(updateBlogStatus({ blogId, status: "published" }));
+  };
+
+  const filteredBlogs = blogs.filter(
+    (blog) =>
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.author.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="p-4 md:p-6">
+      <h2 className="text-xl font-semibold mb-6">{t("admin.blogs.title")}</h2>
+      
+      <input
+        type="text"
+        placeholder={t("admin.blogs.search")}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="mb-6 w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#98E9E9]"
+      />
+
+      {/* Desktop Table View */}
+      <div className="hidden md:block">
+        <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t("admin.blogs.table.title")}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t("admin.blogs.table.author")}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t("admin.blogs.table.date")}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t("admin.blogs.table.status")}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t("admin.blogs.table.actions")}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredBlogs.map((blog) => (
+                <tr key={blog.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">{blog.title}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{blog.author}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {blog.publishDate}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        blog.status === "published"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {blog.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center justify-end space-x-2">
+                      <button
+                        onClick={() => handleView(blog)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        <Eye size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleEdit(blog)}
+                        className="text-green-600 hover:text-green-900"
+                      >
+                        <Edit size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(blog.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {filteredBlogs.map((blog) => (
+          <div key={blog.id} className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <h3 className="font-medium text-gray-900">{blog.title}</h3>
+                <p className="text-sm text-gray-500">By {blog.author}</p>
+              </div>
+              <span
+                className={`px-2 py-1 text-xs rounded-full ${
+                  blog.status === "published"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-yellow-100 text-yellow-800"
+                }`}
+              >
+                {blog.status}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+              <span>{blog.publishDate}</span>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => handleView(blog)}
+                className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
+              >
+                <Eye size={18} />
+              </button>
+              <button
+                onClick={() => handleEdit(blog)}
+                className="p-2 text-green-600 hover:bg-green-50 rounded-full"
+              >
+                <Edit size={18} />
+              </button>
+              <button
+                onClick={() => handleDelete(blog.id)}
+                className="p-2 text-red-600 hover:bg-red-50 rounded-full"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* View/Edit Modal */}
+      {selectedBlog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+            <h2 className="text-xl font-semibold mb-4">
+              {selectedBlog ? "Edit Blog" : "View Blog"}
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={selectedBlog.title}
+                  readOnly
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Content
+                </label>
+                <textarea
+                  value={selectedBlog.content}
+                  readOnly
+                  rows={6}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Author
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedBlog.author}
+                    readOnly
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Category
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedBlog.category}
+                    readOnly
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setSelectedBlog(null)}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+              >
+                Close
+              </button>
+              {selectedBlog.status === "draft" && (
+                <button
+                  onClick={() => handlePublish(selectedBlog.id)}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                >
+                  Publish
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default BlogsManagement;

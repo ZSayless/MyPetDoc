@@ -1,0 +1,311 @@
+{
+  "language": "Ngôn ngữ",
+  "nav": {
+    "home": "Trang chủ",
+    "findHospital": "Tìm bệnh viện",
+    "aboutUs": "Về chúng tôi",
+    "contactUs": "Liên hệ",
+    "services": {
+      "title": "Dịch vụ",
+      "findHospitalDesc": "Tìm kiếm bệnh viện thú y gần bạn",
+      "blogDesc": "Đọc tin tức và bài viết mới nhất",
+      "communityDesc": "Tham gia cộng đồng yêu thú cưng",
+      "termsTitle": "Điều khoản & Điều kiện",
+      "termsDesc": "Đọc điều khoản dịch vụ của chúng tôi"
+    },
+    "blog": "Blog",
+    "community": "Cộng đồng"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "registerTitle": "Tạo Tài Khoản",
+    "registerSubtitle": "Tham gia cộng đồng của chúng tôi ngay hôm nay",
+    "emailPlaceholder": "Nhập email của bạn",
+    "passwordPlaceholder": "Tạo mật khẩu",
+    "confirmPasswordPlaceholder": "Xác nhận mật khẩu",
+    "firstNamePlaceholder": "Tên",
+    "lastNamePlaceholder": "Họ",
+    "termsAgree": "Tôi đồng ý với",
+    "termsLink": "Điều khoản dịch vụ",
+    "continueButton": "Tiếp tục",
+    "orContinueWith": "Hoặc tiếp tục với",
+    "googleSignup": "Đăng ký với Google",
+    "facebookSignup": "Đăng ký với Facebook",
+    "haveAccount": "Đã có tài khoản?",
+    "loginButton": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "profile": "Hồ sơ",
+    "myBlogs": "Blog của tôi",
+    "settings": "Cài đặt",
+    "adminDashboard": "Quản trị viên",
+    "signOut": "Đăng xuất",
+    "selectRole": {
+      "title": "Chọn Vai Trò",
+      "subtitle": "Chọn cách bạn muốn sử dụng MyPetDoc",
+      "roles": {
+        "petOwner": {
+          "title": "Chủ Thú Cưng",
+          "description": "Tìm dịch vụ thú y và kết nối với chuyên gia"
+        },
+        "veterinarian": {
+          "title": "Bác Sĩ Thú Y",
+          "description": "Cung cấp dịch vụ và chia sẻ kiến thức với chủ thú cưng"
+        }
+      }
+    }
+  },
+  "profile": {
+    "myBlogs": "Blog của tôi",
+    "settings": "Cài đặt",
+    "adminDashboard": "Quản trị"
+  },
+  "home": {
+    "banner": {
+      "slide1": {
+        "title": "Chăm Sóc Thú Cưng Chất Lượng",
+        "description": "Dịch vụ thú y chuyên nghiệp cho thú cưng của bạn",
+        "button": "Tìm Bệnh Viện"
+      },
+      "slide2": {
+        "title": "Đội Ngũ Bác Sĩ Chuyên Nghiệp",
+        "description": "Các bác sĩ giàu kinh nghiệm tận tâm với sức khỏe thú cưng",
+        "button": "Tham Gia Cộng Đồng"
+      },
+      "slide3": {
+        "title": "Cơ Sở Vật Chất Hiện Đại",
+        "description": "Trang thiết bị hiện đại cho dịch vụ chăm sóc tốt nhất",
+        "button": "Đăng Ký Bệnh Viện"
+      }
+    },
+    "hospitalList": {
+      "title": "Danh Sách Bệnh Viện Thú Y",
+      "subtitle": "Tìm kiếm dịch vụ chăm sóc thú y tốt nhất cho thú cưng của bạn",
+      "searchPlaceholder": "Tìm kiếm bệnh viện...",
+      "viewDetails": "Xem Chi Tiết",
+      "verifiedReviews": "đánh giá đã xác minh"
+    },
+    "cities": {
+      "title": "Địa Điểm Nổi Bật",
+      "subtitle": "Khám phá các bệnh viện thú y hàng đầu tại các thành phố lớn",
+      "hospitals": "Bệnh viện"
+    },
+    "places": {
+      "title": "Bệnh Viện Nổi Bật",
+      "subtitle": "Khám phá các bệnh viện thú y chất lượng với đội ngũ bác sĩ giàu kinh nghiệm",
+      "reviews": "đánh giá đã xác minh"
+    },
+    "blogs": {
+      "title": "Bài Viết Mới Nhất",
+      "subtitle": "Cập nhật các mẹo và lời khuyên chăm sóc thú cưng mới nhất",
+      "viewAll": "Xem Tất Cả"
+    }
+  },
+  "terms": {
+    "title": "Điều Khoản & Điều Kiện",
+    "lastUpdated": "Cập Nhật Lần Cuối",
+    "sections": {
+      "confidentiality": {
+        "title": "1. Bảo Mật Thông Tin Khách Hàng",
+        "content": "Tất cả thông tin liên quan đến khách hàng và thú cưng đều được bảo mật theo Luật Bảo Vệ Dữ Liệu và chỉ được tiết lộ trong các trường hợp sau:",
+        "list": [
+          "Khi khách hàng có yêu cầu bằng văn bản được xác nhận.",
+          "Khi Bác sĩ Thú y khác yêu cầu để tiếp tục chăm sóc bệnh nhân.",
+          "Cho tòa án hoặc đại diện của The Pet Health Partnership như một phần của quy trình pháp lý.",
+          "Khi The Pet Health Partnership sử dụng dịch vụ nhắc nhở bên ngoài cho việc điều trị, tiêm chủng hoặc nhắc nhở thuốc."
+        ]
+      },
+      "records": {
+        "title": "2. Quyền Sở Hữu Hồ Sơ",
+        "content": "Hồ sơ ca bệnh và các tài liệu tương tự là tài sản của và được lưu giữ bởi The Pet Health Partnership. Bản sao, kèm theo tóm tắt lịch sử lâm sàng, có thể được chuyển theo yêu cầu cho bác sĩ thú y khác tiếp nhận ca bệnh hoặc theo yêu cầu của công ty bảo hiểm của bạn."
+      },
+      "radiographs": {
+        "title": "3. Quyền Sở Hữu X-quang và Hồ Sơ Tương Tự",
+        "content": "Việc chăm sóc thú cưng của bạn có thể liên quan đến một số kiểm tra cụ thể, ví dụ như chụp X-quang hoặc siêu âm. Mặc dù chúng tôi tính phí cho việc thực hiện các kiểm tra này và diễn giải kết quả, quyền sở hữu hồ sơ kết quả vẫn thuộc về phòng khám."
+      },
+      "photos": {
+        "title": "4. Hình Ảnh Bệnh Nhân",
+        "content": "Hình ảnh của thú cưng hoặc tình trạng của chúng đôi khi có thể được sử dụng cho mục đích giáo dục hoặc tiếp thị. Vui lòng cho chúng tôi biết nếu bạn không muốn điều này xảy ra."
+      },
+      "fees": {
+        "title": "5. Phí",
+        "list": [
+          "VAT được tính theo mức hiện hành trên tất cả các khoản phí, chế độ ăn và thuốc.",
+          "Bạn sẽ nhận được hóa đơn chi tiết cho mọi lần tư vấn, thủ thuật phẫu thuật hoặc giao dịch với chúng tôi.",
+          "Danh sách phí của chúng tôi có sẵn theo yêu cầu."
+        ]
+      },
+      "costs": {
+        "title": "6. Ước Tính Chi Phí Điều Trị",
+        "content": "Chúng tôi cố gắng cung cấp ước tính cho tất cả các thủ thuật. Vui lòng hỏi nếu bạn cần."
+      }
+    }
+  },
+  "aboutUs": {
+    "title": "Về MyPetDoc",
+    "subtitle": "Kết nối chủ thú cưng với dịch vụ thú y chất lượng trên khắp Việt Nam",
+    "story": {
+      "p1": "Được thành lập vào năm 2024, MyPetDoc ra đời từ tầm nhìn đổi mới dịch vụ chăm sóc thú cưng tại Việt Nam. Chúng tôi nhận thấy những thách thức mà chủ thú cưng phải đối mặt trong việc tìm kiếm dịch vụ thú y đáng tin cậy và quyết định tạo ra giải pháp.",
+      "p2": "Nền tảng của chúng tôi kết nối chủ thú cưng với các bệnh viện thú y đã được xác minh, giúp dịch vụ chăm sóc thú cưng chất lượng dễ tiếp cận với tất cả mọi người. Chúng tôi cam kết hỗ trợ cả chủ thú cưng và các chuyên gia thú y trong việc cung cấp dịch vụ chăm sóc tốt nhất cho những người bạn lông xù.",
+      "p3": "Hiện nay, chúng tôi tự hào hợp tác với các bệnh viện thú y hàng đầu tại Việt Nam, phục vụ hàng nghìn chủ thú cưng và những người bạn đồng hành thân yêu của họ."
+    },
+    "team": {
+      "title": "Đội Ngũ Của Chúng Tôi",
+      "members": [
+        {
+          "name": "TS. Nguyễn Văn A",
+          "role": "Nhà Sáng Lập & CEO",
+          "bio": "Với hơn 15 năm kinh nghiệm trong lĩnh vực thú y, TS. Nguyễn dẫn dắt sứ mệnh chuyển đổi dịch vụ chăm sóc thú cưng."
+        },
+        {
+          "name": "TS. Trần Thị B",
+          "role": "Giám Đốc Y Tế",
+          "bio": "Chuyên về y học động vật nhỏ, TS. Trần đảm bảo chất lượng chăm sóc cao nhất trong toàn mạng lưới."
+        },
+        {
+          "name": "Lê Văn C",
+          "role": "Giám Đốc Kỹ Thuật",
+          "bio": "Dẫn dắt đội ngũ kỹ thuật phát triển các giải pháp sáng tạo cho việc tiếp cận dịch vụ chăm sóc thú cưng."
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Khách Hàng Nói Gì",
+      "list": [
+        {
+          "name": "Mai Anh",
+          "role": "Chủ Thú Cưng",
+          "content": "MyPetDoc giúp việc tìm bác sĩ thú y phù hợp cho mèo của tôi trở nên dễ dàng. Dịch vụ tuyệt vời!"
+        },
+        {
+          "name": "TS. Hoàng",
+          "role": "Bác Sĩ Thú Y",
+          "content": "Nền tảng giúp chúng tôi kết nối hiệu quả với chủ thú cưng. Công nghệ tuyệt vời!"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Bắt Đầu Tìm Kiếm Ngay",
+      "subtitle": "Tìm bệnh viện thú y phù hợp cho thú cưng của bạn",
+      "button": "Tìm Bệnh Viện"
+    }
+  },
+  "blog": {
+    "comments": {
+      "title": "Bình Luận",
+      "writeComment": "Viết bình luận...",
+      "postComment": "Đăng Bình Luận",
+      "noComments": "Chưa có bình luận nào. Hãy là người đầu tiên bình luận!",
+      "placeholder": "Viết bình luận...",
+      "actions": {
+        "reply": "Trả lời",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa",
+        "report": "Báo cáo"
+      }
+    },
+    "list": {
+      "title": "Blog Chăm Sóc Thú Cưng",
+      "subtitle": "Khám phá mẹo, câu chuyện và lời khuyên chuyên gia cho thú cưng của bạn",
+      "shareStory": "Chia Sẻ Câu Chuyện",
+      "search": {
+        "placeholder": "Tìm kiếm bài viết...",
+        "button": "Tìm Kiếm"
+      },
+      "categories": {
+        "allPosts": "Tất Cả Bài Viết",
+        "healthTips": "Mẹo Sức Khỏe",
+        "petCare": "Chăm Sóc Thú Cưng",
+        "nutrition": "Dinh Dưỡng",
+        "training": "Huấn Luyện",
+        "behavior": "Hành Vi",
+        "grooming": "Làm Đẹp"
+      },
+      "card": {
+        "readTime": "phút đọc",
+        "likes": "lượt thích",
+        "comments": "bình luận"
+      }
+    },
+    "report": {
+      "title": "Báo Cáo Bình Luận",
+      "commentBy": "Bình luận bởi",
+      "form": {
+        "reason": {
+          "label": "Lý Do Báo Cáo *",
+          "placeholder": "Chọn lý do",
+          "options": {
+            "spam": "Spam",
+            "harassment": "Quấy Rối",
+            "inappropriate": "Nội Dung Không Phù Hợp",
+            "misinformation": "Thông Tin Sai Lệch",
+            "other": "Khác"
+          }
+        },
+        "notes": {
+          "label": "Ghi Chú Bổ Sung",
+          "placeholder": "Vui lòng cung cấp thêm chi tiết về báo cáo này..."
+        }
+      },
+      "buttons": {
+        "submit": "Gửi Báo Cáo",
+        "cancel": "Hủy"
+      }
+    }
+  },
+  "community": {
+    "hero": {
+      "title": "Cộng Đồng Yêu Thú Cưng",
+      "subtitle": "Chia sẻ câu chuyện và kết nối với những người yêu thú cưng khác",
+      "shareButton": "Chia Sẻ Câu Chuyện",
+      "loginRequired": "Vui lòng đăng nhập để chia sẻ câu chuyện"
+    },
+    "post": {
+      "justNow": "Vừa xong",
+      "likes": "lượt thích",
+      "comments": "bình luận",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa bài viết này?"
+    },
+    "createPost": {
+      "title": "Tạo Bài Viết",
+      "placeholder": "Chia sẻ câu chuyện về thú cưng của bạn...",
+      "addImage": "Thêm Ảnh",
+      "posting": "Đang đăng...",
+      "post": "Đăng",
+      "validation": {
+        "content": "Vui lòng nhập nội dung",
+        "image": "Vui lòng thêm ảnh"
+      }
+    },
+    "editPost": {
+      "title": "Chỉnh Sửa Bài Viết",
+      "placeholder": "Chỉnh sửa câu chuyện của bạn...",
+      "saving": "Đang lưu...",
+      "save": "Lưu",
+      "cancel": "Hủy"
+    },
+    "menu": {
+      "edit": "Sửa Bài Viết",
+      "delete": "Xóa Bài Viết"
+    }
+  },
+  "settings": {
+    "title": "Cài Đặt",
+    "language": {
+      "label": "Ngôn Ngữ",
+      "english": "Tiếng Anh",
+      "vietnamese": "Tiếng Việt"
+    },
+    "notification": {
+      "label": "Thông Báo",
+      "description": "Nhận thông báo khi có người bình luận hoặc thích bài viết của bạn",
+      "enable": "Bật thông báo"
+    },
+    "theme": {
+      "label": "Giao Diện",
+      "light": "Sáng",
+      "dark": "Tối"
+    },
+    "save": "Lưu Thay Đổi"
+  }
+}

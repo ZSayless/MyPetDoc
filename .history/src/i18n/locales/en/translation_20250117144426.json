@@ -1,0 +1,18 @@
+{
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "loginTitle": "Welcome Back!",
+    "loginSubtitle": "Please sign in to continue",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot Password?",
+    "orContinueWith": "Or continue with",
+    "googleLogin": "Sign in with Google",
+    "facebookLogin": "Sign in with Facebook",
+    "noAccount": "Don't have an account?",
+    "register": "Register"
+  }
+}
