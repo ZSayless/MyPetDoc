@@ -15,7 +15,7 @@ export function useInfiniteScroll(callback, deps = []) {
     const observer = new IntersectionObserver(handleScroll, {
       root: null,
       rootMargin: "20px",
-      threshold: 1.0,I
+      threshold: 1.0,
     });
 
     const element = document.getElementById("infinite-scroll-trigger");

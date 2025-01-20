@@ -1,0 +1,68 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading..."
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "registerHospital": "Register Hospital",
+    "joined": "Joined",
+    "reviews": "Reviews",
+    "favorites": "Favorites",
+    "blogs": "Blogs",
+    "recentReviews": "Recent Reviews",
+    "viewAllReviews": "View All Reviews",
+    "viewAllFavorites": "View All Favorites",
+    "socialUpdateSuccess": "Social media updated successfully",
+    "socialUpdateError": "Failed to update social media"
+  },
+  "setting": {
+    "personal": {
+      "title": "Personal Information",
+      "description": "Update your personal information",
+      "tab": "Personal Info",
+      "basic": {
+        "title": "Basic Info",
+        "description": "Your basic information"
+      },
+      "social": {
+        "facebook": "Facebook",
+        "x": "X (Twitter)",
+        "instagram": "Instagram",
+        "notLinked": "Not linked"
+      }
+    },
+    "security": {
+      "title": "Security Settings",
+      "description": "Manage your security settings",
+      "tab": "Security"
+    },
+    "modal": {
+      "editName": {
+        "title": "Edit Name",
+        "description": "Enter your new name"
+      },
+      "editAvatar": {
+        "title": "Change Avatar",
+        "description": "Upload a new avatar",
+        "uploadTitle": "Click to upload",
+        "dragDropText": "or drag and drop",
+        "fileSizeError": "File size must be less than 2MB",
+        "fileTypeError": "Only image files are allowed",
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "community": {
+    "deletePost": "Delete Post"
+  }
+} 

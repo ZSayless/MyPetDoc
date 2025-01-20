@@ -1,0 +1,68 @@
+{
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "loading": "Đang tải..."
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất"
+  },
+  "profile": {
+    "editProfile": "Chỉnh sửa hồ sơ",
+    "registerHospital": "Đăng ký bệnh viện",
+    "joined": "Tham gia",
+    "reviews": "Đánh giá",
+    "favorites": "Yêu thích",
+    "blogs": "Bài viết",
+    "recentReviews": "Đánh giá gần đây",
+    "viewAllReviews": "Xem tất cả đánh giá",
+    "viewAllFavorites": "Xem tất cả yêu thích",
+    "socialUpdateSuccess": "Cập nhật mạng xã hội thành công",
+    "socialUpdateError": "Cập nhật mạng xã hội thất bại"
+  },
+  "setting": {
+    "personal": {
+      "title": "Thông tin cá nhân",
+      "description": "Cập nhật thông tin cá nhân của bạn",
+      "tab": "Thông tin cá nhân",
+      "basic": {
+        "title": "Thông tin cơ bản",
+        "description": "Thông tin cơ bản của bạn"
+      },
+      "social": {
+        "facebook": "Facebook",
+        "x": "X (Twitter)",
+        "instagram": "Instagram",
+        "notLinked": "Chưa liên kết"
+      }
+    },
+    "security": {
+      "title": "Cài đặt bảo mật",
+      "description": "Quản lý cài đặt bảo mật của bạn",
+      "tab": "Bảo mật"
+    },
+    "modal": {
+      "editName": {
+        "title": "Sửa tên",
+        "description": "Nhập tên mới của bạn"
+      },
+      "editAvatar": {
+        "title": "Đổi ảnh đại diện",
+        "description": "Tải lên ảnh đại diện mới",
+        "uploadTitle": "Nhấp để tải lên",
+        "dragDropText": "hoặc kéo thả",
+        "fileSizeError": "Kích thước file phải nhỏ hơn 2MB",
+        "fileTypeError": "Chỉ chấp nhận file ảnh",
+        "save": "Lưu",
+        "cancel": "Hủy"
+      }
+    }
+  },
+  "community": {
+    "deletePost": "Xóa bài viết"
+  }
+}

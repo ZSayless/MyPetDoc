@@ -1,0 +1,24 @@
+{
+  "auth": {
+    "continueButton": "Continue",
+    "continueWith": "Or continue with",
+    "googleSignup": "Sign up with Google",
+    "login": "Login",
+    "register": "Register",
+    "registerSubtitle": "Create a new account",
+    "haveAccount": "Already have an account?",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "emailNote": "Only @mypetdoc.com emails are allowed",
+    "registering": "Registering...",
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "passwordMismatch": "Passwords do not match",
+      "invalidEmail": "Only @mypetdoc.com emails are allowed",
+      "registerFailed": "Registration failed"
+    }
+  }
+} 

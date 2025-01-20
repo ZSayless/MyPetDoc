@@ -1,0 +1,41 @@
+{
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "continueButton": "Tiếp tục",
+    "orContinueWith": "Hoặc tiếp tục với",
+    "googleSignup": "Đăng ký với Google",
+    "termsAgree": "Tôi đồng ý với",
+    "termsLink": "Điều khoản dịch vụ",
+    "signingIn": "Đang xử lý...",
+    "registerSubtitle": "Tạo tài khoản mới",
+    "haveAccount": "Đã có tài khoản?",
+    "firstName": "Họ",
+    "lastName": "Tên",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "emailNote": "Chỉ chấp nhận email @mypetdoc.com",
+    "registering": "Đang đăng ký...",
+    "selectRole": {
+      "title": "Chọn vai trò của bạn",
+      "subtitle": "Chọn cách bạn muốn sử dụng MyPetDoc",
+      "roles": {
+        "petOwner": {
+          "title": "Chủ thú cưng",
+          "description": "Tôi muốn tìm dịch vụ thú y cho thú cưng của mình"
+        },
+        "veterinarian": {
+          "title": "Bác sĩ thú y",
+          "description": "Tôi muốn cung cấp dịch vụ thú y"
+        }
+      }
+    },
+    "errors": {
+      "invalidCredentials": "Email hoặc mật khẩu không đúng",
+      "passwordMismatch": "Mật khẩu xác nhận không khớp",
+      "invalidEmail": "Chỉ chấp nhận email @mypetdoc.com",
+      "registerFailed": "Đăng ký thất bại"
+    }
+  }
+}

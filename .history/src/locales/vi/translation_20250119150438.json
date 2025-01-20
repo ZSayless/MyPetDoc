@@ -1,0 +1,39 @@
+{
+  "hospitalDetail": {
+    "specialization": "Chuyên môn",
+    "address": "Địa chỉ",
+    "phone": "Điện thoại",
+    "workingHours": "Giờ làm việc",
+    "services": "Dịch vụ",
+    "photoGallery": "Thư viện ảnh",
+    "uploadPhoto": "Tải ảnh lên",
+    "viewDetails": "Xem chi tiết",
+    "customerReviews": "Đánh giá khách hàng",
+    "writeReview": "Viết đánh giá",
+    "viewAllReviews": "Xem tất cả đánh giá",
+    "callNow": "Gọi ngay",
+    "getDirections": "Chỉ đường",
+    "addToFavorites": "Thêm vào yêu thích",
+    "removeFromFavorites": "Xóa khỏi yêu thích",
+    "verified": "Đã xác thực",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "hospitalNotFound": "Không tìm thấy bệnh viện",
+    "uploadSuccess": "Tải ảnh lên thành công",
+    "uploadError": "Tải ảnh lên thất bại",
+    "reviewSuccess": "Gửi đánh giá thành công",
+    "reviewError": "Gửi đánh giá thất bại",
+    "report": "Báo cáo",
+    "photo": "Ảnh",
+    "comment": "Bình luận",
+    "reportReason": "Vui lòng chọn lý do báo cáo",
+    "reportReasons": {
+      "inappropriate": "Nội dung không phù hợp",
+      "spam": "Spam",
+      "harassment": "Quấy rối",
+      "falseInfo": "Thông tin sai sự thật",
+      "other": "Khác"
+    },
+    "information": "Thông tin bệnh viện"
+  }
+} 

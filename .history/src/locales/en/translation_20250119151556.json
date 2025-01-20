@@ -1,0 +1,29 @@
+{
+  "hospitalDetail": {
+    "title": "Hospital Information",
+    "services": {
+      "title": "Services",
+      "generalCheckup": "General Checkup",
+      "vaccination": "Vaccination",
+      "surgery": "Surgery",
+      "petGrooming": "Pet Grooming",
+      "emergencyCare": "Emergency Care",
+      "dentalCare": "Dental Care",
+      "laboratoryServices": "Laboratory Services",
+      "petBoarding": "Pet Boarding"
+    },
+    "gallery": {
+      "title": "Photo Gallery",
+      "uploadPhoto": "Upload Photo",
+      "viewDetails": "View Details"
+    },
+    "map": {
+      "title": "Location"
+    },
+    "workingHours": {
+      "title": "Working Hours",
+      "weekdays": "Monday - Friday",
+      "weekends": "Saturday - Sunday"
+    }
+  }
+} 
