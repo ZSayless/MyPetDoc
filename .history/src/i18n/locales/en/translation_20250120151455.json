@@ -146,33 +146,59 @@
   },
   "terms": {
     "title": "Terms & Conditions",
-    "lastUpdated": "Last Updated"
+    "lastUpdated": "Last Updated",
+    "sections": {
+      "confidentiality": {
+        "title": "1. Client Confidentiality",
+        "content": "All information relating to both client and patient is held in confidence and in line with the Data Protection Acts and will not be disclosed except under the following circumstances:",
+        "list": [
+          "Where a client provides a confirmed request in writing.",
+          "Where another Veterinary Surgeon requests this in order to continue the patient's care.",
+          "To a court or agent of The Pet Health Partnership as part of a legal process.",
+          "Where The Pet Health Partnership uses outsourced reminder services for treatments, vaccinations, or medication reminders."
+        ]
+      },
+      "records": {
+        "title": "2. Ownership of Records",
+        "content": "Case records and similar documents are the property of, and retained by, The Pet Health Partnership. Copies, with a summary of the clinical history, may be passed on request, to another veterinary surgeon taking over the case or at the request of your insurance company."
+      },
+      "radiographs": {
+        "title": "3. Ownership of Radiographs and Similar Records",
+        "content": "The care given to your pet may involve making some specific investigations, for example, taking x-rays or performing ultrasound scans. Although we make a charge for performing these investigations and interpreting their results, ownership of the resulting record remains with the practice."
+      },
+      "photos": {
+        "title": "4. Patient Photographs",
+        "content": "Photographs of your pet or their conditions may sometimes be used for educational or marketing purposes. Please let us know if you would prefer this not to happen."
+      },
+      "fees": {
+        "title": "5. Fees",
+        "list": [
+          "VAT is charged at the prevailing rate on all fees, diets, and drugs.",
+          "You will receive a detailed invoice for every consultation, surgical procedure, or transaction with us.",
+          "Our fee list is available on request."
+        ]
+      },
+      "costs": {
+        "title": "6. Estimate of Treatment Costs",
+        "content": "We endeavor to provide estimates for all procedures. Please ask if one is required."
+      }
+    }
   },
   "aboutUs": {
-    "title": "About MyPetDoc",
-    "subtitle": "Connecting pet owners with quality veterinary care across Vietnam",
+    "title": "About Us",
+    "subtitle": "Connecting Pet Owners with Quality Veterinary Care",
     "story": {
-      "p1": "Founded in 2024, MyPetDoc emerged from a vision to revolutionize pet healthcare in Vietnam. We recognized the challenges pet owners face in finding reliable veterinary care and set out to create a solution.",
-      "p2": "Our platform connects pet owners with verified veterinary hospitals, making quality pet care accessible to all. We're committed to supporting both pet owners and veterinary professionals in providing the best possible care for our furry friends.",
-      "p3": "Today, we're proud to partner with leading veterinary hospitals across Vietnam, serving thousands of pet owners and their beloved companions."
+      "p1": "MyPetDoc was founded with a simple mission: to make quality veterinary care accessible to all pet owners.",
+      "p2": "Our platform connects pet owners with trusted veterinarians, making it easy to find and book appointments with veterinary clinics across Vietnam.",
+      "p3": "We're committed to improving the lives of pets and their owners through technology and community. Contact us at support@mypetdoc.com"
     },
     "team": {
       "title": "Our Team",
       "members": [
         {
-          "name": "Dr. Nguyen Van A",
-          "role": "Founder & CEO",
-          "bio": "With over 15 years of veterinary experience, Dr. Nguyen leads our mission to transform pet healthcare."
-        },
-        {
-          "name": "Dr. Tran Thi B",
-          "role": "Chief Medical Officer",
-          "bio": "Specializing in small animal medicine, Dr. Tran ensures the highest quality of care across our network."
-        },
-        {
-          "name": "Le Van C",
-          "role": "Technical Director",
-          "bio": "Leading our tech team in developing innovative solutions for pet healthcare accessibility."
+          "name": "MyPetDoc",
+          "role": "support@mypetdoc.com",
+          "bio": "+84 123 456 789"
         }
       ]
     },

@@ -201,7 +201,7 @@ function Register({ onClose, onLoginClick }) {
                   className="h-5 w-5 mr-2"
                   alt="Google"
                 />
-                <span>{t("auth.googleSignUp")}</span>
+                <span>{t("auth.googleSignup")}</span>
               </button>
             </form>
           )}

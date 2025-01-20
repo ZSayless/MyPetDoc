@@ -91,6 +91,16 @@
       "userDesc": "Tìm kiếm và đánh giá dịch vụ thú y",
       "veterinarian": "Bác sĩ thú y",
       "veterinarianDesc": "Cung cấp dịch vụ và tư vấn cho thú cưng"
+    },
+    "forgotPasswordTitle": "Quên mật khẩu",
+    "forgotPasswordSubtitle": "Nhập email của bạn để nhận link đặt lại mật khẩu",
+    "sendResetLink": "Gửi link đặt lại mật khẩu",
+    "sending": "Đang gửi...",
+    "backToLogin": "Quay lại đăng nhập",
+    "passwordResetSent": "Link đặt lại mật khẩu đã được gửi đến email của bạn",
+    "errors": {
+      "emailRequired": "Vui lòng nhập email",
+      "resetPasswordFailed": "Không thể gửi link đặt lại mật khẩu. Vui lòng thử lại sau."
     }
   },
   "profile": {

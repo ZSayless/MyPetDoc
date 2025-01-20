@@ -83,8 +83,7 @@
       "roleRequired": "Vui lòng chọn vai trò của bạn",
       "nameRequired": "Vui lòng nhập họ và tên",
       "emailRequired": "Vui lòng nhập email",
-      "passwordRequired": "Vui lòng nhập mật khẩu",
-      "googleSignUpFailed": "Đăng ký với Google thất bại"
+      "passwordRequired": "Vui lòng nhập mật khẩu"
     },
     "roles": {
       "user": "Người dùng",
@@ -160,7 +159,43 @@
   },
   "terms": {
     "title": "Điều Khoản & Điều Kiện",
-    "lastUpdated": "Cập Nhật Lần Cuối"
+    "lastUpdated": "Cập Nhật Lần Cuối",
+    "sections": {
+      "confidentiality": {
+        "title": "1. Bảo Mật Thông Tin Khách Hàng",
+        "content": "Tất cả thông tin liên quan đến khách hàng và thú cưng đều được bảo mật theo Luật Bảo Vệ Dữ Liệu và chỉ được tiết lộ trong các trường hợp sau:",
+        "list": [
+          "Khi khách hàng có yêu cầu bằng văn bản được xác nhận.",
+          "Khi Bác sĩ Thú y khác yêu cầu để tiếp tục chăm sóc bệnh nhân.",
+          "Cho tòa án hoặc đại diện của The Pet Health Partnership như một phần của quy trình pháp lý.",
+          "Khi The Pet Health Partnership sử dụng dịch vụ nhắc nhở bên ngoài cho việc điều trị, tiêm chủng hoặc nhắc nhở thuốc."
+        ]
+      },
+      "records": {
+        "title": "2. Quyền Sở Hữu Hồ Sơ",
+        "content": "Hồ sơ ca bệnh và các tài liệu tương tự là tài sản của và được lưu giữ bởi The Pet Health Partnership. Bản sao, kèm theo tóm tắt lịch sử lâm sàng, có thể được chuyển theo yêu cầu cho bác sĩ thú y khác tiếp nhận ca bệnh hoặc theo yêu cầu của công ty bảo hiểm của bạn."
+      },
+      "radiographs": {
+        "title": "3. Quyền Sở Hữu X-quang và Hồ Sơ Tương Tự",
+        "content": "Việc chăm sóc thú cưng của bạn có thể liên quan đến một số kiểm tra cụ thể, ví dụ như chụp X-quang hoặc siêu âm. Mặc dù chúng tôi tính phí cho việc thực hiện các kiểm tra này và diễn giải kết quả, quyền sở hữu hồ sơ kết quả vẫn thuộc về phòng khám."
+      },
+      "photos": {
+        "title": "4. Hình Ảnh Bệnh Nhân",
+        "content": "Hình ảnh của thú cưng hoặc tình trạng của chúng đôi khi có thể được sử dụng cho mục đích giáo dục hoặc tiếp thị. Vui lòng cho chúng tôi biết nếu bạn không muốn điều này xảy ra."
+      },
+      "fees": {
+        "title": "5. Phí",
+        "list": [
+          "VAT được tính theo mức hiện hành trên tất cả các khoản phí, chế độ ăn và thuốc.",
+          "Bạn sẽ nhận được hóa đơn chi tiết cho mọi lần tư vấn, thủ thuật phẫu thuật hoặc giao dịch với chúng tôi.",
+          "Danh sách phí của chúng tôi có sẵn theo yêu cầu."
+        ]
+      },
+      "costs": {
+        "title": "6. Ước Tính Chi Phí Điều Trị",
+        "content": "Chúng tôi cố gắng cung cấp ước tính cho tất cả các thủ thuật. Vui lòng hỏi nếu bạn cần."
+      }
+    }
   },
   "aboutUs": {
     "title": "Về MyPetDoc",

@@ -15,47 +15,33 @@ function Terms() {
       lastUpdated: "March 15, 2024",
       sections: {
         confidentiality: {
-          title: "1. Client Confidentiality",
-          content:
-            "All information relating to both client and patient is held in confidence and in line with the Data Protection Acts and will not be disclosed except under the following circumstances:",
-          list: [
-            "Where a client provides a confirmed request in writing.",
-            "Where another Veterinary Surgeon requests this in order to continue the patient's care.",
-            "To a court or agent of The Pet Health Partnership as part of a legal process.",
-            "Where The Pet Health Partnership uses outsourced reminder services for treatments, vaccinations, or medication reminders.",
-          ],
+          title: t("terms.sections.confidentiality.title"),
+          content: t("terms.sections.confidentiality.content"),
+          list: t("terms.sections.confidentiality.list", { returnObjects: true })
         },
         records: {
-          title: "2. Ownership of Records",
-          content:
-            "All case records, laboratory results, X-rays and similar documents are the property of MyPetDoc Veterinary Practice.",
+          title: t("terms.sections.records.title"),
+          content: t("terms.sections.records.content")
         },
         radiographs: {
-          title: "3. Radiographs and Other Documents",
-          content:
-            "The care given to your pet may involve making some specific investigations, for example taking radiographs or performing ultrasound scans. Even though we make a charge for carrying out these investigations and interpreting their results, ownership of the resulting record remains with the practice.",
+          title: t("terms.sections.radiographs.title"),
+          content: t("terms.sections.radiographs.content")
         },
         photos: {
-          title: "4. Patient Photographs",
-          content:
-            "Photographs may be taken of your pet for their medical record. These remain the property of MyPetDoc Veterinary Practice.",
+          title: t("terms.sections.photos.title"),
+          content: t("terms.sections.photos.content")
         },
         fees: {
-          title: "5. Fees and Payment Terms",
-          list: [
-            "All fees are due for payment at the time of the consultation or when your pet is discharged.",
-            "All fees are subject to VAT at the current rate.",
-            "Fee levels are determined by the time spent on a case and according to the drugs, materials, and consumables used.",
-          ],
+          title: t("terms.sections.fees.title"),
+          list: t("terms.sections.fees.list", { returnObjects: true })
         },
         costs: {
-          title: "6. Treatment Costs",
-          content:
-            "We will provide you with a detailed estimate of costs for any surgical procedures or treatments. Please note that any estimate given can only be approximate.",
-        },
-      },
+          title: t("terms.sections.costs.title"),
+          content: t("terms.sections.costs.content")
+        }
+      }
     };
-
+    
     setTermsContent(staticTerms);
     setLoading(false);
   }, [t]);
@@ -86,11 +72,9 @@ function Terms() {
                   {termsContent.sections.confidentiality.content}
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-gray-600 ml-4">
-                  {termsContent.sections.confidentiality.list.map(
-                    (item, index) => (
-                      <li key={index}>{item}</li>
-                    )
-                  )}
+                  {termsContent.sections.confidentiality.list.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
                 </ul>
               </div>
             </section>

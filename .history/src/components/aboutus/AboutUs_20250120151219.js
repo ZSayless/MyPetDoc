@@ -29,7 +29,10 @@ function AboutUs() {
               <p>{t("aboutUs.story.p2")}</p>
               <p>{t("aboutUs.story.p3")}</p>
             </div>
-            <div className="flex justify-center items-center gap-6 mt-8">   
+            {/* Social Media Icons */}
+            <div className="flex justify-center items-center gap-6 mt-8">
+        
+
             </div>
           </div>
         </div>

@@ -29,7 +29,33 @@ function AboutUs() {
               <p>{t("aboutUs.story.p2")}</p>
               <p>{t("aboutUs.story.p3")}</p>
             </div>
-            <div className="flex justify-center items-center gap-6 mt-8">   
+            {/* Social Media Icons */}
+            <div className="flex justify-center items-center gap-6 mt-8">
+              <a
+                href="#"
+                className="text-[#1A3C8E] hover:text-[#98E9E9] transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Facebook size={24} />
+              </a>
+              <a
+                href="#"
+                className="text-[#1A3C8E] hover:text-[#98E9E9] transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Twitter size={24} />
+              </a>
+              <a
+                href="#"
+                className="text-[#1A3C8E] hover:text-[#98E9E9] transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Instagram size={24} />
+              </a>
+
             </div>
           </div>
         </div>

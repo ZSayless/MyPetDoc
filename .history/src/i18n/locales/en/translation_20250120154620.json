@@ -79,7 +79,17 @@
     },
     "signingIn": "Signing in...",
     "continueButton": "Register",
-    "googleSignUp": "Sign up with Google"
+    "googleSignUp": "Sign up with Google",
+    "forgotPasswordTitle": "Forgot Password",
+    "forgotPasswordSubtitle": "Enter your email to receive a password reset link",
+    "sendResetLink": "Send Reset Link",
+    "sending": "Sending...",
+    "backToLogin": "Back to Login",
+    "passwordResetSent": "Password reset link has been sent to your email",
+    "errors": {
+      "emailRequired": "Please enter your email",
+      "resetPasswordFailed": "Could not send reset link. Please try again later."
+    }
   },
   "profile": {
     "myBlogs": "My Blogs",

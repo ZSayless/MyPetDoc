@@ -1,15 +1,90 @@
-import { X } from "lucide-react";
+import { X, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "../../context/AuthContext";
+import { authService } from "../../services/authService";
 import SelectRoleModal from "./SelectRoleModal";
 import { registerWithGoogle } from "../../services/authService";
-import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
 
-function Register({ onClose, onLoginClick }) {
+function Register({ isOpenRegister, onLoginClick, onClose }) {
   const { t } = useTranslation();
+  const { register } = useAuth();
+  const { showToast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showRoleModal, setShowRoleModal] = useState(false);
   const [userType, setUserType] = useState("general");
   const [googleUserData, setGoogleUserData] = useState(null);
   const [isGoogleSignup, setIsGoogleSignup] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+  });
+
+  const roles = [
+    {
+      value: "user",
+      label: t("auth.roles.user"),
+      description: t("auth.roles.userDesc"),
+    },
+    {
+      value: "veterinarian",
+      label: t("auth.roles.veterinarian"),
+      description: t("auth.roles.veterinarianDesc"),
+    },
+  ];
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setError(null);
+  };
+
+  const validateForm = () => {
+    if (!formData.firstName || !formData.lastName) {
+      setError(t("auth.errors.nameRequired"));
+      return false;
+    }
+    if (!formData.email) {
+      setError(t("auth.errors.emailRequired"));
+      return false;
+    }
+    if (!formData.password) {
+      setError(t("auth.errors.passwordRequired"));
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError(t("auth.errors.passwordMismatch"));
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await authService.register(formData);
+      await register(response.user, response.token);
+      onClose();
+    } catch (error) {
+      setError(t("auth.errors.registrationFailed"));
+      console.error("Registration failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLoginClick = () => {
     onClose();
@@ -38,24 +113,12 @@ function Register({ onClose, onLoginClick }) {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // TODO: Call API to register
-      alert("Đăng ký thành công!");
-      onClose();
-      onLoginClick(); // Chuyển sang form đăng nhập
-    } catch (error) {
-      alert("Đăng ký thất bại");
-    }
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-[30px] w-full max-w-md relative">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+          className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
         >
           <X size={24} />
         </button>
@@ -65,7 +128,7 @@ function Register({ onClose, onLoginClick }) {
             <h3 className="text-2xl font-bold text-gray-800">
               {isGoogleSignup
                 ? t("auth.selectRole.title")
-                : t("auth.registerTitle")}
+                : t("auth.registerSubtitle")}
             </h3>
             <p className="text-gray-600 mt-2">
               {isGoogleSignup
@@ -109,30 +172,31 @@ function Register({ onClose, onLoginClick }) {
               </button>
             </div>
           ) : (
-            <form className="space-y-3">
-              <div className="flex space-x-4 p-1 bg-gray-100 rounded-[20px]">
-                <button
-                  type="button"
-                  className={`flex-1 py-2 px-4 rounded-[15px] text-sm font-medium transition-colors ${
-                    userType === "general"
-                      ? "bg-white text-gray-800 shadow"
-                      : "text-gray-600 hover:text-gray-800"
-                  }`}
-                  onClick={() => setUserType("general")}
-                >
-                  {t("auth.selectRole.roles.petOwner.title")}
-                </button>
-                <button
-                  type="button"
-                  className={`flex-1 py-2 px-4 rounded-[15px] text-sm font-medium transition-colors ${
-                    userType === "hospital"
-                      ? "bg-white text-gray-800 shadow"
-                      : "text-gray-600 hover:text-gray-800"
-                  }`}
-                  onClick={() => setUserType("hospital")}
-                >
-                  {t("auth.selectRole.roles.veterinarian.title")}
-                </button>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("auth.selectRole.title")}
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {roles.map((role) => (
+                    <div
+                      key={role.value}
+                      className={`p-4 border rounded-lg cursor-pointer ${
+                        formData.role === role.value
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 hover:border-blue-300"
+                      }`}
+                      onClick={() =>
+                        setFormData({ ...formData, role: role.value })
+                      }
+                    >
+                      <h3 className="font-medium">{role.label}</h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {role.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -140,11 +204,17 @@ function Register({ onClose, onLoginClick }) {
                   type="text"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
                   placeholder={t("auth.firstNamePlaceholder")}
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
                 />
                 <input
                   type="text"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
                   placeholder={t("auth.lastNamePlaceholder")}
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -152,16 +222,25 @@ function Register({ onClose, onLoginClick }) {
                 type="text"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
                 placeholder={t("auth.emailPlaceholder")}
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
               />
               <input
                 type="password"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
                 placeholder={t("auth.passwordPlaceholder")}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
               />
               <input
                 type="password"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
                 placeholder={t("auth.confirmPasswordPlaceholder")}
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
               />
 
               <div className="flex items-start">
@@ -174,11 +253,20 @@ function Register({ onClose, onLoginClick }) {
                 </label>
               </div>
 
+              {error && (
+                <div className="mb-4 text-sm text-red-500 text-center">
+                  {error}
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full bg-[#98E9E9] text-gray-700 py-3 rounded-lg font-medium hover:bg-[#7CD5D5] transition-colors"
+                className={`w-full py-3 bg-[#98E9E9] text-gray-700 rounded-xl hover:bg-[#7CD5D5] ${
+                  loading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+                disabled={loading}
               >
-                {t("auth.continueButton")}
+                {loading ? t("auth.signingIn") : t("auth.register")}
               </button>
 
               <div className="relative my-4">
@@ -201,7 +289,7 @@ function Register({ onClose, onLoginClick }) {
                   className="h-5 w-5 mr-2"
                   alt="Google"
                 />
-                <span>{t("auth.googleSignUp")}</span>
+                <span>{t("auth.googleSignIn")}</span>
               </button>
             </form>
           )}

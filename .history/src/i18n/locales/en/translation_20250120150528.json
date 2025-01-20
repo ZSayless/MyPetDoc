@@ -79,7 +79,7 @@
     },
     "signingIn": "Signing in...",
     "continueButton": "Register",
-    "googleSignUp": "Sign up with Google"
+    "googleSignUp": "Sign  with Google"
   },
   "profile": {
     "myBlogs": "My Blogs",
@@ -146,7 +146,43 @@
   },
   "terms": {
     "title": "Terms & Conditions",
-    "lastUpdated": "Last Updated"
+    "lastUpdated": "Last Updated",
+    "sections": {
+      "confidentiality": {
+        "title": "1. Client Confidentiality",
+        "content": "All information relating to both client and patient is held in confidence and in line with the Data Protection Acts and will not be disclosed except under the following circumstances:",
+        "list": [
+          "Where a client provides a confirmed request in writing.",
+          "Where another Veterinary Surgeon requests this in order to continue the patient's care.",
+          "To a court or agent of The Pet Health Partnership as part of a legal process.",
+          "Where The Pet Health Partnership uses outsourced reminder services for treatments, vaccinations, or medication reminders."
+        ]
+      },
+      "records": {
+        "title": "2. Ownership of Records",
+        "content": "Case records and similar documents are the property of, and retained by, The Pet Health Partnership. Copies, with a summary of the clinical history, may be passed on request, to another veterinary surgeon taking over the case or at the request of your insurance company."
+      },
+      "radiographs": {
+        "title": "3. Ownership of Radiographs and Similar Records",
+        "content": "The care given to your pet may involve making some specific investigations, for example, taking x-rays or performing ultrasound scans. Although we make a charge for performing these investigations and interpreting their results, ownership of the resulting record remains with the practice."
+      },
+      "photos": {
+        "title": "4. Patient Photographs",
+        "content": "Photographs of your pet or their conditions may sometimes be used for educational or marketing purposes. Please let us know if you would prefer this not to happen."
+      },
+      "fees": {
+        "title": "5. Fees",
+        "list": [
+          "VAT is charged at the prevailing rate on all fees, diets, and drugs.",
+          "You will receive a detailed invoice for every consultation, surgical procedure, or transaction with us.",
+          "Our fee list is available on request."
+        ]
+      },
+      "costs": {
+        "title": "6. Estimate of Treatment Costs",
+        "content": "We endeavor to provide estimates for all procedures. Please ask if one is required."
+      }
+    }
   },
   "aboutUs": {
     "title": "About MyPetDoc",
