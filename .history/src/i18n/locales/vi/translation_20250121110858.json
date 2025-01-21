@@ -1,21 +1,15 @@
 {
   "language": "Ngôn ngữ",
   "nav": {
-    "home": "Trang chủ",
-    "findHospital": "Tìm bệnh viện",
-    "aboutUs": "Về chúng tôi",
-    "contactUs": "Liên hệ",
-    "explore": "Khám phá thêm",
-    "services": {
-      "title": "Dịch vụ",
-      "findHospitalDesc": "Tìm kiếm bệnh viện thú y gần bạn",
-      "blogDesc": "Đọc tin tức và bài viết mới nhất",
-      "communityDesc": "Tham gia cộng đồng yêu thú cưng",
-      "termsTitle": "Điều khoản & Điều kiện",
-      "termsDesc": "Đọc điều khoản dịch vụ của chúng tôi"
-    },
+    "home": "Trang Chủ",
+    "findHospital": "Tìm Bệnh Viện",
+    "about": "Về Chúng Tôi",
+    "contact": "Liên Hệ",
+    "explore": "Khám Phá Thêm",
+    "services": "Dịch Vụ",
     "blog": "Blog",
-    "community": "Cộng đồng"
+    "community": "Cộng Đồng",
+    "blogs": "Bài Viết"
   },
   "auth": {
     "login": "Đăng nhập",

@@ -200,13 +200,8 @@ function Header() {
     e.preventDefault();
     const contactSection = document.getElementById("contact");
     if (contactSection) {
-      window.scrollTo({
-        top: contactSection.offsetTop,
-        behavior: "smooth",
-      });
+      contactSection.scrollIntoView({ behavior: "smooth" });
     }
-    // Đóng mobile menu nếu đang mở
-    setIsMenuOpen(false);
   };
 
   const handleLanguageChange = (lang) => {
@@ -239,7 +234,7 @@ function Header() {
                   {/* 2. About Us */}
                   <li>
                     <Link
-                      to="/aboutus"
+                      to="/about"
                       className="text-gray-700 hover:text-gray-900"
                     >
                       {t("nav.aboutUs")}
@@ -248,13 +243,12 @@ function Header() {
 
                   {/* 3. Contact Us */}
                   <li>
-                    <a
-                      href="#contact"
+                    <Link
+                      to="/contact"
                       className="text-gray-700 hover:text-gray-900"
-                      onClick={handleContactClick}
                     >
                       {t("nav.contactUs")}
-                    </a>
+                    </Link>
                   </li>
 
                   {/* 4. Find Hospital */}
@@ -521,7 +515,7 @@ function Header() {
                         <span className="text-lg">{t("nav.home")}</span>
                       </Link>
                       <Link
-                        to="/aboutus"
+                        to="/about"
                         className="flex items-center space-x-3 text-gray-700 hover:text-[#27378C] transition-colors"
                         onClick={toggleMenu}
                       >
@@ -529,9 +523,9 @@ function Header() {
                         <span className="text-lg">{t("nav.aboutUs")}</span>
                       </Link>
                       <Link
-                        href="#contact"
+                        to="/contact"
                         className="flex items-center space-x-3 text-gray-700 hover:text-[#27378C] transition-colors"
-                        onClick={handleContactClick}
+                        onClick={toggleMenu}
                       >
                         <Mail className="w-6 h-6" />
                         <span className="text-lg">{t("nav.contactUs")}</span>

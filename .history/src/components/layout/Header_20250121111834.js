@@ -200,13 +200,8 @@ function Header() {
     e.preventDefault();
     const contactSection = document.getElementById("contact");
     if (contactSection) {
-      window.scrollTo({
-        top: contactSection.offsetTop,
-        behavior: "smooth",
-      });
+      contactSection.scrollIntoView({ behavior: "smooth" });
     }
-    // Đóng mobile menu nếu đang mở
-    setIsMenuOpen(false);
   };
 
   const handleLanguageChange = (lang) => {
@@ -251,7 +246,6 @@ function Header() {
                     <a
                       href="#contact"
                       className="text-gray-700 hover:text-gray-900"
-                      onClick={handleContactClick}
                     >
                       {t("nav.contactUs")}
                     </a>
@@ -529,9 +523,9 @@ function Header() {
                         <span className="text-lg">{t("nav.aboutUs")}</span>
                       </Link>
                       <Link
-                        href="#contact"
+                        to="#contact"
                         className="flex items-center space-x-3 text-gray-700 hover:text-[#27378C] transition-colors"
-                        onClick={handleContactClick}
+                        onClick={toggleMenu}
                       >
                         <Mail className="w-6 h-6" />
                         <span className="text-lg">{t("nav.contactUs")}</span>

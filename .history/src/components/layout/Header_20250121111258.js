@@ -1,0 +1,442 @@
+import {
+  ChevronDown,
+  Menu,
+  X,
+  Globe,
+  Settings,
+  Home,
+  Info,
+  Mail,
+  Search,
+  FileText,
+  Users,
+  User,
+  FileEdit,
+  LogOut,
+} from "lucide-react";
+import { Menu as HeadlessMenu, Transition } from "@headlessui/react";
+import { useState, useEffect, useRef, Fragment } from "react";
+import logo from "../../assets/img/logocustom.png";
+import ButtonLink from "../../core/ButtonLink";
+import Register from "../register/Register";
+import Overlay from "../../core/Overlay";
+import Login from "../login/Login";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "../../context/AuthContext";
+import { GB, VN } from "country-flag-icons/react/3x2";
+
+function Header() {
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const { user, currentLang, changeLang, logout } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isOpenRegister, setIsOpenRegister] = useState(false);
+  const [isOpenLogin, setIsOpenLogin] = useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
+  const servicesDropdownRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const languageRef = useRef(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const handleLoginClick = () => {
+    setIsOpenLogin(true);
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsSticky(true);
+      } else {
+        setIsSticky(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Xử lý click outside cho dropdown ngôn ngữ
+      if (languageRef.current && !languageRef.current.contains(event.target)) {
+        setIsLanguageOpen(false);
+      }
+
+      // Xử lý click outside cho các dropdown khác nếu cần
+      if (
+        servicesDropdownRef.current &&
+        !servicesDropdownRef.current.contains(event.target)
+      ) {
+        setIsServicesOpen(false);
+      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+    document.body.style.overflow = !isMenuOpen ? "hidden" : "unset";
+  };
+
+  const handleOpenRegister = () => {
+    setIsOpenRegister(!isOpenRegister);
+  };
+
+  const handleOpenLogin = () => {
+    setIsOpenLogin(!isOpenLogin);
+  };
+
+  const languages = [
+    {
+      code: "en",
+      name: "English",
+      shortCode: "EN",
+      flag: GB,
+    },
+    {
+      code: "vi",
+      name: "Tiếng Việt",
+      shortCode: "VN",
+      flag: VN,
+    },
+  ];
+
+  const customStyles = {
+    control: (base) => ({
+      ...base,
+      border: 0,
+      boxShadow: "none",
+      backgroundColor: "transparent",
+      cursor: "pointer",
+      minHeight: "40px",
+      "&:hover": {
+        border: 0,
+      },
+    }),
+    option: (base, state) => ({
+      ...base,
+      backgroundColor: state.isFocused ? "#f3f4f6" : "white",
+      color: "#374151",
+      cursor: "pointer",
+      "&:active": {
+        backgroundColor: "#e5e7eb",
+      },
+    }),
+    menu: (base) => ({
+      ...base,
+      boxShadow:
+        "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      borderRadius: "0.5rem",
+      marginTop: "0.5rem",
+    }),
+    dropdownIndicator: (base) => ({
+      ...base,
+      color: "#374151",
+      "&:hover": {
+        color: "#1d4ed8",
+      },
+    }),
+    singleValue: (base) => ({
+      ...base,
+      color: "#374151",
+    }),
+  };
+
+  const handleNavigate = (path) => {
+    setIsServicesOpen(false);
+    navigate(path);
+  };
+
+  const handleLoginSuccess = (userData) => {
+    setIsOpenLogin(false);
+  };
+
+  const servicesDropdown = [
+    {
+      name: "Find Hospital",
+      link: "/find-hospital",
+      description: "Search for nearby veterinary hospitals",
+    },
+    {
+      name: "Book Appointment",
+      link: "/appointment",
+      description: "Schedule a visit with our veterinarians",
+    },
+    {
+      name: "Blog",
+      link: "/bloglist",
+      description: "Read latest news and articles",
+    },
+    {
+      name: "Community",
+      link: "/community",
+      description: "Join our pet lovers community",
+    },
+    {
+      name: "Terms & Conditions",
+      link: "/terms",
+      description: "Read our terms of service",
+    },
+  ];
+
+  const handleServicesClick = () => {
+    setIsServicesOpen(!isServicesOpen);
+  };
+
+  const handleContactClick = (e) => {
+    e.preventDefault();
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleLanguageChange = (lang) => {
+    changeLang(lang);
+    setIsLanguageOpen(false);
+  };
+
+  return (
+    <div>
+      <header className={`fixed w-full z-50 transition-all ${isSticky ? "bg-white shadow-md" : "bg-transparent"}`}>
+        <nav className="container mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <img src="/logo.png" alt="Logo" className="h-8" />
+              <span className="text-xl font-bold text-[#1A3C8E]">PetCare</span>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              {/* Home */}
+              <Link to="/" className="text-gray-700 hover:text-gray-900">
+                {t("nav.home")}
+              </Link>
+
+              {/* About Us */}
+              <Link to="/about" className="text-gray-700 hover:text-gray-900">
+                {t("nav.aboutUs")}
+              </Link>
+
+              {/* Contact Us */}
+              <Link to="/contact" className="text-gray-700 hover:text-gray-900">
+                {t("nav.contactUs")}
+              </Link>
+
+              {/* Find Hospital */}
+              <Link to="/find-hospital" className="text-gray-700 hover:text-gray-900">
+                {t("nav.findHospital")}
+              </Link>
+
+              {/* Explore More Dropdown */}
+              <div ref={servicesDropdownRef} className="relative">
+                <button
+                  onClick={handleServicesClick}
+                  className="flex items-center text-gray-700 hover:text-gray-900"
+                >
+                  {t("nav.explore")}
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                </button>
+                {isServicesOpen && (
+                  <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+                    <Link
+                      to="/community"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
+                      onClick={() => setIsServicesOpen(false)}
+                    >
+                      {t("nav.community")}
+                    </Link>
+                    <Link
+                      to="/blogs"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
+                      onClick={() => setIsServicesOpen(false)}
+                    >
+                      {t("nav.blog")}
+                    </Link>
+                    <Link
+                      to="/services"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
+                      onClick={() => setIsServicesOpen(false)}
+                    >
+                      {t("nav.services.title")}
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* ... rest of the code ... */}
+          </div>
+        </nav>
+      </header>
+
+      {isMenuOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={toggleMenu}
+          />
+          <div className="fixed inset-y-0 right-0 w-[300px] bg-white z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto">
+            <div className="flex flex-col h-full">
+              <div className="flex items-center justify-between p-6 border-b border-gray-100">
+                <img src={logo} alt="Logo" className="h-8" />
+                <button
+                  onClick={toggleMenu}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="px-6 py-4 border-b border-gray-100">
+                <div className="flex items-center space-x-3">
+                  <Globe className="w-5 h-5 text-gray-400" />
+                  <select
+                    value={i18n.language}
+                    onChange={(e) => i18n.changeLanguage(e.target.value)}
+                    className="w-full text-sm text-gray-600 bg-transparent focus:outline-none"
+                  >
+                    <option value="en">English</option>
+                    <option value="vi">Tiếng Việt</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex-1 py-6">
+                <nav className="space-y-8">
+                  <div className="px-6 space-y-4">
+                    <Link
+                      to="/"
+                      className="flex items-center space-x-3 text-gray-700 hover:text-[#27378C] transition-colors"
+                      onClick={toggleMenu}
+                    >
+                      <Home className="w-6 h-6" />
+                      <span className="text-lg">{t("nav.home")}</span>
+                    </Link>
+                    <Link
+                      to="/aboutus"
+                      className="flex items-center space-x-3 text-gray-700 hover:text-[#27378C] transition-colors"
+                      onClick={toggleMenu}
+                    >
+                      <Info className="w-6 h-6" />
+                      <span className="text-lg">{t("nav.aboutUs")}</span>
+                    </Link>
+                    <Link
+                      to="#contact"
+                      className="flex items-center space-x-3 text-gray-700 hover:text-[#27378C] transition-colors"
+                      onClick={toggleMenu}
+                    >
+                      <Mail className="w-6 h-6" />
+                      <span className="text-lg">{t("nav.contactUs")}</span>
+                    </Link>
+                  </div>
+
+                  <div className="px-6">
+                    <div className="mb-4">
+                      <div className="text-[#27378C] font-semibold text-lg">
+                        SERVICES
+                      </div>
+                      <div className="mt-1 text-sm text-gray-500">
+                        {t("nav.services.title")}
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <Link
+                        to="/find-hospital"
+                        className="flex items-center space-x-3 text-gray-700 hover:text-[#27378C] transition-colors"
+                        onClick={toggleMenu}
+                      >
+                        <Search className="w-6 h-6" />
+                        <span className="text-lg">
+                          {t("nav.findHospital")}
+                        </span>
+                      </Link>
+                      <Link
+                        to="/bloglist"
+                        className="flex items-center space-x-3 text-gray-700 hover:text-[#27378C] transition-colors"
+                        onClick={toggleMenu}
+                      >
+                        <FileText className="w-6 h-6" />
+                        <span className="text-lg">{t("nav.blog")}</span>
+                      </Link>
+                      <Link
+                        to="/community"
+                        className="flex items-center space-x-3 text-gray-700 hover:text-[#27378C] transition-colors"
+                        onClick={toggleMenu}
+                      >
+                        <Users className="w-6 h-6" />
+                        <span className="text-lg">{t("nav.community")}</span>
+                      </Link>
+                    </div>
+                  </div>
+                </nav>
+              </div>
+
+              <div className="p-6 space-y-3 border-t border-gray-100 bg-gray-50">
+                <button
+                  onClick={() => {
+                    handleLoginClick();
+                    toggleMenu();
+                  }}
+                  className="w-full py-3 text-center border border-gray-300 rounded-lg text-gray-700 hover:bg-white hover:border-[#27378C] transition-all duration-200"
+                >
+                  {t("auth.loginButton")}
+                </button>
+                <button
+                  onClick={() => {
+                    handleOpenRegister();
+                    toggleMenu();
+                  }}
+                  className="w-full py-3 text-center bg-[#27378C] text-white rounded-lg hover:bg-[#1e2b6e] transition-all duration-200 shadow-sm"
+                >
+                  {t("auth.register")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {isOpenRegister && (
+        <Overlay
+          children={
+            <Register
+              isOpenRegister={isOpenRegister}
+              onLoginClick={handleOpenLogin}
+              onClose={() => setIsOpenRegister(false)}
+            />
+          }
+        />
+      )}
+
+      {isOpenLogin && (
+        <Overlay
+          children={
+            <Login
+              isOpenLogin={isOpenLogin}
+              onRegisterClick={handleOpenRegister}
+              onClose={() => setIsOpenLogin(false)}
+              onLoginSuccess={handleLoginSuccess}
+            />
+          }
+        />
+      )}
+    </div>
+  );
+}
+
+export default Header;

@@ -200,13 +200,8 @@ function Header() {
     e.preventDefault();
     const contactSection = document.getElementById("contact");
     if (contactSection) {
-      window.scrollTo({
-        top: contactSection.offsetTop,
-        behavior: "smooth",
-      });
+      contactSection.scrollIntoView({ behavior: "smooth" });
     }
-    // Đóng mobile menu nếu đang mở
-    setIsMenuOpen(false);
   };
 
   const handleLanguageChange = (lang) => {
@@ -229,55 +224,50 @@ function Header() {
               </Link>
               <nav className="hidden lg:block">
                 <ul className="flex items-center space-x-4">
-                  {/* 1. Home */}
                   <li>
-                    <Link to="/" className="text-gray-700 hover:text-gray-900">
+                    <Link to="/" className="text-gray-700 hover:text-blue-600">
                       {t("nav.home")}
                     </Link>
                   </li>
-
-                  {/* 2. About Us */}
                   <li>
                     <Link
                       to="/aboutus"
-                      className="text-gray-700 hover:text-gray-900"
+                      className="text-gray-700 hover:text-blue-600"
                     >
                       {t("nav.aboutUs")}
                     </Link>
                   </li>
-
-                  {/* 3. Contact Us */}
                   <li>
                     <a
                       href="#contact"
-                      className="text-gray-700 hover:text-gray-900"
                       onClick={handleContactClick}
+                      className="text-gray-700 hover:text-blue-600"
                     >
                       {t("nav.contactUs")}
                     </a>
                   </li>
-
-                  {/* 4. Find Hospital */}
-                  <li>
-                    <Link
-                      to="/find-hospital"
-                      className="text-gray-700 hover:text-gray-900"
-                    >
-                      {t("nav.findHospital")}
-                    </Link>
-                  </li>
-
-                  {/* 5. Services (Explore More) */}
                   <li className="relative" ref={servicesDropdownRef}>
                     <button
                       onClick={handleServicesClick}
-                      className="flex items-center text-gray-700 hover:text-gray-900"
+                      className="flex items-center text-gray-700 hover:text-blue-600"
                     >
-                      {t("nav.explore")}
+                      {t("nav.services.title")}
                       <ChevronDown className="w-4 h-4 ml-1" />
                     </button>
                     {isServicesOpen && (
                       <div className="absolute left-0 mt-2 w-60 bg-white rounded-lg shadow-lg border py-1">
+                        <Link
+                          to="/find-hospital"
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
+                          onClick={() => setIsServicesOpen(false)}
+                        >
+                          <div className="font-medium">
+                            {t("nav.findHospital")}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {t("nav.services.findHospitalDesc")}
+                          </div>
+                        </Link>
                         <Link
                           to="/bloglist"
                           className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
@@ -529,9 +519,9 @@ function Header() {
                         <span className="text-lg">{t("nav.aboutUs")}</span>
                       </Link>
                       <Link
-                        href="#contact"
+                        to="#contact"
                         className="flex items-center space-x-3 text-gray-700 hover:text-[#27378C] transition-colors"
-                        onClick={handleContactClick}
+                        onClick={toggleMenu}
                       >
                         <Mail className="w-6 h-6" />
                         <span className="text-lg">{t("nav.contactUs")}</span>
@@ -541,10 +531,10 @@ function Header() {
                     <div className="px-6">
                       <div className="mb-4">
                         <div className="text-[#27378C] font-semibold text-lg">
-                          EXPLORE MORE
+                          SERVICES
                         </div>
                         <div className="mt-1 text-sm text-gray-500">
-                          {t("nav.explore")}
+                          {t("nav.services.title")}
                         </div>
                       </div>
                       <div className="space-y-4">

@@ -2,15 +2,15 @@
   "language": "Language",
   "nav": {
     "home": "Home",
-    "findHospital": "Find Hospital",
     "aboutUs": "About Us",
     "contactUs": "Contact Us",
+    "findHospital": "Find Hospital",
     "explore": "Explore More",
     "services": {
       "title": "Services",
-      "findHospitalDesc": "Search for nearby veterinary hospitals",
+      "findHospitalDesc": "Find nearby veterinary hospitals",
       "blogDesc": "Read latest news and articles",
-      "communityDesc": "Join our pet lovers community",
+      "communityDesc": "Join the pet lovers community",
       "termsTitle": "Terms & Conditions",
       "termsDesc": "Read our terms of service"
     },

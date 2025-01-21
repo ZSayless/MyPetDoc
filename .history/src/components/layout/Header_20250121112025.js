@@ -198,12 +198,9 @@ function Header() {
 
   const handleContactClick = (e) => {
     e.preventDefault();
-    const contactSection = document.getElementById("contact");
+    const contactSection = document.getElementById('contact');
     if (contactSection) {
-      window.scrollTo({
-        top: contactSection.offsetTop,
-        behavior: "smooth",
-      });
+      contactSection.scrollIntoView({ behavior: 'smooth' });
     }
     // Đóng mobile menu nếu đang mở
     setIsMenuOpen(false);
