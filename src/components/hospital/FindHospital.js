@@ -3,155 +3,40 @@ import { Search, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import HospitalList from "./HospitalList";
 import HospitalMap from "./HospitalMap";
 import { useNavigate, useLocation } from "react-router-dom";
+import { getHospitals } from "../../services/hospitalService";
 import { useTranslation } from "react-i18next";
-
-const MOCK_HOSPITALS = [
-  {
-    id: 1,
-    name: "PetCare Hospital",
-    address: "123 Nguyen Van Linh, District 7, HCMC",
-    distance: "0.5 km",
-    rating: 4.8,
-    services: ["Emergency", "Surgery", "Vaccination"],
-    image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
-  },
-  {
-    id: 2,
-    name: "VetCare Clinic",
-    address: "456 Le Van Viet, District 9, HCMC",
-    distance: "1.2 km",
-    rating: 4.5,
-    services: ["Dental Care", "Grooming", "Vaccination"],
-    image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
-  },
-  {
-    id: 3,
-    name: "Pet Health Center",
-    address: "789 Nguyen Thi Minh Khai, District 1, HCMC",
-    distance: "2.0 km",
-    rating: 4.9,
-    services: ["Surgery", "Laboratory", "Emergency"],
-    image: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
-  },
-  {
-    id: 4,
-    name: "Animal Care Hospital",
-    address: "321 Vo Van Ngan, Thu Duc City, HCMC",
-    distance: "2.5 km",
-    rating: 4.7,
-    services: ["Internal Medicine", "Radiology", "Pharmacy"],
-    image: "https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
-  },
-  {
-    id: 5,
-    name: "City Pet Hospital",
-    address: "159 Pham Van Dong, Binh Thanh District, HCMC",
-    distance: "3.1 km",
-    rating: 4.6,
-    services: ["Surgery", "Vaccination", "Boarding"],
-    image: "https://images.unsplash.com/photo-1597914772259-2da2f0eae78b",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
-  },
-  {
-    id: 6,
-    name: "PawSome Clinic",
-    address: "753 Nguyen Xi, Binh Thanh District, HCMC",
-    distance: "3.8 km",
-    rating: 4.4,
-    services: ["Grooming", "Dental Care", "Vaccination"],
-    image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
-  },
-  {
-    id: 7,
-    name: "Happy Pets Clinic",
-    address: "147 Vo Van Tan, District 3, HCMC",
-    distance: "4.2 km",
-    rating: 4.7,
-    services: ["Grooming", "Vaccination", "Pet Hotel"],
-    image: "https://images.unsplash.com/photo-1576201836106-db1758fd1c97",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
-  },
-  {
-    id: 8,
-    name: "Pet Paradise Center",
-    address: "369 Hai Ba Trung, District 1, HCMC",
-    distance: "4.8 km",
-    rating: 4.6,
-    services: ["Surgery", "Emergency", "Pharmacy"],
-    image: "https://images.unsplash.com/photo-1599443015574-be5fe8a05783",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
-  },
-  {
-    id: 9,
-    name: "Loving Care Pet Hospital",
-    address: "258 Dien Bien Phu, Binh Thanh District, HCMC",
-    distance: "5.1 km",
-    rating: 4.8,
-    services: ["Internal Medicine", "Laboratory", "Vaccination"],
-    image: "https://images.unsplash.com/photo-1596272875886-f6313ed6c99f",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
-  },
-  {
-    id: 10,
-    name: "Modern Pet Clinic",
-    address: "951 Kha Van Can, Thu Duc City, HCMC",
-    distance: "5.5 km",
-    rating: 4.5,
-    services: ["Dental Care", "Surgery", "Grooming"],
-    image: "https://images.unsplash.com/photo-1599443015574-be5fe8a05783",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6696584237106!2d106.66488007465357!3d10.759920059446151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f9023a3a85d%3A0x9259bad475336d5c!2zQuG7h25oIHZp4buHbiBUaMO6IHkgUGV0UHJv!5e0!3m2!1svi!2s!4v1710338305071!5m2!1svi!2s",
-  },
-];
 
 const CITIES = [
   {
     id: "hcm",
-    nameVi: "Thành phố Hồ Chí Minh",
-    nameEn: "Ho Chi Minh City",
-    description: "Trung tâm y tế lớn nhất Việt Nam",
-    hospitalCount: "50+ Bệnh viện",
+    name: "Ho Chi Minh City",
+    description: "Vietnam's largest healthcare hub",
+    hospitalCount: "50+ Hospitals",
     image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482",
   },
   {
     id: "hanoi",
-    nameVi: "Hà Nội",
-    nameEn: "Hanoi",
-    description: "Cơ sở thú y hàng đầu",
-    hospitalCount: "40+ Bệnh viện",
+    name: "Hanoi",
+    description: "Leading veterinary facilities",
+    hospitalCount: "40+ Hospitals",
     image: "https://images.unsplash.com/photo-1599708153386-62bf3f03359b",
   },
   {
     id: "danang",
-    nameVi: "Đà Nẵng",
-    nameEn: "Da Nang",
-    description: "Trung tâm chăm sóc thú cưng hiện đại",
-    hospitalCount: "20+ Bệnh viện",
+    name: "Da Nang",
+    description: "Modern pet care centers",
+    hospitalCount: "20+ Hospitals",
     image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b",
   },
 ];
 
 const FindHospital = () => {
-  const { t, i18n } = useTranslation();
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedServices, setSelectedServices] = useState(["All Hospitals"]);
-  const [filteredHospitals, setFilteredHospitals] = useState(MOCK_HOSPITALS);
+  const [hospitals, setHospitals] = useState([]);
+  const [filteredHospitals, setFilteredHospitals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedCity, setSelectedCity] = useState(() => {
     return localStorage.getItem("selectedCity") || "all";
@@ -175,18 +60,60 @@ const FindHospital = () => {
 
       const cityName = CITIES.find((city) => city.id === cityId)?.name;
       if (cityName) {
-        const filteredResults = MOCK_HOSPITALS.filter((hospital) =>
-          hospital.address.includes(cityName)
-        );
+        const filteredResults = hospitals.filter((hospital) => {
+          const address = hospital.address.toLowerCase();
+          switch (cityId) {
+            case "hcm":
+              return (
+                address.includes("hcmc") ||
+                address.includes("ho chi minh") ||
+                address.includes("thu duc")
+              );
+            case "hanoi":
+              return address.includes("hanoi") || address.includes("ha noi");
+            case "danang":
+              return address.includes("danang") || address.includes("da nang");
+            default:
+              return true;
+          }
+        });
         setFilteredHospitals(filteredResults);
       }
     }
-  }, [location.state]);
+  }, [location.state, hospitals]);
+
+  // Fetch hospitals data
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      try {
+        setLoading(true);
+        const response = await getHospitals();
+        const formattedHospitals = response.hospitals.map((hospital) => ({
+          id: hospital.id,
+          name: hospital.name,
+          address: hospital.address,
+          rating: 4.5, // Giá trị mặc định vì API không có
+          services: hospital.specialties ? hospital.specialties.split(',').map(s => s.trim()) : [],
+          image: hospital.images[0]?.url,
+          mapUrl: hospital.map_location,
+          slug: hospital.slug,
+        }));
+        setHospitals(formattedHospitals);
+        setFilteredHospitals(formattedHospitals);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách bệnh viện:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHospitals();
+  }, []);
 
   // Filter hospitals based on search, city and services
   useEffect(() => {
     setLoading(true);
-    let results = MOCK_HOSPITALS;
+    let results = hospitals;
 
     // Filter by search term
     if (searchTerm) {
@@ -232,7 +159,7 @@ const FindHospital = () => {
     setFilteredHospitals(results);
     setCurrentPage(1);
     setLoading(false);
-  }, [searchTerm, selectedCity, selectedServices]);
+  }, [searchTerm, selectedCity, selectedServices, hospitals]);
 
   // Pagination
   const hospitalsPerPage = 5;
@@ -317,11 +244,6 @@ const FindHospital = () => {
     setSelectedHospital(hospital);
   };
 
-  // Hàm helper để lấy tên thành phố theo ngôn ngữ
-  const getCityName = (city) => {
-    return i18n.language === "vi" ? city.nameVi : city.nameEn;
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header Section */}
@@ -329,7 +251,7 @@ const FindHospital = () => {
         <div className="container mx-auto px-4 py-6 md:py-8">
           <div className="max-w-5xl mx-auto">
             <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6 text-center">
-              {t("findHospital.header.title")}
+              Find a Hospital
             </h1>
 
             {/* Search and City Filter Section */}
@@ -338,7 +260,7 @@ const FindHospital = () => {
               <div className="relative flex-1">
                 <input
                   type="text"
-                  placeholder={t("findHospital.header.searchPlaceholder")}
+                  placeholder="Search by hospital name..."
                   className="w-full pl-12 pr-4 py-3 rounded-full bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#98E9E9] text-gray-700 text-sm md:text-base shadow-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -354,10 +276,9 @@ const FindHospital = () => {
                 >
                   <span>
                     {selectedCity === "all"
-                      ? t("findHospital.header.allCities")
-                      : getCityName(
-                          CITIES.find((city) => city.id === selectedCity)
-                        ) || t("findHospital.header.allCities")}
+                      ? "All Cities"
+                      : CITIES.find((city) => city.id === selectedCity)?.name ||
+                        "All Cities"}
                   </span>
                   <ChevronDown className="w-5 h-5" />
                 </button>
@@ -372,7 +293,7 @@ const FindHospital = () => {
                         setShowCityDropdown(false);
                       }}
                     >
-                      {t("findHospital.header.allCities")}
+                      All Cities
                     </button>
                     {CITIES.map((city) => (
                       <button
@@ -383,7 +304,7 @@ const FindHospital = () => {
                           setShowCityDropdown(false);
                         }}
                       >
-                        {getCityName(city)}
+                        {city.name}
                       </button>
                     ))}
                   </div>
@@ -405,7 +326,7 @@ const FindHospital = () => {
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
-                    {t(`findHospital.services.${service.toLowerCase()}`)}
+                    {service}
                   </button>
                 ))}
               </div>
@@ -421,7 +342,7 @@ const FindHospital = () => {
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
-                    {t(`findHospital.services.${service.toLowerCase()}`)}
+                    {service}
                   </button>
                 ))}
               </div>
@@ -440,7 +361,7 @@ const FindHospital = () => {
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
-                    {t(`findHospital.services.${service.toLowerCase()}`)}
+                    {service}
                   </button>
                 ))}
               </div>
@@ -479,7 +400,7 @@ const FindHospital = () => {
                   ></iframe>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
-                    <p>{t("findHospital.map.selectHospital")}</p>
+                    <p>Chọn một bệnh viện để xem vị trí</p>
                   </div>
                 )}
               </div>

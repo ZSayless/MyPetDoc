@@ -1,16 +1,40 @@
-import React, { useState, useRef, useMemo, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MapPin, Search, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getHospitals } from "../../services/hospitalService";
 import { useTranslation } from "react-i18next";
-import debounce from "lodash/debounce";
 
 function HospitalList() {
-  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [hospitals, setHospitals] = useState([]);
   const hospitalsPerPage = 5;
 
   const searchRef = useRef(null);
+
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      try {
+        const response = await getHospitals();
+        const formattedHospitals = response.hospitals.map((hospital) => ({
+          id: hospital.id,
+          name: hospital.name,
+          info: hospital.description,
+          address: hospital.address,
+          rating: 5, // Giá trị cố định theo yêu cầu
+          reviews: 5, // Giá trị cố định theo yêu cầu
+          image: hospital.images[0]?.url, // Lấy ảnh đầu tiên
+          services: hospital.specialties ? hospital.specialties.split(',').map(s => s.trim()) : [],
+          slug: hospital.slug,
+        }));
+        setHospitals(formattedHospitals);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách bệnh viện:", error);
+      }
+    };
+
+    fetchHospitals();
+  }, []);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -20,120 +44,8 @@ function HospitalList() {
     });
   };
 
-  const hospitals = [
-    {
-      id: 1,
-      name: "PawSome Pet Hospital",
-      info: "Information of Hospital",
-      address: "123 Nguyen Hue, District 1, HCMC",
-      rating: 4.5,
-      reviews: 5,
-      image: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7",
-      services: ["Surgery", "Dentistry"],
-    },
-    {
-      id: 2,
-      name: "Happy Tails Clinic",
-      info: "Information of Hospital",
-      address: "456 Le Loi, District 3, HCMC",
-      rating: 4.8,
-      reviews: 5,
-      image: "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf",
-      services: ["Surgery", "Emergency"],
-    },
-    {
-      id: 3,
-      name: "Pet Care Center",
-      info: "Information of Hospital",
-      address: "789 Vo Van Tan, District 3, HCMC",
-      rating: 4.6,
-      reviews: 8,
-      image: "https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06",
-      services: ["Vaccination", "Grooming"],
-    },
-    {
-      id: 4,
-      name: "VetCare Hospital",
-      info: "Information of Hospital",
-      address: "321 Nguyen Thi Minh Khai, District 1, HCMC",
-      rating: 4.7,
-      reviews: 12,
-      image: "https://images.unsplash.com/photo-1629909615184-74f495363b67",
-      services: ["Surgery", "Dentistry", "Emergency"],
-    },
-    {
-      id: 5,
-      name: "Loving Paws Clinic",
-      info: "Information of Hospital",
-      address: "159 Nam Ky Khoi Nghia, District 3, HCMC",
-      rating: 4.9,
-      reviews: 15,
-      image: "https://images.unsplash.com/photo-1599443015574-f61d7c2f1095",
-      services: ["Grooming", "Boarding"],
-    },
-    {
-      id: 6,
-      name: "Animal Health Center",
-      info: "Information of Hospital",
-      address: "753 Dien Bien Phu, District 3, HCMC",
-      rating: 4.4,
-      reviews: 7,
-      image: "https://images.unsplash.com/photo-1596272875729-ed2ff7d6d9c5",
-      services: ["Surgery", "Vaccination"],
-    },
-    {
-      id: 7,
-      name: "Pet Plus Hospital",
-      info: "Information of Hospital",
-      address: "852 Cach Mang Thang 8, District 10, HCMC",
-      rating: 4.3,
-      reviews: 9,
-      image: "https://images.unsplash.com/photo-1601001815894-4bb6c81416d7",
-      services: ["Emergency", "Pharmacy"],
-    },
-    {
-      id: 8,
-      name: "City Pets Clinic",
-      info: "Information of Hospital",
-      address: "147 Ly Tu Trong, District 1, HCMC",
-      rating: 4.7,
-      reviews: 11,
-      image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee",
-      services: ["Surgery", "Dentistry"],
-    },
-    {
-      id: 9,
-      name: "Furry Friends Hospital",
-      info: "Information of Hospital",
-      address: "369 Le Van Sy, District 3, HCMC",
-      rating: 4.6,
-      reviews: 6,
-      image: "https://images.unsplash.com/photo-1598791318878-10e76d178023",
-      services: ["Vaccination", "Grooming"],
-    },
-    {
-      id: 10,
-      name: "PetWell Medical",
-      info: "Information of Hospital",
-      address: "951 Nguyen Trai, District 5, HCMC",
-      rating: 4.8,
-      reviews: 14,
-      image: "https://images.unsplash.com/photo-1596272875729-ed2ff7d6d9c5",
-      services: ["Surgery", "Emergency"],
-    },
-  ];
-
-  const filteredHospitals = useMemo(
-    () =>
-      hospitals.filter((hospital) =>
-        hospital.name.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
-    [searchTerm]
-  );
-
-  const debouncedSearch = useCallback(
-    debounce((value) => setSearchTerm(value), 300),
-    []
+  const filteredHospitals = hospitals.filter((hospital) =>
+    hospital.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastHospital = currentPage * hospitalsPerPage;
@@ -149,10 +61,10 @@ function HospitalList() {
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-[#1A3C8E] mb-2 md:mb-4">
-            {t("home.hospitalList.title")}
+            List of Pet Hospital
           </h2>
           <p className="text-sm md:text-base text-gray-600">
-            {t("home.hospitalList.subtitle")}
+            Find the best veterinary care for your beloved pets
           </p>
         </div>
 
@@ -160,7 +72,7 @@ function HospitalList() {
           <div className="relative">
             <input
               type="text"
-              placeholder={t("home.hospitalList.searchPlaceholder")}
+              placeholder="Search hospitals..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 md:pl-12 pr-4 py-2 md:py-3 border-2 rounded-full text-sm md:text-base focus:outline-none focus:border-[#98E9E9] transition-colors"
@@ -176,11 +88,11 @@ function HospitalList() {
               className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-3 md:p-4"
             >
               <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex gap-3 md:gap-4 items-start">
+                <div className="flex gap-3 md:gap-4 items-center">
                   <span className="text-base font-medium text-gray-400 w-6 hidden md:block">
                     {indexOfFirstHospital + index + 1}
                   </span>
-                  <div className="w-full md:w-48 h-48 md:h-32 rounded-lg overflow-hidden">
+                  <div className="w-full md:w-32 h-48 md:h-24 rounded-lg overflow-hidden">
                     <img
                       src={hospital.image}
                       alt={hospital.name}
@@ -219,16 +131,12 @@ function HospitalList() {
                     ))}
                   </div>
 
-                  <div className="mt-3 text-sm text-gray-500">
-                    {hospital.reviews} {t("home.hospitalList.verifiedReviews")}
-                  </div>
-
                   <div className="flex justify-end mt-3">
                     <Link
-                      to={`/hospital/${hospital.id}`}
+                      to={`/hospital/${hospital.slug}`}
                       className="w-full md:w-auto px-4 py-2 md:py-1.5 bg-[#1A3C8E] text-white text-center text-sm rounded-full hover:bg-[#98E9E9] hover:text-[#1A3C8E] transition-colors"
                     >
-                      {t("home.hospitalList.viewDetails")}
+                      View Details
                     </Link>
                   </div>
                 </div>

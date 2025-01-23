@@ -1,46 +1,27 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import { getActiveBanners } from "../../services/homeService";
+import { useEffect, useState } from "react";
 
 function HomeBanner() {
-  const { t } = useTranslation();
+  const [banners, setBanners] = useState([]);
 
-  const bannerSlides = [
-    {
-      image:
-        "https://img.freepik.com/free-photo/veterinarian-checking-dog-medium-shot_23-2149143920.jpg",
-      title: t("home.banner.slide1.title"),
-      description: t("home.banner.slide1.description"),
-      button: {
-        text: t("home.banner.slide1.button"),
-        link: "/find-hospital",
-      },
-    },
-    {
-      image:
-        "https://img.freepik.com/free-photo/front-view-veterinarian-taking-care-pet_23-2149143894.jpg",
-      title: t("home.banner.slide2.title"),
-      description: t("home.banner.slide2.description"),
-      button: {
-        text: t("home.banner.slide2.button"),
-        link: "/community",
-      },
-    },
-    {
-      image:
-        "https://img.freepik.com/free-photo/young-female-veterinarian-holding-cat-vet-clinic_23-2147844243.jpg",
-      title: t("home.banner.slide3.title"),
-      description: t("home.banner.slide3.description"),
-      button: {
-        text: t("home.banner.slide3.button"),
-        link: "/add-hospital",
-      },
-    },
-  ];
+  useEffect(() => {
+    try {
+      getActiveBanners().then((data) => {
+        setBanners(data);
+      });
+    } catch (error) {
+      console.error("Error fetching banners:", error);
+    }
+  }, []);
+
+  if (banners.length === 0) {
+    return null; // Hoặc có thể return một loading spinner
+  }
 
   return (
     <div className="relative">
@@ -58,28 +39,35 @@ function HomeBanner() {
         modules={[Autoplay, Pagination, Navigation]}
         className="h-[500px]"
       >
-        {bannerSlides.map((slide, index) => (
-          <SwiperSlide key={index}>
+        {banners.map((banner) => (
+          <SwiperSlide key={banner.id}>
             <div className="relative h-full">
               <img
-                src={slide.image}
-                alt={slide.title}
+                src={banner.image_url}
+                alt={banner.title}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black/40" />
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
                 <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
-                  {slide.title}
+                  {banner.title}
                 </h2>
-                <p className="text-xl md:text-2xl text-center mb-8">
-                  {slide.description}
+                {banner.subtitle && (
+                  <h3 className="text-2xl md:text-3xl font-semibold text-center mb-2">
+                    {banner.subtitle}
+                  </h3>
+                )}
+                <p className="text-xl md:text-2xl text-center">
+                  {banner.description}
                 </p>
-                <Link
-                  to={slide.button.link}
-                  className="px-8 py-3 bg-[#98E9E9] text-gray-900 rounded-full font-medium hover:bg-[#7CD5D5] transition-colors shadow-lg"
-                >
-                  {slide.button.text}
-                </Link>
+                {banner.link && (
+                  <a
+                    href={banner.link}
+                    className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+                  >
+                    Xem thêm
+                  </a>
+                )}
               </div>
             </div>
           </SwiperSlide>

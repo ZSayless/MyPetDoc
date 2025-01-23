@@ -5,39 +5,47 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRef, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useInView } from "react-intersection-observer";
-import { useToast } from "../../context/ToastContext";
+import { getHospitals } from "../../services/hospitalService";
 
 function HomePlace() {
-  const { t } = useTranslation();
   const sliderRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const navigate = useNavigate();
-  const { ref: sectionRef, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-  const { showToast } = useToast();
-  const location = useLocation();
+  const [hospitals, setHospitals] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const topHospitals = [
-    {
-      id: 1,
-      name: "Pet Care International",
-      location: "District 1, HCMC",
-      rating: 4.8,
-      reviews: 234,
-      specialties: ["Surgery", "Vaccination", "Emergency"],
-      image:
-        "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?ixlib=rb-4.0.3",
-      isActive: true,
-    },
-    // ... rest of the hospitals data
-  ];
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      try {
+        setLoading(true);
+        const response = await getHospitals();
+
+        
+        // Kiểm tra và format dữ liệu
+        const formattedHospitals = response.hospitals.map(hospital => ({
+          id: hospital.id,
+          name: hospital.name,
+          image: hospital.images[0]?.url || '', // Lấy ảnh đầu tiên
+          rating: hospital.average_rating || 5,
+          location: hospital.address,
+          specialties: hospital.specialties ? hospital.specialties.split(',').map(s => s.trim()) : [],
+          reviews: hospital.review_count || 0,
+          slug: hospital.slug
+        }));
+        
+        setHospitals(formattedHospitals);
+      } catch (error) {
+        console.error("Error fetching hospitals:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHospitals();
+  }, []);
 
   const checkScroll = () => {
     if (sliderRef.current) {
@@ -63,40 +71,27 @@ function HomePlace() {
     }
   };
 
-  const handleHospitalClick = (hospital) => {
-    if (!hospital.isActive) {
-      showToast({
-        type: "error",
-        message: t("errors.hospitalNotAvailable"),
-      });
-      return;
-    }
-    navigate(`/hospital/${hospital.id}`);
-  };
-
-  // Scroll to top when navigating to home
-  useEffect(() => {
-    if (location.pathname === "/") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }
-  }, [location]);
+  if (loading) {
+    return (
+      <div className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center">Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <section
-      ref={sectionRef}
-      className={`py-12 bg-white transition-opacity duration-500 ${
-        inView ? "opacity-100" : "opacity-0"
-      }`}
-    >
+    <section className="py-12 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            {t("home.places.title")}
+            Featured Hospitals
           </h2>
-          <p className="text-gray-600">{t("home.places.subtitle")}</p>
+          <p className="text-gray-600">
+            Discover our top-rated veterinary hospitals with experienced
+            professionals
+          </p>
         </div>
 
         <div className="relative px-4">
@@ -113,10 +108,10 @@ function HomePlace() {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             onScroll={checkScroll}
           >
-            {topHospitals.map((hospital) => (
+            {hospitals.map((hospital) => (
               <Link
                 key={hospital.id}
-                to={`/hospital/${hospital.id}`}
+                to={`/hospital/${hospital.slug}`}
                 className="flex-none w-[260px] bg-white rounded-lg overflow-hidden transform transition-transform hover:scale-105 will-change-transform no-underline"
               >
                 <div className="h-full">
@@ -147,13 +142,13 @@ function HomePlace() {
                           key={i}
                           className="px-2 py-0.5 bg-gray-100 rounded-md text-xs text-gray-600"
                         >
-                          {specialty}
+                          {specialty.trim()}
                         </span>
                       ))}
                     </div>
 
                     <div className="mt-3 text-sm text-gray-500">
-                      {hospital.reviews} {t("home.places.reviews")}
+                      {hospital.reviews} đánh giá đã xác minh
                     </div>
                   </div>
                 </div>

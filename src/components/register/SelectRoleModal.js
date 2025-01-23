@@ -1,9 +1,6 @@
 import { X } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 function SelectRoleModal({ onClose, onSelect }) {
-  const { t } = useTranslation();
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-[30px] w-full max-w-md relative">
@@ -16,10 +13,10 @@ function SelectRoleModal({ onClose, onSelect }) {
 
         <div className="p-8">
           <h2 className="text-2xl font-bold text-center mb-6">
-            {t("auth.selectRoleTitle")}
+            Choose Your Account Type
           </h2>
           <p className="text-gray-600 text-center mb-8">
-            {t("auth.selectRoleSubtitle")}
+            Select the type of account you want to create
           </p>
 
           <div className="space-y-4">
@@ -30,10 +27,10 @@ function SelectRoleModal({ onClose, onSelect }) {
               <div className="flex items-center">
                 <div className="flex-1 text-left">
                   <h3 className="font-semibold text-lg mb-1 group-hover:text-[#98E9E9]">
-                    {t("auth.petOwnerTitle")}
+                    Pet Owner
                   </h3>
                   <p className="text-gray-600 text-sm">
-                    {t("auth.petOwnerDesc")}
+                    Find and book appointments with veterinary hospitals
                   </p>
                 </div>
               </div>
@@ -46,10 +43,10 @@ function SelectRoleModal({ onClose, onSelect }) {
               <div className="flex items-center">
                 <div className="flex-1 text-left">
                   <h3 className="font-semibold text-lg mb-1 group-hover:text-[#98E9E9]">
-                    {t("auth.veterinarianTitle")}
+                    Veterinarian
                   </h3>
                   <p className="text-gray-600 text-sm">
-                    {t("auth.veterinarianDesc")}
+                    Manage your veterinary hospital profile and appointments
                   </p>
                 </div>
               </div>

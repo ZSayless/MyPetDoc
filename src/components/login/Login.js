@@ -2,13 +2,15 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/img/logocustom.png";
+import { login, forgotPassword } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
-import { useTranslation } from "react-i18next";
+import GoogleLoginButton from "./GoogleLoginButton";
 
 function Login({ onClose, onRegisterClick, onLoginSuccess }) {
-  const { t } = useTranslation();
-  const { login } = useAuth();
+  const { login: authLogin } = useAuth();
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleRegisterClick = () => {
     onClose();
@@ -17,63 +19,100 @@ function Login({ onClose, onRegisterClick, onLoginSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const userData = {
-        id: 1,
-        name: "John Doe",
-        email: "john@example.com",
-        role: "admin",
-      };
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
 
-      await login(userData);
-      onLoginSuccess(userData);
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await login(email, password);
+      // console.log('Login response:', result); // Để debug
+
+      if (result.success) {
+        // Truyền toàn bộ response data vào authLogin
+        authLogin(result.data);
+        onClose();
+      } else {
+        setError(result.error);
+      }
     } catch (error) {
-      console.error("Login failed:", error);
+      setError("Failed to login. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await forgotPassword(email);
+      if (result.success) {
+        alert("Please check your email to reset your password");
+        setShowForgotPassword(false);
+      } else {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError("Failed to send request. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const LoginForm = () => (
     <div className="p-8">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold text-gray-800">
-          {t("auth.loginTitle")}
-        </h3>
-        <p className="text-gray-600 mt-2">{t("auth.loginSubtitle")}</p>
+        <h3 className="text-2xl font-bold text-gray-800">Welcome Back!</h3>
+        <p className="text-gray-600 mt-2">Please sign in to continue</p>
       </div>
 
       <form className="space-y-6" onSubmit={handleSubmit}>
+        {error && (
+          <div className="text-red-500 text-sm text-center">{error}</div>
+        )}
         <input
-          type="text"
+          type="email"
+          name="email"
           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-          placeholder={t("auth.emailPlaceholder")}
+          placeholder="Enter your email"
+          required
         />
         <input
           type="password"
+          name="password"
           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-          placeholder={t("auth.passwordPlaceholder")}
+          placeholder="Enter your password"
+          required
         />
 
         <div className="flex items-center justify-between">
           <label className="flex items-center">
             <input type="checkbox" className="rounded text-blue-500" />
-            <span className="ml-2 text-sm text-gray-600">
-              {t("auth.rememberMe")}
-            </span>
+            <span className="ml-2 text-sm text-gray-600">Remember me</span>
           </label>
           <button
             type="button"
             onClick={() => setShowForgotPassword(true)}
             className="text-sm text-blue-600 hover:text-blue-800"
           >
-            {t("auth.forgotPassword")}
+            Forgot Password?
           </button>
         </div>
 
         <button
           type="submit"
-          className="w-full bg-[#98E9E9] text-gray-700 py-3 rounded-lg font-medium hover:bg-[#7CD5D5] transition-colors"
+          disabled={loading}
+          className="w-full bg-[#98E9E9] text-gray-700 py-3 rounded-lg font-medium hover:bg-[#7CD5D5] transition-colors disabled:opacity-50"
         >
-          {t("auth.signIn")}
+          {loading ? "Processing..." : "Login"}
         </button>
 
         <div className="relative my-6">
@@ -82,39 +121,34 @@ function Login({ onClose, onRegisterClick, onLoginSuccess }) {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-white text-gray-500">
-              {t("auth.orContinueWith")}
+              Or continue with
             </span>
           </div>
         </div>
 
-        <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            className="h-5 w-5 mr-2"
-            alt="Google"
-          />
-          <span>{t("auth.googleSignIn")}</span>
-        </button>
+        <div className="mt-6">
+          <GoogleLoginButton onClose={onClose} />
+        </div>
       </form>
 
       <p className="text-center mt-8 text-gray-600">
-        {t("auth.noAccount")}
+        Don't have an account?{" "}
         <button
           onClick={handleRegisterClick}
           className="text-blue-600 hover:text-blue-800 font-medium"
         >
-          {t("auth.signUp")}
+          Sign up
         </button>
       </p>
 
       <p className="text-center mt-6 text-sm text-gray-600">
-        {t("auth.termsAgree")}
+        By continuing, you agree to our{" "}
         <Link
           to="/terms"
           className="text-blue-600 hover:underline"
           onClick={onClose}
         >
-          {t("auth.termsLink")}
+          Terms of Service
         </Link>
       </p>
     </div>
@@ -143,9 +177,7 @@ function Login({ onClose, onRegisterClick, onLoginSuccess }) {
             />
           </svg>
         </button>
-        <span className="text-xl font-medium ml-4">
-          {t("auth.forgotPasswordModal.back")}
-        </span>
+        <span className="text-xl font-medium ml-4">Back</span>
         <button
           onClick={onClose}
           className="ml-auto text-gray-400 hover:text-gray-600"
@@ -156,52 +188,48 @@ function Login({ onClose, onRegisterClick, onLoginSuccess }) {
 
       <div className="text-center mb-8">
         <img src={logo} alt="Logo" className="w-48 h-auto mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-gray-800">
-          {t("auth.forgotPasswordModal.title")}
-        </h3>
+        <h3 className="text-2xl font-bold text-gray-800">Forgot Password?</h3>
         <p className="text-gray-600 mt-2">
-          {t("auth.forgotPasswordModal.subtitle")}
+          Enter your email and we will send you a recovery code.
         </p>
       </div>
 
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleForgotPassword}>
+        {error && (
+          <div className="text-red-500 text-sm text-center">{error}</div>
+        )}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("auth.forgotPasswordModal.username")}
+            Email
           </label>
           <input
-            type="text"
+            type="email"
+            name="email"
             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-            placeholder={t("auth.forgotPasswordModal.usernamePlaceholder")}
+            placeholder="Enter your email"
+            required
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("auth.forgotPasswordModal.verificationCode")}
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-              placeholder={t("auth.forgotPasswordModal.codePlaceholder")}
-            />
-            <button
-              type="button"
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors whitespace-nowrap"
-            >
-              {t("auth.forgotPasswordModal.sendCode")}
-            </button>
-          </div>
         </div>
 
         <button
           type="submit"
-          className="w-full bg-[#98E9E9] text-gray-700 py-3 rounded-lg font-medium hover:bg-[#7CD5D5] transition-colors"
+          disabled={loading}
+          className="w-full bg-[#98E9E9] text-gray-700 py-3 rounded-lg font-medium hover:bg-[#7CD5D5] transition-colors disabled:opacity-50"
         >
-          {t("auth.forgotPasswordModal.resetPassword")}
+          {loading ? "Sending..." : "Send request to reset password"}
         </button>
       </form>
+
+      <p className="text-center mt-6 text-sm text-gray-600">
+        By continuing, you agree to our{" "}
+        <Link
+          to="/terms"
+          className="text-blue-600 hover:underline"
+          onClick={onClose}
+        >
+          Terms of Service
+        </Link>
+      </p>
     </div>
   );
 
