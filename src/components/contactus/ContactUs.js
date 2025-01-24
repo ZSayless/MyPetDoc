@@ -50,11 +50,8 @@ const ContactUs = () => {
       <div className="bg-[#1A3C8E] text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
-            <p className="text-lg text-white/80">
-              Get in touch with us for any questions or concerns about our
-              veterinary services
-            </p>
+            <h1 className="text-4xl font-bold mb-4">{t("contact.title")}</h1>
+            <p className="text-lg text-white/80">{t("contact.subtitle")}</p>
           </div>
         </div>
       </div>
@@ -66,7 +63,9 @@ const ContactUs = () => {
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               <MapPin className="w-6 h-6 text-blue-600" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Visit Us</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {t("contact.info.visit.title")}
+            </h3>
             <p className="text-gray-600">
               123 Nguyen Van Linh Street
               <br />
@@ -78,7 +77,9 @@ const ContactUs = () => {
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               <Phone className="w-6 h-6 text-blue-600" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Call Us</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {t("contact.info.call.title")}
+            </h3>
             <p className="text-gray-600">
               Phone: +84 123 456 789
               <br />
@@ -90,7 +91,9 @@ const ContactUs = () => {
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               <Mail className="w-6 h-6 text-blue-600" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Email Us</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {t("contact.info.email.title")}
+            </h3>
             <p className="text-gray-600">
               support@mypetdoc.com
               <br />

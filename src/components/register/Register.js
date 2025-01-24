@@ -1,34 +1,41 @@
 import { X } from "lucide-react";
 import { useState } from "react";
-import { initiateGoogleLogin, completeGoogleSignup } from "../../services/authService";
+import {
+  initiateGoogleLogin,
+  completeGoogleSignup,
+} from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
 import { register } from "../../services/authService";
+import { useTranslation } from "react-i18next";
 
 function Register({ onClose, onLoginClick }) {
   const { login: authLogin } = useAuth();
+  const { t } = useTranslation();
   const [userType, setUserType] = useState("general");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showRoleSelection, setShowRoleSelection] = useState(false);
   const [pendingUserData, setPendingUserData] = useState(null);
-  
+
   // Thêm state cho form
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    agreeToTerms: false
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    agreeToTerms: false,
+    petType: "",
   });
 
   // Xử lý thay đổi input
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -43,7 +50,7 @@ function Register({ onClose, onLoginClick }) {
 
     try {
       const result = await initiateGoogleLogin();
-      
+
       if (result.isNewUser) {
         // Lưu thông tin người dùng và hiển thị modal chọn role
         setPendingUserData(result.profile);
@@ -67,7 +74,7 @@ function Register({ onClose, onLoginClick }) {
     try {
       const userData = {
         ...pendingUserData,
-        role
+        role,
       };
 
       const signupResult = await completeGoogleSignup(userData);
@@ -89,28 +96,35 @@ function Register({ onClose, onLoginClick }) {
     e.preventDefault();
     setError("");
     setSuccess("");
-    
+
     if (!formData.agreeToTerms) {
-      setError("Vui lòng đồng ý với điều khoản sử dụng");
+      setError(t("auth.errors.termsRequired"));
       return;
     }
-    
+
     if (formData.password !== formData.confirmPassword) {
-      setError("Mật khẩu xác nhận không khớp");
+      setError(t("auth.errors.passwordMismatch"));
+      return;
+    }
+
+    if (userType === "general" && !formData.petType) {
+      setError(t("auth.errors.petTypeRequired"));
       return;
     }
 
     setLoading(true);
     try {
-      const role = userType === 'general' ? 'GENERAL_USER' : 'HOSPITAL_ADMIN';
-      
+      const role = userType === "general" ? "GENERAL_USER" : "HOSPITAL_ADMIN";
+
       const result = await register({
         email: formData.email,
         password: formData.password,
         fullName: `${formData.firstName} ${formData.lastName}`,
-        role: role
+        phone: formData.phone,
+        role: role,
+        petType: userType === "general" ? formData.petType : undefined,
       });
-      
+
       if (result.success) {
         console.log("Đăng ký thành công:", result);
         setSuccess(result.message);
@@ -122,7 +136,7 @@ function Register({ onClose, onLoginClick }) {
         setError(result.error || "Đăng ký thất bại");
       }
     } catch (error) {
-      setError(error.message || "Có lỗi xảy ra khi đăng ký");
+      setError(t("auth.errors.registrationFailed"));
     } finally {
       setLoading(false);
     }
@@ -141,12 +155,14 @@ function Register({ onClose, onLoginClick }) {
         <div className="p-6">
           <div className="text-center mb-6">
             <h3 className="text-2xl font-bold text-gray-800">
-              {showRoleSelection ? "Choose Account Type" : "Create Account"}
+              {showRoleSelection
+                ? t("auth.register.chooseAccountType")
+                : t("auth.register.title")}
             </h3>
             <p className="text-gray-600 mt-2">
               {showRoleSelection
-                ? "Select the type of account you want to create"
-                : "Sign up to get started"}
+                ? t("auth.register.selectAccountType")
+                : t("auth.register.subtitle")}
             </p>
           </div>
 
@@ -162,7 +178,7 @@ function Register({ onClose, onLoginClick }) {
                   }`}
                   onClick={() => setUserType("general")}
                 >
-                  Pet Owner
+                  {t("auth.register.roles.petOwnerButton")}
                 </button>
                 <button
                   type="button"
@@ -173,7 +189,7 @@ function Register({ onClose, onLoginClick }) {
                   }`}
                   onClick={() => setUserType("hospital")}
                 >
-                  Veterinarian
+                  {t("auth.register.roles.veterinarianButton")}
                 </button>
               </div>
 
@@ -184,7 +200,7 @@ function Register({ onClose, onLoginClick }) {
                   value={formData.firstName}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                  placeholder="First name"
+                  placeholder={t("auth.register.firstName")}
                   required
                 />
                 <input
@@ -193,7 +209,7 @@ function Register({ onClose, onLoginClick }) {
                   value={formData.lastName}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                  placeholder="Last name"
+                  placeholder={t("auth.register.lastName")}
                   required
                 />
               </div>
@@ -204,16 +220,64 @@ function Register({ onClose, onLoginClick }) {
                 value={formData.email}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                placeholder="Enter your email"
+                placeholder={t("auth.register.email")}
                 required
               />
+
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                placeholder={t("auth.register.phonePlaceholder")}
+                required
+              />
+
+              {userType === "general" && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {t("auth.register.petType.label")}
+                  </label>
+                  <select
+                    name="petType"
+                    value={formData.petType}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                    required
+                  >
+                    <option value="">
+                      {t("auth.register.petType.placeholder")}
+                    </option>
+                    <option value="dog">
+                      {t("auth.register.petType.dog")}
+                    </option>
+                    <option value="cat">
+                      {t("auth.register.petType.cat")}
+                    </option>
+                    <option value="rabbit">
+                      {t("auth.register.petType.rabbit")}
+                    </option>
+                    <option value="hamster">
+                      {t("auth.register.petType.hamster")}
+                    </option>
+                    <option value="bird">
+                      {t("auth.register.petType.bird")}
+                    </option>
+                    <option value="other">
+                      {t("auth.register.petType.other")}
+                    </option>
+                  </select>
+                </div>
+              )}
+
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                placeholder="Create a password"
+                placeholder={t("auth.register.password")}
                 required
               />
               <input
@@ -222,12 +286,12 @@ function Register({ onClose, onLoginClick }) {
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                placeholder="Confirm your password"
+                placeholder={t("auth.register.confirmPassword")}
                 required
               />
 
               <div className="flex items-start">
-                <input 
+                <input
                   type="checkbox"
                   name="agreeToTerms"
                   checked={formData.agreeToTerms}
@@ -236,13 +300,13 @@ function Register({ onClose, onLoginClick }) {
                   required
                 />
                 <label className="ml-2 text-sm text-gray-600">
-                  I agree to the{" "}
+                  {t("auth.register.termsAgree")}{" "}
                   <a href="#" className="text-blue-600 hover:text-blue-800">
-                    Terms of Service
+                    {t("auth.register.termsLink")}
                   </a>{" "}
-                  and{" "}
+                  {t("auth.register.and")}{" "}
                   <a href="#" className="text-blue-600 hover:text-blue-800">
-                    Privacy Policy
+                    {t("auth.register.privacyLink")}
                   </a>
                 </label>
               </div>
@@ -264,7 +328,9 @@ function Register({ onClose, onLoginClick }) {
                 disabled={loading}
                 className="w-full bg-[#98E9E9] text-gray-700 py-3 rounded-lg font-medium hover:bg-[#7CD5D5] transition-colors disabled:opacity-50"
               >
-                {loading ? "Đang xử lý..." : "Create Account"}
+                {loading
+                  ? t("auth.register.processing")
+                  : t("auth.register.createAccount")}
               </button>
 
               <div className="relative my-4">
@@ -273,7 +339,7 @@ function Register({ onClose, onLoginClick }) {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-white text-gray-500">
-                    Or sign up with
+                    {t("auth.register.orSignUpWith")}
                   </span>
                 </div>
               </div>
@@ -289,7 +355,11 @@ function Register({ onClose, onLoginClick }) {
                   className="h-5 w-5 mr-2"
                   alt="Google"
                 />
-                <span>{loading ? "Đang xử lý..." : "Sign up with Google"}</span>
+                <span>
+                  {loading
+                    ? t("auth.register.processing")
+                    : t("auth.register.googleSignUp")}
+                </span>
               </button>
             </form>
           ) : (
@@ -304,7 +374,7 @@ function Register({ onClose, onLoginClick }) {
                       Pet Owner
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      Find and book appointments with veterinary hospitals
+                      {t("auth.register.roles.petOwnerDesc")}
                     </p>
                   </div>
                 </div>
@@ -316,10 +386,10 @@ function Register({ onClose, onLoginClick }) {
                 <div className="flex items-center">
                   <div className="flex-1 text-left">
                     <h3 className="font-semibold text-lg mb-1 group-hover:text-[#98E9E9]">
-                      Hospital Representative
+                      Veterinarian
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      Manage your veterinary hospital profile and appointments
+                      {t("auth.register.roles.veterinarianDesc")}
                     </p>
                   </div>
                 </div>
@@ -328,12 +398,12 @@ function Register({ onClose, onLoginClick }) {
           )}
 
           <p className="text-center mt-4 text-gray-600">
-            Already have an account?{" "}
+            {t("auth.register.haveAccount")}{" "}
             <button
               onClick={handleLoginClick}
               className="text-blue-600 hover:text-blue-800 font-medium"
             >
-              Sign in
+              {t("auth.register.signIn")}
             </button>
           </p>
         </div>

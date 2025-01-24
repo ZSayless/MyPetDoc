@@ -18,13 +18,14 @@
   },
   "auth": {
     "loginButton": "Login",
-    "loginTitle": "Welcome Back!",
+    "loginTitle": "Welcome Back!", 
     "loginSubtitle": "Please sign in to continue",
     "emailPlaceholder": "Enter your email",
-    "passwordPlaceholder": "Enter your password",
+    "passwordPlaceholder": "Enter your password", 
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot Password?",
     "signIn": "Sign In",
+    "signingIn": "Signing in...",
     "orContinueWith": "Or continue with",
     "googleSignIn": "Sign in with Google",
     "noAccount": "Don't have an account?",
@@ -32,23 +33,58 @@
     "termsAgree": "By continuing, you agree to our",
     "termsLink": "Terms of Service",
     "forgotPasswordModal": {
-      "title": "Forgot Password?",
+      "title": "Forgot Password?", 
       "subtitle": "Enter your email and we will send you a recovery code.",
-      "username": "Username",
-      "usernamePlaceholder": "Email or Username",
-      "verificationCode": "Verification Code",
-      "codePlaceholder": "Enter verification code",
-      "sendCode": "Send Code",
-      "resetPassword": "Reset Password",
-      "back": "Back"
+      "emailLabel": "Email",
+      "back": "Back",
+      "sending": "Sending...",
+      "sendRequest": "Send request to reset password",
+      "checkEmail": "Please check your email to reset your password",
+      "errors": {
+        "sendFailed": "Failed to send request. Please try again."
+      }
     },
-    "register": "Register",
-    "registerTitle": "Create Account",
-    "registerSubtitle": "Join our community today",
-    "confirmPasswordPlaceholder": "Confirm password",
-    "firstNamePlaceholder": "First name",
-    "lastNamePlaceholder": "Last name",
-    "haveAccount": "Already have an account?",
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Sign up to get started",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Enter your email",
+      "phone": "Phone number",
+      "phonePlaceholder": "Enter your phone number",
+      "password": "Create a password",
+      "confirmPassword": "Confirm your password",
+      "termsAgree": "I agree to the",
+      "termsLink": "Terms of Service",
+      "and": "and",
+      "privacyLink": "Privacy Policy",
+      "createAccount": "Create Account",
+      "processing": "Processing...",
+      "orSignUpWith": "Or sign up with",
+      "googleSignUp": "Sign up with Google",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "petType": {
+        "label": "What pet do you have?",
+        "placeholder": "Select your pet type",
+        "dog": "Dog",
+        "cat": "Cat",
+        "rabbit": "Rabbit",
+        "hamster": "Hamster",
+        "bird": "Bird",
+        "other": "Other"
+      },
+      "chooseAccountType": "Choose Account Type",
+      "selectAccountType": "Select the type of account you want to create",
+      "roles": {
+        "petOwnerButton": "Pet Owner",
+        "veterinarianButton": "Veterinarian"
+      },
+      "errors": {
+        "termsRequired": "Please agree to the terms of service",
+        "petTypeRequired": "Please select your pet type"
+      }
+    },
     "logout": "Logout",
     "profile": "Profile",
     "myBlogs": "My Blogs",
@@ -78,8 +114,7 @@
       "registrationFailed": "Registration failed. Please try again"
     },
     "signingIn": "Signing in...",
-    "continueButton": "Register",
-    "googleSignUp": "Sign up with Google"
+    "continueButton": "Register"
   },
   "profile": {
     "myBlogs": "My Blogs",
@@ -204,16 +239,19 @@
       "postComment": "Post Comment",
       "noComments": "No comments yet. Be the first to comment!",
       "placeholder": "Write a comment...",
+      "loginRequired": "Please login to write a comment",
+      "loginToComment": "Login to Comment",
       "actions": {
         "reply": "Reply",
         "edit": "Edit",
         "delete": "Delete",
-        "report": "Report"
+        "report": "Report",
+        "cancel": "Cancel"
       }
     },
     "list": {
       "title": "Pet Care Blog",
-      "subtitle": "Discover tips, stories and expert advice for your beloved pets",
+      "subtitle": "Discover tips, stories and expert advice for your beloved pets", 
       "shareStory": "Share Your Story",
       "search": {
         "placeholder": "Search articles...",
@@ -228,50 +266,32 @@
         "behavior": "Behavior",
         "grooming": "Grooming"
       },
-      "card": {
-        "readTime": "min read",
-        "likes": "likes",
-        "comments": "comments"
-      }
+      "noBlogsFound": "No blogs found"
     },
-    "report": {
-      "title": "Report Comment",
-      "commentBy": "Comment by",
-      "form": {
-        "reason": {
-          "label": "Reason for Report *",
-          "placeholder": "Select a reason",
-          "options": {
-            "spam": "Spam",
-            "harassment": "Harassment",
-            "inappropriate": "Inappropriate Content",
-            "misinformation": "Misinformation",
-            "other": "Other"
-          }
-        },
-        "notes": {
-          "label": "Additional Notes",
-          "placeholder": "Please provide more details about this report..."
-        }
-      },
-      "buttons": {
-        "submit": "Submit Report",
-        "cancel": "Cancel"
-      }
+
+    "myBlogs": {
+      "title": "My Blogs",
+      "writeNew": "Write New Blog",
+      "search": "Search blogs...",
+      "noResults": "No blogs found",
+      "noBlogsYet": "You haven't written any blogs yet"
     }
   },
   "community": {
     "hero": {
       "title": "Pet Lovers Community",
-      "subtitle": "Share your pet stories and connect with other pet lovers",
+      "subtitle": "Share your stories and connect with other pet lovers",
       "shareButton": "Share Your Story",
-      "loginRequired": "Please login to share your stories"
+      "loginRequired": "Please login to share your story"
     },
     "post": {
-      "justNow": "Just now",
       "likes": "likes",
       "comments": "comments",
-      "deleteConfirm": "Are you sure you want to delete this post?"
+      "deleteConfirm": "Are you sure you want to delete this post?",
+      "justNow": "Just now",
+      "minutesAgo": "minutes ago",
+      "hoursAgo": "hours ago",
+      "daysAgo": "days ago"
     },
     "createPost": {
       "title": "Create Post",
@@ -292,40 +312,67 @@
       "cancel": "Cancel"
     },
     "menu": {
-      "edit": "Edit Post",
-      "delete": "Delete Post"
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "comments": {
+      "title": "Comments",
+      "writeComment": "Write a comment...",
+      "noComments": "No comments yet",
+      "loginRequired": "Please login to comment"
     },
     "errors": {
-      "unauthorized": "You don't have permission to perform this action",
-      "deleteFailed": "Failed to delete post. Please try again",
-      "createFailed": "Failed to create post. Please try again",
-      "loadFailed": "Failed to load posts. Please try again",
-      "updateFailed": "Failed to update post. Please try again",
-      "adminCannotEdit": "Administrators can only delete posts, not edit them"
+      "loadFailed": "Failed to load posts",
+      "createFailed": "Failed to create post",
+      "updateFailed": "Failed to update post",
+      "deleteFailed": "Failed to delete post",
+      "unauthorized": "You are not authorized to perform this action",
+      "commentFailed": "Failed to add comment. Please try again"
     }
   },
   "findHospital": {
-    "header": {
-      "title": "Find a Hospital",
-      "searchPlaceholder": "Search by hospital name...",
-      "allCities": "All Cities"
+    "title": "Find a Hospital",
+    "search": {
+      "placeholder": "Search by hospital name...",
+      "button": "Search"
+    },
+    "cityFilter": {
+      "allCities": "All Cities",
+      "cities": {
+        "hcm": {
+          "name": "Ho Chi Minh City",
+          "description": "Vietnam's largest healthcare hub",
+          "count": "50+ Hospitals"
+        },
+        "hanoi": {
+          "name": "Hanoi",
+          "description": "Leading veterinary facilities",
+          "count": "40+ Hospitals"
+        },
+        "danang": {
+          "name": "Da Nang",
+          "description": "Modern pet care centers",
+          "count": "20+ Hospitals"
+        }
+      }
     },
     "services": {
-      "all hospitals": "All Hospitals",
-      "emergency": "24/7 Emergency",
-      "surgery": "Surgery",
-      "vaccination": "Vaccination",
-      "dental care": "Dental Care",
-      "grooming": "Grooming",
-      "laboratory": "Laboratory",
-      "internal medicine": "Internal Medicine",
-      "radiology": "Radiology",
-      "pharmacy": "Pharmacy",
-      "pet hotel": "Pet Hotel",
-      "boarding": "Boarding"
+      "title": "Services",
+      "types": {
+        "allHospitals": "All Hospitals",
+        "emergencyCare": "Emergency Care",
+        "surgery": "Surgery",
+        "vaccination": "Vaccination",
+        "dentalCare": "Dental Care",
+        "petGrooming": "Pet Grooming",
+        "laboratory": "Laboratory",
+        "generalCheckup": "General Checkup",
+        "petBoarding": "Pet Boarding",
+        "pharmacy": "Pharmacy"
+      }
     },
     "map": {
-      "selectHospital": "Select a hospital to view its location"
+      "selectHospital": "Select a hospital to view location"
     }
   },
   "myBlogs": {
@@ -399,7 +446,9 @@
         "description": "Manage your display name, username and avatar",
         "fullName": "Full Name",
         "username": "Username",
-        "avatar": "Avatar"
+        "avatar": "Avatar",
+        "phone": "Phone Number",
+        "addPhone": "Add phone number"
       },
       "social": {
         "title": "Social Media",
@@ -483,12 +532,36 @@
           "passwordsDoNotMatch": "Passwords do not match",
           "changeFailed": "Failed to change password. Please try again"
         }
+      },
+      "editPhone": {
+        "title": "Edit Phone Number",
+        "description": "Update your contact phone number",
+        "placeholder": "Enter your phone number",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "errors": {
+          "required": "Phone number is required",
+          "invalid": "Invalid phone number"
+        }
       }
     }
   },
   "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with us for any questions or concerns about our veterinary services",
+    "info": {
+      "visit": {
+        "title": "Visit Us"
+      },
+      "call": {
+        "title": "Call Us"
+      },
+      "email": {
+        "title": "Email Us"
+      }
+    },
     "form": {
-      "title": "Send us a Message",
+      "title": "Send Message",
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email",
@@ -496,10 +569,10 @@
       "message": "Message",
       "send": "Send Message",
       "sending": "Sending...",
-      "success": "Your message has been sent successfully! We'll get back to you soon."
+      "success": "Message sent successfully!"
     },
     "errors": {
-      "sendFailed": "Failed to send message. Please try again."
+      "sendFailed": "Could not send message. Please try again later."
     }
   },
   "footer": {
@@ -587,5 +660,31 @@
   },
   "common": {
     "reviews": "reviews"
+  },
+  "header": {
+    "menu": {
+      "language": "Language",
+      "home": "Home",
+      "aboutUs": "About Us",
+      "contactUs": "Contact Us",
+      "findHospital": "Find Hospital",
+      "exploreMore": "Explore More",
+      "blog": "Blog",
+      "blogDesc": "Read latest news and articles",
+      "community": "Community",
+      "communityDesc": "Join our pet lovers community",
+      "terms": "Terms & Conditions",
+      "termsDesc": "Read our terms of service"
+    },
+    "auth": {
+      "login": "Login",
+      "register": "Register",
+      "welcome": "Welcome",
+      "profile": "Profile",
+      "myBlogs": "My Blogs",
+      "admin": "Admin Dashboard",
+      "settings": "Settings",
+      "signOut": "Sign Out"
+    }
   }
 }

@@ -6,6 +6,7 @@ import EditNameModal from "./modals/EditNameModal";
 import EditAvatarModal from "./modals/EditAvatarModal";
 import ChangePasswordModal from "./modals/ChangePasswordModal";
 import EditSocialMediaModal from "./modals/EditSocialMediaModal";
+import EditPhoneModal from "./modals/EditPhoneModal";
 import { useAuth } from "../../context/AuthContext";
 
 function Setting() {
@@ -17,6 +18,7 @@ function Setting() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showEditAvatar, setShowEditAvatar] = useState(false);
   const [selectedSocial, setSelectedSocial] = useState(null);
+  const [showEditPhone, setShowEditPhone] = useState(false);
 
   // Memoize initial form data
   const initialFormData = useCallback(
@@ -152,6 +154,23 @@ function Setting() {
                       {user?.name?.charAt(0) || "A"}
                     </div>
                   )}
+                </div>
+              </div>
+              <span className="text-gray-400 text-xl">›</span>
+            </div>
+          </div>
+
+          <div className="border-t">
+            <div
+              className="flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer"
+              onClick={() => setShowEditPhone(true)}
+            >
+              <div>
+                <div className="font-medium">
+                  {t("setting.personal.basic.phone")}
+                </div>
+                <div className="text-gray-600 mt-1">
+                  {user?.phone || t("setting.personal.basic.addPhone")}
                 </div>
               </div>
               <span className="text-gray-400 text-xl">›</span>
@@ -368,6 +387,12 @@ function Setting() {
             onClose={() => setShowChangePassword(false)}
           />
         )}
+        <EditPhoneModal
+          isOpen={showEditPhone}
+          onClose={() => setShowEditPhone(false)}
+          currentPhone={user?.phone}
+          onSubmit={(newPhone) => updateUser({ phone: newPhone })}
+        />
       </div>
     </div>
   );

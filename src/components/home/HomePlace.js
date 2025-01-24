@@ -8,8 +8,10 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useRef, useEffect, useState } from "react";
 import { getHospitals } from "../../services/hospitalService";
+import { useTranslation } from "react-i18next";
 
 function HomePlace() {
+  const { t } = useTranslation();
   const sliderRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -23,19 +25,20 @@ function HomePlace() {
         setLoading(true);
         const response = await getHospitals();
 
-        
         // Kiểm tra và format dữ liệu
-        const formattedHospitals = response.hospitals.map(hospital => ({
+        const formattedHospitals = response.hospitals.map((hospital) => ({
           id: hospital.id,
           name: hospital.name,
-          image: hospital.images[0]?.url || '', // Lấy ảnh đầu tiên
+          image: hospital.images[0]?.url || "", // Lấy ảnh đầu tiên
           rating: hospital.average_rating || 5,
           location: hospital.address,
-          specialties: hospital.specialties ? hospital.specialties.split(',').map(s => s.trim()) : [],
+          specialties: hospital.specialties
+            ? hospital.specialties.split(",").map((s) => s.trim())
+            : [],
           reviews: hospital.review_count || 0,
-          slug: hospital.slug
+          slug: hospital.slug,
         }));
-        
+
         setHospitals(formattedHospitals);
       } catch (error) {
         console.error("Error fetching hospitals:", error);
@@ -73,11 +76,17 @@ function HomePlace() {
 
   if (loading) {
     return (
-      <div className="py-12 bg-white">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">
+              {t("home.places.title")}
+            </h2>
+            <p className="text-gray-600">{t("home.places.subtitle")}</p>
+          </div>
           <div className="text-center">Loading...</div>
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -86,12 +95,9 @@ function HomePlace() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            Featured Hospitals
+            {t("home.places.title")}
           </h2>
-          <p className="text-gray-600">
-            Discover our top-rated veterinary hospitals with experienced
-            professionals
-          </p>
+          <p className="text-gray-600">{t("home.places.subtitle")}</p>
         </div>
 
         <div className="relative px-4">

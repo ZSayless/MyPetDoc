@@ -7,18 +7,22 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     // Kiểm tra localStorage khi khởi tạo
-    const savedUser = localStorage.getItem('user');
-    const savedToken = localStorage.getItem('token');
-    return savedUser ? { user: JSON.parse(savedUser), token: savedToken } : null;
+    const savedUser = localStorage.getItem("user");
+    const savedToken = localStorage.getItem("token");
+    return savedUser
+      ? { user: JSON.parse(savedUser), token: savedToken }
+      : null;
   });
 
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
+
   const login = (data) => {
-    console.log('Login data received:', data);
-    
+    console.log("Login data received:", data);
+
     // Xử lý cấu trúc dữ liệu từ cả login thường và Google login
     let userData, token;
-    
-    if (data.status === 'success') {
+
+    if (data.status === "success") {
       // Login thường
       userData = data.data.user;
       token = data.data.token;
@@ -37,52 +41,60 @@ export function AuthProvider({ children }) {
         full_name: userData.full_name,
         role: userData.role,
         avatar: userData.avatar,
-        hospital_id: userData.hospital_id
+        hospital_id: userData.hospital_id,
       };
 
       // Lưu vào localStorage
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(cleanedUser));
-      
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(cleanedUser));
+
       // Cập nhật state
       setUser({
         user: cleanedUser,
-        token: token
+        token: token,
       });
 
-      console.log('Data saved to localStorage and context:', {
+      console.log("Data saved to localStorage and context:", {
         user: cleanedUser,
-        token: token
+        token: token,
       });
+
+      setIsAuthenticated(true);
     } else {
-      console.error('Invalid login data structure:', data);
+      console.error("Invalid login data structure:", data);
     }
   };
 
   const logout = () => {
     // Xóa dữ liệu khỏi localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
     // Reset state
     setUser(null);
-    
-    console.log('Logged out - data cleared');
+    setIsAuthenticated(false);
+
+    console.log("Logged out - data cleared");
+  };
+
+  // Thêm hàm updateUser
+  const updateUser = (updates) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      ...updates,
+    }));
   };
 
   const value = {
     user: user?.user,
     token: user?.token,
-    isAuthenticated: !!user,
+    isAuthenticated,
     login,
-    logout
+    logout,
+    updateUser,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

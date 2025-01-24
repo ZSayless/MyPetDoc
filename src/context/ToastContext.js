@@ -1,43 +1,43 @@
-import { createContext, useContext, useState } from "react";
-import Toast from "../components/common/Toast";
+import React, { createContext, useContext, useState } from "react";
 
 const ToastContext = createContext();
 
-export const ToastProvider = ({ children }) => {
+export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
 
-  const showToast = (message, type = "success") => {
+  const addToast = ({ type, message }) => {
     const id = Date.now();
-    setToasts((prev) => [...prev, { id, message, type }]);
-  };
-
-  const removeToast = (id) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    setToasts((prev) => [...prev, { id, type, message }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    }, 3000);
   };
 
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={{ addToast }}>
       {children}
-      <div className="fixed bottom-4 right-4 space-y-2 z-50">
+      <div className="fixed bottom-4 right-4 z-50 space-y-2">
         {toasts.map((toast) => (
-          <Toast
+          <div
             key={toast.id}
-            message={toast.message}
-            type={toast.type}
-            onClose={() => removeToast(toast.id)}
-          />
+            className={`px-4 py-2 rounded-lg shadow-lg text-white ${
+              toast.type === "success" ? "bg-green-500" : "bg-red-500"
+            }`}
+          >
+            {toast.message}
+          </div>
         ))}
       </div>
     </ToastContext.Provider>
   );
-};
+}
 
-export const useToast = () => {
+export function useToast() {
   const context = useContext(ToastContext);
   if (!context) {
     throw new Error("useToast must be used within a ToastProvider");
   }
   return context;
-};
+}
 
 export default ToastContext;

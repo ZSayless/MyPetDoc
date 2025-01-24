@@ -7,6 +7,7 @@ import WriteReviewModal from "./WriteReviewModal";
 import Reviews from "./Reviews";
 import { getHospitalDetail } from "../../services/hospitalService";
 import { useTranslation } from "react-i18next";
+import { HOSPITAL_SERVICES } from "../../constants/services";
 
 const HospitalDetail = () => {
   const { slug } = useParams();
@@ -42,7 +43,9 @@ const HospitalDetail = () => {
           const formattedHospital = {
             id: data.id,
             name: data.name,
-            specialization: data.specialties ? data.specialties.split(',').map(s => s.trim()) : [],
+            specialization: data.specialties
+              ? data.specialties.split(",").map((s) => s.trim())
+              : [],
             address: data.address,
             phone: data.phone,
             email: data.email,
@@ -55,7 +58,17 @@ const HospitalDetail = () => {
                 time: data.operating_hours,
               },
             ],
-            services: data.specialties ? data.specialties.split(',').map(s => s.trim()) : [],
+            services: data.specialties
+              ? data.specialties
+                  .split(",")
+                  .map((s) => s.trim())
+                  // Chỉ lấy những service có trong danh sách HOSPITAL_SERVICES
+                  .filter(
+                    (service) =>
+                      HOSPITAL_SERVICES.includes(service) ||
+                      service === "All Hospitals"
+                  )
+              : [],
             gallery: data.images.map((url, index) => ({
               id: index + 1,
               url: url,

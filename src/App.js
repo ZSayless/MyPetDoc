@@ -4,12 +4,13 @@ import Footer from "./components/layout/Footer";
 import "aos/dist/aos.css";
 import AOS from "aos";
 import { Routes, Route } from "react-router-dom";
-import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminDashboard from "./components/admin/AdminDashboard";
 import ScrollToTop from "./components/common/ScrollToTop";
 import { AuthProvider } from "./context/AuthContext";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { ToastProvider } from "./context/ToastContext";
+import FAQBubble from "./components/faq/FAQBubble";
 
 // Import các components
 import Home from "./components/home/Home";
@@ -18,7 +19,6 @@ import AboutUs from "./components/aboutus/AboutUs";
 import BlogList from "./components/blog/BlogList";
 import BlogDetail from "./components/blog/BlogDetail";
 import Terms from "./components/terms/Terms";
-import Community from "./components/community/Community";
 import Setting from "./components/setting/Setting";
 import HospitalDetail from "./components/hospital/HospitalDetail";
 import FindHospital from "./components/hospital/FindHospital";
@@ -34,7 +34,7 @@ import ResetPassword from "./components/resetpassword/ResetPassword";
 import AuthCallback from "./components/auth/AuthCallback";
 import AuthError from "./components/auth/AuthError";
 import SelectRole from "./components/auth/SelectRole";
-import VerifyEmail from './components/register/VerifyEmail';
+import VerifyEmail from "./components/register/VerifyEmail";
 
 // Cấu hình AOS
 AOS.init({
@@ -241,7 +241,16 @@ function App() {
             <Route path="/auth/error" element={<AuthError />} />
             <Route path="/auth/select-role" element={<SelectRole />} />
             <Route path="/auth/verify-email/:token" element={<VerifyEmail />} />
+            <Route
+              path="/contact-us"
+              element={
+                <MainLayout>
+                  <ContactUs />
+                </MainLayout>
+              }
+            />
           </Routes>
+          <FAQBubble />
         </ToastProvider>
       </AuthProvider>
     </Provider>

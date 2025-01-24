@@ -1,24 +1,7 @@
 {
-  "language": "Ngôn ngữ",
-  "nav": {
-    "home": "Trang chủ",
-    "findHospital": "Tìm bệnh viện",
-    "aboutUs": "Về chúng tôi",
-    "contactUs": "Liên hệ",
-    "services": {
-      "title": "Dịch vụ",
-      "findHospitalDesc": "Tìm kiếm bệnh viện thú y gần bạn",
-      "blogDesc": "Đọc tin tức và bài viết mới nhất",
-      "communityDesc": "Tham gia cộng đồng yêu thú cưng",
-      "termsTitle": "Điều khoản & Điều kiện",
-      "termsDesc": "Đọc điều khoản dịch vụ của chúng tôi"
-    },
-    "blog": "Blog",
-    "community": "Cộng đồng"
-  },
   "auth": {
     "login": "Đăng nhập",
-    "loginButton": "Đăng nhập",
+    "loginButton": "Đăng nhập", 
     "loginTitle": "Chào Mừng Trở Lại!",
     "loginSubtitle": "Vui lòng đăng nhập để tiếp tục",
     "emailPlaceholder": "Nhập email của bạn",
@@ -26,22 +9,70 @@
     "rememberMe": "Ghi nhớ đăng nhập",
     "forgotPassword": "Quên mật khẩu?",
     "signIn": "Đăng Nhập",
+    "signUp": "Đăng ký",
     "orContinueWith": "Hoặc tiếp tục với",
     "googleSignIn": "Đăng nhập với Google",
     "noAccount": "Chưa có tài khoản?",
-    "register": "Đăng ký",
+    "register": {
+      "title": "Tạo Tài Khoản",
+      "subtitle": "Đăng ký để bắt đầu",
+      "firstName": "Tên",
+      "lastName": "Họ", 
+      "email": "Nhập email của bạn",
+      "phone": "Số điện thoại",
+      "phonePlaceholder": "Nhập số điện thoại của bạn",
+      "password": "Tạo mật khẩu",
+      "confirmPassword": "Xác nhận mật khẩu",
+      "termsAgree": "Tôi đồng ý với",
+      "termsLink": "Điều khoản dịch vụ",
+      "and": "và",
+      "privacyLink": "Chính sách bảo mật",
+      "createAccount": "Tạo Tài Khoản",
+      "processing": "Đang xử lý...",
+      "orSignUpWith": "Hoặc đăng ký với",
+      "googleSignUp": "Đăng ký với Google",
+      "haveAccount": "Đã có tài khoản?",
+      "signIn": "Đăng nhập",
+      "roles": {
+        "petOwner": "Chủ Thú Cưng",
+        "veterinarian": "Bác Sĩ Thú Y",
+        "petOwnerDesc": "Tìm và đặt lịch với bệnh viện thú y",
+        "veterinarianDesc": "Quản lý hồ sơ và lịch hẹn của bệnh viện thú y"
+      },
+      "petType": {
+        "label": "Bạn nuôi thú cưng gì?",
+        "placeholder": "Chọn loại thú cưng",
+        "dog": "Chó",
+        "cat": "Mèo",
+        "rabbit": "Thỏ",
+        "hamster": "Chuột hamster",
+        "bird": "Chim",
+        "other": "Khác"
+      },
+      "chooseAccountType": "Chọn Loại Tài Khoản",
+      "selectAccountType": "Chọn loại tài khoản bạn muốn tạo",
+      "roles": {
+        "petOwnerButton": "Chủ Thú Cưng",
+        "veterinarianButton": "Bác Sĩ Thú Y"
+      },
+      "errors": {
+        "termsRequired": "Vui lòng đồng ý với điều khoản sử dụng",
+        "petTypeRequired": "Vui lòng chọn loại thú cưng"
+      }
+    },
     "termsAgree": "Tôi đồng ý với",
     "termsLink": "Điều khoản dịch vụ",
     "forgotPasswordModal": {
       "title": "Quên Mật Khẩu?",
-      "subtitle": "Nhập email và chúng tôi sẽ gửi mã khôi phục cho bạn.",
-      "username": "Tên đăng nhập",
-      "usernamePlaceholder": "Email hoặc tên đăng nhập",
-      "verificationCode": "Mã xác thực",
-      "codePlaceholder": "Nhập mã xác thực",
-      "sendCode": "Gửi mã",
-      "resetPassword": "Đặt Lại Mật Khẩu",
-      "back": "Quay lại"
+      "subtitle": "Nhập email của bạn và chúng tôi sẽ gửi mã khôi phục.",
+      "emailLabel": "Email",
+      "back": "Quay lại",
+      "sending": "Đang gửi...",
+      "sendRequest": "Gửi yêu cầu đặt lại mật khẩu",
+      "checkEmail": "Vui lòng kiểm tra email để đặt lại mật khẩu",
+      "errors": {
+        "sendFailed": "Gửi yêu cầu thất bại. Vui lòng thử lại."
+      }
     },
     "signingIn": "Đang xử lý...",
     "registerSubtitle": "Tạo tài khoản mới",
@@ -49,9 +80,7 @@
     "firstNamePlaceholder": "Tên",
     "lastNamePlaceholder": "Họ",
     "continueButton": "Đăng ký",
-    "googleSignUp": "Đăng ký với Google",
     "facebookSignup": "Đăng ký với Facebook",
-    "haveAccount": "Đã có tài khoản?",
     "logout": "Đăng xuất",
     "profile": "Hồ sơ",
     "myBlogs": "Blog của tôi",
@@ -72,7 +101,6 @@
     },
     "email": "Email",
     "password": "Mật khẩu",
-    "confirmPassword": "Xác nhận mật khẩu",
     "emailNote": "Chỉ chấp nhận email @mypetdoc.com",
     "registering": "Đang đăng ký...",
     "errors": {
@@ -118,23 +146,6 @@
     }
   },
   "home": {
-    "banner": {
-      "slide1": {
-        "title": "Chăm Sóc Thú Cưng Chất Lượng",
-        "description": "Dịch vụ thú y chuyên nghiệp cho thú cưng của bạn",
-        "button": "Tìm Bệnh Viện"
-      },
-      "slide2": {
-        "title": "Đội Ngũ Bác Sĩ Chuyên Nghiệp",
-        "description": "Các bác sĩ giàu kinh nghiệm tận tâm với sức khỏe thú cưng",
-        "button": "Tham Gia Cộng Đồng"
-      },
-      "slide3": {
-        "title": "Cơ Sở Vật Chất Hiện Đại",
-        "description": "Trang thiết bị hiện đại cho dịch vụ chăm sóc tốt nhất",
-        "button": "Đăng Ký Bệnh Viện"
-      }
-    },
     "hospitalList": {
       "title": "Danh Sách Bệnh Viện Thú Y",
       "subtitle": "Tìm kiếm dịch vụ chăm sóc thú y tốt nhất cho thú cưng của bạn",
@@ -218,21 +229,25 @@
       "postComment": "Đăng Bình Luận",
       "noComments": "Chưa có bình luận nào. Hãy là người đầu tiên bình luận!",
       "placeholder": "Viết bình luận...",
+      "loginRequired": "Vui lòng đăng nhập để viết bình luận",
+      "loginToComment": "Đăng nhập để Bình luận",
       "actions": {
         "reply": "Trả lời",
         "edit": "Chỉnh sửa",
         "delete": "Xóa",
-        "report": "Báo cáo"
+        "report": "Báo cáo",
+        "cancel": "Hủy"
       }
     },
     "list": {
       "title": "Blog Chăm Sóc Thú Cưng",
-      "subtitle": "Khám phá mẹo, câu chuyện và lời khuyên chuyên gia cho thú cưng của bạn",
+      "subtitle": "Khám phá mẹo, câu chuyện và lời khuyên chuyên gia cho thú cưng của bạn", 
       "shareStory": "Chia Sẻ Câu Chuyện",
       "search": {
         "placeholder": "Tìm kiếm bài viết...",
         "button": "Tìm Kiếm"
       },
+      "noBlogsFound": "Không tìm thấy bài viết nào",
       "categories": {
         "allPosts": "Tất Cả Bài Viết",
         "healthTips": "Mẹo Sức Khỏe",
@@ -241,37 +256,15 @@
         "training": "Huấn Luyện",
         "behavior": "Hành Vi",
         "grooming": "Làm Đẹp"
-      },
-      "card": {
-        "readTime": "phút đọc",
-        "likes": "lượt thích",
-        "comments": "bình luận"
       }
     },
-    "report": {
-      "title": "Báo Cáo Bình Luận",
-      "commentBy": "Bình luận bởi",
-      "form": {
-        "reason": {
-          "label": "Lý Do Báo Cáo *",
-          "placeholder": "Chọn lý do",
-          "options": {
-            "spam": "Spam",
-            "harassment": "Quấy Rối",
-            "inappropriate": "Nội Dung Không Phù Hợp",
-            "misinformation": "Thông Tin Sai Lệch",
-            "other": "Khác"
-          }
-        },
-        "notes": {
-          "label": "Ghi Chú Bổ Sung",
-          "placeholder": "Vui lòng cung cấp thêm chi tiết về báo cáo này..."
-        }
-      },
-      "buttons": {
-        "submit": "Gửi Báo Cáo",
-        "cancel": "Hủy"
-      }
+
+    "myBlogs": {
+      "title": "Bài Viết Của Tôi",
+      "writeNew": "Viết Bài Mới",
+      "search": "Tìm kiếm bài viết...",
+      "noResults": "Không tìm thấy bài viết nào",
+      "noBlogsYet": "Bạn chưa có bài viết nào"
     }
   },
   "community": {
@@ -282,10 +275,13 @@
       "loginRequired": "Vui lòng đăng nhập để chia sẻ câu chuyện"
     },
     "post": {
-      "justNow": "Vừa xong",
       "likes": "lượt thích",
       "comments": "bình luận",
-      "deleteConfirm": "Bạn có chắc chắn muốn xóa bài viết này?"
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa bài viết này?",
+      "justNow": "Vừa xong",
+      "minutesAgo": "phút trước",
+      "hoursAgo": "giờ trước",
+      "daysAgo": "ngày trước"
     },
     "createPost": {
       "title": "Tạo Bài Viết",
@@ -306,29 +302,64 @@
       "cancel": "Hủy"
     },
     "menu": {
-      "edit": "Sửa Bài Viết",
-      "delete": "Xóa Bài Viết"
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa"
+    },
+    "comments": {
+      "title": "Bình Luận",
+      "writeComment": "Viết bình luận...",
+      "noComments": "Chưa có bình luận nào",
+      "loginRequired": "Vui lòng đăng nhập để bình luận"
+    },
+    "errors": {
+      "loadFailed": "Không thể tải bài viết",
+      "createFailed": "Không thể tạo bài viết",
+      "updateFailed": "Không thể cập nhật bài viết",
+      "deleteFailed": "Không thể xóa bài viết",
+      "unauthorized": "Bạn không có quyền thực hiện hành động này",
+      "commentFailed": "Không thể gửi bình luận. Vui lòng thử lại"
     }
   },
   "findHospital": {
-    "header": {
-      "title": "Tìm Bệnh Viện",
-      "searchPlaceholder": "Tìm theo tên bệnh viện...",
-      "allCities": "Tất Cả Thành Phố"
+    "title": "Tìm Bệnh Viện",
+    "search": {
+      "placeholder": "Tìm theo tên bệnh viện...",
+      "button": "Tìm kiếm"
+    },
+    "cityFilter": {
+      "allCities": "Tất Cả Thành Phố",
+      "cities": {
+        "hcm": {
+          "name": "TP. Hồ Chí Minh",
+          "description": "Trung tâm y tế lớn nhất Việt Nam",
+          "count": "50+ Bệnh viện"
+        },
+        "hanoi": {
+          "name": "Hà Nội",
+          "description": "Cơ sở thú y hàng đầu",
+          "count": "40+ Bệnh viện"
+        },
+        "danang": {
+          "name": "Đà Nẵng",
+          "description": "Trung tâm chăm sóc thú cưng hiện đại",
+          "count": "20+ Bệnh viện"
+        }
+      }
     },
     "services": {
-      "all hospitals": "Tất Cả Bệnh Viện",
-      "emergency": "Cấp Cứu 24/7",
-      "surgery": "Phẫu Thuật",
-      "vaccination": "Tiêm Chủng",
-      "dental care": "Nha Khoa",
-      "grooming": "Làm Đẹp",
-      "laboratory": "Xét Nghiệm",
-      "internal medicine": "Nội Khoa",
-      "radiology": "X-Quang",
-      "pharmacy": "Nhà Thuốc",
-      "pet hotel": "Khách Sạn Thú Cưng",
-      "boarding": "Trông Giữ"
+      "title": "Dịch vụ",
+      "types": {
+        "allHospitals": "Tất Cả Bệnh Viện",
+        "emergencyCare": "Chăm sóc khẩn cấp",
+        "surgery": "Phẫu thuật",
+        "vaccination": "Tiêm phòng",
+        "dentalCare": "Nha khoa",
+        "petGrooming": "Cắt tỉa lông",
+        "laboratory": "Xét nghiệm",
+        "generalCheckup": "Khám tổng quát",
+        "petBoarding": "Trông giữ thú cưng",
+        "pharmacy": "Nhà thuốc"
+      }
     },
     "map": {
       "selectHospital": "Chọn một bệnh viện để xem vị trí"
@@ -366,15 +397,15 @@
     "to": "đến",
     "services": "Dịch Vụ",
     "servicesList": {
-      "generalCheckup": "Khám Tổng Quát",
-      "vaccination": "Tiêm Chủng",
-      "surgery": "Phẫu Thuật",
-      "petGrooming": "Cắt Tỉa Lông",
-      "emergencyCare": "Cấp Cứu",
-      "dentalCare": "Nha Khoa",
-      "laboratory": "Xét Nghiệm",
-      "petBoarding": "Trông Giữ Thú Cưng",
-      "pharmacy": "Nhà Thuốc"
+      "generalCheckup": "Khám tổng quát",
+      "vaccination": "Tiêm phòng",
+      "surgery": "Phẫu thuật",
+      "petGrooming": "Cắt tỉa lông",
+      "emergencyCare": "Chăm sóc khẩn cấp",
+      "dentalCare": "Nha khoa",
+      "laboratory": "Xét nghiệm",
+      "petBoarding": "Trông giữ thú cưng",
+      "pharmacy": "Nhà thuốc"
     },
     "mapLocation": "Vị Trí Trên Bản Đồ",
     "mapEmbed": {
@@ -405,7 +436,9 @@
         "description": "Quản lý tên hiển thị, tên người dùng và ảnh đại diện",
         "fullName": "Họ Tên",
         "username": "Tên người dùng",
-        "avatar": "Ảnh đại diện"
+        "avatar": "Ảnh đại diện",
+        "phone": "Số điện thoại",
+        "addPhone": "Thêm số điện thoại"
       },
       "social": {
         "title": "Mạng xã hội",
@@ -488,6 +521,17 @@
           "passwordTooWeak": "Mật khẩu quá yếu. Nên bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
           "passwordsDoNotMatch": "Mật khẩu không khớp",
           "changeFailed": "Không thể thay đổi mật khẩu. Vui lòng thử lại"
+        }
+      },
+      "editPhone": {
+        "title": "Chỉnh sửa số điện thoại",
+        "description": "Cập nhật số điện thoại liên hệ của bạn",
+        "placeholder": "Nhập số điện thoại của bạn",
+        "cancel": "Hủy",
+        "save": "Lưu thay đổi",
+        "errors": {
+          "required": "Vui lòng nhập số điện thoại",
+          "invalid": "Số điện thoại không hợp lệ"
         }
       }
     }
@@ -577,5 +621,73 @@
   },
   "common": {
     "reviews": "đánh giá"
+  },
+  "header": {
+    "menu": {
+      "language": "Ngôn ngữ",
+      "home": "Trang chủ",
+      "aboutUs": "Về chúng tôi",
+      "contactUs": "Liên hệ",
+      "findHospital": "Tìm bệnh viện",
+      "exploreMore": "Khám phá thêm",
+      "blog": "Blog",
+      "blogDesc": "Đọc tin tức và bài viết mới nhất",
+      "community": "Cộng đồng",
+      "communityDesc": "Tham gia cộng đồng yêu thú cưng",
+      "terms": "Điều khoản & Điều kiện",
+      "termsDesc": "Đọc điều khoản dịch vụ"
+    },
+    "auth": {
+      "login": "Đăng Nhập",
+      "register": "Đăng Ký",
+      "welcome": "Xin Chào",
+      "profile": "Hồ Sơ",
+      "myBlogs": "Blog Của Tôi",
+      "admin": "Quản Trị",
+      "settings": "Cài Đặt",
+      "signOut": "Đăng Xuất"
+    }
+  },
+  "contact": {
+    "title": "Liên Hệ",
+    "subtitle": "Liên hệ với chúng tôi nếu bạn có bất kỳ câu hỏi nào về dịch vụ thú y",
+    "info": {
+      "visit": {
+        "title": "Địa Chỉ"
+      },
+      "call": {
+        "title": "Điện Thoại"
+      },
+      "email": {
+        "title": "Email"
+      }
+    },
+    "form": {
+      "title": "Gửi Tin Nhắn",
+      "firstName": "Họ",
+      "lastName": "Tên",
+      "email": "Email",
+      "subject": "Tiêu đề",
+      "message": "Nội dung",
+      "send": "Gửi Tin Nhắn",
+      "sending": "Đang gửi...",
+      "success": "Tin nhắn đã được gửi thành công!"
+    },
+    "errors": {
+      "sendFailed": "Không thể gửi tin nhắn. Vui lòng thử lại sau."
+    }
+  },
+  "faq": {
+    "title": "Hỗ trợ FAQ",
+    "greeting": "Xin chào! 👋 Tôi có thể giúp gì cho bạn?",
+    "placeholder": "Nhập câu hỏi của bạn...",
+    "status": "Đang hoạt động",
+    "welcome": "Vui lòng chọn chủ đề bạn cần hỗ trợ:",
+    "topics": {
+      "findHospital": "Tìm Bệnh Viện",
+      "services": "Dịch Vụ",
+      "appointment": "Đặt Lịch Hẹn",
+      "account": "Tài Khoản & Hồ Sơ"
+    }
   }
 }

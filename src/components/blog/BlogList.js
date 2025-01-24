@@ -1,16 +1,30 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, Filter } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useTranslation } from "react-i18next";
+import BlogCard from "./BlogCard";
 
-function BlogList() {
-  const { t } = useTranslation();
+const BlogList = () => {
+  const { t, i18n } = useTranslation();
+  const [blogs, setBlogs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState([
-    t("blog.list.categories.allPosts"),
-  ]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
+  // Cập nhật selected category mỗi khi ngôn ngữ thay đổi
+  useEffect(() => {
+    setSelectedCategories([t("blog.list.categories.allPosts")]);
+  }, [i18n.language, t]);
+
+  // Mock data hoặc fetch từ API
+  useEffect(() => {
+    // Giả lập fetch data
+    const mockBlogs = [
+      // ... mock data
+    ];
+    setBlogs(mockBlogs);
+  }, []);
 
   const categories = [
     t("blog.list.categories.allPosts"),
@@ -20,25 +34,6 @@ function BlogList() {
     t("blog.list.categories.training"),
     t("blog.list.categories.behavior"),
     t("blog.list.categories.grooming"),
-  ];
-
-  const posts = [
-    {
-      id: 1,
-      title: "Tips for New Pet Owners",
-      author: "Dr. Nguyen Van A",
-      avatar: "/avatar1.jpg",
-      date: "2024-03-15",
-      excerpt:
-        "Essential guidelines and tips for first-time pet owners to ensure their furry friends stay healthy and happy...",
-      image: "https://images.unsplash.com/photo-1450778869180-41d0601e046e",
-      readTime: "5 min read",
-      category: "Pet Care",
-      tags: ["Pet Care", "Health Tips"],
-      likes: 24,
-      comments: 8,
-    },
-    // Thêm các bài viết khác
   ];
 
   const handleCategoryToggle = (category) => {
@@ -62,7 +57,7 @@ function BlogList() {
     }
   };
 
-  const filteredPosts = posts.filter((post) => {
+  const filteredPosts = blogs.filter((post) => {
     const matchesSearch =
       searchTerm === "" ||
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -80,8 +75,8 @@ function BlogList() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-[#98E9E9] to-white">
-        <div className="container mx-auto px-4 py-16">
+      <div className="bg-gradient-to-b from-[#98E9E9] to-white pb-16">
+        <div className="container mx-auto px-4 pt-8">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               {t("blog.list.title")}
@@ -139,81 +134,23 @@ function BlogList() {
       </div>
 
       {/* Blog Posts Grid */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-fr">
             {filteredPosts.map((post) => (
-              <Link
-                to={`/blogdetail/${post.id}`}
-                key={post.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
-              >
-                <div className="relative">
-                  <LazyLoadImage
-                    src={post.image}
-                    alt={post.title}
-                    effect="blur"
-                    className="w-full h-48 object-cover rounded-t-lg"
-                    placeholderSrc="/placeholder-image.jpg"
-                  />
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
-                    {post.readTime} {t("blog.list.card.readTime")}
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                      {post.category}
-                    </span>
-                    {post.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#7CD5D5] transition-colors">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-600 mb-6 line-clamp-2">
-                    {post.excerpt}
-                  </p>
-
-                  <div className="flex items-center justify-between pt-4 border-t">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={post.avatar}
-                        alt={post.author}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                      <div>
-                        <div className="font-medium text-gray-900">
-                          {post.author}
-                        </div>
-                        <div className="text-sm text-gray-500">{post.date}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span>
-                        {post.likes} {t("blog.list.card.likes")}
-                      </span>
-                      <span>
-                        {post.comments} {t("blog.list.card.comments")}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
+              <BlogCard key={post.id} blog={post} />
             ))}
           </div>
         </div>
       </div>
+
+      {filteredPosts.length === 0 && (
+        <p className="text-center text-gray-500 py-8">
+          {t("blog.list.noBlogsFound")}
+        </p>
+      )}
     </div>
   );
-}
+};
 
 export default BlogList;

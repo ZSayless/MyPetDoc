@@ -1,0 +1,74 @@
+.faq-bubble {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+}
+
+.faq-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #98e9e9;
+  box-shadow: 0 4px 12px rgba(152, 233, 233, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s;
+}
+
+.faq-button:hover {
+  transform: scale(1.05);
+}
+
+.faq-popup {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 320px;
+  max-height: 600px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease-out;
+}
+
+.faq-header {
+  padding: 16px;
+  background: #98e9e9;
+  color: #1a3c8e;
+  border-radius: 16px 16px 0 0;
+}
+
+.faq-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.faq-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.faq-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.faq-content::-webkit-scrollbar-thumb {
+  background: #98e9e9;
+  border-radius: 3px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -5,33 +5,38 @@ import HospitalMap from "./HospitalMap";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getHospitals } from "../../services/hospitalService";
 import { useTranslation } from "react-i18next";
-
-const CITIES = [
-  {
-    id: "hcm",
-    name: "Ho Chi Minh City",
-    description: "Vietnam's largest healthcare hub",
-    hospitalCount: "50+ Hospitals",
-    image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482",
-  },
-  {
-    id: "hanoi",
-    name: "Hanoi",
-    description: "Leading veterinary facilities",
-    hospitalCount: "40+ Hospitals",
-    image: "https://images.unsplash.com/photo-1599708153386-62bf3f03359b",
-  },
-  {
-    id: "danang",
-    name: "Da Nang",
-    description: "Modern pet care centers",
-    hospitalCount: "20+ Hospitals",
-    image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b",
-  },
-];
+import { SERVICES_ROW_1, SERVICES_ROW_2 } from "../../constants/services";
 
 const FindHospital = () => {
+  const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Di chuyển CITIES vào trong component
+  const CITIES = [
+    {
+      id: "hcm",
+      name: t("findHospital.cityFilter.cities.hcm.name"),
+      description: t("findHospital.cityFilter.cities.hcm.description"),
+      hospitalCount: t("findHospital.cityFilter.cities.hcm.count"),
+      image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482",
+    },
+    {
+      id: "hanoi",
+      name: t("findHospital.cityFilter.cities.hanoi.name"),
+      description: t("findHospital.cityFilter.cities.hanoi.description"),
+      hospitalCount: t("findHospital.cityFilter.cities.hanoi.count"),
+      image: "https://images.unsplash.com/photo-1599708153386-62bf3f03359b",
+    },
+    {
+      id: "danang",
+      name: t("findHospital.cityFilter.cities.danang.name"),
+      description: t("findHospital.cityFilter.cities.danang.description"),
+      hospitalCount: t("findHospital.cityFilter.cities.danang.count"),
+      image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b",
+    },
+  ];
+
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedServices, setSelectedServices] = useState(["All Hospitals"]);
@@ -42,7 +47,6 @@ const FindHospital = () => {
     return localStorage.getItem("selectedCity") || "all";
   });
   const [showCityDropdown, setShowCityDropdown] = useState(false);
-  const navigate = useNavigate();
   const [selectedHospital, setSelectedHospital] = useState(null);
 
   const listContainerRef = useRef(null);
@@ -93,7 +97,9 @@ const FindHospital = () => {
           name: hospital.name,
           address: hospital.address,
           rating: 4.5, // Giá trị mặc định vì API không có
-          services: hospital.specialties ? hospital.specialties.split(',').map(s => s.trim()) : [],
+          services: hospital.specialties
+            ? hospital.specialties.split(",").map((s) => s.trim())
+            : [],
           image: hospital.images[0]?.url,
           mapUrl: hospital.map_location,
           slug: hospital.slug,
@@ -110,7 +116,35 @@ const FindHospital = () => {
     fetchHospitals();
   }, []);
 
-  // Filter hospitals based on search, city and services
+  // Thay đổi cách hiển thị services
+  const getServiceTranslation = (service) => {
+    switch (service) {
+      case "All Hospitals":
+        return t("findHospital.services.types.allHospitals");
+      case "Emergency Care":
+        return t("findHospital.services.types.emergencyCare");
+      case "Surgery":
+        return t("findHospital.services.types.surgery");
+      case "Vaccination":
+        return t("findHospital.services.types.vaccination");
+      case "Dental Care":
+        return t("findHospital.services.types.dentalCare");
+      case "Pet Grooming":
+        return t("findHospital.services.types.petGrooming");
+      case "Laboratory":
+        return t("findHospital.services.types.laboratory");
+      case "General Checkup":
+        return t("findHospital.services.types.generalCheckup");
+      case "Pet Boarding":
+        return t("findHospital.services.types.petBoarding");
+      case "Pharmacy":
+        return t("findHospital.services.types.pharmacy");
+      default:
+        return service;
+    }
+  };
+
+  // Cập nhật filter logic
   useEffect(() => {
     setLoading(true);
     let results = hospitals;
@@ -124,35 +158,36 @@ const FindHospital = () => {
       );
     }
 
-    // Filter by city - Chỉ filter khi selectedCity không phải "all"
+    // Filter by city
     if (selectedCity && selectedCity !== "all") {
-      const cityName = CITIES.find((city) => city.id === selectedCity)?.name;
-      if (cityName) {
-        // Sửa lại logic filter theo thành phố
-        results = results.filter((hospital) => {
-          const address = hospital.address.toLowerCase();
-          switch (selectedCity) {
-            case "hcm":
-              return (
-                address.includes("hcmc") ||
-                address.includes("ho chi minh") ||
-                address.includes("thu duc")
-              );
-            case "hanoi":
-              return address.includes("hanoi") || address.includes("ha noi");
-            case "danang":
-              return address.includes("danang") || address.includes("da nang");
-            default:
-              return true;
-          }
-        });
-      }
+      results = results.filter((hospital) => {
+        const address = hospital.address.toLowerCase();
+        switch (selectedCity) {
+          case "hcm":
+            return (
+              address.includes("hcmc") ||
+              address.includes("ho chi minh") ||
+              address.includes("thu duc")
+            );
+          case "hanoi":
+            return address.includes("hanoi") || address.includes("ha noi");
+          case "danang":
+            return address.includes("danang") || address.includes("da nang");
+          default:
+            return true;
+        }
+      });
     }
 
-    // Filter by selected services
+    // Filter by services
     if (!selectedServices.includes("All Hospitals")) {
       results = results.filter((hospital) =>
-        hospital.services.some((service) => selectedServices.includes(service))
+        selectedServices.some((selectedService) =>
+          hospital.services.some(
+            (hospitalService) =>
+              hospitalService.toLowerCase() === selectedService.toLowerCase()
+          )
+        )
       );
     }
 
@@ -179,24 +214,9 @@ const FindHospital = () => {
     });
   };
 
-  // Sắp xếp lại services thành 2 hàng cho desktop
-  const servicesRow1 = [
-    "All Hospitals",
-    "Emergency",
-    "Surgery",
-    "Vaccination",
-    "Dental Care",
-    "Grooming",
-    "Laboratory",
-  ];
-
-  const servicesRow2 = [
-    "Internal Medicine",
-    "Radiology",
-    "Pharmacy",
-    "Pet Hotel",
-    "Boarding",
-  ];
+  // Thay thế các mảng services cũ
+  const servicesRow1 = SERVICES_ROW_1;
+  const servicesRow2 = SERVICES_ROW_2;
 
   const handlePrevService = () => {
     if (servicesRef.current) {
@@ -251,7 +271,7 @@ const FindHospital = () => {
         <div className="container mx-auto px-4 py-6 md:py-8">
           <div className="max-w-5xl mx-auto">
             <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6 text-center">
-              Find a Hospital
+              {t("findHospital.title")}
             </h1>
 
             {/* Search and City Filter Section */}
@@ -260,7 +280,7 @@ const FindHospital = () => {
               <div className="relative flex-1">
                 <input
                   type="text"
-                  placeholder="Search by hospital name..."
+                  placeholder={t("findHospital.search.placeholder")}
                   className="w-full pl-12 pr-4 py-3 rounded-full bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#98E9E9] text-gray-700 text-sm md:text-base shadow-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -276,9 +296,9 @@ const FindHospital = () => {
                 >
                   <span>
                     {selectedCity === "all"
-                      ? "All Cities"
+                      ? t("findHospital.cityFilter.allCities")
                       : CITIES.find((city) => city.id === selectedCity)?.name ||
-                        "All Cities"}
+                        t("findHospital.cityFilter.allCities")}
                   </span>
                   <ChevronDown className="w-5 h-5" />
                 </button>
@@ -293,7 +313,7 @@ const FindHospital = () => {
                         setShowCityDropdown(false);
                       }}
                     >
-                      All Cities
+                      {t("findHospital.cityFilter.allCities")}
                     </button>
                     {CITIES.map((city) => (
                       <button
@@ -326,7 +346,7 @@ const FindHospital = () => {
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
-                    {service}
+                    {getServiceTranslation(service)}
                   </button>
                 ))}
               </div>
@@ -342,7 +362,7 @@ const FindHospital = () => {
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
-                    {service}
+                    {getServiceTranslation(service)}
                   </button>
                 ))}
               </div>
@@ -361,7 +381,7 @@ const FindHospital = () => {
                     }`}
                     onClick={() => handleServiceClick(service)}
                   >
-                    {service}
+                    {getServiceTranslation(service)}
                   </button>
                 ))}
               </div>
@@ -400,7 +420,7 @@ const FindHospital = () => {
                   ></iframe>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
-                    <p>Chọn một bệnh viện để xem vị trí</p>
+                    <p>{t("findHospital.map.selectHospital")}</p>
                   </div>
                 )}
               </div>

@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 
 function HomeBlogs() {
+  const { t } = useTranslation();
   const [blogs, setBlogs] = useState([]);
   const [recentBlogs, setRecentBlogs] = useState([]);
 
@@ -16,20 +17,18 @@ function HomeBlogs() {
         if (response.success && response.data.posts) {
           const blogsData = response.data.posts;
           setBlogs(blogsData);
-          
-          const formattedBlogs = blogsData
-            .slice(0, 3)
-            .map((blog) => ({
-              id: blog.id,
-              title: blog.title,
-              summary: blog.summary,
-              image: blog.featured_image,
-              author: blog.author_name,
-              date: format(new Date(blog.created_at), "MMM dd, yyyy"),
-              readTime: "5 min read",
-              tags: blog.tags ? blog.tags.split(',') : [],
-              slug: blog.slug,
-            }));
+
+          const formattedBlogs = blogsData.slice(0, 3).map((blog) => ({
+            id: blog.id,
+            title: blog.title,
+            summary: blog.summary,
+            image: blog.featured_image,
+            author: blog.author_name,
+            date: format(new Date(blog.created_at), "MMM dd, yyyy"),
+            readTime: "5 min read",
+            tags: blog.tags ? blog.tags.split(",") : [],
+            slug: blog.slug,
+          }));
           setRecentBlogs(formattedBlogs);
         }
       } catch (error) {
@@ -41,27 +40,19 @@ function HomeBlogs() {
   }, []);
 
   return (
-    <section className="py-12 bg-gray-50">
+    <div className="py-16">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex justify-between items-center mb-12">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Recent Blog Posts
-            </h2>
-            <p className="text-gray-600">
-              Stay updated with the latest pet care tips and advice
-            </p>
+            <h2 className="text-3xl font-bold mb-4">{t("home.blogs.title")}</h2>
+            <p className="text-gray-600">{t("home.blogs.subtitle")}</p>
           </div>
-          <Link
-            to="/bloglist"
-            className="flex items-center text-[#1A3C8E] hover:text-[#98E9E9] transition-colors"
-          >
-            View All
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Link>
+          <button className="text-blue-600 hover:text-blue-700 font-medium">
+            {t("home.blogs.viewAll")} →
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {recentBlogs.map((blog) => (
             <Link
               key={blog.id}
@@ -103,7 +94,7 @@ function HomeBlogs() {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 

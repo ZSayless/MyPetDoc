@@ -1,18 +1,31 @@
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
-function EditNameModal({ isOpen, onClose, currentName, onSubmit }) {
+function EditPhoneModal({ isOpen, onClose, currentPhone, onSubmit }) {
   const { t } = useTranslation();
+  const [phone, setPhone] = useState(currentPhone || "");
+  const [error, setError] = useState("");
 
   if (!isOpen) return null;
 
+  const validatePhone = (value) => {
+    // Regex cho số điện thoại Việt Nam
+    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+    return phoneRegex.test(value);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const newName = formData.get("name");
-    if (newName.trim()) {
-      onSubmit(newName.trim());
+    if (!phone.trim()) {
+      setError(t("setting.modal.editPhone.errors.required"));
+      return;
     }
+    if (!validatePhone(phone)) {
+      setError(t("setting.modal.editPhone.errors.invalid"));
+      return;
+    }
+    onSubmit(phone);
     onClose();
   };
 
@@ -22,7 +35,7 @@ function EditNameModal({ isOpen, onClose, currentName, onSubmit }) {
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-2xl font-semibold mb-2">
-              {t("setting.modal.editName.title")}
+              {t("setting.modal.editPhone.title")}
             </h3>
             <button
               onClick={onClose}
@@ -32,21 +45,27 @@ function EditNameModal({ isOpen, onClose, currentName, onSubmit }) {
             </button>
           </div>
           <p className="text-gray-600 mb-6">
-            {t("setting.personal.basic.description")}
+            {t("setting.modal.editPhone.description")}
           </p>
 
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t("setting.personal.basic.fullName")}
+                {t("setting.personal.basic.phone")}
               </label>
               <input
-                type="text"
-                name="name"
-                defaultValue={currentName}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
-                placeholder={t("setting.modal.editName.placeholder")}
+                type="tel"
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  setError("");
+                }}
+                className={`w-full px-4 py-3 border ${
+                  error ? "border-red-500" : "border-gray-200"
+                } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400`}
+                placeholder={t("setting.modal.editPhone.placeholder")}
               />
+              {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
             </div>
 
             <div className="flex justify-end gap-3">
@@ -55,13 +74,13 @@ function EditNameModal({ isOpen, onClose, currentName, onSubmit }) {
                 onClick={onClose}
                 className="px-6 py-3 text-gray-700 border border-gray-200 rounded-xl hover:bg-gray-50"
               >
-                {t("setting.modal.editName.cancel")}
+                {t("setting.modal.editPhone.cancel")}
               </button>
               <button
                 type="submit"
                 className="px-6 py-3 bg-[#98E9E9] text-gray-700 rounded-xl hover:bg-[#7CD5D5]"
               >
-                {t("setting.modal.editName.save")}
+                {t("setting.modal.editPhone.save")}
               </button>
             </div>
           </form>
@@ -71,4 +90,4 @@ function EditNameModal({ isOpen, onClose, currentName, onSubmit }) {
   );
 }
 
-export default EditNameModal;
+export default EditPhoneModal;

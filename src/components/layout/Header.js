@@ -1,6 +1,6 @@
 import {
   ChevronDown,
-  Menu,
+  MenuIcon,
   X,
   Globe,
   Settings,
@@ -13,8 +13,9 @@ import {
   User,
   FileEdit,
   LogOut,
+  Check,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import logo from "../../assets/img/logocustom.png";
 import ButtonLink from "../../core/ButtonLink";
 import Register from "../register/Register";
@@ -24,6 +25,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { useAuth } from "../../context/AuthContext";
 import AvatarImage from "../common/AvatarImage";
+import { Menu, Transition } from "@headlessui/react";
+import { VN, GB } from "country-flag-icons/react/3x2";
+import { useTranslation } from "react-i18next";
 
 function Header() {
   const [showLanguage, setShowLanguage] = useState(false);
@@ -36,8 +40,12 @@ function Header() {
   const navigate = useNavigate();
   const servicesDropdownRef = useRef(null);
   const dropdownRef = useRef(null);
+  const [currentLanguage, setCurrentLanguage] = useState(
+    localStorage.getItem("language") || "en"
+  );
 
   const { isAuthenticated, user, logout } = useAuth();
+  const { t, i18n } = useTranslation();
 
   // console.log('Header auth state:', { isAuthenticated, user }); // Để debug
 
@@ -98,26 +106,25 @@ function Header() {
     setIsOpenLogin(!isOpenLogin);
   };
 
-  const languageOptions = [
+  const languages = [
     {
-      value: "en",
-      label: (
-        <div className="flex items-center">
-          <Globe className="w-5 h-5 text-gray-600 mr-2" />
-          <span>English</span>
-        </div>
-      ),
+      code: "en",
+      name: "English",
+      shortName: "EN",
+      flag: GB,
     },
     {
-      value: "vi",
-      label: (
-        <div className="flex items-center">
-          <Globe className="w-5 h-5 text-gray-600 mr-2" />
-          <span>Tiếng Việt</span>
-        </div>
-      ),
+      code: "vi",
+      name: "Tiếng Việt",
+      shortName: "VN",
+      flag: VN,
     },
   ];
+
+  const handleLanguageChange = (code) => {
+    setCurrentLanguage(code);
+    i18n.changeLanguage(code);
+  };
 
   const customStyles = {
     control: (base) => ({
@@ -228,7 +235,7 @@ function Header() {
                 <ul className="flex items-center space-x-4">
                   <li>
                     <Link to="/" className="text-gray-700 hover:text-blue-600">
-                      Home
+                      {t("header.menu.home")}
                     </Link>
                   </li>
                   <li>
@@ -236,7 +243,7 @@ function Header() {
                       to="/aboutus"
                       className="text-gray-700 hover:text-blue-600"
                     >
-                      About Us
+                      {t("header.menu.aboutUs")}
                     </Link>
                   </li>
                   <li>
@@ -245,37 +252,37 @@ function Header() {
                       onClick={handleContactClick}
                       className="text-gray-700 hover:text-blue-600"
                     >
-                      Contact Us
+                      {t("header.menu.contactUs")}
                     </a>
+                  </li>
+                  <li>
+                    <Link
+                      to="/find-hospital"
+                      className="text-gray-700 hover:text-blue-600"
+                    >
+                      {t("header.menu.findHospital")}
+                    </Link>
                   </li>
                   <li className="relative" ref={servicesDropdownRef}>
                     <button
                       onClick={handleServicesClick}
                       className="flex items-center text-gray-700 hover:text-blue-600"
                     >
-                      Services
+                      {t("header.menu.exploreMore")}
                       <ChevronDown className="w-4 h-4 ml-1" />
                     </button>
                     {showServices && (
                       <div className="absolute left-0 mt-2 w-60 bg-white rounded-lg shadow-lg border py-1">
                         <Link
-                          to="/find-hospital"
-                          className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
-                          onClick={() => setShowServices(false)}
-                        >
-                          <div className="font-medium">Find Hospital</div>
-                          <div className="text-sm text-gray-600">
-                            Search for nearby veterinary hospitals
-                          </div>
-                        </Link>
-                        <Link
                           to="/bloglist"
                           className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
                           onClick={() => setShowServices(false)}
                         >
-                          <div className="font-medium">Blog</div>
+                          <div className="font-medium">
+                            {t("header.menu.blog")}
+                          </div>
                           <div className="text-sm text-gray-600">
-                            Read latest news and articles
+                            {t("header.menu.blogDesc")}
                           </div>
                         </Link>
                         <Link
@@ -283,9 +290,11 @@ function Header() {
                           className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
                           onClick={() => setShowServices(false)}
                         >
-                          <div className="font-medium">Community</div>
+                          <div className="font-medium">
+                            {t("header.menu.community")}
+                          </div>
                           <div className="text-sm text-gray-600">
-                            Join our pet lovers community
+                            {t("header.menu.communityDesc")}
                           </div>
                         </Link>
                         <Link
@@ -293,9 +302,11 @@ function Header() {
                           className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
                           onClick={() => setShowServices(false)}
                         >
-                          <div className="font-medium">Terms & Conditions</div>
+                          <div className="font-medium">
+                            {t("header.menu.terms")}
+                          </div>
                           <div className="text-sm text-gray-600">
-                            Read our terms of service
+                            {t("header.menu.termsDesc")}
                           </div>
                         </Link>
                       </div>
@@ -305,25 +316,92 @@ function Header() {
               </nav>
             </div>
             <div className="hidden lg:flex items-center space-x-6">
+              <Menu as="div" className="relative">
+                <Menu.Button className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg border border-gray-200 hover:bg-gray-50">
+                  {(() => {
+                    const Flag = languages.find(
+                      (lang) => lang.code === currentLanguage
+                    )?.flag;
+                    return Flag && <Flag className="h-4 w-5" />;
+                  })()}
+                  <span>
+                    {
+                      languages.find((lang) => lang.code === currentLanguage)
+                        ?.shortName
+                    }
+                  </span>
+                </Menu.Button>
+
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="py-1">
+                      {languages.map((language) => {
+                        const Flag = language.flag;
+                        return (
+                          <Menu.Item key={language.code}>
+                            {({ active }) => (
+                              <button
+                                onClick={() =>
+                                  handleLanguageChange(language.code)
+                                }
+                                className={`
+                                  ${active ? "bg-gray-50" : ""}
+                                  ${
+                                    currentLanguage === language.code
+                                      ? "text-blue-600"
+                                      : "text-gray-700"
+                                  }
+                                  group flex w-full items-center justify-between px-4 py-2 text-sm
+                                `}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <Flag className="h-4 w-5" />
+                                  <span className="font-medium">
+                                    {language.shortName}
+                                  </span>
+                                  <span className="text-gray-500">
+                                    {language.name}
+                                  </span>
+                                </div>
+                                {currentLanguage === language.code && (
+                                  <Check className="h-4 w-4" />
+                                )}
+                              </button>
+                            )}
+                          </Menu.Item>
+                        );
+                      })}
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
               {!isAuthenticated ? (
                 <>
                   <button
                     onClick={handleOpenLogin}
                     className="text-gray-700 hover:text-blue-600 font-medium"
                   >
-                    Login
+                    {t("header.auth.login")}
                   </button>
                   <button
                     onClick={handleOpenRegister}
                     className="bg-[#98E9E9] text-gray-700 px-4 py-2 rounded-lg hover:bg-[#7CD5D5]"
                   >
-                    Register
+                    {t("header.auth.register")}
                   </button>
                 </>
               ) : (
                 <div ref={dropdownRef} className="relative flex items-center">
                   <span className="mr-3 text-gray-700">
-                    Welcome,{" "}
+                    {t("header.auth.welcome")}
                     <span className="font-medium">{user?.full_name}</span>
                   </span>
 
@@ -355,14 +433,14 @@ function Header() {
                             to="/profile"
                             className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
                           >
-                            Profile
+                            {t("header.auth.profile")}
                           </Link>
 
                           <Link
                             to="/my-blogs"
                             className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
                           >
-                            My Blogs
+                            {t("header.auth.myBlogs")}
                           </Link>
 
                           {user.role === "ADMIN" && (
@@ -370,7 +448,7 @@ function Header() {
                               to="/admin"
                               className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
                             >
-                              Admin Dashboard
+                              {t("header.auth.admin")}
                             </Link>
                           )}
 
@@ -378,14 +456,14 @@ function Header() {
                             to="/setting"
                             className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
                           >
-                            Settings
+                            {t("header.auth.settings")}
                           </Link>
 
                           <button
                             onClick={handleLogout}
                             className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50"
                           >
-                            Sign Out
+                            {t("header.auth.signOut")}
                           </button>
                         </div>
                       </div>
@@ -398,7 +476,7 @@ function Header() {
               className="lg:hidden text-gray-700 p-2"
               onClick={toggleMenu}
             >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMenuOpen ? <X size={24} /> : <MenuIcon size={24} />}
             </button>
           </div>
         </div>
@@ -444,7 +522,7 @@ function Header() {
                       onClick={toggleMenu}
                     >
                       <Home className="w-5 h-5" />
-                      Home
+                      {t("header.menu.home")}
                     </Link>
                     <Link
                       to="/aboutus"
@@ -452,7 +530,7 @@ function Header() {
                       onClick={toggleMenu}
                     >
                       <Info className="w-5 h-5" />
-                      About Us
+                      {t("header.menu.aboutUs")}
                     </Link>
                     <Link
                       to="/contactus"
@@ -460,13 +538,13 @@ function Header() {
                       onClick={toggleMenu}
                     >
                       <Mail className="w-5 h-5" />
-                      Contact Us
+                      {t("header.menu.contactUs")}
                     </Link>
                   </div>
 
                   <div>
                     <div className="text-[#1A3C8E] uppercase text-sm font-medium px-3 mb-2">
-                      Services
+                      {t("header.menu.exploreMore")}
                     </div>
                     <div className="space-y-2">
                       <Link
@@ -475,7 +553,7 @@ function Header() {
                         onClick={toggleMenu}
                       >
                         <Search className="w-5 h-5" />
-                        Find Hospital
+                        {t("header.menu.findHospital")}
                       </Link>
                       <Link
                         to="/bloglist"
@@ -483,7 +561,7 @@ function Header() {
                         onClick={toggleMenu}
                       >
                         <FileText className="w-5 h-5" />
-                        Blog
+                        {t("header.menu.blog")}
                       </Link>
                       <Link
                         to="/community"
@@ -491,7 +569,7 @@ function Header() {
                         onClick={toggleMenu}
                       >
                         <Users className="w-5 h-5" />
-                        Community
+                        {t("header.menu.community")}
                       </Link>
                     </div>
                   </div>
@@ -499,7 +577,7 @@ function Header() {
                   {isAuthenticated ? (
                     <div className="space-y-2">
                       <div className="text-[#1A3C8E] uppercase text-sm font-medium px-3 mb-2">
-                        Account
+                        {t("header.auth.account")}
                       </div>
                       <Link
                         to="/profile"
@@ -507,7 +585,7 @@ function Header() {
                         onClick={toggleMenu}
                       >
                         <User className="w-5 h-5" />
-                        Profile
+                        {t("header.auth.profile")}
                       </Link>
                       <Link
                         to="/my-blogs"
@@ -515,7 +593,7 @@ function Header() {
                         onClick={toggleMenu}
                       >
                         <FileEdit className="w-5 h-5" />
-                        My Blogs
+                        {t("header.auth.myBlogs")}
                       </Link>
 
                       {user.role === "ADMIN" && (
@@ -525,7 +603,7 @@ function Header() {
                           onClick={toggleMenu}
                         >
                           <Settings className="w-5 h-5" />
-                          Admin Dashboard
+                          {t("header.auth.admin")}
                         </Link>
                       )}
 
@@ -534,7 +612,7 @@ function Header() {
                         className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg w-full"
                       >
                         <LogOut className="w-5 h-5" />
-                        Sign Out
+                        {t("header.auth.signOut")}
                       </button>
                     </div>
                   ) : (
@@ -546,7 +624,7 @@ function Header() {
                         }}
                         className="w-full px-4 py-2 text-[#1A3C8E] border border-[#1A3C8E] rounded-lg hover:bg-[#98E9E9]/20"
                       >
-                        Login
+                        {t("header.auth.login")}
                       </button>
                       <button
                         onClick={() => {
@@ -555,11 +633,43 @@ function Header() {
                         }}
                         className="w-full px-4 py-2 bg-[#1A3C8E] text-white rounded-lg hover:bg-[#1A3C8E]/90"
                       >
-                        Register
+                        {t("header.auth.register")}
                       </button>
                     </div>
                   )}
                 </nav>
+              </div>
+
+              <div className="px-6 py-4 border-t border-gray-200">
+                <div className="py-4 px-3">
+                  <div className="text-[#1A3C8E] uppercase text-sm font-medium mb-3">
+                    {t("header.menu.language")}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => i18n.changeLanguage("vi")}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                        i18n.language === "vi"
+                          ? "bg-[#1A3C8E] text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      <VN className="w-5 h-5" title="Tiếng Việt" />
+                      <span className="text-sm font-medium">Tiếng Việt</span>
+                    </button>
+                    <button
+                      onClick={() => i18n.changeLanguage("en")}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                        i18n.language === "en"
+                          ? "bg-[#1A3C8E] text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      <GB className="w-5 h-5" title="English" />
+                      <span className="text-sm font-medium">English</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </>

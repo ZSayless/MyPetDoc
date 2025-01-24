@@ -5,8 +5,10 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { getActiveBanners } from "../../services/homeService";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function HomeBanner() {
+  const { t } = useTranslation();
   const [banners, setBanners] = useState([]);
 
   useEffect(() => {

@@ -5,6 +5,7 @@ import { getHospitals } from "../../services/hospitalService";
 import { useTranslation } from "react-i18next";
 
 function HospitalList() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [hospitals, setHospitals] = useState([]);
@@ -24,7 +25,9 @@ function HospitalList() {
           rating: 5, // Giá trị cố định theo yêu cầu
           reviews: 5, // Giá trị cố định theo yêu cầu
           image: hospital.images[0]?.url, // Lấy ảnh đầu tiên
-          services: hospital.specialties ? hospital.specialties.split(',').map(s => s.trim()) : [],
+          services: hospital.specialties
+            ? hospital.specialties.split(",").map((s) => s.trim())
+            : [],
           slug: hospital.slug,
         }));
         setHospitals(formattedHospitals);
@@ -61,10 +64,10 @@ function HospitalList() {
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-[#1A3C8E] mb-2 md:mb-4">
-            List of Pet Hospital
+            {t("home.hospitalList.title")}
           </h2>
           <p className="text-sm md:text-base text-gray-600">
-            Find the best veterinary care for your beloved pets
+            {t("home.hospitalList.subtitle")}
           </p>
         </div>
 
@@ -72,7 +75,7 @@ function HospitalList() {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search hospitals..."
+              placeholder={t("home.hospitalList.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 md:pl-12 pr-4 py-2 md:py-3 border-2 rounded-full text-sm md:text-base focus:outline-none focus:border-[#98E9E9] transition-colors"

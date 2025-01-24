@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { HOSPITAL_SERVICES } from "../../constants/services";
 
 function AddHospital() {
   const { t } = useTranslation();
@@ -10,6 +11,21 @@ function AddHospital() {
   const [images, setImages] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
   const [mapUrl, setMapUrl] = useState("");
+
+  // Thêm state formData
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    services: [], // Mảng rỗng để lưu các services được chọn
+    weekdayStart: "",
+    weekdayEnd: "",
+    weekendStart: "",
+    weekendEnd: "",
+    description: "",
+    images: [],
+    mapUrl: "",
+  });
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -147,6 +163,16 @@ function AddHospital() {
                         type="checkbox"
                         name="services"
                         value={service}
+                        checked={formData.services.includes(service)}
+                        onChange={(e) => {
+                          const { checked, value } = e.target;
+                          setFormData((prev) => ({
+                            ...prev,
+                            services: checked
+                              ? [...prev.services, value]
+                              : prev.services.filter((s) => s !== value),
+                          }));
+                        }}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
                       <span className="text-sm">

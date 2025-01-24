@@ -5,6 +5,9 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import enTranslation from "./locales/en/translation.json";
 import viTranslation from "./locales/vi/translation.json";
 
+// Lấy ngôn ngữ từ localStorage, nếu không có thì dùng 'en'
+const savedLanguage = localStorage.getItem("language") || "en";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -17,10 +20,21 @@ i18n
         translation: viTranslation,
       },
     },
+    lng: savedLanguage, // Sử dụng ngôn ngữ đã lưu
     fallbackLng: "en",
+    detection: {
+      order: ["localStorage", "navigator"],
+      lookupLocalStorage: "language",
+      caches: ["localStorage"],
+    },
     interpolation: {
       escapeValue: false,
     },
   });
+
+// Lưu ngôn ngữ vào localStorage khi thay đổi
+i18n.on("languageChanged", (lng) => {
+  localStorage.setItem("language", lng);
+});
 
 export default i18n;
