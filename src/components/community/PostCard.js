@@ -1,12 +1,35 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import classNames from "classnames";
 
 function PostCard({ post, onLike, onComment, onDelete, onEdit }) {
   const { user } = useAuth();
   const [showOptions, setShowOptions] = useState(false);
   const isAuthor = user?.id === post.authorId;
+
+  const toggleOptions = useCallback(() => {
+    setShowOptions(prev => !prev);
+  }, []);
+
+  const handleLike = useCallback(() => {
+    onLike(post.id);
+  }, [onLike, post.id]);
+
+  const handleComment = useCallback(() => {
+    onComment(post);
+  }, [onComment, post]);
+
+  const handleDelete = useCallback(() => {
+    onDelete(post.id);
+    setShowOptions(false);
+  }, [onDelete, post.id]);
+
+  const handleEdit = useCallback(() => {
+    onEdit(post);
+    setShowOptions(false);
+  }, [onEdit, post]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
@@ -27,7 +50,7 @@ function PostCard({ post, onLike, onComment, onDelete, onEdit }) {
         {isAuthor && (
           <div className="relative">
             <button
-              onClick={() => setShowOptions(!showOptions)}
+              onClick={toggleOptions}
               className="p-2 hover:bg-gray-100 rounded-full"
             >
               <MoreHorizontal className="w-5 h-5" />
@@ -36,19 +59,13 @@ function PostCard({ post, onLike, onComment, onDelete, onEdit }) {
             {showOptions && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-10">
                 <button
-                  onClick={() => {
-                    onEdit(post);
-                    setShowOptions(false);
-                  }}
+                  onClick={handleEdit}
                   className="w-full px-4 py-2 text-left hover:bg-gray-100"
                 >
                   Edit Post
                 </button>
                 <button
-                  onClick={() => {
-                    onDelete(post.id);
-                    setShowOptions(false);
-                  }}
+                  onClick={handleDelete}
                   className="w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
                 >
                   Delete Post
@@ -74,16 +91,17 @@ function PostCard({ post, onLike, onComment, onDelete, onEdit }) {
       {/* Post Actions */}
       <div className="flex items-center gap-6 pt-4 border-t">
         <button
-          onClick={() => onLike(post.id)}
-          className={`flex items-center gap-2 ${
+          onClick={handleLike}
+          className={classNames(
+            "flex items-center gap-2",
             post.isLiked ? "text-red-500" : "text-gray-600 hover:text-[#1A3C8E]"
-          }`}
+          )}
         >
-          <Heart className={`w-5 h-5 ${post.isLiked ? "fill-current" : ""}`} />
+          <Heart className={classNames("w-5 h-5", post.isLiked && "fill-current")} />
           <span>{post.likes}</span>
         </button>
         <button
-          onClick={() => onComment(post)}
+          onClick={handleComment}
           className="flex items-center gap-2 text-gray-600 hover:text-[#1A3C8E]"
         >
           <MessageCircle className="w-5 h-5" />

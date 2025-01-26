@@ -18,10 +18,10 @@
   },
   "auth": {
     "loginButton": "Login",
-    "loginTitle": "Welcome Back!", 
+    "loginTitle": "Welcome Back!",
     "loginSubtitle": "Please sign in to continue",
     "emailPlaceholder": "Enter your email",
-    "passwordPlaceholder": "Enter your password", 
+    "passwordPlaceholder": "Enter your password",
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot Password?",
     "signIn": "Sign In",
@@ -33,7 +33,7 @@
     "termsAgree": "By continuing, you agree to our",
     "termsLink": "Terms of Service",
     "forgotPasswordModal": {
-      "title": "Forgot Password?", 
+      "title": "Forgot Password?",
       "subtitle": "Enter your email and we will send you a recovery code.",
       "emailLabel": "Email",
       "back": "Back",
@@ -251,7 +251,7 @@
     },
     "list": {
       "title": "Pet Care Blog",
-      "subtitle": "Discover tips, stories and expert advice for your beloved pets", 
+      "subtitle": "Discover tips, stories and expert advice for your beloved pets",
       "shareStory": "Share Your Story",
       "search": {
         "placeholder": "Search articles...",
@@ -327,7 +327,9 @@
       "updateFailed": "Failed to update post",
       "deleteFailed": "Failed to delete post",
       "unauthorized": "You are not authorized to perform this action",
-      "commentFailed": "Failed to add comment. Please try again"
+      "commentFailed": "Failed to add comment. Please try again",
+      "loginRequired": "Please login to use this feature",
+      "likeError": "An error occurred. Please try again later."
     }
   },
   "findHospital": {

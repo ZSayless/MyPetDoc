@@ -1,7 +1,7 @@
 {
   "auth": {
     "login": "Đăng nhập",
-    "loginButton": "Đăng nhập", 
+    "loginButton": "Đăng nhập",
     "loginTitle": "Chào Mừng Trở Lại!",
     "loginSubtitle": "Vui lòng đăng nhập để tiếp tục",
     "emailPlaceholder": "Nhập email của bạn",
@@ -17,7 +17,7 @@
       "title": "Tạo Tài Khoản",
       "subtitle": "Đăng ký để bắt đầu",
       "firstName": "Tên",
-      "lastName": "Họ", 
+      "lastName": "Họ",
       "email": "Nhập email của bạn",
       "phone": "Số điện thoại",
       "phonePlaceholder": "Nhập số điện thoại của bạn",
@@ -241,7 +241,7 @@
     },
     "list": {
       "title": "Blog Chăm Sóc Thú Cưng",
-      "subtitle": "Khám phá mẹo, câu chuyện và lời khuyên chuyên gia cho thú cưng của bạn", 
+      "subtitle": "Khám phá mẹo, câu chuyện và lời khuyên chuyên gia cho thú cưng của bạn",
       "shareStory": "Chia Sẻ Câu Chuyện",
       "search": {
         "placeholder": "Tìm kiếm bài viết...",
@@ -317,7 +317,9 @@
       "updateFailed": "Không thể cập nhật bài viết",
       "deleteFailed": "Không thể xóa bài viết",
       "unauthorized": "Bạn không có quyền thực hiện hành động này",
-      "commentFailed": "Không thể gửi bình luận. Vui lòng thử lại"
+      "commentFailed": "Không thể gửi bình luận. Vui lòng thử lại",
+      "loginRequired": "Vui lòng đăng nhập để thực hiện tính năng này",
+      "likeError": "Có lỗi xảy ra khi thực hiện. Vui lòng thử lại sau."
     }
   },
   "findHospital": {

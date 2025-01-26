@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 import CreatePostModal from "./CreatePostModal";
 import CommentModal from "./CommentModal";
 import EditPostModal from "./EditPostModal";
@@ -68,7 +69,8 @@ const storageService = {
 
 function CommunityList() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const { addToast } = useToast();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -156,19 +158,43 @@ function CommunityList() {
     }
   };
 
-  const handleLike = (postId) => {
-    setPosts(
-      posts.map((post) => {
-        if (post.id === postId) {
-          return {
-            ...post,
-            isLiked: !post.isLiked,
-            likes: post.isLiked ? post.likes - 1 : post.likes + 1,
-          };
-        }
-        return post;
-      })
-    );
+  const handleLike = async (postId) => {
+    if (!isAuthenticated) {
+      addToast({
+        type: "error",
+        message: t("community.errors.loginRequired"),
+      });
+      return;
+    }
+
+    try {
+      const post = posts.find((p) => p.id === postId);
+      if (post.isLiked) {
+        await communityService.unlikePost(postId);
+      } else {
+        await communityService.likePost(postId);
+      }
+
+      // Update UI
+      setPosts(
+        posts.map((post) => {
+          if (post.id === postId) {
+            return {
+              ...post,
+              likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+              isLiked: !post.isLiked,
+            };
+          }
+          return post;
+        })
+      );
+    } catch (error) {
+      console.error("Error liking/unliking post:", error);
+      addToast({
+        type: "error",
+        message: t("community.errors.likeError"),
+      });
+    }
   };
 
   const handleComment = (post) => {
@@ -366,7 +392,10 @@ function CommunityList() {
                   <div className="flex items-center justify-center gap-4 text-white">
                     <button
                       onClick={() => handleLike(post.id)}
-                      className="flex items-center gap-1"
+                      className={`flex items-center gap-1 ${
+                        !isAuthenticated ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                      disabled={!isAuthenticated}
                     >
                       <Heart
                         className={`w-5 h-5 ${

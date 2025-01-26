@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { X, Send } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
