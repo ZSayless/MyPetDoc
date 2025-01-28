@@ -5,56 +5,9 @@ import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import CreatePostModal from "./CreatePostModal";
 import CommentModal from "./CommentModal";
-import EditPostModal from "./EditPostModal";
+import PostCard from "./PostCard";
+import { communityService } from "../../services/communityService";
 
-// Mock service tạm thời
-const communityService = {
-  getPosts: () => {
-    return Promise.resolve([
-      {
-        id: 1,
-        content: "My lovely cat! 🐱",
-        image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
-        author: {
-          id: 1,
-          name: "John Doe",
-          avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-        },
-        likes: 12,
-        comments: [],
-        createdAt: "2 hours ago",
-        isLiked: false,
-      },
-    ]);
-  },
-
-  createPost: (postData) => {
-    // Tạo post mới với dữ liệu đã được xử lý
-    return Promise.resolve({
-      id: Date.now(),
-      content: postData.content,
-      image: postData.image, // Sử dụng base64 string trực tiếp
-      author: postData.author,
-      likes: 0,
-      comments: [],
-      createdAt: "Just now",
-      isLiked: false,
-    });
-  },
-
-  deletePost: (postId) => {
-    return Promise.resolve(true);
-  },
-  updatePost: (postId, updatedData) => {
-    return Promise.resolve({
-      id: postId,
-      ...updatedData,
-      createdAt: "Just now (edited)",
-    });
-  },
-  likePost: (postId) => Promise.resolve(true),
-  unlikePost: (postId) => Promise.resolve(true),
-};
 
 // Mock storage service
 const storageService = {
@@ -73,41 +26,47 @@ function CommunityList() {
   const { addToast } = useToast();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const isAdmin = user?.role === "admin";
   const menuRefs = useRef({});
 
   // Helper functions
   const isAuthor = (post) => user?.id === post.author?.id;
-  const canEdit = (post) => isAuthor(post);
   const canDelete = (post) => isAdmin || isAuthor(post);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        // Lấy posts từ localStorage trước
-        const savedPosts = storageService.getPosts();
-        if (savedPosts && savedPosts.length > 0) {
-          setPosts(savedPosts);
+  const fetchPosts = async (pageNumber = 1) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await communityService.getPosts(pageNumber);
+
+      if (response.success) {
+        const newPosts = response.data.posts;
+        if (pageNumber === 1) {
+          setPosts(newPosts);
         } else {
-          // Nếu không có trong localStorage thì lấy từ service
-          const data = await communityService.getPosts();
-          setPosts(data);
-          // Lưu vào localStorage
-          storageService.savePosts(data);
+          setPosts(prev => [...prev, ...newPosts]);
         }
-      } catch (err) {
-        setError(t("community.errors.loadFailed"));
-      } finally {
-        setLoading(false);
+        
+        setHasMore(pageNumber < response.data.pagination.totalPages);
+      } else {
+        setError(response.message);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      setError(error.response?.data?.message || t("community.fetchError"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPosts();
   }, []);
 
@@ -132,28 +91,37 @@ function CommunityList() {
   const handleNewPost = async (postData) => {
     try {
       if (!user) {
-        alert(t("community.hero.loginRequired"));
+        addToast({
+          type: "error", 
+          message: t("community.hero.loginRequired")
+        });
         return false;
       }
 
-      const newPost = await communityService.createPost({
-        content: postData.content,
-        image: postData.image, // Đã là base64 string từ CreatePostModal
-        author: {
-          id: user?.id || 1,
-          name: user?.name || "Anonymous",
-          avatar: user?.avatar || "https://via.placeholder.com/150",
-        },
-      });
-
-      const updatedPosts = [newPost, ...posts];
-      setPosts(updatedPosts);
-      storageService.savePosts(updatedPosts);
-      setIsCreateModalOpen(false);
-      return true;
+      const response = await communityService.createPost(postData);
+      
+      if (response.success) {
+        // Thêm bài đăng mới vào đầu danh sách
+        setPosts(prevPosts => [response.data, ...prevPosts]);
+        setIsCreateModalOpen(false);
+        addToast({
+          type: "success",
+          message: t("community.post.createSuccess")
+        });
+        return true;
+      } else {
+        addToast({
+          type: "error",
+          message: response.message || t("community.errors.createFailed")
+        });
+        return false;
+      }
     } catch (error) {
       console.error("Error creating post:", error);
-      alert(t("community.errors.createFailed"));
+      addToast({
+        type: "error",
+        message: error.response?.data?.message || t("community.errors.createFailed")
+      });
       return false;
     }
   };
@@ -169,85 +137,101 @@ function CommunityList() {
 
     try {
       const post = posts.find((p) => p.id === postId);
-      if (post.isLiked) {
+      const checkLikeResponse = await communityService.checkLikedPost(postId);
+      const hasLiked = checkLikeResponse.data.data.hasLiked;
+
+      if (hasLiked) {
         await communityService.unlikePost(postId);
       } else {
         await communityService.likePost(postId);
       }
 
-      // Update UI
-      setPosts(
-        posts.map((post) => {
-          if (post.id === postId) {
-            return {
-              ...post,
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1,
-              isLiked: !post.isLiked,
-            };
-          }
-          return post;
-        })
-      );
+      // Fetch lại post để lấy số like chính xác
+      const response = await communityService.getPostBySlug(post.slug);
+      if (response.success) {
+        // Cập nhật UI với số like mới từ server
+        setPosts(prevPosts =>
+          prevPosts.map(p => {
+            if (p.id === postId) {
+              return {
+                ...p,
+                likes_count: response.data.likes_count,
+                isLiked: !hasLiked
+              };
+            }
+            return p;
+          })
+        );
+      }
+
     } catch (error) {
       console.error("Error liking/unliking post:", error);
       addToast({
         type: "error",
-        message: t("community.errors.likeError"),
+        message: error.response?.data?.message || t("community.errors.likeError")
       });
     }
   };
+
+  // Chỉ fetch trạng thái like một lần sau khi lấy posts
+  useEffect(() => {
+    const fetchPostsLikeStatus = async () => {
+      if (!isAuthenticated || posts.length === 0) return;
+
+      try {
+        const likeStatusPromises = posts.map(post => 
+          communityService.checkLikedPost(post.id)
+        );
+        
+        const likeStatuses = await Promise.all(likeStatusPromises);
+        
+        setPosts(prevPosts => 
+          prevPosts.map((post, index) => ({
+            ...post,
+            isLiked: likeStatuses[index].data.data.hasLiked
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching posts like status:", error);
+      }
+    };
+
+    fetchPostsLikeStatus();
+  }, [posts.length, isAuthenticated]);
 
   const handleComment = (post) => {
     setSelectedPost(post);
     setIsCommentModalOpen(true);
   };
 
-  const handleEdit = (post) => {
-    setOpenMenuId(null);
-    setSelectedPost(post);
-    setIsEditModalOpen(true);
-  };
-
   const handleDelete = async (postId) => {
     if (window.confirm(t("community.post.deleteConfirm"))) {
       try {
-        const post = posts.find((p) => p.id === postId);
-        if (!canDelete(post)) {
-          alert(t("community.errors.unauthorized"));
-          return;
+        const response = await communityService.deletePost(postId);
+        
+        if (response.success) {
+          // Cập nhật state để xóa bài đăng khỏi danh sách
+          setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+          addToast({
+            type: "success",
+            message: response.message || "Post deleted successfully"
+          });
+        } else {
+          addToast({
+            type: "error",
+            message: response.message || "Failed to delete post"
+          });
         }
-        await communityService.deletePost(postId);
-        const updatedPosts = posts.filter((p) => p.id !== postId);
-        setPosts(updatedPosts);
-        storageService.savePosts(updatedPosts);
-        setOpenMenuId(null);
       } catch (error) {
         console.error("Error deleting post:", error);
-        alert(t("community.errors.deleteFailed"));
+        addToast({
+          type: "error",
+          message: error.response?.data?.message || "Failed to delete post"
+        });
       }
     }
   };
 
-  const handleUpdatePost = async (updatedData) => {
-    try {
-      const updatedPost = await communityService.updatePost(selectedPost.id, {
-        ...selectedPost,
-        ...updatedData,
-      });
-
-      const updatedPosts = posts.map((post) =>
-        post.id === updatedPost.id ? updatedPost : post
-      );
-      setPosts(updatedPosts);
-      storageService.savePosts(updatedPosts);
-
-      setIsEditModalOpen(false);
-      setSelectedPost(null);
-    } catch (error) {
-      console.error("Error updating post:", error);
-      alert(t("community.errors.updateFailed"));
-    }
-  };
 
   const handleCommentAdded = (postId, newComment) => {
     setPosts((prevPosts) => {
@@ -304,121 +288,13 @@ function CommunityList() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
-              <div
-                key={post.id}
-                className="aspect-square bg-white rounded-lg shadow-sm overflow-hidden relative group"
-              >
-                <img
-                  src={post.image}
-                  alt={post.content}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-4">
-                  {/* Post Header with Edit/Delete */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={
-                          post.author?.avatar ||
-                          "https://via.placeholder.com/150"
-                        }
-                        alt={post.author?.name || "Anonymous"}
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                      <div className="text-white">
-                        <p className="font-semibold text-sm">
-                          {post.author?.name || "Anonymous"}
-                        </p>
-                        <p className="text-xs opacity-75">{post.createdAt}</p>
-                      </div>
-                    </div>
-
-                    {/* Show Edit/Delete buttons only for post author */}
-                    {(canEdit(post) || canDelete(post)) && (
-                      <div className="relative">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setOpenMenuId(
-                              openMenuId === post.id ? null : post.id
-                            );
-                          }}
-                          className="p-1 text-white hover:bg-white/20 rounded-full"
-                        >
-                          <MoreHorizontal className="w-5 h-5" />
-                        </button>
-
-                        {openMenuId === post.id && (
-                          <div
-                            ref={(el) => (menuRefs.current[post.id] = el)}
-                            className="absolute right-0 mt-1 w-32 bg-white rounded-lg shadow-lg py-1 z-10"
-                          >
-                            {canEdit(post) && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEdit(post);
-                                }}
-                                className="w-full px-4 py-2 text-left hover:bg-gray-100"
-                              >
-                                {t("community.menu.edit")}
-                              </button>
-                            )}
-                            {canDelete(post) && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDelete(post.id);
-                                }}
-                                className="w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
-                              >
-                                {t("community.menu.delete")}
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Post Content - Centered */}
-                  <div className="flex-1 flex items-center justify-center">
-                    <p className="text-white text-center text-sm line-clamp-3 max-w-[80%]">
-                      {post.content}
-                    </p>
-                  </div>
-
-                  {/* Post Actions */}
-                  <div className="flex items-center justify-center gap-4 text-white">
-                    <button
-                      onClick={() => handleLike(post.id)}
-                      className={`flex items-center gap-1 ${
-                        !isAuthenticated ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
-                      disabled={!isAuthenticated}
-                    >
-                      <Heart
-                        className={`w-5 h-5 ${
-                          post.isLiked ? "fill-current text-red-500" : ""
-                        }`}
-                      />
-                      <span>
-                        {post.likes} {t("community.post.likes")}
-                      </span>
-                    </button>
-                    <button
-                      onClick={() => handleComment(post)}
-                      className="flex items-center gap-1"
-                    >
-                      <MessageCircle className="w-5 h-5" />
-                      <span>
-                        {post.comments?.length || post.commentsCount || 0}{" "}
-                        {t("community.post.comments")}
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <PostCard 
+                key={post.id} 
+                post={post}
+                onLike={handleLike}
+                onComment={handleComment}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         </div>
@@ -435,15 +311,6 @@ function CommunityList() {
         onClose={() => setIsCommentModalOpen(false)}
         post={selectedPost}
         onCommentAdded={handleCommentAdded}
-      />
-      <EditPostModal
-        isOpen={isEditModalOpen}
-        onClose={() => {
-          setIsEditModalOpen(false);
-          setSelectedPost(null);
-        }}
-        post={selectedPost}
-        onUpdate={handleUpdatePost}
       />
     </div>
   );

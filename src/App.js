@@ -126,7 +126,7 @@ function App() {
               }
             />
             <Route
-              path="/community/post/:postId"
+              path="/community/post/:slug"
               element={
                 <MainLayout>
                   <PostDetail />
