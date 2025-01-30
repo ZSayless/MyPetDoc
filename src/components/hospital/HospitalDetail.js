@@ -5,12 +5,14 @@ import Login from "../login/Login";
 import { useAuth } from "../../context/AuthContext";
 import WriteReviewModal from "./WriteReviewModal";
 import Reviews from "./Reviews";
-import { getHospitalDetail } from "../../services/hospitalService";
+import { getHospitalDetail, toggleLikeHospitalImage, checkImageLikeStatus } from "../../services/hospitalService";
 import { useTranslation } from "react-i18next";
 import { HOSPITAL_SERVICES } from "../../constants/services";
+import { useToast } from "../../context/ToastContext";
 
 const HospitalDetail = () => {
   const { slug } = useParams();
+  const { t } = useTranslation();
   const [hospital, setHospital] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,23 +30,25 @@ const HospitalDetail = () => {
   const { isAuthenticated, login, user, logout } = useAuth();
   const [loginSuccessCallback, setLoginSuccessCallback] = useState(null);
   const [showWriteReview, setShowWriteReview] = useState(false);
+  const [imageLikes, setImageLikes] = useState({});
+  const { addToast } = useToast();
 
   // Fetch hospital data
   useEffect(() => {
     const fetchHospitalDetail = async () => {
       try {
         setLoading(true);
-        console.log("Fetching details for slug:", slug);
         const response = await getHospitalDetail(slug);
 
         if (response.status === "success" && response.data) {
           const data = response.data;
+          
           // Format dữ liệu
           const formattedHospital = {
             id: data.id,
             name: data.name,
-            specialization: data.specialties
-              ? data.specialties.split(",").map((s) => s.trim())
+            specialization: data.specialties 
+              ? data.specialties.split(",").map(s => s.trim()) 
               : [],
             address: data.address,
             phone: data.phone,
@@ -52,28 +56,21 @@ const HospitalDetail = () => {
             website: data.link_website,
             mapUrl: data.map_location,
             description: data.description,
-            workingHours: [
-              {
-                days: "Monday - Sunday",
-                time: data.operating_hours,
-              },
-            ],
-            services: data.specialties
-              ? data.specialties
-                  .split(",")
-                  .map((s) => s.trim())
-                  // Chỉ lấy những service có trong danh sách HOSPITAL_SERVICES
-                  .filter(
-                    (service) =>
-                      HOSPITAL_SERVICES.includes(service) ||
-                      service === "All Hospitals"
-                  )
+            workingHours: [{
+              days: "Monday - Sunday",
+              time: data.operating_hours,
+            }],
+            services: data.specialties 
+              ? data.specialties.split(",").map(s => s.trim())
+              .filter(service => HOSPITAL_SERVICES.includes(service) || service === "All Hospitals")
               : [],
-            gallery: data.images.map((url, index) => ({
-              id: index + 1,
-              url: url,
-              title: `Hospital Image ${index + 1}`,
-              likes: 0,
+            // Cập nhật cách xử lý ảnh theo cấu trúc API mới
+            gallery: data.images.map(image => ({
+              id: image.id,
+              url: image.url,
+              title: `Hospital Image ${image.id}`,
+              likes: image.likesCount || 0, 
+              createdAt: image.createdAt,
               comments: [],
             })),
             rating: data.average_rating || 0,
@@ -84,13 +81,13 @@ const HospitalDetail = () => {
           };
 
           setHospital(formattedHospital);
-          setReviews(data.recent_reviews || []);
           setGalleryPhotos(formattedHospital.gallery);
+          setReviews(data.recent_reviews || []);
         }
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching hospital:", error);
         setError(error.message || "Failed to load hospital details");
+      } finally {
         setLoading(false);
       }
     };
@@ -99,6 +96,26 @@ const HospitalDetail = () => {
       fetchHospitalDetail();
     }
   }, [slug]);
+
+  // Thêm useEffect để kiểm tra trạng thái like của từng ảnh
+  useEffect(() => {
+    const checkLikeStatuses = async () => {
+      if (isAuthenticated && hospital?.id && galleryPhotos.length > 0) {
+        try {
+          const likeStatuses = {};
+          for (const photo of galleryPhotos) {
+            const response = await checkImageLikeStatus(hospital.id, photo.id);
+            likeStatuses[photo.id] = response.data.hasLiked;
+          }
+          setImageLikes(likeStatuses);
+        } catch (error) {
+          console.error("Error checking like statuses:", error);
+        }
+      }
+    };
+
+    checkLikeStatuses();
+  }, [isAuthenticated, hospital?.id, galleryPhotos]);
 
   // Handle view all reviews
   const handleViewAllReviews = () => {
@@ -215,30 +232,51 @@ const HospitalDetail = () => {
     // TODO: Call API to add/remove from favorites
   };
 
-  const handleLikePhoto = (photoId) => {
-    if (!isAuthenticated || !user) {
+  const handleLikeImage = async (imageId) => {
+    if (!isAuthenticated) {
+      addToast({
+        type: "error",
+        message: t("Please login to like images")
+      });
       setShowLoginModal(true);
       return;
     }
 
-    if (userLikes.has(photoId)) {
-      setUserLikes((prev) => {
-        const newLikes = new Set(prev);
-        newLikes.delete(photoId);
-        return newLikes;
+    try {
+      const response = await toggleLikeHospitalImage(hospital.id, imageId);
+      
+      // Cập nhật UI dựa trên trạng thái like hiện tại
+      const currentLikeStatus = imageLikes[imageId];
+      
+      setGalleryPhotos(prevPhotos =>
+        prevPhotos.map(photo =>
+          photo.id === imageId
+            ? {
+                ...photo,
+                likes: currentLikeStatus ? photo.likes - 1 : photo.likes + 1
+              }
+            : photo
+        )
+      );
+      
+      // Cập nhật trạng thái like mới
+      setImageLikes(prev => ({
+        ...prev,
+        [imageId]: !currentLikeStatus
+      }));
+
+      addToast({
+        type: "success",
+        message: !currentLikeStatus 
+          ? t("Liked successfully") 
+          : t("Unliked successfully")
       });
-      setGalleryPhotos((prev) =>
-        prev.map((photo) =>
-          photo.id === photoId ? { ...photo, likes: photo.likes - 1 } : photo
-        )
-      );
-    } else {
-      setUserLikes((prev) => new Set([...prev, photoId]));
-      setGalleryPhotos((prev) =>
-        prev.map((photo) =>
-          photo.id === photoId ? { ...photo, likes: photo.likes + 1 } : photo
-        )
-      );
+    } catch (error) {
+      console.error("Error toggling like:", error);
+      addToast({
+        type: "error",
+        message: t("Error liking image")
+      });
     }
   };
 
@@ -534,87 +572,43 @@ const HospitalDetail = () => {
       </div>
 
       {/* Gallery Section */}
-      <section className="py-6 md:py-8 bg-white">
+      <section className="py-8">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-4 md:mb-6">
-            <h2 className="text-lg md:text-2xl font-bold">Photo Gallery</h2>
-            <button
-              onClick={() => setShowUploadModal(true)}
-              className="px-3 py-1.5 md:px-4 md:py-2 bg-blue-600 text-white text-sm md:text-base rounded-lg hover:bg-blue-700"
-            >
-              Upload Photo
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <h2 className="text-2xl font-bold mb-6">{t("Gallery")}</h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {galleryPhotos.map((photo) => (
-              <div
-                key={photo.id}
-                className="bg-gray-50 rounded-xl overflow-hidden"
-              >
-                <div
-                  className="aspect-video relative group cursor-pointer"
-                  onClick={() => handlePhotoClick(photo)}
-                >
-                  <img
-                    src={photo.url}
-                    alt={photo.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-white">View Details</span>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-medium">{photo.title}</h3>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleReport("photo", photo.id);
-                        }}
-                        className="text-gray-400 hover:text-gray-600"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleLikePhoto(photo.id);
-                        }}
-                        className={`flex items-center gap-1 ${
-                          userLikes.has(photo.id)
-                            ? "text-red-500"
-                            : "text-gray-400 hover:text-red-500"
+              <div key={photo.id} className="relative group">
+                <img
+                  src={photo.url}
+                  alt={photo.title}
+                  className="w-full h-64 object-cover rounded-lg shadow-md"
+                  onClick={() => setSelectedPhoto(photo)}
+                />
+                
+                {/* Overlay with like button and created time */}
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-200 rounded-lg">
+                  <div className="absolute bottom-2 right-2 flex items-center gap-2">
+                    <span className="text-xs text-white bg-black/50 px-2 py-1 rounded-full">
+                      {new Date(photo.createdAt).toLocaleDateString()}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleLikeImage(photo.id);
+                      }}
+                      className="flex items-center gap-1 bg-white/90 px-3 py-1.5 rounded-full text-sm hover:bg-white"
+                    >
+                      <Heart
+                        className={`w-4 h-4 ${
+                          imageLikes[photo.id] 
+                            ? "fill-red-500 text-red-500" 
+                            : "text-gray-600"
                         }`}
-                      >
-                        <Heart
-                          size={16}
-                          fill={
-                            userLikes.has(photo.id) ? "currentColor" : "none"
-                          }
-                        />
-                        <span>{photo.likes}</span>
-                      </button>
-                    </div>
+                      />
+                      <span>{photo.likes}</span>
+                    </button>
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {photo.comments.length} comments
-                  </p>
                 </div>
               </div>
             ))}
@@ -699,9 +693,9 @@ const HospitalDetail = () => {
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="font-medium">{selectedPhoto.title}</h4>
                   <button
-                    onClick={() => handleLikePhoto(selectedPhoto.id)}
+                    onClick={() => handleLikeImage(selectedPhoto.id)}
                     className={`flex items-center gap-1 ${
-                      userLikes.has(selectedPhoto.id)
+                      imageLikes[selectedPhoto.id]
                         ? "text-red-500"
                         : "text-gray-400 hover:text-red-500"
                     }`}
@@ -709,9 +703,7 @@ const HospitalDetail = () => {
                     <Heart
                       size={16}
                       fill={
-                        userLikes.has(selectedPhoto.id)
-                          ? "currentColor"
-                          : "none"
+                        imageLikes[selectedPhoto.id] ? "currentColor" : "none"
                       }
                     />
                     <span>{selectedPhoto.likes}</span>

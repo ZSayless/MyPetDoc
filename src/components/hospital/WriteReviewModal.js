@@ -9,7 +9,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [review, setReview] = useState("");
-  const [images, setImages] = useState([]);
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const canSubmitReview = useCallback(() => {
@@ -43,9 +43,9 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
       const formData = new FormData();
       formData.append("rating", rating);
       formData.append("content", review);
-      images.forEach((image) => {
-        formData.append("images", image);
-      });
+      if (image) {
+        formData.append("image", image);
+      }
 
       // Create new review object
       const newReview = {
@@ -56,7 +56,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
         },
         rating,
         content: review,
-        images: images.map((img) => URL.createObjectURL(img)),
+        images: image ? [URL.createObjectURL(image)] : [],
         createdAt: new Date().toISOString(),
         verified: true,
       };
@@ -66,7 +66,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
       // Reset form
       setRating(0);
       setReview("");
-      setImages([]);
+      setImage(null);
       onClose();
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -77,31 +77,27 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
   };
 
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length + images.length > 5) {
-      alert(t("hospitalDetail.modal.writeReview.errors.maxImages"));
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Kiểm tra kích thước file (ví dụ: giới hạn 2MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert(t("hospitalDetail.modal.writeReview.errors.imageSizeLimit"));
       return;
     }
-    setImages([...images, ...files]);
+
+    // Kiểm tra định dạng file
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      alert(t("hospitalDetail.modal.writeReview.errors.imageTypeInvalid"));
+      return;
+    }
+
+    setImage(file);
   };
 
-  const removeImage = (index) => {
-    setImages(images.filter((_, i) => i !== index));
-  };
-
-  const handleImageClick = (index) => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const newImages = [...images];
-        newImages[index] = file;
-        setImages(newImages);
-      }
-    };
-    input.click();
+  const removeImage = () => {
+    setImage(null);
   };
 
   if (!isOpen) return null;
@@ -169,43 +165,42 @@ function WriteReviewModal({ isOpen, onClose, onSubmit }) {
           {/* Image Upload */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("hospitalDetail.modal.writeReview.addPhotos")}
+              {t("hospitalDetail.modal.writeReview.addPhoto")}
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageChange}
-              className="hidden"
-              id="review-images"
-              disabled={images.length >= 5}
-            />
-            <label
-              htmlFor="review-images"
-              className="block w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-blue-500"
-            >
-              {t("hospitalDetail.modal.writeReview.uploadPhotos")}
-            </label>
-
-            {/* Image Preview */}
-            {images.length > 0 && (
-              <div className="grid grid-cols-5 gap-2 mt-4">
-                {images.map((image, index) => (
-                  <div key={index} className="relative">
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-20 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
+            
+            {image ? (
+              <div className="relative inline-block">
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt="Preview"
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <div>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg"
+                  onChange={handleImageChange}
+                  className="hidden"
+                  id="review-image"
+                />
+                <label
+                  htmlFor="review-image"
+                  className="block w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-blue-500"
+                >
+                  {t("hospitalDetail.modal.writeReview.uploadPhoto")}
+                  <p className="text-sm text-gray-500 mt-1">
+                    {t("hospitalDetail.modal.writeReview.imageLimit")}
+                  </p>
+                </label>
               </div>
             )}
           </div>

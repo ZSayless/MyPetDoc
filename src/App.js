@@ -132,7 +132,7 @@ function App() {
                   <PostDetail />
                 </MainLayout>
               }
-            />
+            />  
             <Route
               path="/setting"
               element={
