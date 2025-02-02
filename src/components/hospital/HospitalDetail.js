@@ -47,9 +47,7 @@ const HospitalDetail = () => {
           const formattedHospital = {
             id: data.id,
             name: data.name,
-            specialization: data.specialties 
-              ? data.specialties.split(",").map(s => s.trim()) 
-              : [],
+            specialties: data.specialties, // Lưu trực tiếp chuỗi specialties
             address: data.address,
             phone: data.phone,
             email: data.email,
@@ -60,11 +58,10 @@ const HospitalDetail = () => {
               days: "Monday - Sunday",
               time: data.operating_hours,
             }],
+            // Bỏ phần filter không cần thiết
             services: data.specialties 
               ? data.specialties.split(",").map(s => s.trim())
-              .filter(service => HOSPITAL_SERVICES.includes(service) || service === "All Hospitals")
               : [],
-            // Cập nhật cách xử lý ảnh theo cấu trúc API mới
             gallery: data.images.map(image => ({
               id: image.id,
               url: image.url,
@@ -425,9 +422,6 @@ const HospitalDetail = () => {
               <h1 className="text-xl md:text-2xl font-bold text-gray-900">
                 {hospital.name}
               </h1>
-              <p className="text-sm md:text-base text-gray-600 mt-1">
-                {hospital.specialization}
-              </p>
             </div>
 
             {/* Action Buttons */}
@@ -488,6 +482,41 @@ const HospitalDetail = () => {
         </div>
       </section>
 
+      {/* Description Section */}
+      <section className="py-8 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              {t("Thông tin bệnh viện")}
+            </h2>
+            <div className="prose prose-lg text-gray-600">
+              <p>{hospital?.description}</p>
+            </div>
+
+            {/* Additional Information */}
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {hospital?.department && (
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    {t("Phòng khám")}
+                  </h3>
+                  <p className="text-gray-600">{hospital.department}</p>
+                </div>
+              )}
+              
+              {hospital?.specialties && (
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    {t("Chuyên khoa")}
+                  </h3>
+                  <p className="text-gray-600">{hospital.specialties}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6 md:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -534,13 +563,13 @@ const HospitalDetail = () => {
             {/* Services */}
             <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
               <h2 className="text-lg md:text-xl font-semibold mb-4">
-                Services
+                {t("hospitalDetail.services.title")}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                {hospital.services?.map((service, index) => (
-                  <div key={index} className="flex items-center gap-2">
+                {hospital?.services?.map((service, index) => (
+                  <div key={index} className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg">
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                    <span className="text-sm md:text-base">{service}</span>
+                    <span className="text-sm md:text-base text-gray-700">{service}</span>
                   </div>
                 ))}
               </div>
@@ -906,6 +935,7 @@ const HospitalDetail = () => {
         isOpen={showWriteReview}
         onClose={() => setShowWriteReview(false)}
         onSubmit={handleSubmitReview}
+        hospitalId={hospital.id}
       />
     </div>
   );

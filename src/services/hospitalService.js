@@ -55,9 +55,70 @@ const checkImageLikeStatus = async (hospitalId, imageId) => {
   }
 };
 
+const createReview = async (formData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(
+      `${BASE_URL}/reviews`,
+      formData,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating review:", error);
+    throw error;
+  }
+};
+
+const updateReview = async (reviewId, formData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.put(
+      `${BASE_URL}/reviews/${reviewId}`,
+      formData,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating review:", error);
+    throw error;
+  }
+};
+
+const getUserReviews = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(
+      `${BASE_URL}/reviews/user/me`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user reviews:", error);
+    throw error;
+  }
+};
+
 export { 
   getHospitals, 
   getHospitalDetail,
   toggleLikeHospitalImage,
-  checkImageLikeStatus 
+  checkImageLikeStatus,
+  createReview,
+  updateReview,
+  getUserReviews
 };
