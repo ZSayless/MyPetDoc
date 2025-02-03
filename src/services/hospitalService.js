@@ -113,6 +113,44 @@ const getUserReviews = async () => {
   }
 };
 
+const reportReview = async (reviewId, reason) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(
+      `${BASE_URL}/reviews/${reviewId}/report`,
+      { reason },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error reporting review:", error);
+    throw error;
+  }
+};
+
+const toggleDeleteReview = async (reviewId) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.patch(
+      `${BASE_URL}/reviews/${reviewId}/toggle-delete`,
+      {},
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error toggling delete review:", error);
+    throw error;
+  }
+};
+
 export { 
   getHospitals, 
   getHospitalDetail,
@@ -120,5 +158,7 @@ export {
   checkImageLikeStatus,
   createReview,
   updateReview,
-  getUserReviews
+  getUserReviews,
+  reportReview,
+  toggleDeleteReview
 };

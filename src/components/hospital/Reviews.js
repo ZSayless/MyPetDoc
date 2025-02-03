@@ -1,9 +1,128 @@
 import { useState } from "react";
-import { Star } from "lucide-react";
+import { Star, Flag, MoreVertical, X, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../context/AuthContext";
+import { reportReview, toggleDeleteReview } from "../../services/hospitalService";
 
-const Reviews = ({ reviews, stats, onViewAll, onWriteReview }) => {
+const ReportModal = ({ isOpen, onClose, onSubmit, loading }) => {
+  const [reason, setReason] = useState("");
   const { t } = useTranslation();
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center">
+      <div className="bg-white rounded-lg w-full max-w-md mx-4 p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">
+            {t("hospitalDetail.reviews.report.title")}
+          </h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {t("hospitalDetail.reviews.report.reason")}
+          </label>
+          <input
+            type="text"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder={t("hospitalDetail.reviews.report.reasonPlaceholder")}
+          />
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
+          >
+            {t("Cancel")}
+          </button>
+          <button
+            onClick={() => onSubmit(reason)}
+            disabled={!reason.trim() || loading}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+          >
+            {loading ? t("Submitting...") : t("Submit")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
+  const [showOptionsFor, setShowOptionsFor] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleReportClick = (review) => {
+    setSelectedReview(review);
+    setShowReportModal(true);
+    setShowOptionsFor(null);
+  };
+
+  const handleReport = async (reason) => {
+    if (!reason.trim()) return;
+
+    try {
+      setLoading(true);
+      await reportReview(selectedReview.id, reason);
+      
+      // Cập nhật UI để hiển thị review đã được báo cáo
+      setReviews(prevReviews =>
+        prevReviews.map(review =>
+          review.id === selectedReview.id
+            ? { ...review, is_reported: true }
+            : review
+        )
+      );
+
+      setShowReportModal(false);
+      setSelectedReview(null);
+      alert(t("hospitalDetail.reviews.report.success"));
+    } catch (error) {
+      console.error("Error reporting review:", error);
+      alert(t("hospitalDetail.reviews.report.error"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteReview = async (review) => {
+    if (!window.confirm(t("hospitalDetail.reviews.deleteConfirm"))) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await toggleDeleteReview(review.id);
+      
+      // Cập nhật UI để hiển thị review đã bị xóa
+      setReviews(prevReviews =>
+        prevReviews.map(r =>
+          r.id === review.id
+            ? { ...r, is_deleted: !r.is_deleted }
+            : r
+        )
+      );
+
+      alert(t("hospitalDetail.reviews.deleteSuccess"));
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      alert(t("hospitalDetail.reviews.deleteError"));
+    } finally {
+      setLoading(false);
+      setShowOptionsFor(null);
+    }
+  };
 
   const renderRatingStats = () => {
     const ratingLabels = {
@@ -108,56 +227,94 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview }) => {
                   </time>
                 </div>
               </div>
+
+              {user && (user.id === review.user_id || user.role === 'ADMIN') && !review.is_deleted && (
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowOptionsFor(showOptionsFor === review.id ? null : review.id);
+                    }}
+                    className="p-1 hover:bg-gray-100 rounded-full"
+                  >
+                    <MoreVertical className="w-5 h-5 text-gray-500" />
+                  </button>
+
+                  {showOptionsFor === review.id && (
+                    <div className="absolute right-0 mt-1 bg-white rounded-lg shadow-lg py-1 z-10 min-w-[120px]">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteReview(review);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 text-red-500"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        {t("Delete")}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
-            <p className="mt-4 text-gray-600">{review.comment}</p>
-
-            {/* Hiển thị ảnh đính kèm */}
-            {review.photo && (
-              <div className="mt-4">
-                <img
-                  src={review.photo.image_url}
-                  alt={review.photo.description || "Review image"}
-                  className="w-full max-w-md h-48 object-cover rounded-lg"
-                />
-                {review.photo.description && (
-                  <p className="mt-2 text-sm text-gray-500">
-                    {review.photo.description}
-                  </p>
-                )}
+            {/* Hiển thị trạng thái đã xóa */}
+            {review.is_deleted ? (
+              <div className="mt-4 text-gray-500 italic">
+                {t("hospitalDetail.reviews.deletedMessage")}
               </div>
-            )}
+            ) : (
+              <>
+                <p className="mt-4 text-gray-600">{review.comment}</p>
 
-            {/* Hiển thị phản hồi từ bệnh viện */}
-            {review.reply && (
-              <div className="mt-4 pl-4 border-l-2 border-gray-200">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-full overflow-hidden">
-                      {review.replied_by_avatar ? (
-                        <img
-                          src={review.replied_by_avatar}
-                          alt={review.replied_by_name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-blue-100 flex items-center justify-center">
-                          <span className="text-blue-600 font-medium text-sm">H</span>
+                {/* Hiển thị ảnh đính kèm */}
+                {review.photo && (
+                  <div className="mt-4">
+                    <img
+                      src={review.photo.image_url}
+                      alt={review.photo.description || "Review image"}
+                      className="w-full max-w-md h-48 object-cover rounded-lg"
+                    />
+                    {review.photo.description && (
+                      <p className="mt-2 text-sm text-gray-500">
+                        {review.photo.description}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Hiển thị phản hồi từ bệnh viện */}
+                {review.reply && (
+                  <div className="mt-4 pl-4 border-l-2 border-gray-200">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-full overflow-hidden">
+                          {review.replied_by_avatar ? (
+                            <img
+                              src={review.replied_by_avatar}
+                              alt={review.replied_by_name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+                              <span className="text-blue-600 font-medium text-sm">H</span>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">
-                        {review.replied_by_name || "Hospital Response"}
-                      </h4>
-                      <time className="text-xs text-gray-500">
-                        {new Date(review.replied_at).toLocaleDateString()}
-                      </time>
+                        <div>
+                          <h4 className="font-medium text-sm">
+                            {review.replied_by_name || "Hospital Response"}
+                          </h4>
+                          <time className="text-xs text-gray-500">
+                            {new Date(review.replied_at).toLocaleDateString()}
+                          </time>
+                        </div>
+                      </div>
+                      <p className="text-gray-600 text-sm">{review.reply}</p>
                     </div>
                   </div>
-                  <p className="text-gray-600 text-sm">{review.reply}</p>
-                </div>
-              </div>
+                )}
+              </>
             )}
           </div>
         ))}
@@ -171,6 +328,17 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview }) => {
           {t("hospitalDetail.reviews.viewAll")}
         </button>
       )}
+
+      {/* Report Modal */}
+      <ReportModal
+        isOpen={showReportModal}
+        onClose={() => {
+          setShowReportModal(false);
+          setSelectedReview(null);
+        }}
+        onSubmit={handleReport}
+        loading={loading}
+      />
     </div>
   );
 };

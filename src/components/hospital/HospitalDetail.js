@@ -97,7 +97,7 @@ const HospitalDetail = () => {
   // Thêm useEffect để kiểm tra trạng thái like của từng ảnh
   useEffect(() => {
     const checkLikeStatuses = async () => {
-      if (isAuthenticated && hospital?.id && galleryPhotos.length > 0) {
+      if (isAuthenticated && user && hospital?.id && galleryPhotos.length > 0) {
         try {
           const likeStatuses = {};
           for (const photo of galleryPhotos) {
@@ -112,7 +112,7 @@ const HospitalDetail = () => {
     };
 
     checkLikeStatuses();
-  }, [isAuthenticated, hospital?.id, galleryPhotos]);
+  }, [isAuthenticated, user, hospital?.id, galleryPhotos]);
 
   // Handle view all reviews
   const handleViewAllReviews = () => {
@@ -578,7 +578,7 @@ const HospitalDetail = () => {
 
           {/* Right Column - Map */}
           <div className="h-[300px] lg:h-auto">
-            {hospital.mapUrl ? (
+            {hospital.mapUrl && hospital.mapUrl.startsWith('http') ? (
               <iframe
                 src={hospital.mapUrl}
                 width="100%"
@@ -649,6 +649,7 @@ const HospitalDetail = () => {
       <div className="max-w-5xl mx-auto px-4 py-8">
         <Reviews
           reviews={reviews}
+          setReviews={setReviews}
           onViewAll={handleViewAllReviews}
           onWriteReview={() => setShowWriteReview(true)}
         />
