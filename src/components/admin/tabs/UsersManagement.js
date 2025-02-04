@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Search, Eye, Edit, Trash2, Plus } from "lucide-react";
+import { Search, Eye, Edit, Trash2, Plus, Lock, Unlock, ToggleLeft, ToggleRight, X, RefreshCw } from "lucide-react";
 import {
   deleteUser,
   updateUserStatus,
   addUser,
   updateUser,
+  fetchUsers,
+  toggleLockUser,
+  toggleActiveUser,
+  toggleDeleteUser,
+  fetchDeletedUsers,
 } from "../../../redux/slices/adminSlice";
+import { useToast } from "../../../context/ToastContext";
 
 function UsersManagement() {
   const dispatch = useDispatch();
-  const { users } = useSelector((state) => state.admin);
+  const { users, deletedUsers, pagination, loading, error } = useSelector((state) => state.admin);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [isAddingUser, setIsAddingUser] = useState(false);
@@ -28,6 +34,23 @@ function UsersManagement() {
     password: "",
     confirmPassword: "",
   });
+  const { addToast } = useToast();
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    mode: 'view', // 'view' | 'edit' | 'add'
+    user: null
+  });
+  const [activeTab, setActiveTab] = useState('active'); // 'active' | 'trash'
+
+  useEffect(() => {
+    // Fetch users dựa theo tab đang active
+    if (activeTab === 'active') {
+      dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
+    } else {
+      dispatch(fetchDeletedUsers({ page: pagination.page, limit: pagination.limit }));
+    }
+  }, [dispatch, pagination.page, pagination.limit, activeTab]);
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -41,20 +64,113 @@ function UsersManagement() {
   };
 
   const handleView = (user) => {
-    setSelectedUser(user);
-    setModalMode("view");
+    setModalState({
+      isOpen: true,
+      mode: 'view',
+      user
+    });
   };
 
   const handleEdit = (user) => {
-    setSelectedUser(user);
-    setModalMode("edit");
+    setModalState({
+      isOpen: true,
+      mode: 'edit',
+      user
+    });
   };
 
-  const filteredUsers = users.filter(
+  const handleToggleLock = async (userId, currentLockState) => {
+    try {
+      const message = currentLockState 
+        ? "Bạn có chắc muốn mở khóa người dùng này?" 
+        : "Bạn có chắc muốn khóa người dùng này?";
+      
+      if (window.confirm(message)) {
+        await dispatch(toggleLockUser(userId)).unwrap();
+        addToast({
+          type: "success",
+          message: `${currentLockState ? 'Mở khóa' : 'Khóa'} người dùng thành công!`
+        });
+      }
+    } catch (error) {
+      const errorMessage = error?.message || "Có lỗi xảy ra khi thực hiện thao tác!";
+      addToast({
+        type: "error",
+        message: errorMessage
+      });
+    }
+  };
+
+  const handleToggleActive = async (userId, currentActiveState) => {
+    try {
+      if (!userId) {
+        addToast({
+          type: "error",
+          message: "Không tìm thấy ID người dùng!"
+        });
+        return;
+      }
+
+      const message = currentActiveState 
+        ? "Bạn có chắc muốn vô hiệu hóa người dùng này?" 
+        : "Bạn có chắc muốn kích hoạt người dùng này?";
+      
+      if (window.confirm(message)) {
+        await dispatch(toggleActiveUser(userId)).unwrap();
+        addToast({
+          type: "success",
+          message: `${currentActiveState ? 'Vô hiệu hóa' : 'Kích hoạt'} người dùng thành công!`
+        });
+        // Refresh cả 2 danh sách
+        if (activeTab === 'active') {
+          dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
+        } else {
+          dispatch(fetchDeletedUsers({ page: pagination.page, limit: pagination.limit }));
+        }
+      }
+    } catch (error) {
+      // Lấy message từ error object được trả về từ BE
+      const errorMessage = error?.message || "Có lỗi xảy ra khi thực hiện thao tác!";
+      addToast({
+        type: "error",
+        message: errorMessage
+      });
+    }
+  };
+
+  const handleToggleDelete = async (userId, isDeleted) => {
+    try {
+      const message = isDeleted
+        ? "Bạn có chắc muốn khôi phục người dùng này?"
+        : "Bạn có chắc muốn xóa người dùng này?";
+
+      if (window.confirm(message)) {
+        await dispatch(toggleDeleteUser(userId)).unwrap();
+        addToast({
+          type: "success",
+          message: `${isDeleted ? 'Khôi phục' : 'Xóa'} người dùng thành công!`
+        });
+        // Refresh cả 2 danh sách
+        if (activeTab === 'active') {
+          dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
+        } else {
+          dispatch(fetchDeletedUsers({ page: pagination.page, limit: pagination.limit }));
+        }
+      }
+    } catch (error) {
+      const errorMessage = error?.message || "Có lỗi xảy ra khi thực hiện thao tác!";
+      addToast({
+        type: "error",
+        message: errorMessage
+      });
+    }
+  };
+
+  const filteredUsers = users ? users.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      (user?.full_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (user?.email?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+  ) : [];
 
   const handleAddUser = () => {
     setErrors({
@@ -133,41 +249,85 @@ function UsersManagement() {
     dispatch(updateUser(updatedUser));
   };
 
+  const closeModal = () => {
+    setModalState({
+      isOpen: false,
+      mode: 'view',
+      user: null
+    });
+  };
+
+  // Render data dựa theo tab
+  const displayedUsers = activeTab === 'active' ? users : deletedUsers;
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-500 p-4">
+        Error loading users: {error}
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 md:p-6">
-      {/* Header with Add User button */}
-      <div className="flex justify-between items-center mb-6">
-        {/* <h1 className="text-2xl font-bold">Users Management</h1> */}
+      {/* Tabs */}
+      <div className="flex space-x-4 mb-4">
         <button
-          onClick={() => setIsAddingUser(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
+          onClick={() => setActiveTab('active')}
+          className={`px-4 py-2 rounded-lg ${
+            activeTab === 'active'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
         >
-          <Plus size={20} />
-          Add User
+          Danh sách người dùng
+          {activeTab === 'active' && users.length > 0 && (
+            <span className="ml-2 px-2 py-1 text-xs bg-white text-blue-600 rounded-full">
+              {users.length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('trash')}
+          className={`px-4 py-2 rounded-lg ${
+            activeTab === 'trash'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          Thùng rác
+          {activeTab === 'trash' && deletedUsers.length > 0 && (
+            <span className="ml-2 px-2 py-1 text-xs bg-white text-blue-600 rounded-full">
+              {deletedUsers.length}
+            </span>
+          )}
         </button>
       </div>
 
-      {/* Search */}
-      <div className="mb-6">
-        <div className="relative">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            size={20}
-          />
-          <input
-            type="text"
-            placeholder="Search users..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#98E9E9]"
-          />
+      {/* Empty State */}
+      {displayedUsers.length === 0 && !loading && (
+        <div className="text-center py-8">
+          <p className="text-gray-500">
+            {activeTab === 'active' 
+              ? 'Không có người dùng nào'
+              : 'Thùng rác trống'
+            }
+          </p>
         </div>
-      </div>
+      )}
 
-      {/* Desktop Table View */}
-      <div className="hidden md:block">
-        <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
-          <table className="w-full">
+      {/* Table */}
+      {displayedUsers.length > 0 && (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white rounded-lg">
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -185,15 +345,18 @@ function UsersManagement() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Join Date
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Lock Status
+                </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
+              {displayedUsers.map((user) => (
                 <tr key={user.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{user.full_name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
@@ -207,18 +370,51 @@ function UsersManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        user.status === "active"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {user.status}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        user.is_active 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {user.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                      <button
+                        onClick={() => handleToggleActive(user.id, user.is_active)}
+                        className={`p-1 rounded hover:bg-gray-100 ${
+                          user.is_active 
+                            ? 'text-green-600' 
+                            : 'text-red-600'
+                        }`}
+                        title={user.is_active ? 'Deactivate user' : 'Activate user'}
+                      >
+                        {user.is_active ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+                      </button>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {user.joinDate}
+                    {new Date(user.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        user.is_locked 
+                          ? 'bg-red-100 text-red-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {user.is_locked ? 'Locked' : 'Unlocked'}
+                      </span>
+                      <button
+                        onClick={() => handleToggleLock(user.id, user.is_locked)}
+                        className={`p-1 rounded hover:bg-gray-100 ${
+                          user.is_locked 
+                            ? 'text-green-600' 
+                            : 'text-red-600'
+                        }`}
+                        title={user.is_locked ? 'Unlock user' : 'Lock user'}
+                      >
+                        {user.is_locked ? <Unlock size={18} /> : <Lock size={18} />}
+                      </button>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center justify-end space-x-2">
@@ -235,10 +431,13 @@ function UsersManagement() {
                         <Edit size={18} />
                       </button>
                       <button
-                        onClick={() => handleDelete(user.id)}
-                        className="text-red-600 hover:text-red-900"
+                        onClick={() => handleToggleDelete(user.id, user.is_deleted)}
+                        className={`text-red-600 hover:text-red-900 ${
+                          user.is_deleted ? 'text-green-600' : ''
+                        }`}
+                        title={user.is_deleted ? 'Khôi phục' : 'Xóa'}
                       >
-                        <Trash2 size={18} />
+                        {user.is_deleted ? <RefreshCw size={18} /> : <Trash2 size={18} />}
                       </button>
                     </div>
                   </td>
@@ -247,368 +446,324 @@ function UsersManagement() {
             </tbody>
           </table>
         </div>
-      </div>
-
-      {/* Mobile Card View */}
-      <div className="md:hidden space-y-4">
-        {filteredUsers.map((user) => (
-          <div key={user.id} className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <h3 className="font-medium text-gray-900">{user.name}</h3>
-                <p className="text-sm text-gray-500">{user.email}</p>
-              </div>
-              <span
-                className={`px-2 py-1 text-xs rounded-full ${
-                  user.status === "active"
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-              >
-                {user.status}
-              </span>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <div>
-                <span
-                  className={`px-2 py-1 text-xs rounded-full ${
-                    user.role === "Admin"
-                      ? "bg-purple-100 text-purple-800"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {user.role}
-                </span>
-                <p className="text-sm text-gray-500 mt-1">
-                  Joined: {user.joinDate}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleView(user)}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
-                >
-                  <Eye size={18} />
-                </button>
-                <button
-                  onClick={() => handleEdit(user)}
-                  className="p-2 text-green-600 hover:bg-green-50 rounded-full"
-                >
-                  <Edit size={18} />
-                </button>
-                <button
-                  onClick={() => handleDelete(user.id)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-full"
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Modal Overlay */}
-      {(isAddingUser || selectedUser) && (
-        <div className="fixed inset-0 bg-black/50 z-[100]" />
       )}
 
-      {/* Add User Modal */}
-      {isAddingUser && (
-        <div className="fixed inset-0 flex items-center justify-center z-[110]">
-          <div className="bg-white rounded-lg w-full max-w-md mx-4">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-6">Add New User</h2>
+      {/* Pagination */}
+      <div className="mt-4 flex justify-between items-center">
+        <div className="text-sm text-gray-500">
+          Showing {pagination.page} of {pagination.totalPages} pages
+        </div>
+        <div className="flex gap-2">
+          <button
+            disabled={pagination.page === 1}
+            onClick={() => dispatch(fetchUsers({ page: pagination.page - 1, limit: pagination.limit, isDeleted: activeTab === 'trash' }))}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <button
+            disabled={pagination.page === pagination.totalPages}
+            onClick={() => dispatch(fetchUsers({ page: pagination.page + 1, limit: pagination.limit, isDeleted: activeTab === 'trash' }))}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={newUser.name}
-                    onChange={(e) => {
-                      setNewUser({ ...newUser, name: e.target.value });
-                      if (errors.name) setErrors({ ...errors, name: "" });
-                    }}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                      errors.name ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-500">{errors.name}</p>
-                  )}
-                </div>
+      {/* User Detail Modal */}
+      {modalState.isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            {/* Modal Header - Fixed */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Thông tin người dùng
+              </h3>
+              <button
+                onClick={closeModal}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    value={newUser.email}
-                    onChange={(e) => {
-                      setNewUser({ ...newUser, email: e.target.value });
-                      if (errors.email) setErrors({ ...errors, email: "" });
-                    }}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                      errors.email ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-                  )}
-                </div>
+            {/* Modal Body - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Content sections */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Thông tin cơ bản</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">ID</label>
+                    <input
+                      type="text"
+                      value={modalState.user.id}
+                      readOnly
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Role
-                  </label>
-                  <select
-                    value={newUser.role}
-                    onChange={(e) =>
-                      setNewUser({ ...newUser, role: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="Pet Owner">Pet Owner</option>
-                    <option value="Veterinarian">Veterinarian</option>
-                    <option value="Admin">Admin</option>
-                  </select>
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Họ và tên
+                    </label>
+                    <input
+                      type="text"
+                      value={modalState.user.full_name}
+                      readOnly={modalState.mode === 'view'}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Password *
-                  </label>
-                  <input
-                    type="password"
-                    value={newUser.password}
-                    onChange={(e) => {
-                      setNewUser({ ...newUser, password: e.target.value });
-                      if (errors.password)
-                        setErrors({ ...errors, password: "" });
-                    }}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                      errors.password ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                  {errors.password && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.password}
-                    </p>
-                  )}
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={modalState.user.email}
+                      readOnly={modalState.mode === 'view'}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Confirm Password *
-                  </label>
-                  <input
-                    type="password"
-                    value={newUser.confirmPassword}
-                    onChange={(e) => {
-                      setNewUser({
-                        ...newUser,
-                        confirmPassword: e.target.value,
-                      });
-                      if (errors.confirmPassword)
-                        setErrors({ ...errors, confirmPassword: "" });
-                    }}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                      errors.confirmPassword
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }`}
-                  />
-                  {errors.confirmPassword && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.confirmPassword}
-                    </p>
-                  )}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Số điện thoại
+                    </label>
+                    <input
+                      type="text"
+                      value={modalState.user.phone_number || 'Chưa cập nhật'}
+                      readOnly={modalState.mode === 'view'}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Vai trò
+                    </label>
+                    <input
+                      type="text"
+                      value={modalState.user.role}
+                      readOnly={modalState.mode === 'view'}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Hospital ID
+                    </label>
+                    <input
+                      type="text"
+                      value={modalState.user.hospital_id || 'Chưa có'}
+                      readOnly
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-6 flex justify-end gap-2">
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Trạng thái tài khoản</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Trạng thái hoạt động
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        modalState.user.is_active 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {modalState.user.is_active ? 'Đang hoạt động' : 'Đã vô hiệu hóa'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Trạng thái khóa
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        modalState.user.is_locked 
+                          ? 'bg-red-100 text-red-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {modalState.user.is_locked ? 'Đã khóa' : 'Không khóa'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Đã xóa
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        modalState.user.is_deleted 
+                          ? 'bg-red-100 text-red-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {modalState.user.is_deleted ? 'Đã xóa' : 'Chưa xóa'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Version
+                    </label>
+                    <input
+                      type="text"
+                      value={modalState.user.version}
+                      readOnly
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Thông tin xác thực</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Google ID
+                    </label>
+                    <input
+                      type="text"
+                      value={modalState.user.google_id || 'Không có'}
+                      readOnly
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Avatar
+                    </label>
+                    {modalState.user.avatar ? (
+                      <img 
+                        src={modalState.user.avatar}
+                        alt="Avatar"
+                        className="w-20 h-20 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-gray-500">Chưa có avatar</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {(modalState.user.pet_type || modalState.user.pet_age || modalState.user.pet_photo || modalState.user.pet_notes) && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500 mb-4">Thông tin thú cưng</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Loại thú cưng
+                      </label>
+                      <input
+                        type="text"
+                        value={modalState.user.pet_type || 'Chưa cập nhật'}
+                        readOnly
+                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Tuổi thú cưng
+                      </label>
+                      <input
+                        type="text"
+                        value={modalState.user.pet_age ? `${modalState.user.pet_age} tuổi` : 'Chưa cập nhật'}
+                        readOnly
+                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Ghi chú
+                      </label>
+                      <input
+                        type="text"
+                        value={modalState.user.pet_notes || 'Không có ghi chú'}
+                        readOnly
+                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+
+                    {modalState.user.pet_photo && (
+                      <div className="col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Ảnh thú cưng
+                        </label>
+                        <img 
+                          src={modalState.user.pet_photo}
+                          alt="Pet"
+                          className="w-32 h-32 object-cover rounded-lg"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Thời gian</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Ngày tạo
+                    </label>
+                    <input
+                      type="text"
+                      value={new Date(modalState.user.created_at).toLocaleString()}
+                      readOnly
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cập nhật lần cuối
+                    </label>
+                    <input
+                      type="text"
+                      value={new Date(modalState.user.updated_at).toLocaleString()}
+                      readOnly
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer - Fixed */}
+            <div className="flex items-center justify-end gap-3 p-4 border-t bg-gray-50">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Đóng
+              </button>
+              {modalState.mode !== 'view' && (
                 <button
                   onClick={() => {
-                    setIsAddingUser(false);
-                    setNewUser({
-                      name: "",
-                      email: "",
-                      role: "Pet Owner",
-                      password: "",
-                      confirmPassword: "",
-                    });
+                    modalState.mode === 'edit' ? handleUpdateUser(modalState.user) : handleAddUser();
                   }}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
                 >
-                  Cancel
+                  {modalState.mode === 'edit' ? 'Lưu thay đổi' : 'Thêm người dùng'}
                 </button>
-                <button
-                  onClick={handleAddUser}
-                  className="px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
-                >
-                  Add User
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* View/Edit User Modal */}
-      {selectedUser && (
-        <div className="fixed inset-0 flex items-center justify-center z-[110]">
-          <div className="bg-white rounded-lg w-full max-w-md mx-4">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-6">
-                {modalMode === "view" ? "User Details" : "Edit User"}
-              </h2>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    value={selectedUser.name}
-                    onChange={(e) =>
-                      modalMode === "edit" &&
-                      setSelectedUser({ ...selectedUser, name: e.target.value })
-                    }
-                    readOnly={modalMode === "view"}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg ${
-                      modalMode === "view"
-                        ? "bg-gray-50"
-                        : "focus:ring-2 focus:ring-blue-500"
-                    }`}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={selectedUser.email}
-                    onChange={(e) =>
-                      modalMode === "edit" &&
-                      setSelectedUser({
-                        ...selectedUser,
-                        email: e.target.value,
-                      })
-                    }
-                    readOnly={modalMode === "view"}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg ${
-                      modalMode === "view"
-                        ? "bg-gray-50"
-                        : "focus:ring-2 focus:ring-blue-500"
-                    }`}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Role
-                  </label>
-                  {modalMode === "view" ? (
-                    <input
-                      type="text"
-                      value={selectedUser.role}
-                      readOnly
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
-                    />
-                  ) : (
-                    <select
-                      value={selectedUser.role}
-                      onChange={(e) =>
-                        setSelectedUser({
-                          ...selectedUser,
-                          role: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="Pet Owner">Pet Owner</option>
-                      <option value="Veterinarian">Veterinarian</option>
-                      <option value="Admin">Admin</option>
-                    </select>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Status
-                  </label>
-                  {modalMode === "view" ? (
-                    <input
-                      type="text"
-                      value={selectedUser.status}
-                      readOnly
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
-                    />
-                  ) : (
-                    <select
-                      value={selectedUser.status}
-                      onChange={(e) =>
-                        setSelectedUser({
-                          ...selectedUser,
-                          status: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                    </select>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end gap-2">
-                {modalMode === "view" ? (
-                  <>
-                    <button
-                      onClick={() => setSelectedUser(null)}
-                      className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-                    >
-                      Close
-                    </button>
-                    <button
-                      onClick={() => setModalMode("edit")}
-                      className="px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
-                    >
-                      Edit
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => {
-                        setModalMode("view");
-                        setSelectedUser({ ...selectedUser }); // Reset changes
-                      }}
-                      className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() => {
-                        handleUpdateUser(selectedUser);
-                        setSelectedUser(null);
-                      }}
-                      className="px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
-                    >
-                      Save Changes
-                    </button>
-                  </>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </div>

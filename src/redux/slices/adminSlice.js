@@ -1,15 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
-  mockUsers,
   mockHospitals,
   mockBlogs,
   mockReports,
   mockMessages,
   mockPendingApprovals,
 } from "../../data/mockData";
+import { adminService } from '../../services/adminService';
 
 const initialState = {
-  users: mockUsers || [],
+  users: [],
+  deletedUsers: [],
   hospitals: mockHospitals || [],
   blogs: mockBlogs || [],
   reports: mockReports || [],
@@ -39,7 +40,79 @@ const initialState = {
   loading: false,
   error: null,
   contactMessages: [],
+  pagination: {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1
+  },
 };
+
+export const fetchUsers = createAsyncThunk(
+  'admin/fetchUsers',
+  async ({ page, limit, isDeleted = false }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getUsers(page, limit, isDeleted);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleDeleteUser = createAsyncThunk(
+  'admin/toggleDeleteUser',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleDeleteUser(userId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleLockUser = createAsyncThunk(
+  'admin/toggleLockUser',
+  async (userId, { rejectWithValue }) => {
+    try {
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+      const response = await adminService.toggleLockUser(userId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleActiveUser = createAsyncThunk(
+  'admin/toggleActiveUser',
+  async (userId, { rejectWithValue }) => {
+    try {
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+      const response = await adminService.toggleActiveUser(userId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchDeletedUsers = createAsyncThunk(
+  'admin/fetchDeletedUsers',
+  async ({ page, limit }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getDeletedUsers(page, limit);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
 const adminSlice = createSlice({
   name: "admin",
@@ -169,6 +242,63 @@ const adminSlice = createSlice({
       }
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload.users;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(toggleLockUser.fulfilled, (state, action) => {
+        const user = state.users.find(u => u.id === action.payload.userId);
+        if (user) {
+          user.is_locked = !user.is_locked;
+        }
+      })
+      .addCase(toggleActiveUser.fulfilled, (state, action) => {
+        const user = state.users.find(u => u.id === action.payload.userId);
+        if (user) {
+          user.is_active = !user.is_active;
+        }
+      })
+      .addCase(fetchDeletedUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchDeletedUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload && action.payload.data) {
+          state.deletedUsers = action.payload.data.users || [];
+          state.pagination = action.payload.data.pagination || {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 1
+          };
+        } else {
+          state.deletedUsers = [];
+          state.pagination = {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 1
+          };
+        }
+      })
+      .addCase(fetchDeletedUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.deletedUsers = [];
+      });
+  }
 });
 
 export const {
