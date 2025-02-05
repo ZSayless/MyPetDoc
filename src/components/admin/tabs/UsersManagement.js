@@ -1,16 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Search, Eye, Edit, Trash2, Plus, Lock, Unlock, ToggleLeft, ToggleRight, X, RefreshCw } from "lucide-react";
 import {
   deleteUser,
   updateUserStatus,
   addUser,
-  updateUser,
+  updateUserInfo,
   fetchUsers,
   toggleLockUser,
   toggleActiveUser,
   toggleDeleteUser,
   fetchDeletedUsers,
+  createUser,
+  deleteUserPermanently,
 } from "../../../redux/slices/adminSlice";
 import { useToast } from "../../../context/ToastContext";
 
@@ -21,19 +23,15 @@ function UsersManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isAddingUser, setIsAddingUser] = useState(false);
   const [newUser, setNewUser] = useState({
-    name: "",
-    email: "",
-    role: "Pet Owner", // Default role
-    password: "",
-    confirmPassword: "",
+    email: '',
+    full_name: '',
+    password: '',
+    role: 'GENERAL_USER',
+    avatar: null,
+    phone_number: ''
   });
   const [modalMode, setModalMode] = useState("view"); // "view" hoặc "edit"
-  const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [errors, setErrors] = useState({});
   const { addToast } = useToast();
   const [showUserModal, setShowUserModal] = useState(false);
   const [modalState, setModalState] = useState({
@@ -42,6 +40,25 @@ function UsersManagement() {
     user: null
   });
   const [activeTab, setActiveTab] = useState('active'); // 'active' | 'trash'
+  const [lockTab, setLockTab] = useState('active'); // 'active' | 'trash'
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const fileInputRef = useRef(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    email: '',
+    full_name: '',
+    password: '',
+    role: '',
+    phone_number: '',
+    pet_type: '',
+    pet_age: '',
+    pet_notes: '',
+    is_active: true,
+    is_locked: false,
+    avatar: null,
+    pet_photo: null
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     // Fetch users dựa theo tab đang active
@@ -72,11 +89,11 @@ function UsersManagement() {
   };
 
   const handleEdit = (user) => {
-    setModalState({
-      isOpen: true,
-      mode: 'edit',
-      user
+    setEditForm({
+      ...user,
+      password: '' // Không hiển thị mật khẩu cũ
     });
+    setShowEditModal(true);
   };
 
   const handleToggleLock = async (userId, currentLockState) => {
@@ -91,6 +108,12 @@ function UsersManagement() {
           type: "success",
           message: `${currentLockState ? 'Mở khóa' : 'Khóa'} người dùng thành công!`
         });
+        // Refresh cả 2 danh sách
+        if (lockTab === 'active') {
+          dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
+        } else {
+          dispatch(fetchDeletedUsers({ page: pagination.page, limit: pagination.limit }));
+        }
       }
     } catch (error) {
       const errorMessage = error?.message || "Có lỗi xảy ra khi thực hiện thao tác!";
@@ -166,11 +189,43 @@ function UsersManagement() {
     }
   };
 
-  const filteredUsers = users ? users.filter(
-    (user) =>
-      (user?.full_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (user?.email?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-  ) : [];
+  const handlePermanentDelete = async (userId) => {
+    try {
+      // Hiển thị dialog xác nhận
+      const confirmed = window.confirm(
+        'Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này? Hành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.'
+      );
+
+      if (!confirmed) return;
+
+      const result = await dispatch(deleteUserPermanently(userId)).unwrap();
+      
+      addToast({
+        type: 'success',
+        message: `Xóa người dùng thành công! Đã xóa: ${Object.entries(result.data.relations)
+          .map(([key, value]) => `${value} ${key}`)
+          .join(', ')}`
+      });
+    } catch (error) {
+      addToast({
+        type: 'error',
+        message: error.message || 'Có lỗi xảy ra khi xóa người dùng'
+      });
+    }
+  };
+
+  // Lọc users dựa trên searchTerm
+  const filteredUsers = useMemo(() => {
+    const currentUsers = activeTab === 'active' ? users : deletedUsers;
+    if (!searchTerm.trim()) return currentUsers;
+
+    const searchValue = searchTerm.toLowerCase().trim();
+    return currentUsers.filter(user => 
+      (user.full_name?.toLowerCase() || '').includes(searchValue) ||
+      (user.email?.toLowerCase() || '').includes(searchValue) ||
+      (user.phone_number || '').includes(searchValue)
+    );
+  }, [users, deletedUsers, searchTerm, activeTab]);
 
   const handleAddUser = () => {
     setErrors({
@@ -223,6 +278,11 @@ function UsersManagement() {
       hasError = true;
     }
 
+    if (newUser.phone_number && !/^[0-9]{10}$/.test(newUser.phone_number)) {
+      setErrors((prev) => ({ ...prev, phone_number: 'Số điện thoại không hợp lệ (10 số)' }));
+      hasError = true;
+    }
+
     if (hasError) return;
 
     dispatch(
@@ -241,12 +301,47 @@ function UsersManagement() {
       role: "Pet Owner",
       password: "",
       confirmPassword: "",
+      phone_number: '',
     });
   };
 
-  const handleUpdateUser = (updatedUser) => {
-    // Gọi API để cập nhật user
-    dispatch(updateUser(updatedUser));
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    
+    setIsSubmitting(true);
+    try {
+      await dispatch(updateUserInfo({
+        userId: editForm.id,
+        userData: editForm
+      })).unwrap();
+      
+      addToast({
+        type: 'success',
+        message: 'Cập nhật người dùng thành công!'
+      });
+      setShowEditModal(false);
+    } catch (error) {
+      addToast({
+        type: 'error',
+        message: error.message || 'Có lỗi xảy ra khi cập nhật người dùng'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleFileChange = (e, field) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB
+        addToast({
+          type: 'error',
+          message: 'Kích thước file không được vượt quá 5MB'
+        });
+        return;
+      }
+      setEditForm(prev => ({ ...prev, [field]: file }));
+    }
   };
 
   const closeModal = () => {
@@ -255,6 +350,54 @@ function UsersManagement() {
       mode: 'view',
       user: null
     });
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!newUser.email) newErrors.email = 'Email là bắt buộc';
+    else if (!/\S+@\S+\.\S+/.test(newUser.email)) newErrors.email = 'Email không hợp lệ';
+    
+    if (!newUser.full_name) newErrors.full_name = 'Họ tên là bắt buộc';
+    if (!newUser.password) newErrors.password = 'Mật khẩu là bắt buộc';
+    else if (newUser.password.length < 6) newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+
+    if (newUser.phone_number && !/^[0-9]{10}$/.test(newUser.phone_number)) {
+      newErrors.phone_number = 'Số điện thoại không hợp lệ (10 số)';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    try {
+      await dispatch(createUser(newUser)).unwrap();
+      addToast({
+        type: 'success',
+        message: 'Tạo người dùng thành công!'
+      });
+      setShowCreateModal(false);
+      setNewUser({
+        email: '',
+        full_name: '',
+        password: '',
+        role: 'GENERAL_USER',
+        avatar: null,
+        phone_number: ''
+      });
+      dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
+    } catch (error) {
+      addToast({
+        type: 'error',
+        message: error.message || 'Có lỗi xảy ra khi tạo người dùng'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Render data dựa theo tab
@@ -289,11 +432,6 @@ function UsersManagement() {
           }`}
         >
           Danh sách người dùng
-          {activeTab === 'active' && users.length > 0 && (
-            <span className="ml-2 px-2 py-1 text-xs bg-white text-blue-600 rounded-full">
-              {users.length}
-            </span>
-          )}
         </button>
         <button
           onClick={() => setActiveTab('trash')}
@@ -304,28 +442,49 @@ function UsersManagement() {
           }`}
         >
           Thùng rác
-          {activeTab === 'trash' && deletedUsers.length > 0 && (
-            <span className="ml-2 px-2 py-1 text-xs bg-white text-blue-600 rounded-full">
-              {deletedUsers.length}
-            </span>
-          )}
         </button>
       </div>
 
-      {/* Empty State */}
-      {displayedUsers.length === 0 && !loading && (
+      {/* Search and Add User Row */}
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+        {/* Search Bar */}
+        <div className="w-full md:w-96">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Tìm kiếm theo tên, email, số điện thoại..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            <Search 
+              size={20} 
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            />
+          </div>
+        </div>
+
+        {/* Add User Button */}
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 whitespace-nowrap"
+        >
+          <Plus size={18} className="mr-2" />
+          Thêm người dùng
+        </button>
+      </div>
+
+      {/* Empty State khi không có kết quả tìm kiếm */}
+      {filteredUsers.length === 0 && searchTerm && (
         <div className="text-center py-8">
           <p className="text-gray-500">
-            {activeTab === 'active' 
-              ? 'Không có người dùng nào'
-              : 'Thùng rác trống'
-            }
+            Không tìm thấy người dùng nào phù hợp
           </p>
         </div>
       )}
 
       {/* Table */}
-      {displayedUsers.length > 0 && (
+      {filteredUsers.length > 0 && (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white rounded-lg">
             <thead className="bg-gray-50 border-b">
@@ -354,7 +513,7 @@ function UsersManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {displayedUsers.map((user) => (
+              {filteredUsers.map((user) => (
                 <tr key={user.id}>
                   <td className="px-6 py-4 whitespace-nowrap">{user.full_name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
@@ -439,6 +598,15 @@ function UsersManagement() {
                       >
                         {user.is_deleted ? <RefreshCw size={18} /> : <Trash2 size={18} />}
                       </button>
+                      {activeTab === 'trash' && (
+                        <button
+                          onClick={() => handlePermanentDelete(user.id)}
+                          className="p-1 rounded hover:bg-gray-100 text-red-600"
+                          title="Xóa vĩnh viễn"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -765,6 +933,320 @@ function UsersManagement() {
                 </button>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create User Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h3 className="text-lg font-semibold">Thêm người dùng mới</h3>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateUser} className="p-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Họ và tên
+                </label>
+                <input
+                  type="text"
+                  value={newUser.full_name}
+                  onChange={(e) => setNewUser({ ...newUser, full_name: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.full_name && (
+                  <p className="mt-1 text-sm text-red-600">{errors.full_name}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Số điện thoại
+                </label>
+                <input
+                  type="tel"
+                  value={newUser.phone_number}
+                  onChange={(e) => setNewUser({ ...newUser, phone_number: e.target.value })}
+                  placeholder="Nhập số điện thoại"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.phone_number && (
+                  <p className="mt-1 text-sm text-red-600">{errors.phone_number}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Mật khẩu
+                </label>
+                <input
+                  type="password"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Vai trò
+                </label>
+                <select
+                  value={newUser.role}
+                  onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="GENERAL_USER">Người dùng thường</option>
+                  <option value="HOSPITAL_ADMIN">Quản lý bệnh viện</option>
+                  <option value="ADMIN">Quản trị viên</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ảnh đại diện
+                </label>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={(e) => handleFileChange(e, 'avatar')}
+                  accept="image/*"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`px-4 py-2 text-sm font-medium text-white rounded-md 
+                    ${isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Đang xử lý...
+                    </div>
+                  ) : 'Tạo người dùng'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h3 className="text-lg font-semibold">Chỉnh sửa người dùng</h3>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateUser} className="p-6 grid grid-cols-2 gap-6">
+              {/* Cột trái */}
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={editForm.email}
+                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Họ và tên
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.full_name}
+                    onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Mật khẩu mới
+                  </label>
+                  <input
+                    type="password"
+                    value={editForm.password}
+                    onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                    placeholder="Để trống nếu không muốn thay đổi"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Số điện thoại
+                  </label>
+                  <input
+                    type="tel"
+                    value={editForm.phone_number}
+                    onChange={(e) => setEditForm({ ...editForm, phone_number: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Vai trò
+                  </label>
+                  <select
+                    value={editForm.role}
+                    onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="GENERAL_USER">Người dùng thường</option>
+                    <option value="HOSPITAL_ADMIN">Quản lý bệnh viện</option>
+                    <option value="ADMIN">Quản trị viên</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Ảnh đại diện
+                  </label>
+                  <input
+                    type="file"
+                    onChange={(e) => handleFileChange(e, 'avatar')}
+                    accept="image/*"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Cột phải */}
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Loại thú cưng
+                  </label>
+                  <select
+                    value={editForm.pet_type || ''}
+                    onChange={(e) => setEditForm({ ...editForm, pet_type: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Chọn loại thú cưng</option>
+                    <option value="DOG">Chó</option>
+                    <option value="CAT">Mèo</option>
+                    <option value="OTHER">Khác</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tuổi thú cưng
+                  </label>
+                  <input
+                    type="number"
+                    value={editForm.pet_age || ''}
+                    onChange={(e) => setEditForm({ ...editForm, pet_age: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Ghi chú về thú cưng
+                  </label>
+                  <textarea
+                    value={editForm.pet_notes || ''}
+                    onChange={(e) => setEditForm({ ...editForm, pet_notes: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    rows="3"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Ảnh thú cưng
+                  </label>
+                  <input
+                    type="file"
+                    onChange={(e) => handleFileChange(e, 'pet_photo')}
+                    accept="image/*"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Footer buttons */}
+              <div className="col-span-2 flex justify-end gap-3 mt-6 pt-6 border-t">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`px-4 py-2 text-sm font-medium text-white rounded-md 
+                    ${isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Đang xử lý...
+                    </div>
+                  ) : 'Cập nhật'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

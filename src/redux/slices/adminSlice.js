@@ -114,6 +114,42 @@ export const fetchDeletedUsers = createAsyncThunk(
   }
 );
 
+export const createUser = createAsyncThunk(
+  'admin/createUser',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await adminService.createUser(userData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateUserInfo = createAsyncThunk(
+  'admin/updateUserInfo',
+  async ({ userId, userData }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateUser(userId, userData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteUserPermanently = createAsyncThunk(
+  'admin/deleteUserPermanently',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.deleteUserPermanently(userId);
+      return { ...response, userId };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -204,14 +240,6 @@ const adminSlice = createSlice({
       );
     },
 
-    updateUser: (state, action) => {
-      const index = state.users.findIndex(
-        (user) => user.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.users[index] = action.payload;
-      }
-    },
 
     updateHospital: (state, action) => {
       const index = state.hospitals.findIndex(
@@ -297,6 +325,22 @@ const adminSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.deletedUsers = [];
+      })
+      .addCase(createUser.fulfilled, (state, action) => {
+        if (action.payload && action.payload.data) {
+          state.users = [action.payload.data, ...state.users];
+        }
+      })
+      .addCase(updateUserInfo.fulfilled, (state, action) => {
+        const updatedUser = action.payload.data;
+        state.users = state.users.map(user => 
+          user.id === updatedUser.id ? updatedUser : user
+        );
+      })
+      .addCase(deleteUserPermanently.fulfilled, (state, action) => {
+        state.deletedUsers = state.deletedUsers.filter(
+          user => user.id !== action.payload.userId
+        );
       });
   }
 });
