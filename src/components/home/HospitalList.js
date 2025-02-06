@@ -17,22 +17,29 @@ function HospitalList() {
     const fetchHospitals = async () => {
       try {
         const response = await getHospitals();
-        const formattedHospitals = response.hospitals.map((hospital) => ({
-          id: hospital.id,
-          name: hospital.name,
-          info: hospital.description,
-          address: hospital.address,
-          rating: 5, // Giá trị cố định theo yêu cầu
-          reviews: 5, // Giá trị cố định theo yêu cầu
-          image: hospital.images[0]?.url, // Lấy ảnh đầu tiên
-          services: hospital.specialties
-            ? hospital.specialties.split(",").map((s) => s.trim())
-            : [],
-          slug: hospital.slug,
-        }));
+        const formattedHospitals = response.hospitals
+          .filter(hospital => 
+            hospital.is_active === true && // Kiểm tra bệnh viện đang hoạt động
+            !hospital.is_deleted // Kiểm tra bệnh viện chưa bị xóa
+          )
+          .map((hospital) => ({
+            id: hospital.id,
+            name: hospital.name,
+            info: hospital.description,
+            address: hospital.address,
+            rating: hospital.stats?.average_rating || 5,
+            reviews: hospital.stats?.total_reviews || 0,
+            image: hospital.images[0]?.url || "",
+            services: hospital.specialties
+              ? hospital.specialties.split(",").map((s) => s.trim())
+              : [],
+            slug: hospital.slug,
+            isActive: hospital.is_active,
+            isDeleted: hospital.is_deleted
+          }));
         setHospitals(formattedHospitals);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách bệnh viện:", error);
+        console.error("Error when fetching hospital list:", error);
       }
     };
 

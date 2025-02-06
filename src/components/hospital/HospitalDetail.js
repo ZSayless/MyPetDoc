@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Phone, X, Heart } from "lucide-react";
+import { MapPin, Phone, X, Heart, Star } from "lucide-react";
 import { useParams } from "react-router-dom";
 import Login from "../login/Login";
 import { useAuth } from "../../context/AuthContext";
@@ -9,6 +9,7 @@ import { getHospitalDetail, toggleLikeHospitalImage, checkImageLikeStatus } from
 import { useTranslation } from "react-i18next";
 import { HOSPITAL_SERVICES } from "../../constants/services";
 import { useToast } from "../../context/ToastContext";
+import ReviewListModal from "./ReviewListModal";
 
 const HospitalDetail = () => {
   const { slug } = useParams();
@@ -32,6 +33,7 @@ const HospitalDetail = () => {
   const [showWriteReview, setShowWriteReview] = useState(false);
   const [imageLikes, setImageLikes] = useState({});
   const { addToast } = useToast();
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   // Fetch hospital data
   useEffect(() => {
@@ -70,8 +72,8 @@ const HospitalDetail = () => {
               createdAt: image.createdAt,
               comments: [],
             })),
-            rating: data.average_rating || 0,
-            reviewCount: data.review_count || 0,
+            rating: data.stats.average_rating || 5,
+            reviewCount: data.stats.total_reviews || 0,
             staffDescription: data.staff_description,
             staffCredentials: data.staff_credentials,
             department: data.department,
@@ -116,35 +118,7 @@ const HospitalDetail = () => {
 
   // Handle view all reviews
   const handleViewAllReviews = () => {
-    // Mock loading more reviews
-    const moreReviews = [
-      {
-        id: 4,
-        user: {
-          name: "Emily Chen",
-          avatar: "E",
-        },
-        rating: 5,
-        verified: true,
-        content:
-          "I've been bringing my pets here for years. The level of care and attention is consistently excellent. The staff remembers my pets and their specific needs.",
-        createdAt: "2024-03-08T14:20:00Z",
-      },
-      {
-        id: 5,
-        user: {
-          name: "David Brown",
-          avatar: "D",
-        },
-        rating: 5,
-        verified: true,
-        content:
-          "Very impressed with the emergency services. When my dog needed urgent care late at night, they were quick to respond and provided excellent treatment.",
-        createdAt: "2024-03-05T22:45:00Z",
-      },
-    ];
-
-    setReviews([...reviews, ...moreReviews]);
+    setShowAllReviews(true);
   };
 
   // Handle call button click
@@ -528,6 +502,16 @@ const HospitalDetail = () => {
                 Hospital Information
               </h2>
               <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                    <span className="font-medium">{hospital.rating}</span>
+                  </div>
+                  <span className="text-gray-500">
+                    ({hospital.reviewCount} {t("reviews")})
+                  </span>
+                </div>
+
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-gray-600 mt-1 flex-shrink-0" />
                   <div>
@@ -649,11 +633,19 @@ const HospitalDetail = () => {
       <div className="max-w-5xl mx-auto px-4 py-8">
         <Reviews
           reviews={reviews}
+          stats={hospital.stats}
           setReviews={setReviews}
           onViewAll={handleViewAllReviews}
           onWriteReview={() => setShowWriteReview(true)}
         />
       </div>
+
+      {/* Review List Modal */}
+      <ReviewListModal
+        isOpen={showAllReviews}
+        onClose={() => setShowAllReviews(false)}
+        hospitalId={hospital?.id}
+      />
 
       {/* Image Upload Modal */}
       {showUploadModal && (

@@ -150,5 +150,34 @@ export const adminService = {
     } catch (error) {
       throw error.response?.data || error;
     }
+  },
+  getHospitals: async (params = {}) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/hospitals`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        params
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  toggleActiveHospital: async (hospitalId) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/hospitals/${hospitalId}/toggle-active`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 }; 

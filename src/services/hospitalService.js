@@ -151,6 +151,18 @@ const toggleDeleteReview = async (reviewId) => {
   }
 };
 
+const getHospitalReviews = async (hospitalId, page = 1, limit = 10) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/reviews/hospital/${hospitalId}?page=${page}&limit=${limit}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching hospital reviews:", error);
+    throw error;
+  }
+};
+
 export { 
   getHospitals, 
   getHospitalDetail,
@@ -160,5 +172,6 @@ export {
   updateReview,
   getUserReviews,
   reportReview,
-  toggleDeleteReview
+  toggleDeleteReview,
+  getHospitalReviews
 };

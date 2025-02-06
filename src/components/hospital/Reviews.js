@@ -320,12 +320,13 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
         ))}
       </div>
 
-      {reviews.length > 3 && (
+      {/* Thêm nút See More */}
+      {reviews.length > 0 && (
         <button
           onClick={onViewAll}
           className="mt-6 w-full py-3 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
         >
-          {t("hospitalDetail.reviews.viewAll")}
+          {t("See More Reviews")}
         </button>
       )}
 

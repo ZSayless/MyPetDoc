@@ -150,6 +150,30 @@ export const deleteUserPermanently = createAsyncThunk(
   }
 );
 
+export const fetchHospitals = createAsyncThunk(
+  'admin/fetchHospitals',
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getHospitals(params);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleActiveHospital = createAsyncThunk(
+  'admin/toggleActiveHospital',
+  async (hospitalId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleActiveHospital(hospitalId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -341,6 +365,34 @@ const adminSlice = createSlice({
         state.deletedUsers = state.deletedUsers.filter(
           user => user.id !== action.payload.userId
         );
+      })
+      .addCase(fetchHospitals.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchHospitals.fulfilled, (state, action) => {
+        state.loading = false;
+        state.hospitals = action.payload.hospitals;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchHospitals.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(toggleActiveHospital.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(toggleActiveHospital.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedHospital = action.payload;
+        state.hospitals = state.hospitals.map(hospital =>
+          hospital.id === updatedHospital.id ? updatedHospital : hospital
+        );
+      })
+      .addCase(toggleActiveHospital.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   }
 });
