@@ -10,7 +10,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 
-function AdminSidebar({ activeTab, setActiveTab, isSidebarOpen }) {
+function AdminSidebar({ activeTab, setActiveTab }) {
   const tabs = [
     { id: "users", name: "Users Management", icon: Users },
     { id: "hospitals", name: "Hospitals Management", icon: Building2 },
@@ -22,11 +22,7 @@ function AdminSidebar({ activeTab, setActiveTab, isSidebarOpen }) {
   ];
 
   return (
-    <div
-      className={`fixed md:static inset-y-0 left-0 z-20 bg-white border-r transform transition-transform duration-300 ${
-        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } md:translate-x-0 p-6`}
-    >
+    <div className="h-full p-6 overflow-y-auto">
       <h1 className="text-[#1A3C8E] text-xl font-bold mb-2">Admin Dashboard</h1>
       <Link
         to="/"
@@ -43,7 +39,7 @@ function AdminSidebar({ activeTab, setActiveTab, isSidebarOpen }) {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-colors ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
                 activeTab === tab.id
                   ? "bg-[#98E9E9]/20 text-[#1A3C8E]"
                   : "text-gray-600 hover:bg-gray-50"

@@ -17,10 +17,10 @@ const HospitalList = ({
   }, [isAuthenticated, user]);
 
   // Debug log
-  useEffect(() => {
-    console.log("Auth state in list:", { isAuthenticated, user });
-  }, [isAuthenticated, user]);
-
+  // useEffect(() => {
+  //   console.log("Auth state in list:", { isAuthenticated, user });
+  // }, [isAuthenticated, user]);
+  
   return (
     <div
       className="bg-white rounded-lg shadow-sm overflow-y-auto"
@@ -77,10 +77,11 @@ const HospitalList = ({
                       className="px-3 lg:px-6 py-1.5 text-xs lg:text-base bg-[#98E9E9] hover:bg-[#7CD5D5] text-gray-700 rounded-lg transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/hospital/${hospital.id}`);
+                        navigate(`/hospital/${hospital.slug}`);
                       }}
                     >
                       Get Directions
+
                     </button>
                   </div>
                 </div>

@@ -1,15 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
-  mockUsers,
   mockHospitals,
   mockBlogs,
   mockReports,
   mockMessages,
   mockPendingApprovals,
 } from "../../data/mockData";
+import { adminService } from '../../services/adminService';
 
 const initialState = {
-  users: mockUsers || [],
+  users: [],
+  deletedUsers: [],
   hospitals: mockHospitals || [],
   blogs: mockBlogs || [],
   reports: mockReports || [],
@@ -39,7 +40,139 @@ const initialState = {
   loading: false,
   error: null,
   contactMessages: [],
+  pagination: {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1
+  },
 };
+
+export const fetchUsers = createAsyncThunk(
+  'admin/fetchUsers',
+  async ({ page, limit, isDeleted = false }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getUsers(page, limit, isDeleted);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleDeleteUser = createAsyncThunk(
+  'admin/toggleDeleteUser',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleDeleteUser(userId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleLockUser = createAsyncThunk(
+  'admin/toggleLockUser',
+  async (userId, { rejectWithValue }) => {
+    try {
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+      const response = await adminService.toggleLockUser(userId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleActiveUser = createAsyncThunk(
+  'admin/toggleActiveUser',
+  async (userId, { rejectWithValue }) => {
+    try {
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+      const response = await adminService.toggleActiveUser(userId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchDeletedUsers = createAsyncThunk(
+  'admin/fetchDeletedUsers',
+  async ({ page, limit }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getDeletedUsers(page, limit);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const createUser = createAsyncThunk(
+  'admin/createUser',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await adminService.createUser(userData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateUserInfo = createAsyncThunk(
+  'admin/updateUserInfo',
+  async ({ userId, userData }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateUser(userId, userData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteUserPermanently = createAsyncThunk(
+  'admin/deleteUserPermanently',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.deleteUserPermanently(userId);
+      return { ...response, userId };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchHospitals = createAsyncThunk(
+  'admin/fetchHospitals',
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getHospitals(params);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleActiveHospital = createAsyncThunk(
+  'admin/toggleActiveHospital',
+  async (hospitalId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleActiveHospital(hospitalId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
 const adminSlice = createSlice({
   name: "admin",
@@ -131,14 +264,6 @@ const adminSlice = createSlice({
       );
     },
 
-    updateUser: (state, action) => {
-      const index = state.users.findIndex(
-        (user) => user.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.users[index] = action.payload;
-      }
-    },
 
     updateHospital: (state, action) => {
       const index = state.hospitals.findIndex(
@@ -169,6 +294,107 @@ const adminSlice = createSlice({
       }
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload.users;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(toggleLockUser.fulfilled, (state, action) => {
+        const user = state.users.find(u => u.id === action.payload.userId);
+        if (user) {
+          user.is_locked = !user.is_locked;
+        }
+      })
+      .addCase(toggleActiveUser.fulfilled, (state, action) => {
+        const user = state.users.find(u => u.id === action.payload.userId);
+        if (user) {
+          user.is_active = !user.is_active;
+        }
+      })
+      .addCase(fetchDeletedUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchDeletedUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload && action.payload.data) {
+          state.deletedUsers = action.payload.data.users || [];
+          state.pagination = action.payload.data.pagination || {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 1
+          };
+        } else {
+          state.deletedUsers = [];
+          state.pagination = {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 1
+          };
+        }
+      })
+      .addCase(fetchDeletedUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.deletedUsers = [];
+      })
+      .addCase(createUser.fulfilled, (state, action) => {
+        if (action.payload && action.payload.data) {
+          state.users = [action.payload.data, ...state.users];
+        }
+      })
+      .addCase(updateUserInfo.fulfilled, (state, action) => {
+        const updatedUser = action.payload.data;
+        state.users = state.users.map(user => 
+          user.id === updatedUser.id ? updatedUser : user
+        );
+      })
+      .addCase(deleteUserPermanently.fulfilled, (state, action) => {
+        state.deletedUsers = state.deletedUsers.filter(
+          user => user.id !== action.payload.userId
+        );
+      })
+      .addCase(fetchHospitals.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchHospitals.fulfilled, (state, action) => {
+        state.loading = false;
+        state.hospitals = action.payload.hospitals;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchHospitals.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(toggleActiveHospital.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(toggleActiveHospital.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedHospital = action.payload;
+        state.hospitals = state.hospitals.map(hospital =>
+          hospital.id === updatedHospital.id ? updatedHospital : hospital
+        );
+      })
+      .addCase(toggleActiveHospital.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  }
 });
 
 export const {

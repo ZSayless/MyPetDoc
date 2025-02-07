@@ -92,18 +92,25 @@ const FindHospital = () => {
       try {
         setLoading(true);
         const response = await getHospitals();
-        const formattedHospitals = response.hospitals.map((hospital) => ({
-          id: hospital.id,
-          name: hospital.name,
-          address: hospital.address,
-          rating: 4.5, // Giá trị mặc định vì API không có
-          services: hospital.specialties
-            ? hospital.specialties.split(",").map((s) => s.trim())
-            : [],
-          image: hospital.images[0]?.url,
-          mapUrl: hospital.map_location,
-          slug: hospital.slug,
-        }));
+        const formattedHospitals = response.hospitals
+          .filter(hospital => 
+            hospital.is_active === true && 
+            !hospital.is_deleted 
+          )
+          .map((hospital) => ({
+            id: hospital.id,
+            name: hospital.name,
+            address: hospital.address,
+            rating: hospital.stats?.average_rating || 4.5,
+            services: hospital.specialties
+              ? hospital.specialties.split(",").map((s) => s.trim())
+              : [],
+            image: hospital.images[0]?.url,
+            mapUrl: hospital.map_location,
+            slug: hospital.slug,
+            isActive: hospital.is_active,
+            isDeleted: hospital.is_deleted
+          }));
         setHospitals(formattedHospitals);
         setFilteredHospitals(formattedHospitals);
       } catch (error) {

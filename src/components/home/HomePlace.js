@@ -25,19 +25,25 @@ function HomePlace() {
         setLoading(true);
         const response = await getHospitals();
 
-        // Kiểm tra và format dữ liệu
-        const formattedHospitals = response.hospitals.map((hospital) => ({
-          id: hospital.id,
-          name: hospital.name,
-          image: hospital.images[0]?.url || "", // Lấy ảnh đầu tiên
-          rating: hospital.average_rating || 5,
-          location: hospital.address,
-          specialties: hospital.specialties
-            ? hospital.specialties.split(",").map((s) => s.trim())
-            : [],
-          reviews: hospital.review_count || 0,
-          slug: hospital.slug,
-        }));
+        const formattedHospitals = response.hospitals
+          .filter(hospital => 
+            hospital.is_active === true && 
+            !hospital.is_deleted 
+          )
+          .map((hospital) => ({
+            id: hospital.id,
+            name: hospital.name,
+            image: hospital.images[0]?.url || "",
+            rating: hospital.stats?.average_rating || 5,
+            location: hospital.address,
+            specialties: hospital.specialties
+              ? hospital.specialties.split(",").map((s) => s.trim())
+              : [],
+            reviews: hospital.stats?.total_reviews || 0,
+            slug: hospital.slug,
+            isActive: hospital.is_active,
+            isDeleted: hospital.is_deleted
+          }));
 
         setHospitals(formattedHospitals);
       } catch (error) {
