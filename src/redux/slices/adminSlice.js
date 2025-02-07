@@ -46,6 +46,13 @@ const initialState = {
     total: 0,
     totalPages: 1
   },
+  deletedHospitals: [],
+  deletedPagination: {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1
+  },
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -168,6 +175,66 @@ export const toggleActiveHospital = createAsyncThunk(
     try {
       const response = await adminService.toggleActiveHospital(hospitalId);
       return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchDeletedHospitals = createAsyncThunk(
+  'admin/fetchDeletedHospitals',
+  async ({ page, limit }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getDeletedHospitals(page, limit);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleDeleteHospital = createAsyncThunk(
+  'admin/toggleDeleteHospital',
+  async (hospitalId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleDeleteHospital(hospitalId);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateHospital = createAsyncThunk(
+  'admin/updateHospital',
+  async ({ hospitalId, formData }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateHospital(hospitalId, formData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const createHospital = createAsyncThunk(
+  'admin/createHospital',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await adminService.createHospital(formData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteHospitalPermanently = createAsyncThunk(
+  'admin/deleteHospitalPermanently',
+  async (hospitalId, { rejectWithValue }) => {
+    try {
+      await adminService.deleteHospitalPermanently(hospitalId);
+      return hospitalId;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -393,6 +460,49 @@ const adminSlice = createSlice({
       .addCase(toggleActiveHospital.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchDeletedHospitals.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchDeletedHospitals.fulfilled, (state, action) => {
+        state.loading = false;
+        state.deletedHospitals = action.payload.data.data.hospitals;
+        state.deletedPagination = action.payload.data.data.pagination;
+      })
+      .addCase(fetchDeletedHospitals.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.deletedHospitals = [];
+      })
+      .addCase(toggleDeleteHospital.fulfilled, (state, action) => {
+        const updatedHospital = action.payload.data.data;
+        if (updatedHospital.is_deleted) {
+          state.hospitals = state.hospitals.filter(h => h.id !== updatedHospital.id);
+          if (!state.deletedHospitals.find(h => h.id === updatedHospital.id)) {
+            state.deletedHospitals.push(updatedHospital);
+          }
+        } else {
+          state.deletedHospitals = state.deletedHospitals.filter(h => h.id !== updatedHospital.id);
+          if (!state.hospitals.find(h => h.id === updatedHospital.id)) {
+            state.hospitals.push(updatedHospital);
+          }
+        }
+      })
+      .addCase(updateHospital.fulfilled, (state, action) => {
+        const updatedHospital = action.payload.data.data;
+        const index = state.hospitals.findIndex(h => h.id === updatedHospital.id);
+        if (index !== -1) {
+          state.hospitals[index] = updatedHospital;
+        }
+      })
+      .addCase(createHospital.fulfilled, (state, action) => {
+        state.hospitals.unshift(action.payload.data.data);
+      })
+      .addCase(deleteHospitalPermanently.fulfilled, (state, action) => {
+        state.deletedHospitals = state.deletedHospitals.filter(
+          hospital => hospital.id !== action.payload
+        );
       });
   }
 });
@@ -414,7 +524,6 @@ export const {
   rejectPending,
   deletePending,
   updateUser,
-  updateHospital,
   addContactMessage,
   setContactMessages,
   deleteContactMessage,

@@ -179,5 +179,85 @@ export const adminService = {
     } catch (error) {
       throw error.response?.data || error;
     }
+  },
+  // getDeletedHospitals
+  getDeletedHospitals: async (page = 1, limit = 10) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/hospitals/deleted/list`, {
+        params: { page, limit },
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // toggleDeleteHospital
+  toggleDeleteHospital: async (hospitalId) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/hospitals/${hospitalId}/toggle-delete`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  updateHospital: async (hospitalId, formData) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/hospitals/${hospitalId}`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data',
+          }
+        }
+      );
+      return response;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  createHospital: async (formData) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/hospitals/create`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data',
+          }
+        }
+      );
+      return response;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  deleteHospitalPermanently: async (hospitalId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/hospitals/${hospitalId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 }; 
