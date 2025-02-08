@@ -6,7 +6,7 @@ import {
   mockMessages,
   mockPendingApprovals,
 } from "../../data/mockData";
-import { adminService } from '../../services/adminService';
+import {adminService} from '../../services/adminService';
 
 const initialState = {
   users: [],
@@ -53,6 +53,8 @@ const initialState = {
     total: 0,
     totalPages: 1
   },
+  isLoadingReports: false,
+  reportsError: null
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -241,6 +243,68 @@ export const deleteHospitalPermanently = createAsyncThunk(
   }
 );
 
+export const fetchReports = createAsyncThunk(
+  'admin/fetchReports',
+  async (page = 1, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getReports(page);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const resolveReport = createAsyncThunk(
+  'admin/resolveReport',
+  async (reportId, { rejectWithValue }) => {
+    try {
+      await adminService.resolveReport(reportId);
+      return reportId;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteReviewPermanently = createAsyncThunk(
+  'admin/deleteReviewPermanently',
+  async ({ reviewId, reportId }, { dispatch, rejectWithValue }) => {
+    try {
+      await adminService.deleteReviewPermanently(reviewId);
+      dispatch(resolveReport(reportId));
+      return { reviewId, reportId };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteReportPermanently = createAsyncThunk(
+  'admin/deleteReportPermanently',
+  async (reportId, { rejectWithValue }) => {
+    try {
+      await adminService.deleteReportPermanently(reportId);
+      return reportId;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteGalleryComment = createAsyncThunk(
+  'admin/deleteGalleryComment',
+  async ({ commentId, reportId }, { dispatch, rejectWithValue }) => {
+    try {
+      await adminService.deleteGalleryComment(commentId);
+      dispatch(resolveReport(reportId));
+      return { commentId, reportId };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -288,16 +352,10 @@ const adminSlice = createSlice({
     },
 
     // Reports
-    resolveReport: (state, action) => {
-      const report = state.reports.find((r) => r.id === action.payload);
+    updateReportStatus: (state, action) => {
+      const report = state.reports.find((r) => r.id === action.payload.reportId);
       if (report) {
-        report.status = "resolved";
-      }
-    },
-    dismissReport: (state, action) => {
-      const report = state.reports.find((r) => r.id === action.payload);
-      if (report) {
-        report.status = "dismissed";
+        report.status = action.payload.status;
       }
     },
 
@@ -330,7 +388,6 @@ const adminSlice = createSlice({
         (item) => item.id !== action.payload
       );
     },
-
 
     updateHospital: (state, action) => {
       const index = state.hospitals.findIndex(
@@ -503,6 +560,46 @@ const adminSlice = createSlice({
         state.deletedHospitals = state.deletedHospitals.filter(
           hospital => hospital.id !== action.payload
         );
+      })
+      .addCase(fetchReports.pending, (state) => {
+        state.isLoadingReports = true;
+        state.reportsError = null;
+      })
+      .addCase(fetchReports.fulfilled, (state, action) => {
+        state.reports = action.payload.reports;
+        state.isLoadingReports = false;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchReports.rejected, (state, action) => {
+        state.isLoadingReports = false;
+        state.reportsError = action.payload;
+      })
+      .addCase(resolveReport.fulfilled, (state, action) => {
+        const reportIndex = state.reports.findIndex(
+          report => report.id === action.payload
+        );
+        if (reportIndex !== -1) {
+          state.reports[reportIndex].resolved = true;
+        }
+      })
+      .addCase(deleteReviewPermanently.fulfilled, (state, action) => {
+        const reportIndex = state.reports.findIndex(
+          report => report.id === action.payload.reportId
+        );
+        if (reportIndex !== -1) {
+          state.reports[reportIndex].resolved = true;
+        }
+      })
+      .addCase(deleteReportPermanently.fulfilled, (state, action) => {
+        state.reports = state.reports.filter(report => report.id !== action.payload);
+      })
+      .addCase(deleteGalleryComment.fulfilled, (state, action) => {
+        const reportIndex = state.reports.findIndex(
+          report => report.id === action.payload.reportId
+        );
+        if (reportIndex !== -1) {
+          state.reports[reportIndex].resolved = true;
+        }
       });
   }
 });
@@ -516,8 +613,7 @@ export const {
   deleteHospital,
   deleteBlog,
   updateBlogStatus,
-  resolveReport,
-  dismissReport,
+  updateReportStatus,
   deleteMessage,
   markMessageAsRead,
   approvePending,

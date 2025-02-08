@@ -259,5 +259,86 @@ export const adminService = {
     } catch (error) {
       throw error.response?.data || error;
     }
+  },
+  // Lấy danh sách reports
+  getReports: async (page = 1) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/reports?page=${page}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // Đánh dấu report đã xử lý
+  resolveReport: async (reportId) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/reports/${reportId}/resolve`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // Xóa cứng review
+  deleteReviewPermanently: async (reviewId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/reviews/${reviewId}/hard`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // Xóa cứng report
+  deleteReportPermanently: async (reportId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/reports/${reportId}/force`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // Xóa gallery comment
+  deleteGalleryComment: async (commentId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/community/comments/${commentId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 }; 

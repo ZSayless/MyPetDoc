@@ -429,18 +429,26 @@ function HospitalsManagement() {
                       </button>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <img 
-                        src={hospital.creator.avatar} 
-                        alt={hospital.creator.full_name}
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div className="text-sm">
-                        <div className="font-medium text-gray-900">{hospital.creator.full_name}</div>
-                        <div className="text-gray-500">{hospital.creator.email}</div>
+                  <td className="px-6 py-4">
+                    {hospital?.creator && (
+                      <div className="flex items-center gap-2">
+                        {hospital.creator.avatar && (
+                          <img 
+                            src={hospital.creator.avatar} 
+                            alt={hospital.creator.full_name}
+                            className="w-8 h-8 rounded-full"
+                          />
+                        )}
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {hospital.creator.full_name || 'N/A'}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {hospital.creator.email || 'N/A'}
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right">
                     <div className="flex items-center justify-end space-x-2">
@@ -533,17 +541,25 @@ function HospitalsManagement() {
               <span>{hospital.rating}</span>
             </div>
 
-            <div className="flex items-center gap-2 mt-3 mb-3">
-              <img 
-                src={hospital.creator.avatar} 
-                alt={hospital.creator.full_name}
-                className="w-8 h-8 rounded-full"
-              />
-              <div className="text-sm">
-                <div className="font-medium text-gray-900">{hospital.creator.full_name}</div>
-                <div className="text-gray-500">{hospital.creator.email}</div>
+            {hospital?.creator && (
+              <div className="mt-4 flex items-center gap-2">
+                {hospital.creator.avatar && (
+                  <img 
+                    src={hospital.creator.avatar} 
+                    alt={hospital.creator.full_name}
+                    className="w-8 h-8 rounded-full"
+                  />
+                )}
+                <div>
+                  <div className="text-sm font-medium text-gray-900">
+                    {hospital.creator.full_name || 'N/A'}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {hospital.creator.email || 'N/A'}
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="flex justify-end gap-2">
               <button

@@ -132,18 +132,18 @@ const reportReview = async (reviewId, reason) => {
   }
 };
 
-const toggleDeleteReview = async (reviewId) => {
+const deleteReviewPermanently = async (reviewId) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.patch(
-      `${BASE_URL}/reviews/${reviewId}/toggle-delete`,
-      {},
+    const response = await axios.delete(
+      `${BASE_URL}/reviews/${reviewId}/hard`,
       {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       }
     );
+    
     return response.data;
   } catch (error) {
     console.error("Error toggling delete review:", error);
@@ -172,6 +172,6 @@ export {
   updateReview,
   getUserReviews,
   reportReview,
-  toggleDeleteReview,
+  deleteReviewPermanently,
   getHospitalReviews
 };
