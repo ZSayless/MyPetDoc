@@ -10,6 +10,16 @@ import { useTranslation } from "react-i18next";
 function HomeBanner() {
   const { t } = useTranslation();
   const [banners, setBanners] = useState([]);
+  const handleLinkClick = (link) => {
+    if (!link) return;
+    
+    // Kiểm tra xem link có protocol chưa
+    const hasProtocol = /^https?:\/\//i.test(link);
+    const url = hasProtocol ? link : `https://${link}`;
+    
+    // Mở link trong tab mới
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
 
   useEffect(() => {
     try {
@@ -63,12 +73,12 @@ function HomeBanner() {
                   {banner.description}
                 </p>
                 {banner.link && (
-                  <a
-                    href={banner.link}
+                 <button
+                    onClick={() => handleLinkClick(banner.link)}
                     className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
                   >
                     Xem thêm
-                  </a>
+                  </button>
                 )}
               </div>
             </div>

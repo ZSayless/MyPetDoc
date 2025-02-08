@@ -163,6 +163,41 @@ const getHospitalReviews = async (hospitalId, page = 1, limit = 10) => {
   }
 };
 
+// Kiểm tra trạng thái favorite
+const checkFavorite = async (hospitalId) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/favorites/check/${hospitalId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+    return response.data.data.isFavorited;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+// Toggle favorite
+const toggleFavorite = async (hospitalId) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/favorites/${hospitalId}`,
+      {},
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+    return response.data.data.isFavorited;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
 export { 
   getHospitals, 
   getHospitalDetail,
@@ -173,5 +208,7 @@ export {
   getUserReviews,
   reportReview,
   deleteReviewPermanently,
-  getHospitalReviews
+  getHospitalReviews,
+  checkFavorite,
+  toggleFavorite
 };

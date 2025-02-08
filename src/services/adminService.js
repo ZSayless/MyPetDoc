@@ -340,5 +340,102 @@ export const adminService = {
     } catch (error) {
       throw error.response?.data || error;
     }
+  },
+  // Lấy danh sách banners
+  getBanners: async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/banners`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data; // Trả về cả object bao gồm banners và pagination
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  updateBanner: async (id, formData) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/banners/${id}`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  toggleActiveBanner: async (id) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/banners/${id}/toggle-active`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  createBanner: async (formData) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/banners`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  toggleDeleteBanner: async (id) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/banners/${id}/soft`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  hardDeleteBanner: async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/banners/${id}/hard`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 }; 

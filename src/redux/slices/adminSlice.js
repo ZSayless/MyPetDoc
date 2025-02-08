@@ -54,7 +54,16 @@ const initialState = {
     totalPages: 1
   },
   isLoadingReports: false,
-  reportsError: null
+  reportsError: null,
+  banners: [],
+  isLoadingBanners: false,
+  bannersPagination: {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1
+  },
+  isSubmittingBanner: false,
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -299,6 +308,78 @@ export const deleteGalleryComment = createAsyncThunk(
       await adminService.deleteGalleryComment(commentId);
       dispatch(resolveReport(reportId));
       return { commentId, reportId };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchBanners = createAsyncThunk(
+  'admin/fetchBanners',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getBanners();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateBanner = createAsyncThunk(
+  'admin/updateBanner',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateBanner(id, data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleActiveBanner = createAsyncThunk(
+  'admin/toggleActiveBanner',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleActiveBanner(id);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const createBanner = createAsyncThunk(
+  'admin/createBanner',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await adminService.createBanner(formData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleDeleteBanner = createAsyncThunk(
+  'admin/toggleDeleteBanner',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleDeleteBanner(id);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const hardDeleteBanner = createAsyncThunk(
+  'admin/hardDeleteBanner',
+  async (id, { rejectWithValue }) => {
+    try {
+      await adminService.hardDeleteBanner(id);
+      return id;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -600,6 +681,57 @@ const adminSlice = createSlice({
         if (reportIndex !== -1) {
           state.reports[reportIndex].resolved = true;
         }
+      })
+      .addCase(fetchBanners.pending, (state) => {
+        state.isLoadingBanners = true;
+        state.error = null;
+      })
+      .addCase(fetchBanners.fulfilled, (state, action) => {
+        state.isLoadingBanners = false;
+        state.banners = action.payload.banners;
+        state.bannersPagination = action.payload.pagination;
+      })
+      .addCase(fetchBanners.rejected, (state, action) => {
+        state.isLoadingBanners = false;
+        state.error = action.payload;
+      })
+      .addCase(updateBanner.pending, (state) => {
+        state.isSubmittingBanner = true;
+      })
+      .addCase(updateBanner.fulfilled, (state, action) => {
+        state.isSubmittingBanner = false;
+        const index = state.banners.findIndex(banner => banner.id === action.payload.id);
+        if (index !== -1) {
+          state.banners[index] = action.payload;
+        }
+      })
+      .addCase(updateBanner.rejected, (state) => {
+        state.isSubmittingBanner = false;
+      })
+      .addCase(toggleActiveBanner.fulfilled, (state, action) => {
+        const index = state.banners.findIndex(banner => banner.id === action.payload.id);
+        if (index !== -1) {
+          state.banners[index] = action.payload;
+        }
+      })
+      .addCase(createBanner.pending, (state) => {
+        state.isSubmittingBanner = true;
+      })
+      .addCase(createBanner.fulfilled, (state, action) => {
+        state.isSubmittingBanner = false;
+        state.banners.unshift(action.payload);
+      })
+      .addCase(createBanner.rejected, (state) => {
+        state.isSubmittingBanner = false;
+      })
+      .addCase(toggleDeleteBanner.fulfilled, (state, action) => {
+        const index = state.banners.findIndex(banner => banner.id === action.payload.id);
+        if (index !== -1) {
+          state.banners[index] = action.payload;
+        }
+      })
+      .addCase(hardDeleteBanner.fulfilled, (state, action) => {
+        state.banners = state.banners.filter(banner => banner.id !== action.payload);
       });
   }
 });

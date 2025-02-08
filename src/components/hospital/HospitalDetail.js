@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Phone, X, Heart, Star } from "lucide-react";
+import { MapPin, Phone, X, Heart, Star, Globe, Clock } from "lucide-react";
 import { useParams } from "react-router-dom";
 import Login from "../login/Login";
 import { useAuth } from "../../context/AuthContext";
 import WriteReviewModal from "./WriteReviewModal";
 import Reviews from "./Reviews";
-import { getHospitalDetail, toggleLikeHospitalImage, checkImageLikeStatus } from "../../services/hospitalService";
+import { getHospitalDetail, toggleLikeHospitalImage, checkImageLikeStatus, toggleFavorite, checkFavorite } from "../../services/hospitalService";
 import { useTranslation } from "react-i18next";
 import { HOSPITAL_SERVICES } from "../../constants/services";
 import { useToast } from "../../context/ToastContext";
@@ -49,18 +49,14 @@ const HospitalDetail = () => {
           const formattedHospital = {
             id: data.id,
             name: data.name,
-            specialties: data.specialties, // Lưu trực tiếp chuỗi specialties
+            specialties: data.specialties,
             address: data.address,
             phone: data.phone,
             email: data.email,
-            website: data.link_website,
+            link_website: data.link_website,
             mapUrl: data.map_location,
             description: data.description,
-            workingHours: [{
-              days: "Monday - Sunday",
-              time: data.operating_hours,
-            }],
-            // Bỏ phần filter không cần thiết
+            workingHours: data.operating_hours,
             services: data.specialties 
               ? data.specialties.split(",").map(s => s.trim())
               : [],
@@ -74,6 +70,13 @@ const HospitalDetail = () => {
             })),
             rating: data.stats.average_rating || 5,
             reviewCount: data.stats.total_reviews || 0,
+            ratingCounts: data.stats.rating_counts || {
+              five_star: 0,
+              four_star: 0,
+              three_star: 0,
+              two_star: 0,
+              one_star: 0
+            },
             staffDescription: data.staff_description,
             staffCredentials: data.staff_credentials,
             department: data.department,
@@ -115,6 +118,26 @@ const HospitalDetail = () => {
 
     checkLikeStatuses();
   }, [isAuthenticated, user, hospital?.id, galleryPhotos]);
+
+  // Thêm useEffect để kiểm tra trạng thái favorite chỉ khi đã đăng nhập
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (isAuthenticated && user && hospital?.id) {
+        try {
+          const isFavorited = await checkFavorite(hospital.id);
+          setIsFavorite(isFavorited);
+        } catch (error) {
+          console.error("Error checking favorite status:", error);
+          addToast({
+            type: "error",
+            message: t("Error checking favorite status")
+          });
+        }
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [isAuthenticated, user, hospital?.id]);
 
   // Handle view all reviews
   const handleViewAllReviews = () => {
@@ -188,19 +211,32 @@ const HospitalDetail = () => {
     }
   };
 
-  const handleToggleFavorite = () => {
-    // Kiểm tra đăng nhập trước khi thực hiện
-    if (!isAuthenticated || !user) {
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
       setShowLoginModal(true);
-      // Lưu callback để thực hiện sau khi đăng nhập
       setLoginSuccessCallback(() => () => {
-        setIsFavorite(true);
+        handleToggleFavorite();
       });
       return;
     }
 
-    setIsFavorite(!isFavorite);
-    // TODO: Call API to add/remove from favorites
+    try {
+      const newFavoriteStatus = await toggleFavorite(hospital.id);
+      setIsFavorite(newFavoriteStatus);
+      
+      addToast({
+        type: "success",
+        message: newFavoriteStatus 
+          ? t("Added to favorites successfully") 
+          : t("Removed from favorites successfully")
+      });
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      addToast({
+        type: "error",
+        message: t("Error updating favorite status")
+      });
+    }
   };
 
   const handleLikeImage = async (imageId) => {
@@ -512,17 +548,13 @@ const HospitalDetail = () => {
                   </span>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-gray-600 mt-1 flex-shrink-0" />
+                <div className="flex flex-col md:flex-row md:gap-12">
                   <div>
                     <h3 className="font-medium">Address</h3>
                     <p className="text-sm md:text-base text-gray-600">
                       {hospital.address}
                     </p>
                   </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-gray-600 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-medium">Phone</h3>
                     <p className="text-sm md:text-base text-gray-600">
@@ -532,15 +564,23 @@ const HospitalDetail = () => {
                 </div>
                 <div>
                   <h3 className="font-medium mb-2">Working Hours</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm md:text-base text-gray-600">
-                    {hospital.workingHours?.map((hours, index) => (
-                      <div key={index}>
-                        <p className="font-medium">{hours.days}</p>
-                        <p>{hours.time}</p>
-                      </div>
-                    ))}
+                  <div className="text-sm md:text-base text-gray-600">
+                    {hospital.workingHours}
                   </div>
                 </div>
+                {hospital.link_website && (
+                  <div>
+                    <h3 className="font-medium">Website</h3>
+                    <a 
+                      href={hospital.link_website.startsWith('http') ? hospital.link_website : `https://${hospital.link_website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm md:text-base text-blue-600 hover:text-blue-700 hover:underline"
+                    >
+                      {hospital.link_website}
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
 

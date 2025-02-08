@@ -8,6 +8,7 @@ import {
   ClipboardList,
   Home,
   HelpCircle,
+  Circle,
 } from "lucide-react";
 
 function AdminSidebar({ activeTab, setActiveTab }) {
@@ -19,6 +20,7 @@ function AdminSidebar({ activeTab, setActiveTab }) {
     { id: "messages", name: "Contact Messages", icon: MessageSquare },
     { id: "pending", name: "Pending Approvals", icon: ClipboardList },
     { id: "faq", name: "FAQ Management", icon: HelpCircle },
+    { id: "banner", name: "Banner Management", icon: Circle },
   ];
 
   return (
