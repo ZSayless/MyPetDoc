@@ -6,7 +6,7 @@ import {
   mockMessages,
   mockPendingApprovals,
 } from "../../data/mockData";
-import { adminService } from '../../services/adminService';
+import {adminService} from '../../services/adminService';
 
 const initialState = {
   users: [],
@@ -46,6 +46,24 @@ const initialState = {
     total: 0,
     totalPages: 1
   },
+  deletedHospitals: [],
+  deletedPagination: {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1
+  },
+  isLoadingReports: false,
+  reportsError: null,
+  banners: [],
+  isLoadingBanners: false,
+  bannersPagination: {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1
+  },
+  isSubmittingBanner: false,
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -174,6 +192,200 @@ export const toggleActiveHospital = createAsyncThunk(
   }
 );
 
+export const fetchDeletedHospitals = createAsyncThunk(
+  'admin/fetchDeletedHospitals',
+  async ({ page, limit }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getDeletedHospitals(page, limit);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleDeleteHospital = createAsyncThunk(
+  'admin/toggleDeleteHospital',
+  async (hospitalId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleDeleteHospital(hospitalId);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateHospital = createAsyncThunk(
+  'admin/updateHospital',
+  async ({ hospitalId, formData }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateHospital(hospitalId, formData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const createHospital = createAsyncThunk(
+  'admin/createHospital',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await adminService.createHospital(formData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteHospitalPermanently = createAsyncThunk(
+  'admin/deleteHospitalPermanently',
+  async (hospitalId, { rejectWithValue }) => {
+    try {
+      await adminService.deleteHospitalPermanently(hospitalId);
+      return hospitalId;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchReports = createAsyncThunk(
+  'admin/fetchReports',
+  async (page = 1, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getReports(page);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const resolveReport = createAsyncThunk(
+  'admin/resolveReport',
+  async (reportId, { rejectWithValue }) => {
+    try {
+      await adminService.resolveReport(reportId);
+      return reportId;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteReviewPermanently = createAsyncThunk(
+  'admin/deleteReviewPermanently',
+  async ({ reviewId, reportId }, { dispatch, rejectWithValue }) => {
+    try {
+      await adminService.deleteReviewPermanently(reviewId);
+      dispatch(resolveReport(reportId));
+      return { reviewId, reportId };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteReportPermanently = createAsyncThunk(
+  'admin/deleteReportPermanently',
+  async (reportId, { rejectWithValue }) => {
+    try {
+      await adminService.deleteReportPermanently(reportId);
+      return reportId;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteGalleryComment = createAsyncThunk(
+  'admin/deleteGalleryComment',
+  async ({ commentId, reportId }, { dispatch, rejectWithValue }) => {
+    try {
+      await adminService.deleteGalleryComment(commentId);
+      dispatch(resolveReport(reportId));
+      return { commentId, reportId };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchBanners = createAsyncThunk(
+  'admin/fetchBanners',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getBanners();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateBanner = createAsyncThunk(
+  'admin/updateBanner',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateBanner(id, data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleActiveBanner = createAsyncThunk(
+  'admin/toggleActiveBanner',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleActiveBanner(id);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const createBanner = createAsyncThunk(
+  'admin/createBanner',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await adminService.createBanner(formData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleDeleteBanner = createAsyncThunk(
+  'admin/toggleDeleteBanner',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleDeleteBanner(id);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const hardDeleteBanner = createAsyncThunk(
+  'admin/hardDeleteBanner',
+  async (id, { rejectWithValue }) => {
+    try {
+      await adminService.hardDeleteBanner(id);
+      return id;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -221,16 +433,10 @@ const adminSlice = createSlice({
     },
 
     // Reports
-    resolveReport: (state, action) => {
-      const report = state.reports.find((r) => r.id === action.payload);
+    updateReportStatus: (state, action) => {
+      const report = state.reports.find((r) => r.id === action.payload.reportId);
       if (report) {
-        report.status = "resolved";
-      }
-    },
-    dismissReport: (state, action) => {
-      const report = state.reports.find((r) => r.id === action.payload);
-      if (report) {
-        report.status = "dismissed";
+        report.status = action.payload.status;
       }
     },
 
@@ -263,7 +469,6 @@ const adminSlice = createSlice({
         (item) => item.id !== action.payload
       );
     },
-
 
     updateHospital: (state, action) => {
       const index = state.hospitals.findIndex(
@@ -393,6 +598,140 @@ const adminSlice = createSlice({
       .addCase(toggleActiveHospital.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchDeletedHospitals.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchDeletedHospitals.fulfilled, (state, action) => {
+        state.loading = false;
+        state.deletedHospitals = action.payload.data.data.hospitals;
+        state.deletedPagination = action.payload.data.data.pagination;
+      })
+      .addCase(fetchDeletedHospitals.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.deletedHospitals = [];
+      })
+      .addCase(toggleDeleteHospital.fulfilled, (state, action) => {
+        const updatedHospital = action.payload.data.data;
+        if (updatedHospital.is_deleted) {
+          state.hospitals = state.hospitals.filter(h => h.id !== updatedHospital.id);
+          if (!state.deletedHospitals.find(h => h.id === updatedHospital.id)) {
+            state.deletedHospitals.push(updatedHospital);
+          }
+        } else {
+          state.deletedHospitals = state.deletedHospitals.filter(h => h.id !== updatedHospital.id);
+          if (!state.hospitals.find(h => h.id === updatedHospital.id)) {
+            state.hospitals.push(updatedHospital);
+          }
+        }
+      })
+      .addCase(updateHospital.fulfilled, (state, action) => {
+        const updatedHospital = action.payload.data.data;
+        const index = state.hospitals.findIndex(h => h.id === updatedHospital.id);
+        if (index !== -1) {
+          state.hospitals[index] = updatedHospital;
+        }
+      })
+      .addCase(createHospital.fulfilled, (state, action) => {
+        state.hospitals.unshift(action.payload.data.data);
+      })
+      .addCase(deleteHospitalPermanently.fulfilled, (state, action) => {
+        state.deletedHospitals = state.deletedHospitals.filter(
+          hospital => hospital.id !== action.payload
+        );
+      })
+      .addCase(fetchReports.pending, (state) => {
+        state.isLoadingReports = true;
+        state.reportsError = null;
+      })
+      .addCase(fetchReports.fulfilled, (state, action) => {
+        state.reports = action.payload.reports;
+        state.isLoadingReports = false;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchReports.rejected, (state, action) => {
+        state.isLoadingReports = false;
+        state.reportsError = action.payload;
+      })
+      .addCase(resolveReport.fulfilled, (state, action) => {
+        const reportIndex = state.reports.findIndex(
+          report => report.id === action.payload
+        );
+        if (reportIndex !== -1) {
+          state.reports[reportIndex].resolved = true;
+        }
+      })
+      .addCase(deleteReviewPermanently.fulfilled, (state, action) => {
+        const reportIndex = state.reports.findIndex(
+          report => report.id === action.payload.reportId
+        );
+        if (reportIndex !== -1) {
+          state.reports[reportIndex].resolved = true;
+        }
+      })
+      .addCase(deleteReportPermanently.fulfilled, (state, action) => {
+        state.reports = state.reports.filter(report => report.id !== action.payload);
+      })
+      .addCase(deleteGalleryComment.fulfilled, (state, action) => {
+        const reportIndex = state.reports.findIndex(
+          report => report.id === action.payload.reportId
+        );
+        if (reportIndex !== -1) {
+          state.reports[reportIndex].resolved = true;
+        }
+      })
+      .addCase(fetchBanners.pending, (state) => {
+        state.isLoadingBanners = true;
+        state.error = null;
+      })
+      .addCase(fetchBanners.fulfilled, (state, action) => {
+        state.isLoadingBanners = false;
+        state.banners = action.payload.banners;
+        state.bannersPagination = action.payload.pagination;
+      })
+      .addCase(fetchBanners.rejected, (state, action) => {
+        state.isLoadingBanners = false;
+        state.error = action.payload;
+      })
+      .addCase(updateBanner.pending, (state) => {
+        state.isSubmittingBanner = true;
+      })
+      .addCase(updateBanner.fulfilled, (state, action) => {
+        state.isSubmittingBanner = false;
+        const index = state.banners.findIndex(banner => banner.id === action.payload.id);
+        if (index !== -1) {
+          state.banners[index] = action.payload;
+        }
+      })
+      .addCase(updateBanner.rejected, (state) => {
+        state.isSubmittingBanner = false;
+      })
+      .addCase(toggleActiveBanner.fulfilled, (state, action) => {
+        const index = state.banners.findIndex(banner => banner.id === action.payload.id);
+        if (index !== -1) {
+          state.banners[index] = action.payload;
+        }
+      })
+      .addCase(createBanner.pending, (state) => {
+        state.isSubmittingBanner = true;
+      })
+      .addCase(createBanner.fulfilled, (state, action) => {
+        state.isSubmittingBanner = false;
+        state.banners.unshift(action.payload);
+      })
+      .addCase(createBanner.rejected, (state) => {
+        state.isSubmittingBanner = false;
+      })
+      .addCase(toggleDeleteBanner.fulfilled, (state, action) => {
+        const index = state.banners.findIndex(banner => banner.id === action.payload.id);
+        if (index !== -1) {
+          state.banners[index] = action.payload;
+        }
+      })
+      .addCase(hardDeleteBanner.fulfilled, (state, action) => {
+        state.banners = state.banners.filter(banner => banner.id !== action.payload);
       });
   }
 });
@@ -406,15 +745,13 @@ export const {
   deleteHospital,
   deleteBlog,
   updateBlogStatus,
-  resolveReport,
-  dismissReport,
+  updateReportStatus,
   deleteMessage,
   markMessageAsRead,
   approvePending,
   rejectPending,
   deletePending,
   updateUser,
-  updateHospital,
   addContactMessage,
   setContactMessages,
   deleteContactMessage,

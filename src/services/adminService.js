@@ -179,5 +179,263 @@ export const adminService = {
     } catch (error) {
       throw error.response?.data || error;
     }
+  },
+  // getDeletedHospitals
+  getDeletedHospitals: async (page = 1, limit = 10) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/hospitals/deleted/list`, {
+        params: { page, limit },
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // toggleDeleteHospital
+  toggleDeleteHospital: async (hospitalId) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/hospitals/${hospitalId}/toggle-delete`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  updateHospital: async (hospitalId, formData) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/hospitals/${hospitalId}`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data',
+          }
+        }
+      );
+      return response;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  createHospital: async (formData) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/hospitals/create`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data',
+          }
+        }
+      );
+      return response;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  deleteHospitalPermanently: async (hospitalId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/hospitals/${hospitalId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // Lấy danh sách reports
+  getReports: async (page = 1) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/reports?page=${page}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // Đánh dấu report đã xử lý
+  resolveReport: async (reportId) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/reports/${reportId}/resolve`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // Xóa cứng review
+  deleteReviewPermanently: async (reviewId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/reviews/${reviewId}/hard`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // Xóa cứng report
+  deleteReportPermanently: async (reportId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/reports/${reportId}/force`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // Xóa gallery comment
+  deleteGalleryComment: async (commentId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/community/comments/${commentId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  // Lấy danh sách banners
+  getBanners: async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/banners`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data; // Trả về cả object bao gồm banners và pagination
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  updateBanner: async (id, formData) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/banners/${id}`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  toggleActiveBanner: async (id) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/banners/${id}/toggle-active`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  createBanner: async (formData) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/banners`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  toggleDeleteBanner: async (id) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/banners/${id}/soft`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  hardDeleteBanner: async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/banners/${id}/hard`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 }; 

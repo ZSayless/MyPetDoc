@@ -18,7 +18,14 @@ import { useToast } from "../../../context/ToastContext";
 
 function UsersManagement() {
   const dispatch = useDispatch();
-  const { users, deletedUsers, pagination, loading, error } = useSelector((state) => state.admin);
+  const { 
+    users, 
+    deletedUsers, 
+    pagination, 
+    deletedPagination,
+    loading, 
+    error 
+  } = useSelector((state) => state.admin);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [isAddingUser, setIsAddingUser] = useState(false);
@@ -617,27 +624,54 @@ function UsersManagement() {
       )}
 
       {/* Pagination */}
-      <div className="mt-4 flex justify-between items-center">
-        <div className="text-sm text-gray-500">
-          Showing {pagination.page} of {pagination.totalPages} pages
+      {(activeTab === "active" ? users : deletedUsers)?.length > 0 && (
+        <div className="flex items-center justify-between py-3">
+          <div className="text-sm text-gray-500">
+            Showing {activeTab === "active" ? pagination.page : deletedPagination.page} of{" "}
+              {activeTab === "active" ? pagination.totalPages : deletedPagination.totalPages} pages
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                const action = activeTab === "active" ? fetchUsers : fetchDeletedUsers;
+                const currentPage = activeTab === "active" ? pagination.page : deletedPagination.page;
+                dispatch(action({ page: currentPage - 1, limit: 10 }));
+              }}
+              disabled={
+                activeTab === "active" 
+                  ? pagination.page === 1 || users.length === 0
+                  : deletedPagination.page === 1 || deletedUsers.length === 0
+              }
+              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => {
+                const action = activeTab === "active" ? fetchUsers : fetchDeletedUsers;
+                const currentPage = activeTab === "active" ? pagination.page : deletedPagination.page;
+                const totalPages = activeTab === "active" ? pagination.totalPages : deletedPagination.totalPages;
+                dispatch(action({ page: currentPage + 1, limit: 10 }));
+              }}
+              disabled={
+                activeTab === "active"
+                  ? pagination.page === pagination.totalPages || users.length === 0
+                  : deletedPagination.page === deletedPagination.totalPages || deletedUsers.length === 0
+              }
+              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            disabled={pagination.page === 1}
-            onClick={() => dispatch(fetchUsers({ page: pagination.page - 1, limit: pagination.limit, isDeleted: activeTab === 'trash' }))}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <button
-            disabled={pagination.page === pagination.totalPages}
-            onClick={() => dispatch(fetchUsers({ page: pagination.page + 1, limit: pagination.limit, isDeleted: activeTab === 'trash' }))}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Next
-          </button>
+      )}
+
+      {/* Empty State */}
+      {!loading && (activeTab === "active" ? users : deletedUsers)?.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          {activeTab === "active" ? "Không có người dùng nào" : "Thùng rác trống"}
         </div>
-      </div>
+      )}
 
       {/* User Detail Modal */}
       {modalState.isOpen && (

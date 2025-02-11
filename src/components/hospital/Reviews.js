@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Star, Flag, MoreVertical, X, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
-import { reportReview, toggleDeleteReview } from "../../services/hospitalService";
+import { reportReview, deleteReviewPermanently } from "../../services/hospitalService";
 
 const ReportModal = ({ isOpen, onClose, onSubmit, loading }) => {
   const [reason, setReason] = useState("");
@@ -103,7 +103,7 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
 
     try {
       setLoading(true);
-      await toggleDeleteReview(review.id);
+      await deleteReviewPermanently(review.id);
       
       // Cập nhật UI để hiển thị review đã bị xóa
       setReviews(prevReviews =>
@@ -228,7 +228,7 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
                 </div>
               </div>
 
-              {user && (user.id === review.user_id || user.role === 'ADMIN') && !review.is_deleted && (
+              {user && !review.is_deleted && (
                 <div className="relative">
                   <button
                     onClick={(e) => {
@@ -242,16 +242,31 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
 
                   {showOptionsFor === review.id && (
                     <div className="absolute right-0 mt-1 bg-white rounded-lg shadow-lg py-1 z-10 min-w-[120px]">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteReview(review);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 text-red-500"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        {t("Delete")}
-                      </button>
+                      {(user.id === review.user_id || user.role === 'ADMIN') && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteReview(review);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 text-red-500"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          {t("Delete")}
+                        </button>
+                      )}
+                      
+                      {user.id !== review.user_id && !review.is_reported && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleReportClick(review);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 text-gray-700"
+                        >
+                          <Flag className="w-4 h-4" />
+                          {t("Report")}
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>

@@ -1,21 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Search, Eye, Check, X } from "lucide-react";
-import { resolveReport, dismissReport } from "../../../redux/slices/adminSlice";
+import { Search, Eye, Check, Trash2, Trash } from "lucide-react";
+import { useToast } from "../../../context/ToastContext";
+import { resolveReport, fetchReports, deleteReviewPermanently, deleteReportPermanently, deleteGalleryComment } from "../../../redux/slices/adminSlice";
 
 function ReportsManagement() {
   const dispatch = useDispatch();
-  const { reports } = useSelector((state) => state.admin);
+  const { addToast } = useToast();
+  const { reports, isLoadingReports } = useSelector((state) => state.admin);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedReport, setSelectedReport] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1
+  });
 
-  const handleResolve = (reportId) => {
-    dispatch(resolveReport(reportId));
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await dispatch(fetchReports(currentPage)).unwrap();
+        setPagination(response.pagination);
+      } catch (error) {
+        addToast({
+          type: "error",
+          message: error.message || "Có lỗi xảy ra khi tải danh sách báo cáo"
+        });
+      }
+    };
+    fetchData();
+  }, [dispatch, currentPage]);
 
-  const handleDismiss = (reportId) => {
-    if (window.confirm("Are you sure you want to dismiss this report?")) {
-      dispatch(dismissReport(reportId));
+  const handleResolve = async (reportId) => {
+    try {
+      await dispatch(resolveReport(reportId)).unwrap();
+      addToast({
+        type: "success",
+        message: "Đã đánh dấu báo cáo là đã xử lý"
+      });
+    } catch (error) {
+      addToast({
+        type: "error",
+        message: error.message || "Có lỗi xảy ra khi xử lý báo cáo"
+      });
     }
   };
 
@@ -23,12 +52,81 @@ function ReportsManagement() {
     setSelectedReport(report);
   };
 
-  const filteredReports = reports.filter(
-    (report) =>
-      report.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.reportedBy.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleDeleteReview = async (report) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa vĩnh viễn review này?')) {
+      try {
+        await dispatch(deleteReviewPermanently({
+          reviewId: report.reported_content.id,
+          reportId: report.id
+        })).unwrap();
+        addToast({
+          type: "success",
+          message: "Đã xóa vĩnh viễn review"
+        });
+      } catch (error) {
+        addToast({
+          type: "error",
+          message: error.message || "Có lỗi xảy ra khi xóa review"
+        });
+      }
+    }
+  };
+
+  const handleDeleteReport = async (reportId) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa vĩnh viễn báo cáo này?')) {
+      try {
+        await dispatch(deleteReportPermanently(reportId)).unwrap();
+        addToast({
+          type: "success",
+          message: "Đã xóa vĩnh viễn báo cáo"
+        });
+      } catch (error) {
+        addToast({
+          type: "error",
+          message: error.message || "Có lỗi xảy ra khi xóa báo cáo"
+        });
+      }
+    }
+  };
+
+  const handleDeleteGalleryComment = async (report) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
+      try {
+        await dispatch(deleteGalleryComment({
+          commentId: report.reported_content.id,
+          reportId: report.id
+        })).unwrap();
+        addToast({
+          type: "success",
+          message: "Đã xóa bình luận"
+        });
+      } catch (error) {
+        addToast({
+          type: "error",
+          message: error.message || "Có lỗi xảy ra khi xóa bình luận"
+        });
+      }
+    }
+  };
+
+  const getFilteredReports = () => {
+    if (!searchTerm || !reports) return reports || [];
+
+    const searchTermLower = searchTerm.toLowerCase().trim();
+    return reports.filter(report => 
+      report?.reason?.toLowerCase().includes(searchTermLower) ||
+      report?.reporter?.full_name?.toLowerCase().includes(searchTermLower) ||
+      report?.reported_content?.content?.toLowerCase().includes(searchTermLower)
+    );
+  };
+
+  if (isLoadingReports) {
+    return (
+      <div className="p-4 md:p-6 flex justify-center">
+        <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-6">
@@ -41,7 +139,7 @@ function ReportsManagement() {
           />
           <input
             type="text"
-            placeholder="Search reports..."
+            placeholder="Tìm kiếm theo lý do, người báo cáo, nội dung..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#98E9E9]"
@@ -73,65 +171,98 @@ function ReportsManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredReports.map((report) => (
+              {getFilteredReports()?.map((report) => (
                 <tr key={report.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        report.type === "comment"
-                          ? "bg-blue-100 text-blue-800"
-                          : report.type === "review"
-                          ? "bg-purple-100 text-purple-800"
-                          : "bg-orange-100 text-orange-800"
-                      }`}
-                    >
-                      {report.type}
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      report?.reported_content?.type === "review"
+                        ? "bg-purple-100 text-purple-800"
+                        : "bg-blue-100 text-blue-800"
+                    }`}>
+                      {report?.reported_content?.type || 'N/A'}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-sm text-gray-900 line-clamp-2">
-                      {report.content}
-                    </p>
+                    <div>
+                      <p className="text-sm text-gray-900 line-clamp-2">
+                        {report?.reported_content?.content}
+                      </p>
+                      {report?.reported_content?.type === "review" && report?.reported_content?.details?.hospital && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Bệnh viện: {report.reported_content.details.hospital.name}
+                        </p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-1">
+                        Lý do: {report?.reason}
+                      </p>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {report.reportedBy}
+                    <div className="flex items-center gap-2">
+                      {report?.reporter?.avatar && (
+                        <img 
+                          src={report.reporter.avatar} 
+                          alt={report.reporter.full_name}
+                          className="w-8 h-8 rounded-full"
+                        />
+                      )}
+                      <div>
+                        <div className="text-sm font-medium">{report?.reporter?.full_name}</div>
+                        <div className="text-xs text-gray-500">{report?.reporter?.email}</div>
+                      </div>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        report.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : report.status === "resolved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {report.status}
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      report?.resolved 
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}>
+                      {report?.resolved ? "Đã xử lý" : "Chờ xử lý"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
                     <div className="flex items-center justify-end space-x-2">
                       <button
                         onClick={() => handleView(report)}
                         className="text-blue-600 hover:text-blue-900"
+                        title="Xem chi tiết"
                       >
                         <Eye size={18} />
                       </button>
-                      {report.status === "pending" && (
-                        <>
-                          <button
-                            onClick={() => handleResolve(report.id)}
-                            className="text-green-600 hover:text-green-900"
-                          >
-                            <Check size={18} />
-                          </button>
-                          <button
-                            onClick={() => handleDismiss(report.id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <X size={18} />
-                          </button>
-                        </>
+                      {report?.reported_content?.type === 'review' && (
+                        <button
+                          onClick={() => handleDeleteReview(report)}
+                          className="text-red-600 hover:text-red-900"
+                          title="Xóa vĩnh viễn review"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+                      {report?.reported_content?.type === 'gallery_comment' && (
+                        <button
+                          onClick={() => handleDeleteGalleryComment(report)}
+                          className="text-red-600 hover:text-red-900"
+                          title="Xóa bình luận"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDeleteReport(report.id)}
+                        className="text-red-600 hover:text-red-900"
+                        title="Xóa vĩnh viễn báo cáo"
+                      >
+                        <Trash size={18} />
+                      </button>
+                      {!report?.resolved && (
+                        <button
+                          onClick={() => handleResolve(report.id)}
+                          className="text-green-600 hover:text-green-900"
+                          title="Đánh dấu đã xử lý"
+                        >
+                          <Check size={18} />
+                        </button>
                       )}
                     </div>
                   </td>
@@ -144,40 +275,36 @@ function ReportsManagement() {
 
       {/* Mobile Card View */}
       <div className="md:hidden space-y-4">
-        {filteredReports.map((report) => (
+        {getFilteredReports()?.map((report) => (
           <div key={report.id} className="bg-white p-4 rounded-lg shadow-sm">
             <div className="flex justify-between items-start mb-3">
               <div>
                 <span
                   className={`px-2 py-1 text-xs rounded-full ${
-                    report.type === "comment"
-                      ? "bg-blue-100 text-blue-800"
-                      : report.type === "review"
+                    report?.reported_content?.type === "review"
                       ? "bg-purple-100 text-purple-800"
-                      : "bg-orange-100 text-orange-800"
+                      : "bg-blue-100 text-blue-800"
                   }`}
                 >
-                  {report.type}
+                  {report?.reported_content?.type || 'N/A'}
                 </span>
                 <p className="text-sm text-gray-500 mt-1">
-                  By: {report.reportedBy}
+                  By: {report?.reporter?.full_name}
                 </p>
               </div>
               <span
                 className={`px-2 py-1 text-xs rounded-full ${
-                  report.status === "pending"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : report.status === "resolved"
+                  report?.resolved
                     ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
+                    : "bg-yellow-100 text-yellow-800"
                 }`}
               >
-                {report.status}
+                {report?.resolved ? "Đã xử lý" : "Chờ xử lý"}
               </span>
             </div>
 
             <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-              {report.content}
+              {report?.reported_content?.content}
             </p>
 
             <div className="flex justify-end gap-2">
@@ -187,25 +314,70 @@ function ReportsManagement() {
               >
                 <Eye size={18} />
               </button>
-              {report.status === "pending" && (
-                <>
-                  <button
-                    onClick={() => handleResolve(report.id)}
-                    className="p-2 text-green-600 hover:bg-green-50 rounded-full"
-                  >
-                    <Check size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDismiss(report.id)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-full"
-                  >
-                    <X size={18} />
-                  </button>
-                </>
+              {report?.reported_content?.type === 'review' && (
+                <button
+                  onClick={() => handleDeleteReview(report)}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-full"
+                >
+                  <Trash2 size={18} />
+                </button>
+              )}
+              {report?.reported_content?.type === 'gallery_comment' && (
+                <button
+                  onClick={() => handleDeleteGalleryComment(report)}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-full"
+                >
+                  <Trash2 size={18} />
+                </button>
+              )}
+              <button
+                onClick={() => handleDeleteReport(report.id)}
+                className="p-2 text-red-600 hover:bg-red-50 rounded-full"
+              >
+                <Trash size={18} />
+              </button>
+              {!report?.resolved && (
+                <button
+                  onClick={() => handleResolve(report.id)}
+                  className="p-2 text-green-600 hover:bg-green-50 rounded-full"
+                >
+                  <Check size={18} />
+                </button>
               )}
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-4 flex items-center justify-between">
+        <div className="text-sm text-gray-700">
+          Showing {currentPage} of {pagination.totalPages} pages
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 text-sm font-medium rounded-md ${
+              currentPage === 1
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white text-gray-700 hover:bg-gray-50 border'
+            }`}
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+            disabled={currentPage === pagination.totalPages}
+            className={`px-4 py-2 text-sm font-medium rounded-md ${
+              currentPage === pagination.totalPages
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white text-gray-700 hover:bg-gray-50 border'
+            }`}
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       {/* Modal Overlay */}
@@ -216,16 +388,16 @@ function ReportsManagement() {
         <div className="fixed inset-0 flex items-center justify-center z-[110]">
           <div className="bg-white rounded-lg w-full max-w-md mx-4">
             <div className="p-6">
-              <h2 className="text-xl font-semibold mb-6">Report Details</h2>
+              <h2 className="text-xl font-semibold mb-6">Chi tiết báo cáo</h2>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Type
+                    Loại
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.type}
+                    value={selectedReport.reported_content.type}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -233,10 +405,10 @@ function ReportsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Content
+                    Nội dung
                   </label>
                   <textarea
-                    value={selectedReport.content}
+                    value={selectedReport.reported_content.content}
                     readOnly
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
@@ -245,11 +417,15 @@ function ReportsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Reported Item
+                    Nội dung được báo cáo
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.reportedItem}
+                    value={
+                      selectedReport.reported_content.type === 'review'
+                        ? selectedReport.reported_content.details.hospital.name
+                        : selectedReport.reported_content.details.gallery.caption
+                    }
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -257,11 +433,11 @@ function ReportsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Reported By
+                    Người báo cáo
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.reportedBy}
+                    value={selectedReport.reporter.full_name}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -269,11 +445,11 @@ function ReportsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Status
+                    Trạng thái
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.status}
+                    value={selectedReport.resolved ? "Đã xử lý" : "Chờ xử lý"}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -285,29 +461,18 @@ function ReportsManagement() {
                   onClick={() => setSelectedReport(null)}
                   className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
                 >
-                  Close
+                  Đóng
                 </button>
-                {selectedReport.status === "pending" && (
-                  <>
-                    <button
-                      onClick={() => {
-                        handleResolve(selectedReport.id);
-                        setSelectedReport(null);
-                      }}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                    >
-                      Resolve
-                    </button>
-                    <button
-                      onClick={() => {
-                        handleDismiss(selectedReport.id);
-                        setSelectedReport(null);
-                      }}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                    >
-                      Dismiss
-                    </button>
-                  </>
+                {!selectedReport.resolved && (
+                  <button
+                    onClick={() => {
+                      handleResolve(selectedReport.id);
+                      setSelectedReport(null);
+                    }}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  >
+                    Đánh dấu đã xử lý
+                  </button>
                 )}
               </div>
             </div>

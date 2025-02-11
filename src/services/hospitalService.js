@@ -132,18 +132,18 @@ const reportReview = async (reviewId, reason) => {
   }
 };
 
-const toggleDeleteReview = async (reviewId) => {
+const deleteReviewPermanently = async (reviewId) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.patch(
-      `${BASE_URL}/reviews/${reviewId}/toggle-delete`,
-      {},
+    const response = await axios.delete(
+      `${BASE_URL}/reviews/${reviewId}/hard`,
       {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       }
     );
+    
     return response.data;
   } catch (error) {
     console.error("Error toggling delete review:", error);
@@ -163,6 +163,41 @@ const getHospitalReviews = async (hospitalId, page = 1, limit = 10) => {
   }
 };
 
+// Kiểm tra trạng thái favorite
+const checkFavorite = async (hospitalId) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/favorites/check/${hospitalId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+    return response.data.data.isFavorited;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+// Toggle favorite
+const toggleFavorite = async (hospitalId) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/favorites/${hospitalId}`,
+      {},
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+    return response.data.data.isFavorited;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
 export { 
   getHospitals, 
   getHospitalDetail,
@@ -172,6 +207,8 @@ export {
   updateReview,
   getUserReviews,
   reportReview,
-  toggleDeleteReview,
-  getHospitalReviews
+  deleteReviewPermanently,
+  getHospitalReviews,
+  checkFavorite,
+  toggleFavorite
 };
