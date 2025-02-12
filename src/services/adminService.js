@@ -189,7 +189,7 @@ export const adminService = {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      return response;
+      return response.data;
     } catch (error) {
       throw error.response?.data || error;
     }
@@ -437,5 +437,96 @@ export const adminService = {
     } catch (error) {
       throw error.response?.data || error;
     }
+  },
+  getBlogPosts: async (params = {}) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/blog-posts/admin/all`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        params
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  createBlogPost: async (formData) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/blog-posts/admin`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  updateBlogPost: async (id, formData) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/blog-posts/admin/${id}`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  fetchDeletedBlogs: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/blog-posts/admin/trash`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  toggleDeleteBlog: async (blogId) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/blog-posts/admin/${blogId}/toggle-delete`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  deleteBlogPermanently: async (blogId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/blog-posts/admin/hard/${blogId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
+
 }; 

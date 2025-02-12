@@ -297,21 +297,14 @@ function HospitalsManagement() {
   };
 
   const getFilteredHospitals = () => {
-    if (!searchTerm) {
-      return activeTab === "list" 
-        ? hospitals?.filter(h => !h.is_deleted)
-        : hospitals?.filter(h => h.is_deleted);
-    }
-
-    const searchTermLower = searchTerm.toLowerCase().trim();
+    const currentHospitals = activeTab === "list" ? hospitals : deletedHospitals;
+    if (!currentHospitals) return [];
     
-    return (activeTab === "list" ? hospitals?.filter(h => !h.is_deleted) : hospitals?.filter(h => h.is_deleted))
-      ?.filter(hospital => 
-        hospital.name.toLowerCase().includes(searchTermLower) ||
-        hospital.phone.toLowerCase().includes(searchTermLower) ||
-        hospital.email.toLowerCase().includes(searchTermLower) ||
-        hospital.address.toLowerCase().includes(searchTermLower)
-      );
+    return currentHospitals.filter(hospital => 
+      hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      hospital.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      hospital.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   };
 
   // Hàm xử lý đóng form

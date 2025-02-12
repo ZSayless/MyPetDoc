@@ -12,7 +12,7 @@ const initialState = {
   users: [],
   deletedUsers: [],
   hospitals: mockHospitals || [],
-  blogs: mockBlogs || [],
+  blogs: [],
   reports: mockReports || [],
   messages: mockMessages || [],
   pendingApprovals:
@@ -64,6 +64,8 @@ const initialState = {
     totalPages: 1
   },
   isSubmittingBanner: false,
+  isSubmittingBlog: false,
+  deletedBlogs: [],
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -386,6 +388,81 @@ export const hardDeleteBanner = createAsyncThunk(
   }
 );
 
+export const fetchBlogPosts = createAsyncThunk(
+  'admin/fetchBlogPosts',
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getBlogPosts(params);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const createBlogPost = createAsyncThunk(
+  'admin/createBlogPost',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await adminService.createBlogPost(formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateBlogPost = createAsyncThunk(
+  'admin/updateBlogPost',
+  async ({ id, formData }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateBlogPost(id, formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchDeletedBlogs = createAsyncThunk(
+  'admin/fetchDeletedBlogs',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await adminService.fetchDeletedBlogs();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const toggleDeleteBlog = createAsyncThunk(
+  'admin/toggleDeleteBlog',
+  async (blogId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleDeleteBlog(blogId);
+      return { ...response.data, id: blogId };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteBlogPermanently = createAsyncThunk(
+  'admin/deleteBlogPermanently',
+  async (blogId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.deleteBlogPermanently(blogId);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      throw error;
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -605,8 +682,8 @@ const adminSlice = createSlice({
       })
       .addCase(fetchDeletedHospitals.fulfilled, (state, action) => {
         state.loading = false;
-        state.deletedHospitals = action.payload.data.data.hospitals;
-        state.deletedPagination = action.payload.data.data.pagination;
+        state.deletedHospitals = action.payload.data.hospitals;
+        state.deletedPagination = action.payload.data.pagination;
       })
       .addCase(fetchDeletedHospitals.rejected, (state, action) => {
         state.loading = false;
@@ -732,6 +809,73 @@ const adminSlice = createSlice({
       })
       .addCase(hardDeleteBanner.fulfilled, (state, action) => {
         state.banners = state.banners.filter(banner => banner.id !== action.payload);
+      })
+      .addCase(fetchBlogPosts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchBlogPosts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.blogs = action.payload.posts;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchBlogPosts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(createBlogPost.pending, (state) => {
+        state.isSubmittingBlog = true;
+        state.error = null;
+      })
+      .addCase(createBlogPost.fulfilled, (state, action) => {
+        state.isSubmittingBlog = false;
+        state.blogs.unshift(action.payload);
+      })
+      .addCase(createBlogPost.rejected, (state, action) => {
+        state.isSubmittingBlog = false;
+        state.error = action.payload;
+      })
+      .addCase(updateBlogPost.pending, (state) => {
+        state.isSubmittingBlog = true;
+        state.error = null;
+      })
+      .addCase(updateBlogPost.fulfilled, (state, action) => {
+        state.isSubmittingBlog = false;
+        const updatedBlog = action.payload;
+        const index = state.blogs.findIndex(blog => blog.id === updatedBlog.id);
+        if (index !== -1) {
+          state.blogs[index] = updatedBlog;
+        }
+      })
+      .addCase(updateBlogPost.rejected, (state, action) => {
+        state.isSubmittingBlog = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchDeletedBlogs.fulfilled, (state, action) => {
+        state.loading = false;
+        state.deletedBlogs = action.payload.data.posts;
+        state.pagination = action.payload.data.pagination;
+      })
+      .addCase(toggleDeleteBlog.fulfilled, (state, action) => {
+        const { id, is_deleted } = action.payload;
+        if (is_deleted) {
+          state.blogs = state.blogs.filter(b => b.id !== id);
+          state.deletedBlogs.push({ ...state.blogs.find(b => b.id === id), is_deleted: true });
+        } else {
+          state.deletedBlogs = state.deletedBlogs.filter(b => b.id !== id);
+          state.blogs.push({ ...state.deletedBlogs.find(b => b.id === id), is_deleted: false });
+        }
+      })
+      .addCase(deleteBlogPermanently.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteBlogPermanently.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(deleteBlogPermanently.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   }
 });
