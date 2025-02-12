@@ -250,7 +250,7 @@ function App() {
               }
             />
           </Routes>
-          {/* <FAQBubble /> */}
+          <FAQBubble />
         </ToastProvider>
       </AuthProvider>
     </Provider>
