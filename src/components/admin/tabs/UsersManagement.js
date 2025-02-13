@@ -100,6 +100,8 @@ function UsersManagement() {
       ...user,
       password: '' // Không hiển thị mật khẩu cũ
     });
+    // Reset errors
+    setErrors({});
     setShowEditModal(true);
   };
 
@@ -198,7 +200,6 @@ function UsersManagement() {
 
   const handlePermanentDelete = async (userId) => {
     try {
-      // Hiển thị dialog xác nhận
       const confirmed = window.confirm(
         'Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này? Hành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.'
       );
@@ -209,9 +210,7 @@ function UsersManagement() {
       
       addToast({
         type: 'success',
-        message: `Xóa người dùng thành công! Đã xóa: ${Object.entries(result.data.relations)
-          .map(([key, value]) => `${value} ${key}`)
-          .join(', ')}`
+        message: result.message || 'Xóa người dùng thành công!'
       });
     } catch (error) {
       addToast({
@@ -315,6 +314,18 @@ function UsersManagement() {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     
+    const validationErrors = validateForm(editForm, true);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      // Hiển thị thông báo lỗi đầu tiên
+      const firstError = Object.values(validationErrors)[0];
+      addToast({
+        type: 'error',
+        message: firstError
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await dispatch(updateUserInfo({
@@ -359,26 +370,101 @@ function UsersManagement() {
     });
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!newUser.email) newErrors.email = 'Email là bắt buộc';
-    else if (!/\S+@\S+\.\S+/.test(newUser.email)) newErrors.email = 'Email không hợp lệ';
+  const validateForm = (formData, isEdit = false) => {
+    const errors = {};
     
-    if (!newUser.full_name) newErrors.full_name = 'Họ tên là bắt buộc';
-    if (!newUser.password) newErrors.password = 'Mật khẩu là bắt buộc';
-    else if (newUser.password.length < 6) newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
-
-    if (newUser.phone_number && !/^[0-9]{10}$/.test(newUser.phone_number)) {
-      newErrors.phone_number = 'Số điện thoại không hợp lệ (10 số)';
+    // Validate email
+    if (!formData.email) {
+      errors.email = 'Email là bắt buộc';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Email không hợp lệ';
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // Validate họ tên
+    if (!formData.full_name) {
+      errors.full_name = 'Họ tên là bắt buộc';
+    } else if (formData.full_name.length < 2) {
+      errors.full_name = 'Họ tên phải có ít nhất 2 ký tự';
+    } else if (formData.full_name.length > 50) {
+      errors.full_name = 'Họ tên không được vượt quá 50 ký tự';
+    }
+
+    // Validate mật khẩu (chỉ bắt buộc khi tạo mới)
+    if (!isEdit && !formData.password) {
+      errors.password = 'Mật khẩu là bắt buộc';
+    } else if (formData.password && formData.password.length < 6) {
+      errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+    } else if (formData.password && formData.password.length > 50) {
+      errors.password = 'Mật khẩu không được vượt quá 50 ký tự';
+    } else if (formData.password && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      errors.password = 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số';
+    }
+
+    // Validate số điện thoại
+    if (formData.phone_number) {
+      if (!/^[0-9]{10}$/.test(formData.phone_number)) {
+        errors.phone_number = 'Số điện thoại phải có 10 chữ số';
+      } else if (!/^(0[3|5|7|8|9])/.test(formData.phone_number)) {
+        errors.phone_number = 'Số điện thoại không hợp lệ';
+      }
+    }
+
+    // Validate role
+    if (!formData.role) {
+      errors.role = 'Vai trò là bắt buộc';
+    }
+
+    // Validate file ảnh
+    if (formData.avatar instanceof File) {
+      if (formData.avatar.size > 5 * 1024 * 1024) {
+        errors.avatar = 'Kích thước ảnh không được vượt quá 5MB';
+      }
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(formData.avatar.type)) {
+        errors.avatar = 'Chỉ chấp nhận file ảnh định dạng JPG, PNG hoặc GIF';
+      }
+    }
+
+    // Validate thông tin thú cưng (nếu có)
+    if (formData.pet_age && isNaN(formData.pet_age)) {
+      errors.pet_age = 'Tuổi thú cưng phải là số';
+    }
+
+    if (formData.pet_type && !['DOG', 'CAT', 'OTHER'].includes(formData.pet_type)) {
+      errors.pet_type = 'Loại thú cưng không hợp lệ';
+    }
+
+    if (formData.pet_notes && formData.pet_notes.length > 500) {
+      errors.pet_notes = 'Ghi chú không được vượt quá 500 ký tự';
+    }
+
+    if (formData.pet_photo instanceof File) {
+      if (formData.pet_photo.size > 5 * 1024 * 1024) {
+        errors.pet_photo = 'Kích thước ảnh không được vượt quá 5MB';
+      }
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(formData.pet_photo.type)) {
+        errors.pet_photo = 'Chỉ chấp nhận file ảnh định dạng JPG, PNG hoặc GIF';
+      }
+    }
+
+    return errors;
   };
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    
+    const validationErrors = validateForm(newUser);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      // Hiển thị thông báo lỗi đầu tiên
+      const firstError = Object.values(validationErrors)[0];
+      addToast({
+        type: 'error',
+        message: firstError
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -994,7 +1080,9 @@ function UsersManagement() {
                   type="email"
                   value={newUser.email}
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.email ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -1009,7 +1097,9 @@ function UsersManagement() {
                   type="text"
                   value={newUser.full_name}
                   onChange={(e) => setNewUser({ ...newUser, full_name: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.full_name ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
                 {errors.full_name && (
                   <p className="mt-1 text-sm text-red-600">{errors.full_name}</p>
@@ -1025,7 +1115,9 @@ function UsersManagement() {
                   value={newUser.phone_number}
                   onChange={(e) => setNewUser({ ...newUser, phone_number: e.target.value })}
                   placeholder="Nhập số điện thoại"
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.phone_number ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
                 {errors.phone_number && (
                   <p className="mt-1 text-sm text-red-600">{errors.phone_number}</p>
@@ -1040,7 +1132,9 @@ function UsersManagement() {
                   type="password"
                   value={newUser.password}
                   onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.password ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -1054,7 +1148,9 @@ function UsersManagement() {
                 <select
                   value={newUser.role}
                   onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.role ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 >
                   <option value="GENERAL_USER">Người dùng thường</option>
                   <option value="HOSPITAL_ADMIN">Quản lý bệnh viện</option>
@@ -1071,7 +1167,9 @@ function UsersManagement() {
                   ref={fileInputRef}
                   onChange={(e) => handleFileChange(e, 'avatar')}
                   accept="image/*"
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.avatar ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
               </div>
 
@@ -1130,7 +1228,9 @@ function UsersManagement() {
                     type="email"
                     value={editForm.email}
                     onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.email ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
                 </div>
 
@@ -1142,7 +1242,9 @@ function UsersManagement() {
                     type="text"
                     value={editForm.full_name}
                     onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.full_name ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
                 </div>
 
@@ -1155,7 +1257,9 @@ function UsersManagement() {
                     value={editForm.password}
                     onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
                     placeholder="Để trống nếu không muốn thay đổi"
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.password ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
                 </div>
 
@@ -1167,7 +1271,9 @@ function UsersManagement() {
                     type="tel"
                     value={editForm.phone_number}
                     onChange={(e) => setEditForm({ ...editForm, phone_number: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.phone_number ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
                 </div>
 
@@ -1178,7 +1284,9 @@ function UsersManagement() {
                   <select
                     value={editForm.role}
                     onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.role ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   >
                     <option value="GENERAL_USER">Người dùng thường</option>
                     <option value="HOSPITAL_ADMIN">Quản lý bệnh viện</option>
@@ -1194,7 +1302,9 @@ function UsersManagement() {
                     type="file"
                     onChange={(e) => handleFileChange(e, 'avatar')}
                     accept="image/*"
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.avatar ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
                 </div>
               </div>
@@ -1208,7 +1318,9 @@ function UsersManagement() {
                   <select
                     value={editForm.pet_type || ''}
                     onChange={(e) => setEditForm({ ...editForm, pet_type: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.pet_type ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   >
                     <option value="">Chọn loại thú cưng</option>
                     <option value="DOG">Chó</option>
@@ -1225,7 +1337,9 @@ function UsersManagement() {
                     type="number"
                     value={editForm.pet_age || ''}
                     onChange={(e) => setEditForm({ ...editForm, pet_age: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.pet_age ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
                 </div>
 
@@ -1236,7 +1350,9 @@ function UsersManagement() {
                   <textarea
                     value={editForm.pet_notes || ''}
                     onChange={(e) => setEditForm({ ...editForm, pet_notes: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.pet_notes ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     rows="3"
                   />
                 </div>
@@ -1249,7 +1365,9 @@ function UsersManagement() {
                     type="file"
                     onChange={(e) => handleFileChange(e, 'pet_photo')}
                     accept="image/*"
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.pet_photo ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
                 </div>
               </div>

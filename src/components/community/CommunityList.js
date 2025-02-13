@@ -104,6 +104,7 @@ function CommunityList() {
         // Thêm bài đăng mới vào đầu danh sách
         setPosts(prevPosts => [response.data, ...prevPosts]);
         setIsCreateModalOpen(false);
+        fetchPosts();
         addToast({
           type: "success",
           message: t("community.post.createSuccess")

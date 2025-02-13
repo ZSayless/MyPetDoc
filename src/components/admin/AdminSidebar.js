@@ -21,6 +21,7 @@ function AdminSidebar({ activeTab, setActiveTab }) {
     { id: "pending", name: "Pending Approvals", icon: ClipboardList },
     { id: "faq", name: "FAQ Management", icon: HelpCircle },
     { id: "banner", name: "Banner Management", icon: Circle },
+    { id: "community", name: "Community Management", icon: Users },
   ];
 
   return (
