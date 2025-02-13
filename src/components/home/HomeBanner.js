@@ -10,6 +10,8 @@ import { useTranslation } from "react-i18next";
 function HomeBanner() {
   const { t } = useTranslation();
   const [banners, setBanners] = useState([]);
+  const [error, setError] = useState(false);
+
   const handleLinkClick = (link) => {
     if (!link) return;
     
@@ -22,17 +24,29 @@ function HomeBanner() {
   };
 
   useEffect(() => {
-    try {
-      getActiveBanners().then((data) => {
-        setBanners(data);
-      });
-    } catch (error) {
-      console.error("Error fetching banners:", error);
-    }
+    const fetchBanners = async () => {
+      try {
+        const data = await getActiveBanners();
+        setBanners(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching banners:", error);
+        setError(true);
+      }
+    };
+    
+    fetchBanners();
   }, []);
 
+  if (error) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-gray-600">Không thể tải dữ liệu. Vui lòng thử lại sau.</p>
+      </div>
+    );
+  }
+
   if (banners.length === 0) {
-    return null; // Hoặc có thể return một loading spinner
+    return null;
   }
 
   return (
