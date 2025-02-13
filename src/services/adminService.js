@@ -527,6 +527,94 @@ export const adminService = {
     } catch (error) {
       throw error.response?.data || error;
     }
-  }
-
+  },
+  getFaqs: async (params = {}) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/faqs`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        params
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  createFaq: async (data) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/faqs`, data, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  updateFaq: async (id, data) => {
+    try {
+      const response = await axios.put(`${BASE_URL}/faqs/${id}`, data, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  deleteFaq: async (id) => {
+    try {
+      const response = await axios.delete(`${BASE_URL}/faqs/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  getAllPosts: async (params) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/community/admin/posts/all`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        params
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  updatePostStatus: async (id, status) => {
+    try {
+      const response = await axios.patch(`${BASE_URL}/community/admin/posts/${id}/status`, 
+        { status },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  deletePostPermanently: async (id) => {
+    try {
+      const response = await axios.delete(`${BASE_URL}/community/posts/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 }; 

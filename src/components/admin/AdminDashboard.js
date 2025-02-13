@@ -8,6 +8,7 @@ import ContactMessages from "./tabs/ContactMessages";
 import PendingApprovals from "./tabs/PendingApprovals";
 import FAQManagement from "./tabs/FAQManagement";
 import BannerManagement from "./tabs/BannersManagement";
+import CommunityManagement from "./tabs/CommunityManagement";
 import { Menu, X, Users, Building2, FileText, AlertCircle } from "lucide-react";
 
 function AdminDashboard() {
@@ -29,6 +30,7 @@ function AdminDashboard() {
       case "messages": return <ContactMessages />;
       case "pending": return <PendingApprovals />;
       case "faq": return <FAQManagement />;
+      case "community": return <CommunityManagement />;
       case "banner": return <BannerManagement />;
       default: return <UsersManagement />;
     }
