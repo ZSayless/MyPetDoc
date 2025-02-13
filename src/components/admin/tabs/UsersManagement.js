@@ -507,7 +507,7 @@ function UsersManagement() {
   if (error) {
     return (
       <div className="text-center text-red-500 p-4">
-        Error loading users: {error}
+        Error loading users: {error?.message || "Có lỗi xảy ra khi tải dữ liệu"}
       </div>
     );
   }

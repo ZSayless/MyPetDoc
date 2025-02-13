@@ -733,7 +733,7 @@ const adminSlice = createSlice({
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.error.message || "Có lỗi xảy ra khi tải dữ liệu";
       })
       .addCase(toggleLockUser.fulfilled, (state, action) => {
         const user = state.users.find(u => u.id === action.payload.userId);
