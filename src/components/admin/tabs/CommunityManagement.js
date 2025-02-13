@@ -11,12 +11,13 @@ function CommunityManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPost, setSelectedPost] = useState(null);
   const [modalMode, setModalMode] = useState("view"); // chỉ còn "view"
-  const [activeTab, setActiveTab] = useState("list"); // list, deleted
   const [postToDelete, setPostToDelete] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 10; // số items mỗi trang
 
   useEffect(() => {
-    dispatch(fetchPosts());
-  }, [dispatch]);
+    dispatch(fetchPosts({ page: currentPage, limit }));
+  }, [dispatch, currentPage]);
 
   const filteredPosts = useMemo(() => {
     if (!searchTerm) return posts;
@@ -71,30 +72,6 @@ function CommunityManagement() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Quản lý bài viết cộng đồng</h2>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-4 mb-6">
-        <button
-          onClick={() => setActiveTab("list")}
-          className={`px-4 py-2 rounded-lg ${
-            activeTab === "list"
-              ? "bg-blue-50 text-blue-600"
-              : "text-gray-600 hover:bg-gray-50"
-          }`}
-        >
-          Danh sách bài viết
-        </button>
-        <button
-          onClick={() => setActiveTab("deleted")}
-          className={`px-4 py-2 rounded-lg ${
-            activeTab === "deleted"
-              ? "bg-blue-50 text-blue-600"
-              : "text-gray-600 hover:bg-gray-50"
-          }`}
-        >
-          Đã xóa
-        </button>
       </div>
 
       {/* Search */}
@@ -474,6 +451,31 @@ function CommunityManagement() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Pagination */}
+      {!isLoadingPosts && !postsError && postsPagination && postsPagination.totalPages > 0 && (
+        <div className="flex items-center justify-between py-3">
+          <div className="text-sm text-gray-500">
+            Showing {currentPage} of {postsPagination.totalPages} pages
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1 || posts.length === 0}
+              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(postsPagination.totalPages, prev + 1))}
+              disabled={currentPage === postsPagination.totalPages || posts.length === 0}
+              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

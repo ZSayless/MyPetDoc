@@ -583,7 +583,11 @@ export const adminService = {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        params
+        params: {
+          page: params.page || 1,
+          limit: params.limit || 10,
+          ...params
+        }
       });
       return response.data;
     } catch (error) {
