@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { completeGoogleSignup } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
@@ -8,6 +8,9 @@ function SelectRole() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const profile = location.state?.profile;
+  const [showPhoneInput, setShowPhoneInput] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [selectedRole, setSelectedRole] = useState(null);
 
   console.log("Profile data in SelectRole:", profile);
 
@@ -20,13 +23,20 @@ function SelectRole() {
   }, [profile, navigate]);
 
   const handleRoleSelect = async (role) => {
+    setSelectedRole(role);
+    setShowPhoneInput(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const userData = {
         email: profile.email,
         full_name: profile.full_name,
         google_id: profile.google_id,
+        phone_number: phone,
         avatar: profile.avatar,
-        role: role,
+        role: selectedRole,
       };
 
       console.log("Sending complete signup data:", userData);
@@ -55,6 +65,47 @@ function SelectRole() {
 
   if (!profile) {
     return null;
+  }
+
+  if (showPhoneInput) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+              Nhập số điện thoại
+            </h2>
+            <p className="text-gray-600 mb-8">
+              Vui lòng nhập số điện thoại của bạn để hoàn tất đăng ký
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Nhập số điện thoại"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#98E9E9] focus:border-[#98E9E9]"
+              required
+            />
+            <button
+              type="submit"
+              className="w-full p-3 bg-[#98E9E9] text-white rounded-lg hover:bg-opacity-90"
+            >
+              Hoàn tất đăng ký
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowPhoneInput(false)}
+              className="w-full p-3 text-gray-600 hover:text-gray-800"
+            >
+              Quay lại
+            </button>
+          </form>
+        </div>
+      </div>
+    );
   }
 
   return (

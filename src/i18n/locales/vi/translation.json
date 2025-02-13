@@ -18,6 +18,12 @@
       "subtitle": "Đăng ký để bắt đầu",
       "firstName": "Tên",
       "lastName": "Họ",
+      "petAge": "Tuổi Thú Cưng",
+      "petNotes": "Ghi Chú Thú Cưng",
+      "petPhoto": "Ảnh Thú Cưng",
+      "petAgePlaceholder": "Nhập tuổi thú cưng",
+      "petNotesPlaceholder": "Nhập ghi chú thú cưng",
+      "petPhotoPlaceholder": "Tải ảnh thú cưng",
       "email": "Nhập email của bạn",
       "phone": "Số điện thoại",
       "phonePlaceholder": "Nhập số điện thoại của bạn",
@@ -665,14 +671,15 @@
       }
     },
     "form": {
-      "title": "Gửi Tin Nhắn",
-      "firstName": "Họ",
-      "lastName": "Tên",
+      "title": "Gửi Tin Nhắn phản hồi",
+      "name": "Họ Tên",
       "email": "Email",
+      "phone": "Số Điện Thoại",
       "subject": "Tiêu đề",
       "message": "Nội dung",
       "send": "Gửi Tin Nhắn",
       "sending": "Đang gửi...",
+      "loginToSend": "Đăng nhập để gửi tin nhắn",
       "success": "Tin nhắn đã được gửi thành công!"
     },
     "errors": {

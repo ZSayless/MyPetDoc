@@ -23,6 +23,7 @@ function AuthCallback() {
           const profileData = {
             email: result.profile.email,
             full_name: result.profile.full_name,
+            phone_number: result.profile.phone_number,
             google_id: result.profile.google_id,
             avatar: result.profile.avatar,
           };

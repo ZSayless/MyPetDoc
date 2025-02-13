@@ -18,7 +18,7 @@ function Register({ onClose, onLoginClick }) {
   const [showRoleSelection, setShowRoleSelection] = useState(false);
   const [pendingUserData, setPendingUserData] = useState(null);
 
-  // Thêm state cho form
+  // Cập nhật state formData
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,6 +28,9 @@ function Register({ onClose, onLoginClick }) {
     confirmPassword: "",
     agreeToTerms: false,
     petType: "",
+    petAge: "",
+    petPhoto: null,
+    petNotes: "",
   });
 
   // Xử lý thay đổi input
@@ -92,23 +95,70 @@ function Register({ onClose, onLoginClick }) {
     }
   };
 
+  const validateForm = () => {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Email không hợp lệ");
+      return false;
+    }
+
+    // Validate phone number (Vietnam format)
+    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+    if (!phoneRegex.test(formData.phone)) {
+      setError("Số điện thoại không hợp lệ");
+      return false;
+    }
+
+    // Validate password
+    if (formData.password.length < 6) {
+      setError("Mật khẩu phải có ít nhất 6 ký tự");
+      return false;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Mật khẩu xác nhận không khớp");
+      return false;
+    }
+
+    // Validate name fields
+    if (formData.firstName.trim().length < 2 || formData.lastName.trim().length < 2) {
+      setError("Họ và tên phải có ít nhất 2 ký tự");
+      return false;
+    }
+
+    // Validate pet information if pet type is selected
+    if (userType === "general" && formData.petType) {
+      if (!formData.petAge) {
+        setError("Vui lòng nhập tuổi thú cưng");
+        return false;
+      }
+      if (!formData.petPhoto) {
+        setError("Vui lòng tải lên ảnh thú cưng");
+        return false;
+      }
+      if (!formData.petNotes || formData.petNotes.trim().length < 10) {
+        setError("Vui lòng nhập mô tả về thú cưng (ít nhất 10 ký tự)");
+        return false;
+      }
+    }
+
+    // Validate terms agreement
+    if (!formData.agreeToTerms) {
+      setError("Vui lòng đồng ý với điều khoản sử dụng");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!formData.agreeToTerms) {
-      setError(t("auth.errors.termsRequired"));
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError(t("auth.errors.passwordMismatch"));
-      return;
-    }
-
-    if (userType === "general" && !formData.petType) {
-      setError(t("auth.errors.petTypeRequired"));
+    // Validate form before submitting
+    if (!validateForm()) {
       return;
     }
 
@@ -116,43 +166,87 @@ function Register({ onClose, onLoginClick }) {
     try {
       const role = userType === "general" ? "GENERAL_USER" : "HOSPITAL_ADMIN";
 
-      const result = await register({
+      // Log để kiểm tra dữ liệu trước khi xử lý
+      console.log("Initial form data:", formData);
+
+      let registerData = {
         email: formData.email,
         password: formData.password,
-        fullName: `${formData.firstName} ${formData.lastName}`,
-        phone: formData.phone,
+        full_name: `${formData.firstName} ${formData.lastName}`,
+        phone_number: formData.phone,
         role: role,
-        petType: userType === "general" ? formData.petType : undefined,
-      });
+      };
+
+      // Chỉ thêm thông tin thú cưng nếu userType là general và có chọn petType
+      if (userType === "general" && formData.petType) {
+        // Log để kiểm tra thông tin pet
+        console.log("Adding pet information");
+        
+        if (formData.petPhoto) {
+          console.log("Pet photo detected, creating FormData");
+          const formDataWithFile = new FormData();
+          
+          // Thêm các trường cơ bản
+          Object.keys(registerData).forEach(key => {
+            formDataWithFile.append(key, registerData[key]);
+          });
+          
+          // Thêm thông tin về thú cưng
+          formDataWithFile.append('pet_type', formData.petType);
+          formDataWithFile.append('pet_age', formData.petAge);
+          formDataWithFile.append('pet_notes', formData.petNotes);
+          formDataWithFile.append('pet_photo', formData.petPhoto);
+          
+          registerData = formDataWithFile;
+        } else {
+          // Nếu không có ảnh, thêm thông tin pet vào object
+          registerData.pet_type = formData.petType;
+          registerData.pet_age = formData.petAge;
+          registerData.pet_notes = formData.petNotes;
+        }
+      }
+
+      // Log dữ liệu cuối cùng trước khi gửi request
+      console.log("Final register data:", 
+        registerData instanceof FormData 
+          ? Object.fromEntries(registerData.entries()) 
+          : registerData
+      );
+
+      const result = await register(registerData);
+      console.log("Registration result:", result);
 
       if (result.success) {
-        console.log("Đăng ký thành công:", result);
-        setSuccess(result.message);
+        setSuccess(result.message || "Đăng ký thành công");
         setTimeout(() => {
           onClose();
           onLoginClick();
         }, 3000);
       } else {
         setError(result.error || "Đăng ký thất bại");
+        console.error("Registration error details:", result.details);
       }
     } catch (error) {
-      setError(t("auth.errors.registrationFailed"));
+      console.error("Registration error:", error);
+      setError(error.message || t("auth.errors.registrationFailed"));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-[30px] w-full max-w-md relative">
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
-        >
-          <X size={24} />
-        </button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-white rounded-[30px] w-full max-w-md relative my-8">
+        <div className="sticky top-0 right-0 pt-4 pr-4 bg-white rounded-t-[30px] z-10 flex justify-end">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <X size={24} />
+          </button>
+        </div>
 
-        <div className="p-6">
+        <div className="px-6 pb-6">
           <div className="text-center mb-6">
             <h3 className="text-2xl font-bold text-gray-800">
               {showRoleSelection
@@ -235,39 +329,78 @@ function Register({ onClose, onLoginClick }) {
               />
 
               {userType === "general" && (
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    {t("auth.register.petType.label")}
-                  </label>
-                  <select
-                    name="petType"
-                    value={formData.petType}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                    required
-                  >
-                    <option value="">
-                      {t("auth.register.petType.placeholder")}
-                    </option>
-                    <option value="dog">
-                      {t("auth.register.petType.dog")}
-                    </option>
-                    <option value="cat">
-                      {t("auth.register.petType.cat")}
-                    </option>
-                    <option value="rabbit">
-                      {t("auth.register.petType.rabbit")}
-                    </option>
-                    <option value="hamster">
-                      {t("auth.register.petType.hamster")}
-                    </option>
-                    <option value="bird">
-                      {t("auth.register.petType.bird")}
-                    </option>
-                    <option value="other">
-                      {t("auth.register.petType.other")}
-                    </option>
-                  </select>
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      {t("auth.register.petType.label")}
+                    </label>
+                    <select
+                      name="petType"
+                      value={formData.petType}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                    >
+                      <option value="">{t("auth.register.petType.placeholder")}</option>
+                      <option value="DOG">{t("auth.register.petType.dog")}</option>
+                      <option value="CAT">{t("auth.register.petType.cat")}</option>
+                      <option value="RABBIT">{t("auth.register.petType.rabbit")}</option>
+                      <option value="HAMSTER">{t("auth.register.petType.hamster")}</option>
+                      <option value="BIRD">{t("auth.register.petType.bird")}</option>
+                      <option value="FISH">{t("auth.register.petType.fish")}</option>
+                      <option value="REPTILE">{t("auth.register.petType.reptile")}</option>
+                      <option value="OTHER">{t("auth.register.petType.other")}</option>
+                    </select>
+                  </div>
+
+                  {formData.petType && (
+                    <>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          {t("auth.register.petAge")}
+                        </label>
+                        <input
+                          type="text"
+                          name="petAge"
+                          value={formData.petAge}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                          placeholder={t("auth.register.petAgePlaceholder")}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          {t("auth.register.petPhoto")}
+                        </label>
+                        <input
+                          type="file"
+                          name="petPhoto"
+                          onChange={(e) => handleInputChange({
+                            target: {
+                              name: 'petPhoto',
+                              value: e.target.files[0]
+                            }
+                          })}
+                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                          accept="image/*"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          {t("auth.register.petNotes")}
+                        </label>
+                        <textarea
+                          name="petNotes"
+                          value={formData.petNotes}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                          placeholder={t("auth.register.petNotesPlaceholder")}
+                          rows="3"
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 

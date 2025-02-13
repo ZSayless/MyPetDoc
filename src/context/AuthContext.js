@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import i18n from "../i18n";
 
 const AuthContext = createContext();
 
@@ -40,6 +38,7 @@ export function AuthProvider({ children }) {
         email: userData.email,
         full_name: userData.full_name,
         role: userData.role,
+        phone_number: userData.phone_number,
         avatar: userData.avatar,
         hospital_id: userData.hospital_id,
       };

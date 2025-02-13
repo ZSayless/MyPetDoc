@@ -52,24 +52,25 @@ export const login = async (email, password) => {
 
 export const register = async (userData) => {
   try {
-    console.log("Sending registration data:", userData);
+    console.log("Register service - Request data:", 
+      userData instanceof FormData 
+        ? Object.fromEntries(userData.entries()) 
+        : userData
+    );
 
     const response = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: userData instanceof FormData 
+        ? {} 
+        : {
+            "Content-Type": "application/json",
+          },
       credentials: "include",
-      body: JSON.stringify({
-        email: userData.email,
-        password: userData.password,
-        full_name: userData.fullName,
-        role: userData.role || "USER",
-      }),
+      body: userData instanceof FormData ? userData : JSON.stringify(userData),
     });
 
     const data = await response.json();
-    console.log("Registration response:", data);
+    console.log("Register service - Response:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "Đăng ký thất bại");
@@ -81,7 +82,7 @@ export const register = async (userData) => {
       message: data.message || "Đăng ký thành công",
     };
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error("Register service - Error:", error);
     return {
       success: false,
       error: error.message || "Có lỗi xảy ra khi đăng ký",

@@ -621,4 +621,55 @@ export const adminService = {
       throw error.response?.data || error;
     }
   },
+
+  getContactMessages: async (params = {}) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/contact-messages`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        params: {
+          page: params.page || 1,
+          limit: params.limit || 10,
+          ...params
+        }
+      });
+      return response.data.result;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  respondToContactMessage: async (messageId, data) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/contact-messages/${messageId}/respond`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data.message;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  deleteContactMessagePermanently: async (messageId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/contact-messages/${messageId}/hard-delete`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 }; 

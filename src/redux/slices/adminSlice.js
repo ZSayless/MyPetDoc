@@ -88,6 +88,8 @@ const initialState = {
   postsError: null,
   isUpdatingStatus: false,
   isDeletingPost: false,
+  isSubmitting: false,
+  isDeletingMessage: false,
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -565,6 +567,42 @@ export const deletePostPermanently = createAsyncThunk(
       return id;
     } catch (error) {
       return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchContactMessages = createAsyncThunk(
+  'admin/fetchContactMessages',
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getContactMessages(params);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const respondToMessage = createAsyncThunk(
+  'admin/respondToMessage',
+  async ({ messageId, data }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.respondToContactMessage(messageId, data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const deleteContactMessagePermanently = createAsyncThunk(
+  'admin/deleteContactMessagePermanently',
+  async (messageId, { rejectWithValue }) => {
+    try {
+      await adminService.deleteContactMessagePermanently(messageId);
+      return messageId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -1074,6 +1112,50 @@ const adminSlice = createSlice({
       })
       .addCase(deletePostPermanently.rejected, (state) => {
         state.isDeletingPost = false;
+      })
+      .addCase(fetchContactMessages.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchContactMessages.fulfilled, (state, action) => {
+        state.loading = false;
+        state.contactMessages = action.payload.messages;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchContactMessages.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(respondToMessage.pending, (state) => {
+        state.isSubmitting = true;
+        state.error = null;
+      })
+      .addCase(respondToMessage.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        const updatedMessage = action.payload;
+        const index = state.contactMessages.findIndex(msg => msg.id === updatedMessage.id);
+        if (index !== -1) {
+          state.contactMessages[index] = updatedMessage;
+        }
+      })
+      .addCase(respondToMessage.rejected, (state, action) => {
+        state.isSubmitting = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteContactMessagePermanently.pending, (state) => {
+        state.isDeletingMessage = true;
+        state.error = null;
+      })
+      .addCase(deleteContactMessagePermanently.fulfilled, (state, action) => {
+        state.isDeletingMessage = false;
+        state.contactMessages = state.contactMessages.filter(
+          message => message.id !== action.payload
+        );
+        state.selectedMessage = null;
+      })
+      .addCase(deleteContactMessagePermanently.rejected, (state, action) => {
+        state.isDeletingMessage = false;
+        state.error = action.payload;
       });
   }
 });
