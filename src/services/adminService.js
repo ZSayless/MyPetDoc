@@ -834,4 +834,84 @@ export const adminService = {
       throw error.response?.data || error;
     }
   },
+
+  getContactInfoHistory: async (params = { page: 1, limit: 10 }) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/contact-info/history`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          params
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  getCurrentContactInfo: async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/contact-info/current`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  createContactInfo: async (data) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/contact-info/create`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  updateContactInfo: async (id, data) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/contact-info/update/${id}`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  deleteContactInfo: async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/contact-info/hard-delete/${id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 }; 

@@ -107,6 +107,16 @@ const initialState = {
   isLoadingTerms: false,
   termsError: null,
   isSubmittingTerms: false,
+  contactInfoList: [],
+  currentContactInfo: null,
+  contactInfoPagination: {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1
+  },
+  isLoadingContactInfo: false,
+  contactInfoError: null,
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -726,6 +736,66 @@ export const updateTerms = createAsyncThunk(
     try {
       const response = await adminService.updateTerms(id, data);
       return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchContactInfoHistory = createAsyncThunk(
+  'admin/fetchContactInfoHistory',
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getContactInfoHistory(params);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchCurrentContactInfo = createAsyncThunk(
+  'admin/fetchCurrentContactInfo',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getCurrentContactInfo();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const createContactInfo = createAsyncThunk(
+  'admin/createContactInfo',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await adminService.createContactInfo(data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateContactInfo = createAsyncThunk(
+  'admin/updateContactInfo',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateContactInfo(id, data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteContactInfo = createAsyncThunk(
+  'admin/deleteContactInfo',
+  async (id, { rejectWithValue }) => {
+    try {
+      await adminService.deleteContactInfo(id);
+      return id;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -1399,6 +1469,73 @@ const adminSlice = createSlice({
       .addCase(updateTerms.rejected, (state, action) => {
         state.isSubmittingTerms = false;
         state.termsError = action.payload;
+      })
+      .addCase(fetchContactInfoHistory.pending, (state) => {
+        state.isLoadingContactInfo = true;
+        state.contactInfoError = null;
+      })
+      .addCase(fetchContactInfoHistory.fulfilled, (state, action) => {
+        state.isLoadingContactInfo = false;
+        state.contactInfoList = action.payload.versions;
+        state.contactInfoPagination = action.payload.pagination;
+      })
+      .addCase(fetchContactInfoHistory.rejected, (state, action) => {
+        state.isLoadingContactInfo = false;
+        state.contactInfoError = action.payload;
+      })
+      .addCase(fetchCurrentContactInfo.pending, (state) => {
+        state.isLoadingContactInfo = true;
+        state.contactInfoError = null;
+      })
+      .addCase(fetchCurrentContactInfo.fulfilled, (state, action) => {
+        state.isLoadingContactInfo = false;
+        state.currentContactInfo = action.payload;
+      })
+      .addCase(fetchCurrentContactInfo.rejected, (state, action) => {
+        state.isLoadingContactInfo = false;
+        state.contactInfoError = action.payload;
+      })
+      .addCase(createContactInfo.pending, (state) => {
+        state.isSubmittingContactInfo = true;
+        state.contactInfoError = null;
+      })
+      .addCase(createContactInfo.fulfilled, (state, action) => {
+        state.isSubmittingContactInfo = false;
+        state.contactInfoList = [action.payload, ...state.contactInfoList];
+        state.contactInfoPagination.total += 1;
+      })
+      .addCase(createContactInfo.rejected, (state, action) => {
+        state.isSubmittingContactInfo = false;
+        state.contactInfoError = action.payload;
+      })
+      .addCase(updateContactInfo.pending, (state) => {
+        state.isSubmittingContactInfo = true;
+        state.contactInfoError = null;
+      })
+      .addCase(updateContactInfo.fulfilled, (state, action) => {
+        state.isSubmittingContactInfo = false;
+        state.contactInfoList = state.contactInfoList.map(info => 
+          info.id === action.payload.id ? action.payload : info
+        );
+      })
+      .addCase(updateContactInfo.rejected, (state, action) => {
+        state.isSubmittingContactInfo = false;
+        state.contactInfoError = action.payload;
+      })
+      .addCase(deleteContactInfo.pending, (state) => {
+        state.isSubmittingContactInfo = true;
+        state.contactInfoError = null;
+      })
+      .addCase(deleteContactInfo.fulfilled, (state, action) => {
+        state.isSubmittingContactInfo = false;
+        state.contactInfoList = state.contactInfoList.filter(
+          info => info.id !== action.payload
+        );
+        state.contactInfoPagination.total -= 1;
+      })
+      .addCase(deleteContactInfo.rejected, (state, action) => {
+        state.isSubmittingContactInfo = false;
+        state.contactInfoError = action.payload;
       });
   }
 });
