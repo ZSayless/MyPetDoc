@@ -90,6 +90,13 @@ const initialState = {
   isDeletingPost: false,
   isSubmitting: false,
   isDeletingMessage: false,
+  aboutUsVersions: [],
+  isLoadingAboutUs: false,
+  aboutUsError: null,
+  isSubmittingAboutUs: false,
+  currentAboutUs: null,
+  isLoadingCurrentAboutUs: false,
+  currentAboutUsError: null,
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -603,6 +610,66 @@ export const deleteContactMessagePermanently = createAsyncThunk(
       return messageId;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const fetchAboutUsHistory = createAsyncThunk(
+  'admin/fetchAboutUsHistory',
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getAboutUsHistory(params);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const createAboutUs = createAsyncThunk(
+  'admin/createAboutUs',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await adminService.createAboutUs(data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateAboutUs = createAsyncThunk(
+  'admin/updateAboutUs',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateAboutUs(id, data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchCurrentAboutUs = createAsyncThunk(
+  'admin/fetchCurrentAboutUs',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getCurrentAboutUs();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteAboutUs = createAsyncThunk(
+  'admin/deleteAboutUs',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await adminService.deleteAboutUs(id);
+      return { id, response };
+    } catch (error) {
+      return rejectWithValue(error);
     }
   }
 );
@@ -1156,6 +1223,80 @@ const adminSlice = createSlice({
       .addCase(deleteContactMessagePermanently.rejected, (state, action) => {
         state.isDeletingMessage = false;
         state.error = action.payload;
+      })
+      .addCase(fetchAboutUsHistory.pending, (state) => {
+        state.isLoadingAboutUs = true;
+        state.aboutUsError = null;
+      })
+      .addCase(fetchAboutUsHistory.fulfilled, (state, action) => {
+        state.isLoadingAboutUs = false;
+        state.aboutUsVersions = action.payload?.versions || [];
+        state.pagination = action.payload?.pagination || {
+          page: 1,
+          limit: 10,
+          total: 0,
+          totalPages: 1
+        };
+      })
+      .addCase(fetchAboutUsHistory.rejected, (state, action) => {
+        state.isLoadingAboutUs = false;
+        state.aboutUsError = action.payload;
+        state.aboutUsVersions = [];
+      })
+      .addCase(createAboutUs.pending, (state) => {
+        state.isSubmittingAboutUs = true;
+        state.aboutUsError = null;
+      })
+      .addCase(createAboutUs.fulfilled, (state, action) => {
+        state.isSubmittingAboutUs = false;
+        state.aboutUsVersions.unshift(action.payload);
+      })
+      .addCase(createAboutUs.rejected, (state, action) => {
+        state.isSubmittingAboutUs = false;
+        state.aboutUsError = action.payload;
+      })
+      .addCase(updateAboutUs.pending, (state) => {
+        state.isSubmittingAboutUs = true;
+        state.aboutUsError = null;
+      })
+      .addCase(updateAboutUs.fulfilled, (state, action) => {
+        state.isSubmittingAboutUs = false;
+        const updatedVersion = action.payload.data;
+        const index = state.aboutUsVersions.findIndex(v => v.id === updatedVersion.id);
+        if (index !== -1) {
+          state.aboutUsVersions[index] = updatedVersion;
+        }
+        state.currentAboutUs = updatedVersion;
+      })
+      .addCase(updateAboutUs.rejected, (state, action) => {
+        state.isSubmittingAboutUs = false;
+        state.aboutUsError = action.payload;
+      })
+      .addCase(fetchCurrentAboutUs.pending, (state) => {
+        state.isLoadingCurrentAboutUs = true;
+        state.currentAboutUsError = null;
+      })
+      .addCase(fetchCurrentAboutUs.fulfilled, (state, action) => {
+        state.isLoadingCurrentAboutUs = false;
+        state.currentAboutUs = action.payload;
+      })
+      .addCase(fetchCurrentAboutUs.rejected, (state, action) => {
+        state.isLoadingCurrentAboutUs = false;
+        state.currentAboutUsError = action.payload;
+      })
+      .addCase(deleteAboutUs.pending, (state) => {
+        state.isSubmittingAboutUs = true;
+        state.aboutUsError = null;
+      })
+      .addCase(deleteAboutUs.fulfilled, (state, action) => {
+        state.isSubmittingAboutUs = false;
+        state.aboutUsVersions = state.aboutUsVersions.filter(
+          version => version.id !== action.payload.id
+        );
+      })
+      .addCase(deleteAboutUs.rejected, (state, action) => {
+        state.isSubmittingAboutUs = false;
+        state.aboutUsError = action.payload;
       });
   }
 });

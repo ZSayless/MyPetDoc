@@ -22,6 +22,7 @@ function AdminSidebar({ activeTab, setActiveTab }) {
     { id: "faq", name: "FAQ Management", icon: HelpCircle },
     { id: "banner", name: "Banner Management", icon: Circle },
     { id: "community", name: "Community Management", icon: Users },
+    { id: "aboutus", name: "About Us Management", icon: Users },
   ];
 
   return (

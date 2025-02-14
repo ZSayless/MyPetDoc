@@ -672,4 +672,99 @@ export const adminService = {
       throw error.response?.data || error;
     }
   },
+
+  getAboutUsHistory: async (params = { page: 1, limit: 10 }) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/about-us/history`,
+        {
+          params: {
+            page: params.page,
+            limit: params.limit
+          },
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      // Đảm bảo trả về đúng format dữ liệu
+      return {
+        versions: response.data?.versions || [],
+        pagination: response.data?.pagination || {
+          page: 1,
+          limit: 10,
+          total: 0,
+          totalPages: 1
+        }
+      };
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  createAboutUs: async (data) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/about-us/create`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  updateAboutUs: async (id, data) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/about-us/update/${id}`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  getCurrentAboutUs: async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/about-us/current`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  deleteAboutUs: async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/about-us/hard-delete/${id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 }; 
