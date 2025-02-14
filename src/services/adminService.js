@@ -767,4 +767,71 @@ export const adminService = {
       throw error.response?.data || error;
     }
   },
+
+  getTermsList: async (params = { page: 1, limit: 10 }) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/terms/history`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          params
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  createTerms: async (data) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/terms/create`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  deleteTerms: async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/terms/hard-delete/${id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  updateTerms: async (id, data) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/terms/update/${id}`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 }; 

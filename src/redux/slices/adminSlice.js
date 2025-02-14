@@ -97,6 +97,16 @@ const initialState = {
   currentAboutUs: null,
   isLoadingCurrentAboutUs: false,
   currentAboutUsError: null,
+  termsList: [],
+  termsPagination: {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1
+  },
+  isLoadingTerms: false,
+  termsError: null,
+  isSubmittingTerms: false,
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -674,6 +684,54 @@ export const deleteAboutUs = createAsyncThunk(
   }
 );
 
+export const fetchTermsList = createAsyncThunk(
+  'admin/fetchTermsList',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getTermsList();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const createTerms = createAsyncThunk(
+  'admin/createTerms',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await adminService.createTerms(data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteTerms = createAsyncThunk(
+  'admin/deleteTerms',
+  async (id, { rejectWithValue }) => {
+    try {
+      await adminService.deleteTerms(id);
+      return id;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateTerms = createAsyncThunk(
+  'admin/updateTerms',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateTerms(id, data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -777,14 +835,6 @@ const adminSlice = createSlice({
       state.contactMessages = state.contactMessages.filter(
         (msg) => msg.id !== action.payload
       );
-    },
-    markMessageAsRead: (state, action) => {
-      const message = state.contactMessages.find(
-        (msg) => msg.id === action.payload
-      );
-      if (message) {
-        message.status = "read";
-      }
     },
   },
   extraReducers: (builder) => {
@@ -1297,6 +1347,58 @@ const adminSlice = createSlice({
       .addCase(deleteAboutUs.rejected, (state, action) => {
         state.isSubmittingAboutUs = false;
         state.aboutUsError = action.payload;
+      })
+      .addCase(fetchTermsList.pending, (state) => {
+        state.isLoadingTerms = true;
+        state.termsError = null;
+      })
+      .addCase(fetchTermsList.fulfilled, (state, action) => {
+        state.isLoadingTerms = false;
+        state.termsList = action.payload.versions;
+        state.termsPagination = action.payload.pagination;
+      })
+      .addCase(fetchTermsList.rejected, (state, action) => {
+        state.isLoadingTerms = false;
+        state.termsError = action.payload;
+      })
+      .addCase(createTerms.pending, (state) => {
+        state.isSubmittingTerms = true;
+        state.termsError = null;
+      })
+      .addCase(createTerms.fulfilled, (state, action) => {
+        state.isSubmittingTerms = false;
+        state.termsList = [action.payload, ...state.termsList];
+      })
+      .addCase(createTerms.rejected, (state, action) => {
+        state.isSubmittingTerms = false;
+        state.termsError = action.payload;
+      })
+      .addCase(deleteTerms.pending, (state) => {
+        state.isSubmittingTerms = true;
+        state.termsError = null;
+      })
+      .addCase(deleteTerms.fulfilled, (state, action) => {
+        state.isSubmittingTerms = false;
+        state.termsList = state.termsList.filter(terms => terms.id !== action.payload);
+      })
+      .addCase(deleteTerms.rejected, (state, action) => {
+        state.isSubmittingTerms = false;
+        state.termsError = action.payload;
+      })
+      .addCase(updateTerms.pending, (state) => {
+        state.isSubmittingTerms = true;
+        state.termsError = null;
+      })
+      .addCase(updateTerms.fulfilled, (state, action) => {
+        state.isSubmittingTerms = false;
+        const index = state.termsList.findIndex(terms => terms.id === action.payload.id);
+        if (index !== -1) {
+          state.termsList[index] = action.payload;
+        }
+      })
+      .addCase(updateTerms.rejected, (state, action) => {
+        state.isSubmittingTerms = false;
+        state.termsError = action.payload;
       });
   }
 });
