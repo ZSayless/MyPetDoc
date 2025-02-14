@@ -583,7 +583,11 @@ export const adminService = {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        params
+        params: {
+          page: params.page || 1,
+          limit: params.limit || 10,
+          ...params
+        }
       });
       return response.data;
     } catch (error) {
@@ -612,6 +616,299 @@ export const adminService = {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  getContactMessages: async (params = {}) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/contact-messages`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        params: {
+          page: params.page || 1,
+          limit: params.limit || 10,
+          ...params
+        }
+      });
+      return response.data.result;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  respondToContactMessage: async (messageId, data) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/contact-messages/${messageId}/respond`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data.message;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  deleteContactMessagePermanently: async (messageId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/contact-messages/${messageId}/hard-delete`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  getAboutUsHistory: async (params = { page: 1, limit: 10 }) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/about-us/history`,
+        {
+          params: {
+            page: params.page,
+            limit: params.limit
+          },
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      // Đảm bảo trả về đúng format dữ liệu
+      return {
+        versions: response.data?.versions || [],
+        pagination: response.data?.pagination || {
+          page: 1,
+          limit: 10,
+          total: 0,
+          totalPages: 1
+        }
+      };
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  createAboutUs: async (data) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/about-us/create`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  updateAboutUs: async (id, data) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/about-us/update/${id}`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  getCurrentAboutUs: async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/about-us/current`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  deleteAboutUs: async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/about-us/hard-delete/${id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  getTermsList: async (params = { page: 1, limit: 10 }) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/terms/history`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          params
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  createTerms: async (data) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/terms/create`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  deleteTerms: async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/terms/hard-delete/${id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  updateTerms: async (id, data) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/terms/update/${id}`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  getContactInfoHistory: async (params = { page: 1, limit: 10 }) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/contact-info/history`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          params
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  getCurrentContactInfo: async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/contact-info/current`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  createContactInfo: async (data) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/contact-info/create`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  updateContactInfo: async (id, data) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/contact-info/update/${id}`,
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  deleteContactInfo: async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/contact-info/hard-delete/${id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
       return response.data;
     } catch (error) {
       throw error.response?.data || error;

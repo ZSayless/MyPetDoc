@@ -8,7 +8,11 @@ const getActiveBanners = async () => {
     console.log(process.env.REACT_APP_API_URL);
     return response.data;
   } catch (error) {
-    throw error;
+    return {
+      error: true,
+      message: error.response?.data?.message || 'Can not load banners',
+      data: []
+    };
   }
 };
 

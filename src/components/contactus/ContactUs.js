@@ -1,19 +1,41 @@
 import { Mail, MapPin, Phone } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { contactService } from "../../services/contactService";
+import { useNavigate } from "react-router-dom";
+import { contactMessageService } from "../../services/contactMessageService";
+import { useToast } from "../../context/ToastContext";
 
 const ContactUs = () => {
   const { t } = useTranslation();
+  const { addToast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
     email: "",
-    subject: "",
+    phone: "",
     message: "",
   });
+
+  // Kiểm tra đăng nhập và điền thông tin một lần khi component mount
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      setIsLoggedIn(true);
+      try {
+        const user = JSON.parse(userStr);
+        setFormData(prev => ({
+          ...prev,
+          name: user.fullName || user.name || "",
+          email: user.email || "",
+          phone: user.phone || "",
+        }));
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,18 +49,28 @@ const ContactUs = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await contactService.sendMessage(formData);
-      setSuccess(true);
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        subject: "",
-        message: "",
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+      };
+      await contactMessageService.sendMessage(payload);
+      
+      addToast({
+        type: "success",
+        message: t("contact.form.success"),
       });
-      setTimeout(() => setSuccess(false), 5000);
+
+      setFormData(prev => ({
+        ...prev,
+        message: "", // Chỉ reset trường message
+      }));
     } catch (error) {
-      alert(t("contact.errors.sendFailed"));
+      addToast({
+        type: "error",
+        message: t("contact.errors.sendFailed"),
+      });
     } finally {
       setLoading(false);
     }
@@ -116,28 +148,30 @@ const ContactUs = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {t("contact.form.firstName")}
+                      {t("contact.form.name")}
                     </label>
                     <input
                       type="text"
-                      name="firstName"
-                      value={formData.firstName}
+                      name="name"
+                      value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      disabled
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {t("contact.form.lastName")}
+                      {t("contact.form.phone")}
                     </label>
                     <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      disabled
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
                     />
                   </div>
                 </div>
@@ -151,20 +185,8 @@ const ContactUs = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("contact.form.subject")}
-                  </label>
-                  <input
-                    type="text"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    disabled
+                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
                   />
                 </div>
                 <div className="mb-6">
@@ -180,20 +202,24 @@ const ContactUs = () => {
                     className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                   ></textarea>
                 </div>
-                <button
-                  type="submit"
-                  className={`w-full bg-[#98E9E9] text-gray-700 py-3 rounded-lg font-medium hover:bg-[#7CD5D5] transition-colors ${
-                    loading ? "opacity-70 cursor-not-allowed" : ""
-                  }`}
-                  disabled={loading}
-                >
-                  {loading ? t("contact.form.sending") : t("contact.form.send")}
-                </button>
-
-                {success && (
-                  <div className="mt-4 p-4 bg-green-100 text-green-700 rounded-lg">
-                    {t("contact.form.success")}
-                  </div>
+                {isLoggedIn ? (
+                  <button
+                    type="submit"
+                    className={`w-full bg-[#98E9E9] text-gray-700 py-3 rounded-lg font-medium hover:bg-[#7CD5D5] transition-colors ${
+                      loading ? "opacity-70 cursor-not-allowed" : ""
+                    }`}
+                    disabled={loading}
+                  >
+                    {loading ? t("contact.form.sending") : t("contact.form.send")}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/")}
+                    className="w-full bg-[#98E9E9] text-gray-700 py-3 rounded-lg font-medium hover:bg-[#7CD5D5] transition-colors"
+                  >
+                    {t("contact.form.loginToSend")}
+                  </button>
                 )}
               </form>
             </div>
