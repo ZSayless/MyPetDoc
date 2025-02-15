@@ -169,7 +169,6 @@ function AboutUsManagement() {
         data: formData
       })).unwrap();
       
-      await dispatch(fetchCurrentAboutUs());
       addToast({
         type: 'success',
         message: 'Update About Us successfully!'
