@@ -45,6 +45,7 @@ function HospitalsManagement() {
   const [newImages, setNewImages] = useState([]);
   const [hospitalToDelete, setHospitalToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     if (activeTab === "list") {
@@ -82,12 +83,18 @@ function HospitalsManagement() {
 
   const handleUpdateHospital = async (e) => {
     e.preventDefault();
+    const errors = validateHospitalForm(selectedHospital);
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
       const formData = new FormData();
       
-      // Thêm các trường thông tin cơ bản
+      // Add basic information fields
       formData.append('name', selectedHospital.name);
       formData.append('address', selectedHospital.address);
       formData.append('phone', selectedHospital.phone);
@@ -101,12 +108,12 @@ function HospitalsManagement() {
       formData.append('staff_description', selectedHospital.staff_description);
       formData.append('staff_credentials', selectedHospital.staff_credentials);
 
-      // Thêm ảnh mới
+      // Add new images
       selectedImages.forEach((file) => {
         formData.append('images', file);
       });
 
-      // Thêm danh sách ID ảnh cần xóa với tên mới
+      // Add list of image IDs to delete with new name
       if (imageIdsToDelete.length > 0) {
         formData.append('imageIdsToDelete', JSON.stringify(imageIdsToDelete));
       }
@@ -118,7 +125,7 @@ function HospitalsManagement() {
 
       addToast({
         type: 'success',
-        message: 'Cập nhật thông tin bệnh viện thành công!'
+        message: 'Update hospital information successfully!'
       });
 
       setModalMode('view');
@@ -128,7 +135,7 @@ function HospitalsManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi cập nhật thông tin'
+        message: error.message || 'An error occurred while updating hospital information'
       });
     } finally {
       setIsSubmitting(false);
@@ -140,7 +147,7 @@ function HospitalsManagement() {
     if (files.length + selectedHospital.images.length - imageIdsToDelete.length > 5) {
       addToast({
         type: 'error',
-        message: 'Tối đa 5 ảnh được phép tải lên'
+        message: 'Maximum 5 images allowed to upload'
       });
       return;
     }
@@ -158,56 +165,62 @@ function HospitalsManagement() {
   const handleToggleActive = async (hospitalId, currentActiveState) => {
     try {
       const message = currentActiveState 
-        ? "Bạn có chắc muốn vô hiệu hóa bệnh viện này?" 
-        : "Bạn có chắc muốn kích hoạt bệnh viện này?";
+        ? "Are you sure you want to disable this hospital?" 
+        : "Are you sure you want to activate this hospital?";
       
       if (window.confirm(message)) {
         await dispatch(toggleActiveHospital(hospitalId)).unwrap();
         addToast({
           type: "success",
-          message: `${currentActiveState ? 'Vô hiệu hóa' : 'Kích hoạt'} bệnh viện thành công!`
+          message: `${currentActiveState ? 'Disable' : 'Activate'} hospital successfully!`
         });
       }
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "Có lỗi xảy ra khi cập nhật trạng thái"
+        message: error.message || "An error occurred while updating the hospital status"
       });
     }
   };
 
   const handleToggleDelete = async (hospitalId) => {
     try {
-      const message = "Bạn có chắc chắn muốn thực hiện hành động này?";
+      const message = "Are you sure you want to perform this action?";
       if (window.confirm(message)) {
         await dispatch(toggleDeleteHospital(hospitalId)).unwrap();
         addToast({
           type: "success",
-          message: "Thao tác thành công!"
+          message: "Action performed successfully!"
         });
       }
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "Có lỗi xảy ra"
+        message: error.message || "An error occurred"
       });
     }
   };
 
   const handleCreateHospital = async (e) => {
     e.preventDefault();
+    const errors = validateHospitalForm(newHospital);
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     setIsCreating(true);
 
     try {
       const formData = new FormData();
       
-      // Thêm các trường bắt buộc
+      // Add required fields
       formData.append('name', newHospital.name);
       formData.append('address', newHospital.address);
       formData.append('phone', newHospital.phone);
       formData.append('email', newHospital.email);
 
-      // Thêm các trường không bắt buộc
+      // Add optional fields
       if (newHospital.description) formData.append('description', newHospital.description);
       if (newHospital.link_website) formData.append('link_website', newHospital.link_website);
       if (newHospital.map_location) formData.append('map_location', newHospital.map_location);
@@ -217,7 +230,7 @@ function HospitalsManagement() {
       if (newHospital.staff_description) formData.append('staff_description', newHospital.staff_description);
       if (newHospital.staff_credentials) formData.append('staff_credentials', newHospital.staff_credentials);
 
-      // Thêm ảnh
+      // Add images
       newImages.forEach((file) => {
         formData.append('images', file);
       });
@@ -226,7 +239,7 @@ function HospitalsManagement() {
 
       addToast({
         type: 'success',
-        message: 'Thêm bệnh viện mới thành công!'
+        message: 'Add new hospital successfully!'
       });
 
       // Reset form
@@ -250,7 +263,7 @@ function HospitalsManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi thêm bệnh viện'
+        message: error.message || 'An error occurred while adding a new hospital'
       });
     } finally {
       setIsCreating(false);
@@ -262,7 +275,7 @@ function HospitalsManagement() {
     if (files.length + newImages.length > 5) {
       addToast({
         type: 'error',
-        message: 'Tối đa 5 ảnh được phép tải lên'
+        message: 'Maximum 5 images allowed to upload'
       });
       return;
     }
@@ -282,14 +295,14 @@ function HospitalsManagement() {
       
       addToast({
         type: 'success',
-        message: 'Xóa bệnh viện thành công!'
+        message: 'Delete hospital successfully!'
       });
       
       setHospitalToDelete(null);
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi xóa bệnh viện'
+        message: error.message || 'An error occurred while deleting the hospital'
       });
     } finally {
       setIsDeleting(false);
@@ -307,12 +320,117 @@ function HospitalsManagement() {
     );
   };
 
-  // Hàm xử lý đóng form
   const handleCloseForm = () => {
     setModalMode('view');
     setSelectedHospital(null);
     setSelectedImages([]);
     setImageIdsToDelete([]);
+  };
+
+  const validateHospitalForm = (data) => {
+    const errors = {};
+
+    // Validate name
+    if (!data.name?.trim()) {
+      errors.name = 'Hospital name is required';
+    } else if (data.name.length > 255) {
+      errors.name = 'Hospital name cannot exceed 255 characters';
+    }
+
+    // Validate address
+    if (!data.address?.trim()) {
+      errors.address = 'Address is required';
+    } else if (data.address.length > 500) {
+      errors.address = 'Address cannot exceed 500 characters';
+    }
+
+    // Validate phone
+    if (!data.phone?.trim()) {
+      errors.phone = 'Phone number is required';
+    } else if (!/^[0-9]{10,11}$/.test(data.phone)) {
+      errors.phone = 'Phone number must be 10-11 digits';
+    }
+
+    // Validate email
+    if (!data.email?.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      errors.email = 'Invalid email format';
+    }
+
+    // Validate website (optional)
+    if (data.link_website && !/^https?:\/\//.test(data.link_website)) {
+      errors.link_website = 'Link website must start with http:// or https://';
+    }
+
+    // Validate map location (optional)
+    if (data.map_location && data.map_location.length > 500) {
+      errors.map_location = 'Map location cannot exceed 500 characters';
+    }
+
+    // Validate description
+    if (!data.description?.trim()) {
+      errors.description = 'Description is required';
+    } else if (data.description.length > 2000) {
+      errors.description = 'Description cannot exceed 2000 characters';
+    }
+
+    // Validate department
+    if (!data.department?.trim()) {
+      errors.department = 'Department is required';
+    } else if (data.department.length > 1000) {
+      errors.department = 'Department cannot exceed 1000 characters';
+    }
+
+    // Validate operating hours
+    if (!data.operating_hours?.trim()) {
+      errors.operating_hours = 'Working hours are required';
+    } else if (data.operating_hours.length > 255) {
+      errors.operating_hours = 'Operating hours cannot exceed 255 characters';
+    }
+
+    // Validate specialties
+    if (!data.specialties?.trim()) {
+      errors.specialties = 'Specialties are required';
+    } else if (data.specialties.length > 1000) {
+      errors.specialties = 'Specialties cannot exceed 1000 characters';
+    }
+
+    // Validate staff description (optional)
+    if (data.staff_description && data.staff_description.length > 1000) {
+      errors.staff_description = 'Staff description cannot exceed 1000 characters';
+    }
+
+    // Validate staff credentials (optional)
+    if (data.staff_credentials && data.staff_credentials.length > 1000) {
+      errors.staff_credentials = 'Staff credentials cannot exceed 1000 characters';
+    }
+
+    // Validate images
+    if (modalMode === 'create' && (!newImages || newImages.length === 0)) {
+      errors.images = 'Need to upload at least 1 image';
+    }
+
+    if (newImages && newImages.length > 5) {
+      errors.images = 'Cannot upload more than 5 images';
+    }
+
+    // Validate file size and type
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (newImages) {
+      newImages.forEach((file, index) => {
+        if (!validImageTypes.includes(file.type)) {
+          errors[`image_${index}`] = 'Only accept image files in JPG, JPEG, or PNG format';
+        }
+        if (file.size > maxSize) {
+          errors[`image_${index}`] = 'Image size cannot exceed 5MB';
+        }
+      });
+    }
+
+    return errors;
   };
 
   return (
@@ -327,7 +445,7 @@ function HospitalsManagement() {
               : "text-gray-700 bg-gray-100 hover:bg-gray-200"
           }`}
         >
-          Danh sách bệnh viện
+          List of hospitals
         </button>
         <button 
           onClick={() => setActiveTab("trash")}
@@ -337,7 +455,7 @@ function HospitalsManagement() {
               : "text-gray-700 bg-gray-100 hover:bg-gray-200"
           }`}
         >
-          Thùng rác
+          Trash
         </button>
       </div>
 
@@ -348,7 +466,7 @@ function HospitalsManagement() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Tìm kiếm theo tên, email, số điện thoại, địa chỉ..."
+            placeholder="Search by name, email, phone number, address..."
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
           />
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -358,7 +476,7 @@ function HospitalsManagement() {
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
         >
           <Plus size={20} />
-          Thêm bệnh viện
+          Add hospital
         </button>
       </div>
 
@@ -611,10 +729,10 @@ function HospitalsManagement() {
       {!loading && getFilteredHospitals()?.length === 0 && (
         <div className="text-center py-8 text-gray-500">
           {searchTerm 
-            ? "Không tìm thấy kết quả phù hợp"
+            ? "No matching results"
             : activeTab === "list" 
-              ? "Không có bệnh viện nào" 
-              : "Thùng rác trống"
+              ? "No hospital found" 
+              : "Trash is empty"
           }
         </div>
       )}
@@ -636,7 +754,7 @@ function HospitalsManagement() {
             >
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                 <h2 className="text-xl font-semibold">
-                  {modalMode === "view" ? "Chi tiết bệnh viện" : "Chỉnh sửa bệnh viện"}
+                  {modalMode === "view" ? "Hospital details" : "Edit hospital"}
                 </h2>
                 <button
                   onClick={handleCloseForm}
@@ -649,17 +767,22 @@ function HospitalsManagement() {
               {/* Form content */}
               {modalMode === 'edit' && (
                 <form onSubmit={handleUpdateHospital} className="space-y-6 p-6">
-                  {/* Thông tin cơ bản */}
+                  {/* Basic information */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Tên bệnh viện</label>
+                      <label className="block text-sm font-medium text-gray-700">Hospital name</label>
                       <input
                         type="text"
                         value={selectedHospital.name}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, name: e.target.value}))}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.name ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                       />
+                      {formErrors.name && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -667,19 +790,29 @@ function HospitalsManagement() {
                         type="email"
                         value={selectedHospital.email}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, email: e.target.value}))}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.email ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                       />
+                      {formErrors.email && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                      )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                      <label className="block text-sm font-medium text-gray-700">Phone number</label>
                       <input
                         type="text"
                         value={selectedHospital.phone}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, phone: e.target.value}))}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.phone ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                       />
+                      {formErrors.phone && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Website</label>
@@ -687,99 +820,142 @@ function HospitalsManagement() {
                         type="text"
                         value={selectedHospital.link_website}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, link_website: e.target.value}))}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        required
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.link_website ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       />
+                      {formErrors.link_website && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.link_website}</p>
+                      )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Địa chỉ</label>
+                      <label className="block text-sm font-medium text-gray-700">Address</label>
                       <input
                         type="text"
                         value={selectedHospital.address}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, address: e.target.value}))}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.address ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                       />
+                      {formErrors.address && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.address}</p>
+                      )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Vị trí bản đồ</label>
+                      <label className="block text-sm font-medium text-gray-700">Map location</label>
                       <input
                         type="text"
                         value={selectedHospital.map_location}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, map_location: e.target.value}))}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        required
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.map_location ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       />
+                      {formErrors.map_location && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.map_location}</p>
+                      )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Giờ làm việc</label>
+                      <label className="block text-sm font-medium text-gray-700">Working hours</label>
                       <input
                         type="text"
                         value={selectedHospital.operating_hours}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, operating_hours: e.target.value}))}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.operating_hours ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                       />
+                      {formErrors.operating_hours && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.operating_hours}</p>
+                      )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Khoa/phòng</label>
+                      <label className="block text-sm font-medium text-gray-700">Department</label>
                       <input
                         type="text"
                         value={selectedHospital.department}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, department: e.target.value}))}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.department ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                       />
+                      {formErrors.department && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.department}</p>
+                      )}
                     </div>
                   </div>
 
-                  {/* Các trường textarea */}
+                  {/* Textarea fields */}
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Chuyên khoa</label>
+                      <label className="block text-sm font-medium text-gray-700">Specialties</label>
                       <textarea
                         value={selectedHospital.specialties}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, specialties: e.target.value}))}
                         rows={3}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.specialties ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                       />
+                      {formErrors.specialties && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.specialties}</p>
+                      )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Mô tả</label>
+                      <label className="block text-sm font-medium text-gray-700">Description</label>
                       <textarea
                         value={selectedHospital.description}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, description: e.target.value}))}
                         rows={4}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.description ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                       />
+                      {formErrors.description && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.description}</p>
+                      )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Mô tả nhân viên</label>
+                      <label className="block text-sm font-medium text-gray-700">Staff description</label>
                       <textarea
                         value={selectedHospital.staff_description}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, staff_description: e.target.value}))}
                         rows={3}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.staff_description ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                       />
+                      {formErrors.staff_description && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.staff_description}</p>
+                      )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Chứng chỉ nhân viên</label>
+                      <label className="block text-sm font-medium text-gray-700">Staff credentials</label>
                       <textarea
                         value={selectedHospital.staff_credentials}
                         onChange={(e) => setSelectedHospital(prev => ({...prev, staff_credentials: e.target.value}))}
                         rows={3}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`w-full p-2 border rounded-lg ${
+                          formErrors.staff_credentials ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                       />
+                      {formErrors.staff_credentials && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.staff_credentials}</p>
+                      )}
                     </div>
                   </div>
 
-                  {/* Phần upload ảnh */}
+                  {/* Image upload section */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Hình ảnh</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Images</label>
                     <div className="mt-2 grid grid-cols-3 gap-4">
                       {selectedHospital.images
                         .filter(img => !imageIdsToDelete.includes(img.id))
@@ -845,7 +1021,7 @@ function HospitalsManagement() {
                       onClick={handleCloseForm}
                       className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
                     >
-                      Hủy
+                      Cancel
                     </button>
                     <button
                       type="submit"
@@ -855,10 +1031,10 @@ function HospitalsManagement() {
                       {isSubmitting ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          <span>Đang lưu...</span>
+                          <span>Saving...</span>
                         </>
                       ) : (
-                        'Lưu thay đổi'
+                        'Save changes'
                       )}
                     </button>
                   </div>
@@ -868,10 +1044,10 @@ function HospitalsManagement() {
               {/* View mode content */}
               {modalMode === 'view' && (
                 <div className="p-6 space-y-6">
-                  {/* Thông tin cơ bản */}
+                  {/* Basic information */}
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Tên bệnh viện</h3>
+                      <h3 className="text-sm font-medium text-gray-500">Hospital name</h3>
                       <p className="mt-1 text-sm text-gray-900">{selectedHospital.name}</p>
                     </div>
                     <div>
@@ -879,7 +1055,7 @@ function HospitalsManagement() {
                       <p className="mt-1 text-sm text-gray-900">{selectedHospital.email}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Số điện thoại</h3>
+                      <h3 className="text-sm font-medium text-gray-500">Phone number</h3>
                       <p className="mt-1 text-sm text-gray-900">{selectedHospital.phone}</p>
                     </div>
                     <div>
@@ -894,42 +1070,42 @@ function HospitalsManagement() {
                       </a>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Địa chỉ</h3>
+                      <h3 className="text-sm font-medium text-gray-500">Address</h3>
                       <p className="mt-1 text-sm text-gray-900">{selectedHospital.address}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Giờ hoạt động</h3>
+                      <h3 className="text-sm font-medium text-gray-500">Working hours</h3>
                       <p className="mt-1 text-sm text-gray-900">{selectedHospital.operating_hours}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Khoa</h3>
+                      <h3 className="text-sm font-medium text-gray-500">Department</h3>
                       <p className="mt-1 text-sm text-gray-900">{selectedHospital.department}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Chuyên khoa</h3>
+                      <h3 className="text-sm font-medium text-gray-500">Specialties</h3>
                       <p className="mt-1 text-sm text-gray-900">{selectedHospital.specialties}</p>
                     </div>
                   </div>
 
-                  {/* Thông tin thêm */}
+                  {/* Additional information */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Mô tả</h3>
+                    <h3 className="text-sm font-medium text-gray-500">Description</h3>
                     <p className="mt-1 text-sm text-gray-900">{selectedHospital.description}</p>
                   </div>
 
-                  {/* Thông tin nhân viên */}
+                  {/* Staff information */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Thông tin nhân viên</h3>
+                    <h3 className="text-sm font-medium text-gray-500">Staff information</h3>
                     <p className="mt-1 text-sm text-gray-900">{selectedHospital.staff_description}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Chứng chỉ nhân viên</h3>
+                    <h3 className="text-sm font-medium text-gray-500">Staff credentials</h3>
                     <p className="mt-1 text-sm text-gray-900">{selectedHospital.staff_credentials}</p>
                   </div>
 
-                  {/* Hình ảnh */}
+                  {/* Images */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-2">Hình ảnh</h3>
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Images</h3>
                     <div className="grid grid-cols-3 gap-4">
                       {selectedHospital.images?.map((image) => (
                         <div key={image.id} className="relative">
@@ -945,13 +1121,13 @@ function HospitalsManagement() {
 
                   {/* Trạng thái */}
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-500">Trạng thái:</span>
+                    <span className="text-sm font-medium text-gray-500">Status:</span>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                       selectedHospital.is_active 
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-red-100 text-red-800'
                     }`}>
-                      {selectedHospital.is_active ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                      {selectedHospital.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </div>
 
@@ -961,13 +1137,13 @@ function HospitalsManagement() {
                       onClick={handleCloseForm}
                       className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                     >
-                      Đóng
+                      Close
                     </button>
                     <button
                       onClick={() => setModalMode('edit')}
                       className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                     >
-                      Chỉnh sửa
+                      Edit
                     </button>
                   </div>
                 </div>
@@ -990,7 +1166,7 @@ function HospitalsManagement() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Thêm bệnh viện mới</h2>
+                <h2 className="text-xl font-semibold">Add new hospital</h2>
                 <button
                   onClick={() => setModalMode('')}
                   className="text-gray-400 hover:text-gray-500"
@@ -1004,15 +1180,20 @@ function HospitalsManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Tên bệnh viện <span className="text-red-500">*</span>
+                      Hospital name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       value={newHospital.name}
                       onChange={(e) => setNewHospital(prev => ({...prev, name: e.target.value}))}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.name ? 'border-red-500' : 'border-gray-300'
+                      }`}
                       required
                     />
+                    {formErrors.name && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
@@ -1022,9 +1203,14 @@ function HospitalsManagement() {
                       type="email"
                       value={newHospital.email}
                       onChange={(e) => setNewHospital(prev => ({...prev, email: e.target.value}))}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.email ? 'border-red-500' : 'border-gray-300'
+                      }`}
                       required
                     />
+                    {formErrors.email && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
@@ -1034,21 +1220,31 @@ function HospitalsManagement() {
                       type="text"
                       value={newHospital.phone}
                       onChange={(e) => setNewHospital(prev => ({...prev, phone: e.target.value}))}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.phone ? 'border-red-500' : 'border-gray-300'
+                      }`}
                       required
                     />
+                    {formErrors.phone && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Địa chỉ <span className="text-red-500">*</span>
+                      Address <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       value={newHospital.address}
                       onChange={(e) => setNewHospital(prev => ({...prev, address: e.target.value}))}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.address ? 'border-red-500' : 'border-gray-300'
+                      }`}
                       required
                     />
+                    {formErrors.address && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.address}</p>
+                    )}
                   </div>
                 </div>
 
@@ -1060,81 +1256,121 @@ function HospitalsManagement() {
                       type="text"
                       value={newHospital.link_website}
                       onChange={(e) => setNewHospital(prev => ({...prev, link_website: e.target.value}))}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.link_website ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
+                    {formErrors.link_website && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.link_website}</p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Vị trí bản đồ</label>
+                    <label className="block text-sm font-medium text-gray-700">Map location</label>
                     <input
                       type="text"
                       value={newHospital.map_location}
                       onChange={(e) => setNewHospital(prev => ({...prev, map_location: e.target.value}))}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.map_location ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
+                    {formErrors.map_location && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.map_location}</p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Giờ làm việc</label>
+                    <label className="block text-sm font-medium text-gray-700">Working hours</label>
                     <input
                       type="text"
                       value={newHospital.operating_hours}
                       onChange={(e) => setNewHospital(prev => ({...prev, operating_hours: e.target.value}))}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.operating_hours ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
+                    {formErrors.operating_hours && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.operating_hours}</p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Khoa/phòng</label>
+                    <label className="block text-sm font-medium text-gray-700">Department</label>
                     <input
                       type="text"
                       value={newHospital.department}
                       onChange={(e) => setNewHospital(prev => ({...prev, department: e.target.value}))}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.department ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
+                    {formErrors.department && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.department}</p>
+                    )}
                   </div>
                 </div>
 
                 {/* Textarea Fields */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Chuyên khoa</label>
+                    <label className="block text-sm font-medium text-gray-700">Specialties</label>
                     <textarea
                       value={newHospital.specialties}
                       onChange={(e) => setNewHospital(prev => ({...prev, specialties: e.target.value}))}
                       rows={3}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.specialties ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
+                    {formErrors.specialties && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.specialties}</p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Mô tả</label>
+                    <label className="block text-sm font-medium text-gray-700">Description</label>
                     <textarea
                       value={newHospital.description}
                       onChange={(e) => setNewHospital(prev => ({...prev, description: e.target.value}))}
                       rows={4}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.description ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
+                    {formErrors.description && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.description}</p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Mô tả nhân viên</label>
+                    <label className="block text-sm font-medium text-gray-700">Staff description</label>
                     <textarea
                       value={newHospital.staff_description}
                       onChange={(e) => setNewHospital(prev => ({...prev, staff_description: e.target.value}))}
                       rows={3}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.staff_description ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
+                    {formErrors.staff_description && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.staff_description}</p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Chứng chỉ nhân viên</label>
+                    <label className="block text-sm font-medium text-gray-700">Staff credentials</label>
                     <textarea
                       value={newHospital.staff_credentials}
                       onChange={(e) => setNewHospital(prev => ({...prev, staff_credentials: e.target.value}))}
                       rows={3}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`w-full p-2 border rounded-lg ${
+                        formErrors.staff_credentials ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
+                    {formErrors.staff_credentials && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.staff_credentials}</p>
+                    )}
                   </div>
                 </div>
 
                 {/* Image Upload */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Hình ảnh</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Images</label>
                   <div className="grid grid-cols-3 gap-4">
                     {newImages.map((file, index) => (
                       <div key={index} className="relative">
@@ -1176,7 +1412,7 @@ function HospitalsManagement() {
                     onClick={() => setModalMode('')}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="submit"
@@ -1186,10 +1422,10 @@ function HospitalsManagement() {
                     {isCreating ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang tạo...</span>
+                        <span>Creating...</span>
                       </>
                     ) : (
-                      'Tạo mới'
+                      'Create'
                     )}
                   </button>
                 </div>
@@ -1259,11 +1495,11 @@ function HospitalsManagement() {
                   <AlertTriangle className="w-6 h-6 text-red-600" />
                 </div>
                 <h3 className="mb-2 text-lg font-medium text-center text-gray-900">
-                  Xóa vĩnh viễn bệnh viện
+                  Delete hospital permanently
                 </h3>
                 <p className="text-sm text-center text-gray-500">
-                  Bạn có chắc chắn muốn xóa vĩnh viễn bệnh viện "{hospitalToDelete.name}"? 
-                  Hành động này không thể hoàn tác.
+                  Are you sure you want to delete the hospital "{hospitalToDelete.name}"? 
+                  This action cannot be undone.
                 </p>
                 <div className="flex justify-center gap-3 mt-6">
                   <button
@@ -1272,7 +1508,7 @@ function HospitalsManagement() {
                     onClick={() => setHospitalToDelete(null)}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="button"
@@ -1283,10 +1519,10 @@ function HospitalsManagement() {
                     {isDeleting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang xóa...</span>
+                        <span>Deleting...</span>
                       </>
                     ) : (
-                      'Xóa vĩnh viễn'
+                      'Delete permanently'
                     )}
                   </button>
                 </div>

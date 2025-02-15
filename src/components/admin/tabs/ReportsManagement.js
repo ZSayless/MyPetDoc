@@ -26,7 +26,7 @@ function ReportsManagement() {
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "Có lỗi xảy ra khi tải danh sách báo cáo"
+          message: error.message || "An error occurred while loading the report list"
         });
       }
     };
@@ -38,12 +38,12 @@ function ReportsManagement() {
       await dispatch(resolveReport(reportId)).unwrap();
       addToast({
         type: "success",
-        message: "Đã đánh dấu báo cáo là đã xử lý"
+        message: "Report marked as resolved"
       });
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "Có lỗi xảy ra khi xử lý báo cáo"
+        message: error.message || "An error occurred while resolving the report"
       });
     }
   };
@@ -53,7 +53,7 @@ function ReportsManagement() {
   };
 
   const handleDeleteReview = async (report) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa vĩnh viễn review này?')) {
+    if (window.confirm('Are you sure you want to delete this review permanently?')) {
       try {
         await dispatch(deleteReviewPermanently({
           reviewId: report.reported_content.id,
@@ -61,36 +61,36 @@ function ReportsManagement() {
         })).unwrap();
         addToast({
           type: "success",
-          message: "Đã xóa vĩnh viễn review"
+          message: "Deleted review permanently"
         });
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "Có lỗi xảy ra khi xóa review"
+          message: error.message || "An error occurred while deleting the review"
         });
       }
     }
   };
 
   const handleDeleteReport = async (reportId) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa vĩnh viễn báo cáo này?')) {
+    if (window.confirm('Are you sure you want to delete this report permanently?')) {
       try {
         await dispatch(deleteReportPermanently(reportId)).unwrap();
         addToast({
           type: "success",
-          message: "Đã xóa vĩnh viễn báo cáo"
+          message: "Deleted report permanently"
         });
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "Có lỗi xảy ra khi xóa báo cáo"
+          message: error.message || "An error occurred while deleting the report"
         });
       }
     }
   };
 
   const handleDeleteGalleryComment = async (report) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
+    if (window.confirm('Are you sure you want to delete this comment?')) {
       try {
         await dispatch(deleteGalleryComment({
           commentId: report.reported_content.id,
@@ -98,12 +98,12 @@ function ReportsManagement() {
         })).unwrap();
         addToast({
           type: "success",
-          message: "Đã xóa bình luận"
+          message: "Deleted comment"
         });
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "Có lỗi xảy ra khi xóa bình luận"
+          message: error.message || "An error occurred while deleting the comment"
         });
       }
     }
@@ -139,7 +139,7 @@ function ReportsManagement() {
           />
           <input
             type="text"
-            placeholder="Tìm kiếm theo lý do, người báo cáo, nội dung..."
+            placeholder="Search by reason, reporter, content..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#98E9E9]"
@@ -218,7 +218,7 @@ function ReportsManagement() {
                         ? "bg-green-100 text-green-800"
                         : "bg-yellow-100 text-yellow-800"
                     }`}>
-                      {report?.resolved ? "Đã xử lý" : "Chờ xử lý"}
+                      {report?.resolved ? "Resolved" : "Pending"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -226,7 +226,7 @@ function ReportsManagement() {
                       <button
                         onClick={() => handleView(report)}
                         className="text-blue-600 hover:text-blue-900"
-                        title="Xem chi tiết"
+                        title="View details"
                       >
                         <Eye size={18} />
                       </button>
@@ -234,7 +234,7 @@ function ReportsManagement() {
                         <button
                           onClick={() => handleDeleteReview(report)}
                           className="text-red-600 hover:text-red-900"
-                          title="Xóa vĩnh viễn review"
+                          title="Delete review permanently"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -243,7 +243,7 @@ function ReportsManagement() {
                         <button
                           onClick={() => handleDeleteGalleryComment(report)}
                           className="text-red-600 hover:text-red-900"
-                          title="Xóa bình luận"
+                          title="Delete comment"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -251,7 +251,7 @@ function ReportsManagement() {
                       <button
                         onClick={() => handleDeleteReport(report.id)}
                         className="text-red-600 hover:text-red-900"
-                        title="Xóa vĩnh viễn báo cáo"
+                        title="Delete report permanently"
                       >
                         <Trash size={18} />
                       </button>
@@ -259,7 +259,7 @@ function ReportsManagement() {
                         <button
                           onClick={() => handleResolve(report.id)}
                           className="text-green-600 hover:text-green-900"
-                          title="Đánh dấu đã xử lý"
+                          title="Mark as resolved"
                         >
                           <Check size={18} />
                         </button>
@@ -299,7 +299,7 @@ function ReportsManagement() {
                     : "bg-yellow-100 text-yellow-800"
                 }`}
               >
-                {report?.resolved ? "Đã xử lý" : "Chờ xử lý"}
+                {report?.resolved ? "Resolved" : "Pending"}
               </span>
             </div>
 
@@ -388,12 +388,12 @@ function ReportsManagement() {
         <div className="fixed inset-0 flex items-center justify-center z-[110]">
           <div className="bg-white rounded-lg w-full max-w-md mx-4">
             <div className="p-6">
-              <h2 className="text-xl font-semibold mb-6">Chi tiết báo cáo</h2>
+              <h2 className="text-xl font-semibold mb-6">Report details</h2>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Loại
+                    Type
                   </label>
                   <input
                     type="text"
@@ -405,7 +405,7 @@ function ReportsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nội dung
+                    Content
                   </label>
                   <textarea
                     value={selectedReport.reported_content.content}
@@ -417,7 +417,7 @@ function ReportsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nội dung được báo cáo
+                    Reported content
                   </label>
                   <input
                     type="text"
@@ -433,7 +433,7 @@ function ReportsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Người báo cáo
+                    Reporter
                   </label>
                   <input
                     type="text"
@@ -445,11 +445,11 @@ function ReportsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Trạng thái
+                    Status
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.resolved ? "Đã xử lý" : "Chờ xử lý"}
+                    value={selectedReport.resolved ? "Resolved" : "Pending"}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -461,7 +461,7 @@ function ReportsManagement() {
                   onClick={() => setSelectedReport(null)}
                   className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
                 >
-                  Đóng
+                  Close
                 </button>
                 {!selectedReport.resolved && (
                   <button
@@ -471,7 +471,7 @@ function ReportsManagement() {
                     }}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                   >
-                    Đánh dấu đã xử lý
+                    Mark as resolved
                   </button>
                 )}
               </div>

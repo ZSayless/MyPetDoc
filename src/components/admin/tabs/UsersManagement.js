@@ -37,7 +37,7 @@ function UsersManagement() {
     avatar: null,
     phone_number: ''
   });
-  const [modalMode, setModalMode] = useState("view"); // "view" hoặc "edit"
+  const [modalMode, setModalMode] = useState("view"); // "view" or "edit"
   const [errors, setErrors] = useState({});
   const { addToast } = useToast();
   const [showUserModal, setShowUserModal] = useState(false);
@@ -68,7 +68,7 @@ function UsersManagement() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // Fetch users dựa theo tab đang active
+    // Fetch users based on the active tab
     if (activeTab === 'active') {
       dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
     } else {
@@ -98,7 +98,7 @@ function UsersManagement() {
   const handleEdit = (user) => {
     setEditForm({
       ...user,
-      password: '' // Không hiển thị mật khẩu cũ
+      password: ''
     });
     // Reset errors
     setErrors({});
@@ -108,16 +108,16 @@ function UsersManagement() {
   const handleToggleLock = async (userId, currentLockState) => {
     try {
       const message = currentLockState 
-        ? "Bạn có chắc muốn mở khóa người dùng này?" 
-        : "Bạn có chắc muốn khóa người dùng này?";
+        ? "Are you sure you want to unlock this user?" 
+        : "Are you sure you want to lock this user?";
       
       if (window.confirm(message)) {
         await dispatch(toggleLockUser(userId)).unwrap();
         addToast({
           type: "success",
-          message: `${currentLockState ? 'Mở khóa' : 'Khóa'} người dùng thành công!`
+          message: `${currentLockState ? 'Unlock' : 'Lock'} user successfully!`
         });
-        // Refresh cả 2 danh sách
+        // Refresh both lists
         if (lockTab === 'active') {
           dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
         } else {
@@ -125,7 +125,7 @@ function UsersManagement() {
         }
       }
     } catch (error) {
-      const errorMessage = error?.message || "Có lỗi xảy ra khi thực hiện thao tác!";
+      const errorMessage = error?.message || "An error occurred while performing the operation!";
       addToast({
         type: "error",
         message: errorMessage
@@ -138,22 +138,22 @@ function UsersManagement() {
       if (!userId) {
         addToast({
           type: "error",
-          message: "Không tìm thấy ID người dùng!"
+          message: "User ID not found!"
         });
         return;
       }
 
       const message = currentActiveState 
-        ? "Bạn có chắc muốn vô hiệu hóa người dùng này?" 
-        : "Bạn có chắc muốn kích hoạt người dùng này?";
+        ? "Are you sure you want to disable this user?" 
+        : "Are you sure you want to activate this user?";
       
       if (window.confirm(message)) {
         await dispatch(toggleActiveUser(userId)).unwrap();
         addToast({
           type: "success",
-          message: `${currentActiveState ? 'Vô hiệu hóa' : 'Kích hoạt'} người dùng thành công!`
+          message: `${currentActiveState ? 'Disable' : 'Activate'} user successfully!`
         });
-        // Refresh cả 2 danh sách
+        // Refresh both lists
         if (activeTab === 'active') {
           dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
         } else {
@@ -161,8 +161,7 @@ function UsersManagement() {
         }
       }
     } catch (error) {
-      // Lấy message từ error object được trả về từ BE
-      const errorMessage = error?.message || "Có lỗi xảy ra khi thực hiện thao tác!";
+      const errorMessage = error?.message || "An error occurred while performing the operation!";
       addToast({
         type: "error",
         message: errorMessage
@@ -173,16 +172,16 @@ function UsersManagement() {
   const handleToggleDelete = async (userId, isDeleted) => {
     try {
       const message = isDeleted
-        ? "Bạn có chắc muốn khôi phục người dùng này?"
-        : "Bạn có chắc muốn xóa người dùng này?";
+        ? "Are you sure you want to restore this user?"
+        : "Are you sure you want to delete this user?";
 
       if (window.confirm(message)) {
         await dispatch(toggleDeleteUser(userId)).unwrap();
         addToast({
           type: "success",
-          message: `${isDeleted ? 'Khôi phục' : 'Xóa'} người dùng thành công!`
+          message: `${isDeleted ? 'Restore' : 'Delete'} user successfully!`
         });
-        // Refresh cả 2 danh sách
+        // Refresh both lists
         if (activeTab === 'active') {
           dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
         } else {
@@ -190,7 +189,7 @@ function UsersManagement() {
         }
       }
     } catch (error) {
-      const errorMessage = error?.message || "Có lỗi xảy ra khi thực hiện thao tác!";
+      const errorMessage = error?.message || "An error occurred while performing the operation!";
       addToast({
         type: "error",
         message: errorMessage
@@ -201,7 +200,7 @@ function UsersManagement() {
   const handlePermanentDelete = async (userId) => {
     try {
       const confirmed = window.confirm(
-        'Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này? Hành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.'
+        'Are you sure you want to permanently delete this user? This action cannot be undone and will delete all related data.'
       );
 
       if (!confirmed) return;
@@ -210,17 +209,17 @@ function UsersManagement() {
       
       addToast({
         type: 'success',
-        message: result.message || 'Xóa người dùng thành công!'
+        message: result.message || 'Delete user successfully!'
       });
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi xóa người dùng'
+        message: error.message || 'An error occurred while deleting the user'
       });
     }
   };
 
-  // Lọc users dựa trên searchTerm
+  // Filter users based on searchTerm
   const filteredUsers = useMemo(() => {
     const currentUsers = activeTab === 'active' ? users : deletedUsers;
     if (!searchTerm.trim()) return currentUsers;
@@ -235,7 +234,7 @@ function UsersManagement() {
 
   const handleAddUser = () => {
     setErrors({
-      name: "",
+      full_name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -285,7 +284,7 @@ function UsersManagement() {
     }
 
     if (newUser.phone_number && !/^[0-9]{10}$/.test(newUser.phone_number)) {
-      setErrors((prev) => ({ ...prev, phone_number: 'Số điện thoại không hợp lệ (10 số)' }));
+      setErrors((prev) => ({ ...prev, phone_number: 'Invalid phone number (10 digits)' }));
       hasError = true;
     }
 
@@ -317,7 +316,7 @@ function UsersManagement() {
     const validationErrors = validateForm(editForm, true);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      // Hiển thị thông báo lỗi đầu tiên
+      // Display the first error message
       const firstError = Object.values(validationErrors)[0];
       addToast({
         type: 'error',
@@ -335,13 +334,13 @@ function UsersManagement() {
       
       addToast({
         type: 'success',
-        message: 'Cập nhật người dùng thành công!'
+        message: 'Update user successfully!'
       });
       setShowEditModal(false);
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi cập nhật người dùng'
+        message: error.message || 'An error occurred while updating the user'
       });
     } finally {
       setIsSubmitting(false);
@@ -354,7 +353,7 @@ function UsersManagement() {
       if (file.size > 5 * 1024 * 1024) { // 5MB
         addToast({
           type: 'error',
-          message: 'Kích thước file không được vượt quá 5MB'
+          message: 'File size must not exceed 5MB'
         });
         return;
       }
@@ -375,76 +374,76 @@ function UsersManagement() {
     
     // Validate email
     if (!formData.email) {
-      errors.email = 'Email là bắt buộc';
+      errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = 'Email không hợp lệ';
+      errors.email = 'Invalid email address';
     }
 
     // Validate họ tên
     if (!formData.full_name) {
-      errors.full_name = 'Họ tên là bắt buộc';
+      errors.full_name = 'Full name is required';
     } else if (formData.full_name.length < 2) {
-      errors.full_name = 'Họ tên phải có ít nhất 2 ký tự';
+      errors.full_name = 'Full name must be at least 2 characters';
     } else if (formData.full_name.length > 50) {
-      errors.full_name = 'Họ tên không được vượt quá 50 ký tự';
+      errors.full_name = 'Full name must not exceed 50 characters';
     }
 
-    // Validate mật khẩu (chỉ bắt buộc khi tạo mới)
+    // Validate password (only required when creating a new user)
     if (!isEdit && !formData.password) {
-      errors.password = 'Mật khẩu là bắt buộc';
+      errors.password = 'Password is required';
     } else if (formData.password && formData.password.length < 6) {
-      errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+      errors.password = 'Password must be at least 6 characters';
     } else if (formData.password && formData.password.length > 50) {
-      errors.password = 'Mật khẩu không được vượt quá 50 ký tự';
+      errors.password = 'Password must not exceed 50 characters';
     } else if (formData.password && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      errors.password = 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số';
+      errors.password = 'Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number';
     }
 
     // Validate số điện thoại
     if (formData.phone_number) {
       if (!/^[0-9]{10}$/.test(formData.phone_number)) {
-        errors.phone_number = 'Số điện thoại phải có 10 chữ số';
+        errors.phone_number = 'Phone number must be 10 digits';
       } else if (!/^(0[3|5|7|8|9])/.test(formData.phone_number)) {
-        errors.phone_number = 'Số điện thoại không hợp lệ';
+        errors.phone_number = 'Invalid phone number';
       }
     }
 
     // Validate role
     if (!formData.role) {
-      errors.role = 'Vai trò là bắt buộc';
+      errors.role = 'Role is required';
     }
 
     // Validate file ảnh
     if (formData.avatar instanceof File) {
       if (formData.avatar.size > 5 * 1024 * 1024) {
-        errors.avatar = 'Kích thước ảnh không được vượt quá 5MB';
+        errors.avatar = 'Image size must not exceed 5MB';
       }
       const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
       if (!validTypes.includes(formData.avatar.type)) {
-        errors.avatar = 'Chỉ chấp nhận file ảnh định dạng JPG, PNG hoặc GIF';
+        errors.avatar = 'Only JPG, PNG, and GIF images are supported';
       }
     }
 
     // Validate thông tin thú cưng (nếu có)
     if (formData.pet_age && isNaN(formData.pet_age)) {
-      errors.pet_age = 'Tuổi thú cưng phải là số';
+      errors.pet_age = 'Pet age must be a number';
     }
 
     if (formData.pet_type && !['DOG', 'CAT', 'OTHER'].includes(formData.pet_type)) {
-      errors.pet_type = 'Loại thú cưng không hợp lệ';
+      errors.pet_type = 'Invalid pet type';
     }
 
     if (formData.pet_notes && formData.pet_notes.length > 500) {
-      errors.pet_notes = 'Ghi chú không được vượt quá 500 ký tự';
+      errors.pet_notes = 'Notes must not exceed 500 characters';
     }
 
     if (formData.pet_photo instanceof File) {
       if (formData.pet_photo.size > 5 * 1024 * 1024) {
-        errors.pet_photo = 'Kích thước ảnh không được vượt quá 5MB';
+        errors.pet_photo = 'Image size must not exceed 5MB';
       }
       const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
       if (!validTypes.includes(formData.pet_photo.type)) {
-        errors.pet_photo = 'Chỉ chấp nhận file ảnh định dạng JPG, PNG hoặc GIF';
+        errors.pet_photo = 'Only JPG, PNG, and GIF images are supported';
       }
     }
 
@@ -471,7 +470,7 @@ function UsersManagement() {
       await dispatch(createUser(newUser)).unwrap();
       addToast({
         type: 'success',
-        message: 'Tạo người dùng thành công!'
+        message: 'Create user successfully!'
       });
       setShowCreateModal(false);
       setNewUser({
@@ -486,7 +485,7 @@ function UsersManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi tạo người dùng'
+        message: error.message || 'An error occurred while creating the user'
       });
     } finally {
       setIsSubmitting(false);
@@ -507,7 +506,7 @@ function UsersManagement() {
   if (error) {
     return (
       <div className="text-center text-red-500 p-4">
-        Error loading users: {error?.message || "Có lỗi xảy ra khi tải dữ liệu"}
+        Error loading users: {error?.message || "An error occurred while loading data"}
       </div>
     );
   }
@@ -524,7 +523,7 @@ function UsersManagement() {
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          Danh sách người dùng
+          User List
         </button>
         <button
           onClick={() => setActiveTab('trash')}
@@ -534,7 +533,7 @@ function UsersManagement() {
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          Thùng rác
+          Trash
         </button>
       </div>
 
@@ -545,7 +544,7 @@ function UsersManagement() {
           <div className="relative">
             <input
               type="text"
-              placeholder="Tìm kiếm theo tên, email, số điện thoại..."
+              placeholder="Search by name, email, phone number..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
@@ -563,7 +562,7 @@ function UsersManagement() {
           className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 whitespace-nowrap"
         >
           <Plus size={18} className="mr-2" />
-          Thêm người dùng
+          Add User
         </button>
       </div>
 
@@ -571,7 +570,7 @@ function UsersManagement() {
       {filteredUsers.length === 0 && searchTerm && (
         <div className="text-center py-8">
           <p className="text-gray-500">
-            Không tìm thấy người dùng nào phù hợp
+            No users found
           </p>
         </div>
       )}
@@ -687,7 +686,7 @@ function UsersManagement() {
                         className={`text-red-600 hover:text-red-900 ${
                           user.is_deleted ? 'text-green-600' : ''
                         }`}
-                        title={user.is_deleted ? 'Khôi phục' : 'Xóa'}
+                        title={user.is_deleted ? 'Restore' : 'Delete'}
                       >
                         {user.is_deleted ? <RefreshCw size={18} /> : <Trash2 size={18} />}
                       </button>
@@ -695,7 +694,7 @@ function UsersManagement() {
                         <button
                           onClick={() => handlePermanentDelete(user.id)}
                           className="p-1 rounded hover:bg-gray-100 text-red-600"
-                          title="Xóa vĩnh viễn"
+                          title="Permanent Delete"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -755,7 +754,7 @@ function UsersManagement() {
       {/* Empty State */}
       {!loading && (activeTab === "active" ? users : deletedUsers)?.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          {activeTab === "active" ? "Không có người dùng nào" : "Thùng rác trống"}
+          {activeTab === "active" ? "No users found" : "Trash is empty"}
         </div>
       )}
 
@@ -766,7 +765,7 @@ function UsersManagement() {
             {/* Modal Header - Fixed */}
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-lg font-semibold text-gray-900">
-                Thông tin người dùng
+                User Information
               </h3>
               <button
                 onClick={closeModal}
@@ -780,7 +779,7 @@ function UsersManagement() {
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {/* Content sections */}
               <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-4">Thông tin cơ bản</h4>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Basic Information</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">ID</label>
@@ -794,7 +793,7 @@ function UsersManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Họ và tên
+                      Full Name
                     </label>
                     <input
                       type="text"
@@ -818,7 +817,7 @@ function UsersManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Số điện thoại
+                      Phone Number
                     </label>
                     <input
                       type="text"
@@ -830,7 +829,7 @@ function UsersManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vai trò
+                      Role
                     </label>
                     <input
                       type="text"
@@ -855,11 +854,11 @@ function UsersManagement() {
               </div>
 
               <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-4">Trạng thái tài khoản</h4>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Account Status</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Trạng thái hoạt động
+                      Active Status
                     </label>
                     <div className="flex items-center gap-2">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -874,7 +873,7 @@ function UsersManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Trạng thái khóa
+                      Lock Status
                     </label>
                     <div className="flex items-center gap-2">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -882,14 +881,14 @@ function UsersManagement() {
                           ? 'bg-red-100 text-red-800' 
                           : 'bg-green-100 text-green-800'
                       }`}>
-                        {modalState.user.is_locked ? 'Đã khóa' : 'Không khóa'}
+                        {modalState.user.is_locked ? 'Locked' : 'Unlocked'}
                       </span>
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Đã xóa
+                      Deleted
                     </label>
                     <div className="flex items-center gap-2">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -897,7 +896,7 @@ function UsersManagement() {
                           ? 'bg-red-100 text-red-800' 
                           : 'bg-green-100 text-green-800'
                       }`}>
-                        {modalState.user.is_deleted ? 'Đã xóa' : 'Chưa xóa'}
+                        {modalState.user.is_deleted ? 'Deleted' : 'Not Deleted'}
                       </span>
                     </div>
                   </div>
@@ -917,7 +916,7 @@ function UsersManagement() {
               </div>
 
               <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-4">Thông tin xác thực</h4>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Authentication Information</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -942,7 +941,7 @@ function UsersManagement() {
                         className="w-20 h-20 rounded-full object-cover"
                       />
                     ) : (
-                      <span className="text-gray-500">Chưa có avatar</span>
+                      <span className="text-gray-500">No avatar</span>
                     )}
                   </div>
                 </div>
@@ -950,15 +949,15 @@ function UsersManagement() {
 
               {(modalState.user.pet_type || modalState.user.pet_age || modalState.user.pet_photo || modalState.user.pet_notes) && (
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-4">Thông tin thú cưng</h4>
+                  <h4 className="text-sm font-medium text-gray-500 mb-4">Pet Information</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Loại thú cưng
+                        Pet Type
                       </label>
                       <input
                         type="text"
-                        value={modalState.user.pet_type || 'Chưa cập nhật'}
+                        value={modalState.user.pet_type || 'Not updated'}
                         readOnly
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                       />
@@ -966,11 +965,11 @@ function UsersManagement() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Tuổi thú cưng
+                        Pet Age
                       </label>
                       <input
                         type="text"
-                        value={modalState.user.pet_age ? `${modalState.user.pet_age} tuổi` : 'Chưa cập nhật'}
+                        value={modalState.user.pet_age ? `${modalState.user.pet_age} years old` : 'Not updated'}
                         readOnly
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                       />
@@ -978,11 +977,11 @@ function UsersManagement() {
 
                     <div className="col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Ghi chú
+                        Notes
                       </label>
                       <input
                         type="text"
-                        value={modalState.user.pet_notes || 'Không có ghi chú'}
+                        value={modalState.user.pet_notes || 'No notes'}
                         readOnly
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                       />
@@ -991,7 +990,7 @@ function UsersManagement() {
                     {modalState.user.pet_photo && (
                       <div className="col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Ảnh thú cưng
+                          Pet Image
                         </label>
                         <img 
                           src={modalState.user.pet_photo}
@@ -1005,11 +1004,11 @@ function UsersManagement() {
               )}
 
               <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-4">Thời gian</h4>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Time</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Ngày tạo
+                      Created Date
                     </label>
                     <input
                       type="text"
@@ -1021,7 +1020,7 @@ function UsersManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Cập nhật lần cuối
+                      Last Updated
                     </label>
                     <input
                       type="text"
@@ -1040,7 +1039,7 @@ function UsersManagement() {
                 onClick={closeModal}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
               >
-                Đóng
+                Close
               </button>
               {modalState.mode !== 'view' && (
                 <button
@@ -1049,7 +1048,7 @@ function UsersManagement() {
                   }}
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
                 >
-                  {modalState.mode === 'edit' ? 'Lưu thay đổi' : 'Thêm người dùng'}
+                  {modalState.mode === 'edit' ? 'Save changes' : 'Add user'}
                 </button>
               )}
             </div>
@@ -1062,7 +1061,7 @@ function UsersManagement() {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-semibold">Thêm người dùng mới</h3>
+              <h3 className="text-lg font-semibold">Add new user</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="text-gray-400 hover:text-gray-500"
@@ -1091,7 +1090,7 @@ function UsersManagement() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Họ và tên
+                  Full Name
                 </label>
                 <input
                   type="text"
@@ -1108,13 +1107,13 @@ function UsersManagement() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Số điện thoại
+                  Phone Number
                 </label>
                 <input
                   type="tel"
                   value={newUser.phone_number}
                   onChange={(e) => setNewUser({ ...newUser, phone_number: e.target.value })}
-                  placeholder="Nhập số điện thoại"
+                  placeholder="Enter phone number"
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
                     errors.phone_number ? 'border-red-500' : 'border-gray-300'
                   }`}
@@ -1126,7 +1125,7 @@ function UsersManagement() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mật khẩu
+                  Password
                 </label>
                 <input
                   type="password"
@@ -1143,7 +1142,7 @@ function UsersManagement() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Vai trò
+                  Role
                 </label>
                 <select
                   value={newUser.role}
@@ -1152,15 +1151,15 @@ function UsersManagement() {
                     errors.role ? 'border-red-500' : 'border-gray-300'
                   }`}
                 >
-                  <option value="GENERAL_USER">Người dùng thường</option>
-                  <option value="HOSPITAL_ADMIN">Quản lý bệnh viện</option>
-                  <option value="ADMIN">Quản trị viên</option>
+                  <option value="GENERAL_USER">General User</option>
+                  <option value="HOSPITAL_ADMIN">Hospital Admin</option>
+                  <option value="ADMIN">Admin</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ảnh đại diện
+                  Avatar
                 </label>
                 <input
                   type="file"
@@ -1179,7 +1178,7 @@ function UsersManagement() {
                   onClick={() => setShowCreateModal(false)}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="submit"
@@ -1193,9 +1192,9 @@ function UsersManagement() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Đang xử lý...
+                      Processing...
                     </div>
-                  ) : 'Tạo người dùng'}
+                  ) : 'Create user'}
                 </button>
               </div>
             </form>
@@ -1208,7 +1207,7 @@ function UsersManagement() {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-semibold">Chỉnh sửa người dùng</h3>
+              <h3 className="text-lg font-semibold">Edit user</h3>
               <button
                 onClick={() => setShowEditModal(false)}
                 className="text-gray-400 hover:text-gray-500"
@@ -1236,7 +1235,7 @@ function UsersManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Họ và tên
+                    Full Name
                   </label>
                   <input
                     type="text"
@@ -1250,13 +1249,13 @@ function UsersManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Mật khẩu mới
+                    New Password
                   </label>
                   <input
                     type="password"
                     value={editForm.password}
                     onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
-                    placeholder="Để trống nếu không muốn thay đổi"
+                    placeholder="Leave blank if you don't want to change"
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
                       errors.password ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -1265,7 +1264,7 @@ function UsersManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Số điện thoại
+                    Phone Number
                   </label>
                   <input
                     type="tel"
@@ -1279,7 +1278,7 @@ function UsersManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vai trò
+                    Role
                   </label>
                   <select
                     value={editForm.role}
@@ -1288,15 +1287,15 @@ function UsersManagement() {
                       errors.role ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="GENERAL_USER">Người dùng thường</option>
-                    <option value="HOSPITAL_ADMIN">Quản lý bệnh viện</option>
-                    <option value="ADMIN">Quản trị viên</option>
+                    <option value="GENERAL_USER">General User</option>
+                    <option value="HOSPITAL_ADMIN">Hospital Admin</option>
+                    <option value="ADMIN">Admin</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ảnh đại diện
+                    Avatar
                   </label>
                   <input
                     type="file"
@@ -1309,11 +1308,11 @@ function UsersManagement() {
                 </div>
               </div>
 
-              {/* Cột phải */}
+              {/* Right Column */}
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Loại thú cưng
+                    Pet Type
                   </label>
                   <select
                     value={editForm.pet_type || ''}
@@ -1322,16 +1321,20 @@ function UsersManagement() {
                       errors.pet_type ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="">Chọn loại thú cưng</option>
-                    <option value="DOG">Chó</option>
-                    <option value="CAT">Mèo</option>
-                    <option value="OTHER">Khác</option>
+                    <option value="">Select pet type</option>
+                    <option value="DOG">Dog</option>
+                    <option value="CAT">Cat</option>
+                    <option value="BIRD">Bird</option>
+                    <option value="FISH">Fish</option>
+                    <option value="REPTILE">Reptile</option>
+                    <option value="RABBIT">Rabbit</option>
+                    <option value="OTHER">Other</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tuổi thú cưng
+                    Pet Age
                   </label>
                   <input
                     type="number"
@@ -1345,7 +1348,7 @@ function UsersManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ghi chú về thú cưng
+                    Pet Notes
                   </label>
                   <textarea
                     value={editForm.pet_notes || ''}
@@ -1359,7 +1362,7 @@ function UsersManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ảnh thú cưng
+                    Pet Photo
                   </label>
                   <input
                     type="file"
@@ -1379,7 +1382,7 @@ function UsersManagement() {
                   onClick={() => setShowEditModal(false)}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="submit"
@@ -1393,9 +1396,9 @@ function UsersManagement() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Đang xử lý...
+                      Processing...
                     </div>
-                  ) : 'Cập nhật'}
+                  ) : 'Update'}
                 </button>
               </div>
             </form>

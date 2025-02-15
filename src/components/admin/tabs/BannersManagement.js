@@ -43,19 +43,19 @@ function BannersManagement() {
 
   const validateForm = () => {
     if (!formData.title.trim()) {
-      addToast({ type: "error", message: "Vui lòng nhập tiêu đề" });
+      addToast({ type: "error", message: "Please enter the title" });
       return false;
     }
     if (!formData.subtitle.trim()) {
-      addToast({ type: "error", message: "Vui lòng nhập tiêu đề phụ" });
+      addToast({ type: "error", message: "Please enter the subtitle" });
       return false;
     }
     if (formData.description.trim().length < 10) {
-      addToast({ type: "error", message: "Mô tả phải có ít nhất 10 ký tự" });
+      addToast({ type: "error", message: "Description must be at least 10 characters" });
       return false;
     }
     if (!selectedBanner && !formData.image) {
-      addToast({ type: "error", message: "Vui lòng chọn ảnh banner" });
+      addToast({ type: "error", message: "Please select a banner image" });
       return false;
     }
     return true;
@@ -83,10 +83,10 @@ function BannersManagement() {
           id: selectedBanner.id, 
           data: formDataToSend 
         })).unwrap();
-        addToast({ type: "success", message: "Cập nhật banner thành công" });
+        addToast({ type: "success", message: "Updated banner successfully" });
       } else {
         await dispatch(createBanner(formDataToSend)).unwrap();
-        addToast({ type: "success", message: "Thêm banner thành công" });
+        addToast({ type: "success", message: "Added banner successfully" });
       }
 
       setIsModalOpen(false);
@@ -94,7 +94,7 @@ function BannersManagement() {
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "Có lỗi xảy ra"
+        message: error.message || "An error occurred"
       });
     }
   };
@@ -114,8 +114,8 @@ function BannersManagement() {
 
   const handleToggleDelete = async (banner) => {
     const message = banner.is_deleted 
-      ? "Bạn có chắc chắn muốn khôi phục banner này?"
-      : "Bạn có chắc chắn muốn xóa banner này?";
+      ? "Are you sure you want to restore this banner?"
+      : "Are you sure you want to delete this banner?";
       
     if (window.confirm(message)) {
       try {
@@ -123,13 +123,13 @@ function BannersManagement() {
         addToast({ 
           type: "success", 
           message: banner.is_deleted 
-            ? "Đã khôi phục banner thành công" 
-            : "Đã xóa banner thành công"
+            ? "Restored banner successfully" 
+            : "Deleted banner successfully"
         });
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "Có lỗi xảy ra khi thay đổi trạng thái banner"
+          message: error.message || "An error occurred when changing the banner status"
         });
       }
     }
@@ -141,29 +141,29 @@ function BannersManagement() {
       addToast({ 
         type: "success", 
         message: banner.is_active 
-          ? "Đã tắt kích hoạt banner" 
-          : "Đã kích hoạt banner"
+          ? "Deactivated banner" 
+          : "Activated banner"
       });
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "Có lỗi xảy ra khi thay đổi trạng thái banner"
+        message: error.message || "An error occurred when changing the banner status"
       });
     }
   };
 
   const handleHardDelete = async (banner) => {
-    if (window.confirm("CẢNH BÁO: Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa vĩnh viễn banner này?")) {
+    if (window.confirm("WARNING: This action cannot be undone. Are you sure you want to permanently delete this banner?")) {
       try {
         await dispatch(hardDeleteBanner(banner.id)).unwrap();
         addToast({ 
           type: "success", 
-          message: "Đã xóa vĩnh viễn banner thành công"
+          message: "Permanently deleted banner successfully"
         });
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "Có lỗi xảy ra khi xóa vĩnh viễn banner"
+          message: error.message || "An error occurred when permanently deleting the banner"
         });
       }
     }
@@ -193,7 +193,7 @@ function BannersManagement() {
     <div className="p-4 md:p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Quản lý Banner</h2>
+        <h2 className="text-xl font-semibold text-gray-800">Banner Management</h2>
         <button
           onClick={() => {
             resetForm();
@@ -202,7 +202,7 @@ function BannersManagement() {
           className="flex items-center gap-2 px-4 py-2 bg-[#40B8D3] text-white rounded-lg hover:bg-[#3aa5bd]"
         >
           <Plus size={20} />
-          Thêm Banner
+          Add Banner
         </button>
       </div>
 
@@ -226,7 +226,7 @@ function BannersManagement() {
               {banner.is_deleted && (
                 <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
                   <span className="text-white font-medium px-3 py-1 rounded-full bg-red-500">
-                    Đã xóa
+                    Deleted
                   </span>
                 </div>
               )}
@@ -236,7 +236,7 @@ function BannersManagement() {
               <p className="text-sm text-gray-500 mb-2">{banner.subtitle}</p>
               <p className="text-gray-600 text-sm mb-2">{banner.description}</p>
               <div className="text-xs text-gray-400 mb-4">
-                Tạo bởi: {banner.created_by_name} - {new Date(banner.created_at).toLocaleDateString()}
+                Created by: {banner.created_by_name} - {new Date(banner.created_at).toLocaleDateString()}
               </div>
               <div className="flex justify-between items-center">
                 <button
@@ -250,12 +250,12 @@ function BannersManagement() {
                   {banner.is_active ? (
                     <>
                       <ToggleRight size={16} />
-                      Đang hoạt động
+                      Active
                     </>
                   ) : (
                     <>
                       <ToggleLeft size={16} />
-                      Không hoạt động
+                      Inactive
                     </>
                   )}
                 </button>
@@ -264,7 +264,7 @@ function BannersManagement() {
                     <button
                       onClick={() => handleEdit(banner)}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                      title="Chỉnh sửa"
+                      title="Edit"
                     >
                       <Pencil size={18} />
                     </button>
@@ -276,7 +276,7 @@ function BannersManagement() {
                         ? 'text-green-600 hover:bg-green-50'
                         : 'text-red-600 hover:bg-red-50'
                     }`}
-                    title={banner.is_deleted ? "Khôi phục" : "Xóa tạm thời"}
+                    title={banner.is_deleted ? "Restore" : "Delete temporarily"}
                   >
                     {banner.is_deleted ? (
                       <ArchiveRestore size={18} />
@@ -288,7 +288,7 @@ function BannersManagement() {
                     <button
                       onClick={() => handleHardDelete(banner)}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                      title="Xóa vĩnh viễn"
+                      title="Permanently delete"
                     >
                       <Trash size={18} />
                     </button>
@@ -307,7 +307,7 @@ function BannersManagement() {
             <form onSubmit={handleSubmit} className="flex flex-col">
               <div className="p-4 border-b">
                 <h3 className="text-lg font-semibold">
-                  {selectedBanner ? "Chỉnh sửa Banner" : "Thêm Banner mới"}
+                  {selectedBanner ? "Edit Banner" : "Add new Banner"}
                 </h3>
               </div>
 
@@ -316,7 +316,7 @@ function BannersManagement() {
                   {/* Form fields */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tiêu đề <span className="text-red-500">*</span>
+                      Title <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -329,7 +329,7 @@ function BannersManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tiêu đề phụ <span className="text-red-500">*</span>
+                      Subtitle <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -342,7 +342,7 @@ function BannersManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Link (tùy chọn)
+                      Link (optional)
                     </label>
                     <input
                       type="text"
@@ -354,7 +354,7 @@ function BannersManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Mô tả <span className="text-red-500">*</span>
+                      Description <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       value={formData.description}
@@ -364,12 +364,12 @@ function BannersManagement() {
                       required
                       minLength={10}
                     />
-                    <p className="text-xs text-gray-500 mt-1">Tối thiểu 10 ký tự</p>
+                    <p className="text-xs text-gray-500 mt-1">Minimum 10 characters</p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Hình ảnh {!selectedBanner && <span className="text-red-500">*</span>}
+                      Image {!selectedBanner && <span className="text-red-500">*</span>}
                     </label>
                     <div className="mt-1 flex justify-center px-4 py-4 border-2 border-gray-300 border-dashed rounded-lg">
                       <div className="space-y-1 text-center">
@@ -421,14 +421,14 @@ function BannersManagement() {
                     {isSubmittingBanner ? (
                       <>
                         <span className="opacity-0">
-                          {selectedBanner ? "Cập nhật" : "Thêm mới"}
+                          {selectedBanner ? "Update" : "Add new"}
                         </span>
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         </div>
                       </>
                     ) : (
-                      selectedBanner ? "Cập nhật" : "Thêm mới"
+                      selectedBanner ? "Update" : "Add new"
                     )}
                   </button>
                 </div>
@@ -444,7 +444,7 @@ function BannersManagement() {
           <div className="bg-white p-4 rounded-lg shadow-lg">
             <div className="flex items-center space-x-3">
               <div className="w-6 h-6 border-2 border-[#40B8D3] border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-gray-700">Đang tải...</span>
+              <span className="text-gray-700">Loading...</span>
             </div>
           </div>
         </div>

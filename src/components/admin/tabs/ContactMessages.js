@@ -28,14 +28,14 @@ const getStatusColor = (status) => {
 const getStatusText = (status) => {
   switch (status) {
     case 'completed':
-      return 'Đã hoàn thành';
+      return 'Completed';
     case 'processing':
-      return 'Đang xử lý';
+      return 'Processing';
     case 'cancelled':
-      return 'Đã hủy';
+      return 'Cancelled';
     case 'pending':
     default:
-      return 'Chờ xử lý';
+      return 'Pending';
   }
 };
 
@@ -51,6 +51,7 @@ function ContactMessages() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState(null);
   const [isDeletingMessage, setIsDeletingMessage] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     dispatch(fetchContactMessages({ page: currentPage, limit: 10 }));
@@ -71,9 +72,35 @@ function ContactMessages() {
     window.location.href = `mailto:${email}`;
   };
 
+  const validateForm = () => {
+    const errors = {};
+
+    // Validate response
+    if (!response.trim()) {
+      errors.response = 'Reply content is required';
+    } else if (response.length > 1000) {
+      errors.response = 'Reply content cannot exceed 1000 characters';
+    }
+
+    // Validate status
+    if (!status) {
+      errors.status = 'Status is required';
+    } else if (!['completed', 'processing', 'cancelled'].includes(status)) {
+      errors.status = 'Invalid status';
+    }
+
+    return errors;
+  };
+
   const handleRespond = async (e) => {
     e.preventDefault();
     if (!selectedMessage) return;
+
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -87,14 +114,15 @@ function ContactMessages() {
 
       setResponse("");
       setStatus("completed");
+      setFormErrors({});
       addToast({
         type: "success",
-        message: "Trả lời tin nhắn thành công!"
+        message: "Reply to message successfully!"
       });
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "Có lỗi xảy ra khi trả lời tin nhắn"
+        message: error.message || "An error occurred while replying to the message"
       });
     } finally {
       setIsSubmitting(false);
@@ -109,7 +137,7 @@ function ContactMessages() {
       await dispatch(deleteContactMessagePermanently(messageToDelete.id)).unwrap();
       addToast({
         type: "success",
-        message: "Xóa tin nhắn thành công!"
+        message: "Delete message successfully!"
       });
       setMessageToDelete(null);
       if (selectedMessage?.id === messageToDelete.id) {
@@ -118,7 +146,7 @@ function ContactMessages() {
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "Có lỗi xảy ra khi xóa tin nhắn"
+        message: error.message || "An error occurred while deleting the message"
       });
     } finally {
       setIsDeletingMessage(false);
@@ -140,7 +168,7 @@ function ContactMessages() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Tìm kiếm tin nhắn..."
+            placeholder="Search messages..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#98E9E9]"
@@ -210,7 +238,7 @@ function ContactMessages() {
                       <button
                         onClick={() => handleDelete(selectedMessage)}
                         className="text-red-600 hover:text-red-900"
-                        title="Xóa"
+                        title="Delete"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -221,7 +249,7 @@ function ContactMessages() {
                   </div>
 
                   <div className="mt-6 border-t pt-6">
-                    <h3 className="text-lg font-medium mb-4">Trả lời tin nhắn</h3>
+                    <h3 className="text-lg font-medium mb-4">Reply to message</h3>
                     <form onSubmit={handleRespond}>
                       <div className="space-y-4">
                         <div>
@@ -232,25 +260,41 @@ function ContactMessages() {
                             value={response}
                             onChange={(e) => setResponse(e.target.value)}
                             rows={4}
-                            className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Nhập nội dung trả lời..."
-                            required
+                            className={`w-full rounded-lg ${
+                              formErrors?.response 
+                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                                : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            }`}
+                            placeholder="Enter reply content..."
                           />
+                          {formErrors?.response && (
+                            <p className="mt-1 text-sm text-red-500">{formErrors.response}</p>
+                          )}
+                          <p className="mt-1 text-sm text-gray-500">
+                            {response.length}/1000 ký tự
+                          </p>
                         </div>
                         
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Trạng thái
+                            Status
                           </label>
                           <select
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
-                            className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            className={`w-full rounded-lg ${
+                              formErrors?.status
+                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                                : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            }`}
                           >
-                            <option value="completed">Đã hoàn thành</option>
-                            <option value="processing">Đang xử lý</option>
-                            <option value="cancelled">Đã hủy</option>
+                            <option value="completed">Completed</option>
+                            <option value="processing">Processing</option>
+                            <option value="cancelled">Cancelled</option>
                           </select>
+                          {formErrors?.status && (
+                            <p className="mt-1 text-sm text-red-500">{formErrors.status}</p>
+                          )}
                         </div>
 
                         <div className="flex justify-end">
@@ -262,12 +306,12 @@ function ContactMessages() {
                             {isSubmitting ? (
                               <>
                                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                <span>Đang gửi...</span>
+                                <span>Sending...</span>
                               </>
                             ) : (
                               <>
                                 <Send size={16} />
-                                <span>Gửi trả lời</span>
+                                <span>Send reply</span>
                               </>
                             )}
                           </button>
@@ -278,14 +322,14 @@ function ContactMessages() {
 
                   {selectedMessage.response && (
                     <div className="mt-6 border-t pt-6">
-                      <h3 className="text-lg font-medium mb-2">Phản hồi trước đó</h3>
+                      <h3 className="text-lg font-medium mb-2">Previous reply</h3>
                       <div className="bg-gray-50 rounded-lg p-4">
                         <p className="whitespace-pre-line">{selectedMessage.response}</p>
                         <div className="mt-2 text-sm text-gray-500">
-                          <span>Trạng thái: {selectedMessage.status}</span>
+                          <span>Status: {selectedMessage.status}</span>
                           {selectedMessage.responded_at && (
                             <span className="ml-4">
-                              Thời gian: {formatDate(selectedMessage.responded_at)}
+                              Time: {formatDate(selectedMessage.responded_at)}
                             </span>
                           )}
                         </div>
@@ -295,7 +339,7 @@ function ContactMessages() {
                 </>
               ) : (
                 <div className="h-full flex items-center justify-center text-gray-500">
-                  Chọn một tin nhắn để xem
+                  Select a message to view
                 </div>
               )}
             </div>
@@ -305,7 +349,7 @@ function ContactMessages() {
           {pagination && pagination.totalPages > 0 && (
             <div className="flex items-center justify-between py-3">
               <div className="text-sm text-gray-500">
-                Trang {pagination.page} / {pagination.totalPages}
+                Page {pagination.page} / {pagination.totalPages}
               </div>
               <div className="flex gap-2">
                 <button
@@ -313,14 +357,14 @@ function ContactMessages() {
                   disabled={currentPage === 1}
                   className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
-                  Trước
+                  Previous
                 </button>
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
                   disabled={currentPage === pagination.totalPages}
                   className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
-                  Sau
+                  Next
                 </button>
               </div>
             </div>
@@ -343,11 +387,11 @@ function ContactMessages() {
                       <AlertTriangle className="w-6 h-6 text-red-600" />
                     </div>
                     <h3 className="mb-2 text-lg font-medium text-center text-gray-900">
-                      Xóa vĩnh viễn tin nhắn
+                      Delete message permanently
                     </h3>
                     <p className="text-sm text-center text-gray-500">
-                      Bạn có chắc chắn muốn xóa vĩnh viễn tin nhắn từ "{messageToDelete.name}"? 
-                      Hành động này không thể hoàn tác.
+                      Are you sure you want to delete the message from "{messageToDelete.name}"? 
+                      This action cannot be undone.
                     </p>
                     <div className="flex justify-center gap-3 mt-6">
                       <button
@@ -356,7 +400,7 @@ function ContactMessages() {
                         onClick={() => setMessageToDelete(null)}
                         className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
                       >
-                        Hủy
+                        Cancel
                       </button>
                       <button
                         type="button"
@@ -367,10 +411,10 @@ function ContactMessages() {
                         {isDeletingMessage ? (
                           <>
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            <span>Đang xóa...</span>
+                            <span>Deleting...</span>
                           </>
                         ) : (
-                          'Xóa vĩnh viễn'
+                          'Delete'
                         )}
                       </button>
                     </div>
