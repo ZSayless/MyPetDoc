@@ -39,49 +39,49 @@ function ContactInfoManagement() {
     
     // Email validation
     if (!data.email?.trim()) {
-      errors.email = 'Email là bắt buộc';
+      errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      errors.email = 'Email không hợp lệ';
+      errors.email = 'Email is not valid';
     }
 
     // Phone validation
     if (!data.phone?.trim()) {
-      errors.phone = 'Số điện thoại là bắt buộc';
+      errors.phone = 'Phone number is required';
     } else if (!/^[0-9]{10,11}$/.test(data.phone)) {
-      errors.phone = 'Số điện thoại phải có 10-11 số';
+      errors.phone = 'Phone number must be 10-11 digits';
     }
 
     // Address validation
     if (!data.address?.trim()) {
-      errors.address = 'Địa chỉ là bắt buộc';
+      errors.address = 'Address is required';
     }
     else if (data.address.length <= 5) {
-        errors.address = 'Địa chỉ không được quá ngắn hơn 5 ký tự';
+        errors.address = 'Address cannot be less than 5 characters';
     }
      else if (data.address.length > 255) {
-      errors.address = 'Địa chỉ không được quá 255 ký tự';
+      errors.address = 'Address cannot be more than 255 characters';
     }
 
     // Support hours validation
     if (!data.support_hours?.trim()) {
-      errors.support_hours = 'Giờ hỗ trợ là bắt buộc';
+      errors.support_hours = 'Support hours is required';
     }
     else if (data.support_hours.length <= 5) {
-        errors.support_hours = 'Giờ hỗ trợ không được quá ngắn hơn 5 ký tự';
+        errors.support_hours = 'Support hours cannot be less than 5 characters';
     }
      else if (data.support_hours.length > 100) {
-      errors.support_hours = 'Giờ hỗ trợ không được quá 100 ký tự';
+      errors.support_hours = 'Support hours cannot be more than 100 characters';
     }
 
     // Support description validation
     if (!data.support_description?.trim()) {
-      errors.support_description = 'Mô tả là bắt buộc';
+      errors.support_description = 'Description is required';
     }
     else if (data.support_description.length <= 5) {
-        errors.support_description = 'Mô tả không được quá ngắn hơn 5 ký tự';
+        errors.support_description = 'Description cannot be less than 5 characters';
     }
     else if (data.support_description.length > 100 ) {
-      errors.support_description = 'Mô tả không được quá 100 ký tự';
+      errors.support_description = 'Description cannot be more than 100 characters';
     }
 
     return errors;
@@ -98,7 +98,7 @@ function ContactInfoManagement() {
       await dispatch(createContactInfo(formData)).unwrap();
       addToast({
         type: 'success',
-        message: 'Thêm thông tin liên hệ thành công!'
+        message: 'Add contact information successfully!'
       });
       setIsCreating(false);
       setFormData({
@@ -111,7 +111,7 @@ function ContactInfoManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi thêm thông tin liên hệ'
+        message: error.message || 'An error occurred while adding contact information'
       });
     }
   };
@@ -146,7 +146,7 @@ function ContactInfoManagement() {
       
       addToast({
         type: 'success',
-        message: 'Cập nhật thông tin liên hệ thành công!'
+        message: 'Update contact information successfully!'
       });
       setIsEditing(false);
       setEditingInfo(null);
@@ -155,7 +155,7 @@ function ContactInfoManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi cập nhật thông tin liên hệ'
+        message: error.message || 'An error occurred while updating contact information'
       });
     }
   };
@@ -164,7 +164,7 @@ function ContactInfoManagement() {
     if (contactInfoList.length <= 1) {
       addToast({
         type: 'error',
-        message: 'Không thể xóa thông tin liên hệ duy nhất'
+        message: 'Cannot delete the only contact information'
       });
       return;
     }
@@ -172,7 +172,7 @@ function ContactInfoManagement() {
     if (currentContactInfo?.id === info.id) {
       addToast({
         type: 'error',
-        message: 'Không thể xóa thông tin liên hệ đang hoạt động'
+        message: 'Cannot delete the active contact information'
       });
       return;
     }
@@ -186,14 +186,14 @@ function ContactInfoManagement() {
       await dispatch(deleteContactInfo(isDeletingId)).unwrap();
       addToast({
         type: 'success',
-        message: 'Xóa thông tin liên hệ thành công!'
+        message: 'Delete contact information successfully!'
       });
       setShowDeleteConfirm(false);
       setIsDeletingId(null);
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi xóa thông tin liên hệ'
+        message: error.message || 'An error occurred while deleting contact information'
       });
     }
   };
@@ -209,20 +209,20 @@ function ContactInfoManagement() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Quản lý Thông tin liên hệ</h2>
+        <h2 className="text-xl font-semibold">Manage Contact Information</h2>
         <button
           className="flex items-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
           onClick={() => setIsCreating(true)}
         >
           <Plus size={20} />
-          Thêm thông tin mới
+          Add new contact information
         </button>
       </div>
 
       <div className="space-y-4">
         {contactInfoList?.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            Chưa có thông tin liên hệ nào. Hãy thêm mới!
+            No contact information. Please add new!
           </div>
         ) : (
           contactInfoList?.map((info) => (
@@ -236,22 +236,22 @@ function ContactInfoManagement() {
                 <div className="space-y-2">
                   {currentContactInfo?.id === info.id && (
                     <span className="inline-block px-2 py-1 text-xs font-medium text-teal-700 bg-teal-50 rounded-full mb-2">
-                      Đang hoạt động
+                      Active
                     </span>
                   )}
                   <h3 className="font-medium">Email: {info.email}</h3>
-                  <p className="text-gray-600">Số điện thoại: {info.phone}</p>
-                  <p className="text-gray-600">Địa chỉ: {info.address}</p>
-                  <p className="text-gray-600">Giờ hỗ trợ: {info.support_hours}</p>
-                  <p className="text-gray-600">Mô tả: {info.support_description}</p>
+                  <p className="text-gray-600">Phone number: {info.phone}</p>
+                  <p className="text-gray-600">Address: {info.address}</p>
+                  <p className="text-gray-600">Support hours: {info.support_hours}</p>
+                  <p className="text-gray-600">Description: {info.support_description}</p>
                   <p className="text-sm text-gray-500">
-                    Cập nhật lần cuối: {format(new Date(info.updated_at), 'dd/MM/yyyy HH:mm')} bởi {info.last_updated_by_name}
+                    Last updated: {format(new Date(info.updated_at), 'dd/MM/yyyy HH:mm')} by {info.last_updated_by_name}
                   </p>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
-                    title="Chỉnh sửa"
+                    title="Edit"
                     onClick={() => handleEditClick(info)}
                   >
                     <Edit size={18} />
@@ -264,10 +264,10 @@ function ContactInfoManagement() {
                     }`}
                     title={
                       currentContactInfo?.id === info.id
-                        ? 'Không thể xóa thông tin đang hoạt động'
+                        ? 'Cannot delete the active contact information'
                         : contactInfoList.length <= 1
-                        ? 'Không thể xóa thông tin duy nhất'
-                        : 'Xóa'
+                        ? 'Cannot delete the only contact information'
+                        : 'Delete'
                     }
                     onClick={() => handleDeleteClick(info)}
                     disabled={currentContactInfo?.id === info.id || contactInfoList.length <= 1}
@@ -282,7 +282,7 @@ function ContactInfoManagement() {
       </div>
 
       <div className="text-center text-gray-500 mt-4">
-        Hiển thị {contactInfoList?.length} trên tổng số {contactInfoPagination.total} thông tin liên hệ
+        Display {contactInfoList?.length} on total {contactInfoPagination.total} contact information
       </div>
 
       {/* Modal tạo mới */}
@@ -299,7 +299,7 @@ function ContactInfoManagement() {
             >
               <div className="flex justify-between items-center px-6 py-4 border-b">
                 <h2 className="text-xl font-semibold">
-                  Thêm thông tin liên hệ mới
+                  Add new contact information
                 </h2>
                 <button
                   onClick={() => setIsCreating(false)}
@@ -352,7 +352,7 @@ function ContactInfoManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Địa chỉ
+                    Address
                   </label>
                   <input
                     type="text"
@@ -372,7 +372,7 @@ function ContactInfoManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Giờ hỗ trợ
+                    Support hours
                   </label>
                   <input
                     type="text"
@@ -392,7 +392,7 @@ function ContactInfoManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Mô tả
+                    Description
                   </label>
                   <textarea
                     value={formData.support_description}
@@ -416,7 +416,7 @@ function ContactInfoManagement() {
                     onClick={() => setIsCreating(false)}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="submit"
@@ -426,10 +426,10 @@ function ContactInfoManagement() {
                     {isSubmittingContactInfo ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang lưu...</span>
+                        <span>Saving...</span>
                       </>
                     ) : (
-                      'Lưu'
+                      'Save'
                     )}
                   </button>
                 </div>
@@ -453,7 +453,7 @@ function ContactInfoManagement() {
             >
               <div className="flex justify-between items-center px-6 py-4 border-b">
                 <h2 className="text-xl font-semibold">
-                  Chỉnh sửa thông tin liên hệ
+                  Edit contact information
                 </h2>
                 <button
                   onClick={() => setIsEditing(false)}
@@ -486,7 +486,7 @@ function ContactInfoManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Số điện thoại
+                    Phone number
                   </label>
                   <input
                     type="tel"
@@ -506,7 +506,7 @@ function ContactInfoManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Địa chỉ
+                    Address
                   </label>
                   <input
                     type="text"
@@ -526,7 +526,7 @@ function ContactInfoManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Giờ hỗ trợ
+                    Support hours
                   </label>
                   <input
                     type="text"
@@ -546,7 +546,7 @@ function ContactInfoManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Mô tả
+                    Description
                   </label>
                   <textarea
                     value={formData.support_description}
@@ -570,7 +570,7 @@ function ContactInfoManagement() {
                     onClick={() => setIsEditing(false)}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="submit"
@@ -580,10 +580,10 @@ function ContactInfoManagement() {
                     {isSubmittingContactInfo ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang lưu...</span>
+                        <span>Saving...</span>
                       </>
                     ) : (
-                      'Lưu'
+                      'Save'
                     )}
                   </button>
                 </div>
@@ -610,10 +610,10 @@ function ContactInfoManagement() {
             >
               <div className="p-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
-                  Xác nhận xóa
+                  Confirm delete
                 </h3>
                 <p className="text-gray-500">
-                  Bạn có chắc chắn muốn xóa thông tin liên hệ này? Hành động này không thể hoàn tác.
+                  Are you sure you want to delete this contact information? This action cannot be undone.
                 </p>
                 <div className="flex justify-end gap-2 mt-6">
                   <button
@@ -624,7 +624,7 @@ function ContactInfoManagement() {
                     }}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="button"
@@ -635,10 +635,10 @@ function ContactInfoManagement() {
                     {isSubmittingContactInfo ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang xóa...</span>
+                        <span>Deleting...</span>
                       </>
                     ) : (
-                      'Xóa'
+                      'Delete'
                     )}
                   </button>
                 </div>
