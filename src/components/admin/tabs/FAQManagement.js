@@ -21,7 +21,7 @@ function FAQManagement() {
     answer: ''
   });
 
-  // Thêm hàm lọc FAQ
+  // Add filter function for FAQs
   const filteredFaqs = useMemo(() => {
     if (!searchTerm.trim()) return faqs;
 
@@ -41,19 +41,19 @@ function FAQManagement() {
     const newErrors = {};
     
     if (!formData.question.trim()) {
-      newErrors.question = 'Vui lòng nhập câu hỏi';
+      newErrors.question = 'Please enter a question';
     } else if (formData.question.length < 10) {
-      newErrors.question = 'Câu hỏi phải có ít nhất 10 ký tự';
+      newErrors.question = 'Question must be at least 10 characters';
     } else if (formData.question.length > 200) {
-      newErrors.question = 'Câu hỏi không được vượt quá 200 ký tự';
+      newErrors.question = 'Question cannot exceed 200 characters';
     }
 
     if (!formData.answer.trim()) {
-      newErrors.answer = 'Vui lòng nhập câu trả lời';
+      newErrors.answer = 'Please enter an answer';
     } else if (formData.answer.length < 10) {
-      newErrors.answer = 'Câu trả lời phải có ít nhất 10 ký tự';
+      newErrors.answer = 'Answer must be at least 10 characters';
     } else if (formData.answer.length > 1000) {
-      newErrors.answer = 'Câu trả lời không được vượt quá 1000 ký tự';
+      newErrors.answer = 'Answer cannot exceed 1000 characters';
     }
 
     setErrors(newErrors);
@@ -72,7 +72,7 @@ function FAQManagement() {
       
       addToast({
         type: 'success',
-        message: 'Tạo FAQ thành công!'
+        message: 'Create FAQ successfully!'
       });
 
       // Reset form
@@ -81,7 +81,7 @@ function FAQManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi tạo FAQ'
+        message: error.message || 'An error occurred while creating FAQ'
       });
     }
   };
@@ -120,13 +120,13 @@ function FAQManagement() {
       await dispatch(deleteFaq(faqId)).unwrap();
       addToast({
         type: "success",
-        message: "Xóa FAQ thành công!",
+        message: "Delete FAQ successfully!",
       });
       setFaqToDelete(null);
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "Có lỗi xảy ra khi xóa FAQ!",
+        message: error.message || "An error occurred while deleting FAQ!",
       });
     }
   };
@@ -138,14 +138,14 @@ function FAQManagement() {
       return;
     }
 
-    // Kiểm tra xem có thay đổi gì không
+    // Check if there is any change
     if (
       formData.question === editingFaq.question && 
       formData.answer === editingFaq.answer
     ) {
       addToast({
         type: 'info',
-        message: 'Không có thông tin thay đổi để cập nhật'
+        message: 'No changes to update'
       });
       return;
     }
@@ -158,7 +158,7 @@ function FAQManagement() {
       
       addToast({
         type: 'success',
-        message: 'Cập nhật FAQ thành công!'
+        message: 'Update FAQ successfully!'
       });
 
       // Reset form
@@ -168,12 +168,12 @@ function FAQManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi cập nhật FAQ'
+        message: error.message || 'An error occurred while updating FAQ'
       });
     }
   };
 
-  // Cập nhật form submit handler để xử lý cả create và update
+  // Update form submit handler to handle both create and update
   const handleSubmit = (e) => {
     if (editingFaq) {
       handleUpdateFaq(e);
@@ -193,7 +193,7 @@ function FAQManagement() {
   if (faqsError) {
     return (
       <div className="p-6 text-center text-red-600">
-        Có lỗi xảy ra khi tải danh sách FAQ: {faqsError.message}
+        An error occurred while loading the FAQ list: {faqsError.message}
       </div>
     );
   }
@@ -201,24 +201,24 @@ function FAQManagement() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Quản lý FAQ</h2>
+        <h2 className="text-xl font-semibold">FAQ Management</h2>
         <button
           onClick={() => setIsEditing(true)}
           className="flex items-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
         >
           <Plus size={20} />
-          Thêm FAQ
+          Add FAQ
         </button>
       </div>
 
-      {/* Thêm thanh tìm kiếm */}
+      {/* Add search bar */}
       <div className="mb-6">
         <div className="relative">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Tìm kiếm FAQ..."
+            placeholder="Search FAQ..."
             className="w-full px-4 py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
           />
           <Search 
@@ -244,8 +244,8 @@ function FAQManagement() {
         ) : filteredFaqs.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             {searchTerm 
-              ? "Không tìm thấy FAQ nào phù hợp với từ khóa tìm kiếm."
-              : "Chưa có FAQ nào. Hãy thêm FAQ mới!"}
+              ? "No FAQ found matching the search term."
+              : "No FAQ found. Add a new FAQ!"}
           </div>
         ) : (
           filteredFaqs.map((faq) => (
@@ -256,7 +256,7 @@ function FAQManagement() {
                     onClick={() => setExpandedId(expandedId === faq.id ? null : faq.id)}
                     className="w-full flex justify-between items-center"
                   >
-                    {/* Highlight từ khóa tìm kiếm trong câu hỏi */}
+                    {/* Highlight search term in question */}
                     <h3 className="font-medium text-left">
                       {searchTerm ? (
                         highlightText(faq.question, searchTerm)
@@ -272,7 +272,7 @@ function FAQManagement() {
                   </button>
                   {expandedId === faq.id && (
                     <p className="text-gray-600 mt-2">
-                      {/* Highlight từ khóa tìm kiếm trong câu trả lời */}
+                      {/* Highlight search term in answer */}
                       {searchTerm ? (
                         highlightText(faq.answer, searchTerm)
                       ) : (
@@ -315,7 +315,7 @@ function FAQManagement() {
             >
               <div className="flex justify-between items-center px-6 py-4 border-b">
                 <h2 className="text-xl font-semibold">
-                  {editingFaq ? 'Chỉnh sửa FAQ' : 'Thêm FAQ mới'}
+                  {editingFaq ? 'Edit FAQ' : 'Add new FAQ'}
                 </h2>
                 <button
                   onClick={() => setIsEditing(false)}
@@ -329,7 +329,7 @@ function FAQManagement() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Câu hỏi <span className="text-red-500">*</span>
+                      Question <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -341,7 +341,7 @@ function FAQManagement() {
                           ? 'border-red-500 focus:ring-red-200'
                           : 'border-gray-300 focus:ring-blue-200'
                       }`}
-                      placeholder="Nhập câu hỏi..."
+                      placeholder="Enter question..."
                     />
                     {errors.question && (
                       <p className="mt-1 text-sm text-red-500">{errors.question}</p>
@@ -350,7 +350,7 @@ function FAQManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Câu trả lời <span className="text-red-500">*</span>
+                      Answer <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       name="answer"
@@ -362,7 +362,7 @@ function FAQManagement() {
                           ? 'border-red-500 focus:ring-red-200'
                           : 'border-gray-300 focus:ring-blue-200'
                       }`}
-                      placeholder="Nhập câu trả lời..."
+                      placeholder="Enter answer..."
                     />
                     {errors.answer && (
                       <p className="mt-1 text-sm text-red-500">{errors.answer}</p>
@@ -382,7 +382,7 @@ function FAQManagement() {
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                     disabled={isSubmittingFaq}
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="submit"
@@ -392,10 +392,10 @@ function FAQManagement() {
                     {isSubmittingFaq ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang lưu...</span>
+                        <span>Saving...</span>
                       </>
                     ) : (
-                      'Lưu'
+                      'Save'
                     )}
                   </button>
                 </div>
@@ -422,11 +422,11 @@ function FAQManagement() {
                   <AlertTriangle className="w-6 h-6 text-red-600" />
                 </div>
                 <h3 className="mb-2 text-lg font-medium text-center text-gray-900">
-                  Xóa FAQ
+                  Delete FAQ
                 </h3>
                 <p className="text-sm text-center text-gray-500">
-                  Bạn có chắc chắn muốn xóa FAQ này? 
-                  Hành động này không thể hoàn tác.
+                  Are you sure you want to delete this FAQ? 
+                  This action cannot be undone.
                 </p>
                 <div className="flex justify-center gap-3 mt-6">
                   <button
@@ -435,7 +435,7 @@ function FAQManagement() {
                     onClick={() => setFaqToDelete(null)}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="button"
@@ -446,10 +446,10 @@ function FAQManagement() {
                     {isDeletingFaq ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang xóa...</span>
+                        <span>Deleting...</span>
                       </>
                     ) : (
-                      'Xóa'
+                      'Delete'
                     )}
                   </button>
                 </div>
@@ -462,7 +462,7 @@ function FAQManagement() {
   );
 }
 
-// Hàm highlight text tìm kiếm
+// Function to highlight search term
 function highlightText(text, searchTerm) {
   if (!searchTerm) return text;
 

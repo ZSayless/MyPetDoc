@@ -53,39 +53,39 @@ function AboutUsManagement() {
     const newErrors = {};
     
     if (!formData.title.trim()) {
-      newErrors.title = 'Vui lòng nhập tiêu đề';
+      newErrors.title = 'Please enter the title';
     } else if (formData.title.length > 200) {
-      newErrors.title = 'Tiêu đề không được vượt quá 200 ký tự';
+      newErrors.title = 'The title cannot exceed 200 characters';
     }
 
     if (!formData.content.trim()) {
-      newErrors.content = 'Vui lòng nhập nội dung';
+      newErrors.content = 'Please enter the content';
     } else if (formData.content.length > 1000) {
-      newErrors.content = 'Nội dung không được vượt quá 1000 ký tự';
+      newErrors.content = 'The content cannot exceed 1000 characters';
     }
 
     if (!formData.mission.trim()) {
-      newErrors.mission = 'Vui lòng nhập sứ mệnh';
+      newErrors.mission = 'Please enter the mission';
     } else if (formData.mission.length > 500) {
-      newErrors.mission = 'Sứ mệnh không được vượt quá 500 ký tự';
+      newErrors.mission = 'The mission cannot exceed 500 characters';
     }
 
     if (!formData.vision.trim()) {
-      newErrors.vision = 'Vui lòng nhập tầm nhìn';
+      newErrors.vision = 'Please enter the vision';
     } else if (formData.vision.length > 500) {
-      newErrors.vision = 'Tầm nhìn không được vượt quá 500 ký tự';
+      newErrors.vision = 'The vision cannot exceed 500 characters';
     }
 
     if (!formData.core_values.trim()) {
-      newErrors.core_values = 'Vui lòng nhập giá trị cốt lõi';
+      newErrors.core_values = 'Please enter the core values';
     } else if (formData.core_values.length > 500) {
-      newErrors.core_values = 'Giá trị cốt lõi không được vượt quá 500 ký tự';
+      newErrors.core_values = 'The core values cannot exceed 500 characters';
     }
 
     if (!formData.team_description.trim()) {
-      newErrors.team_description = 'Vui lòng nhập mô tả về đội ngũ';
+      newErrors.team_description = 'Please enter the team description';
     } else if (formData.team_description.length > 500) {
-      newErrors.team_description = 'Mô tả về đội ngũ không được vượt quá 500 ký tự';
+      newErrors.team_description = 'The team description cannot exceed 500 characters';
     }
 
     setErrors(newErrors);
@@ -117,7 +117,7 @@ function AboutUsManagement() {
       await dispatch(createAboutUs(formData)).unwrap();
       addToast({
         type: 'success',
-        message: 'Tạo phiên bản About Us mới thành công!'
+        message: 'Create new About Us version successfully!'
       });
       setIsCreating(false);
       setFormData({
@@ -131,7 +131,7 @@ function AboutUsManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi tạo phiên bản About Us'
+        message: error.message || 'An error occurred while creating a new About Us version'
       });
     }
   };
@@ -140,7 +140,7 @@ function AboutUsManagement() {
     if (!isLatestVersion(version)) {
       addToast({
         type: 'error',
-        message: 'Chỉ có thể chỉnh sửa phiên bản đang sử dụng'
+        message: 'You can only edit the currently used version'
       });
       return;
     }
@@ -164,14 +164,14 @@ function AboutUsManagement() {
     }
 
     try {
-      const result = await dispatch(updateAboutUs({
+     await dispatch(updateAboutUs({
         id: editingVersion.id,
         data: formData
       })).unwrap();
       
       addToast({
         type: 'success',
-        message: 'Cập nhật About Us thành công!'
+        message: 'Update About Us successfully!'
       });
       setIsEditing(false);
       setEditingVersion(null);
@@ -188,7 +188,7 @@ function AboutUsManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi cập nhật About Us'
+        message: error.message || 'An error occurred while updating About Us'
       });
     }
   };
@@ -201,7 +201,7 @@ function AboutUsManagement() {
     if (!canDelete()) {
       addToast({
         type: 'error',
-        message: 'Không thể xóa phiên bản duy nhất'
+        message: 'Cannot delete the only version'
       });
       return;
     }
@@ -217,7 +217,7 @@ function AboutUsManagement() {
       
       addToast({
         type: 'success',
-        message: 'Xóa phiên bản thành công!'
+        message: 'Delete About Us version successfully!'
       });
       setIsDeleting(false);
       setDeletingVersion(null);
@@ -226,7 +226,7 @@ function AboutUsManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi xóa phiên bản'
+        message: error.message || 'An error occurred while deleting the version'
       });
     }
   };
@@ -242,7 +242,7 @@ function AboutUsManagement() {
   if (aboutUsError) {
     return (
       <div className="p-6 text-center text-red-600">
-        Có lỗi xảy ra khi tải lịch sử About Us: {aboutUsError.message}
+        An error occurred while loading the About Us history: {aboutUsError.message}
       </div>
     );
   }
@@ -250,7 +250,7 @@ function AboutUsManagement() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Quản lý About Us</h2>
+        <h2 className="text-xl font-semibold">About Us Management</h2>
         <button
           onClick={() => {
             setIsCreating(true);
@@ -258,14 +258,14 @@ function AboutUsManagement() {
           className="flex items-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
         >
           <Plus size={20} />
-          Thêm phiên bản mới
+          Add new version
         </button>
       </div>
 
       <div className="space-y-4">
         {aboutUsVersions?.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            Chưa có phiên bản About Us nào. Hãy thêm phiên bản mới!
+            No About Us version. Please add a new version!
           </div>
         ) : (
           aboutUsVersions?.map((version) => (
@@ -284,17 +284,17 @@ function AboutUsManagement() {
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-medium text-left">
-                          Phiên bản {version.version} - {version.title}
+                          Version {version.version} - {version.title}
                         </h3>
                         {isLatestVersion(version) && (
                           <span className="px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">
-                            Đang sử dụng
+                            Used
                           </span>
                         )}
                       </div>
                       <p className="text-sm text-gray-500">
-                        Cập nhật lần cuối: {format(new Date(version.updated_at), 'dd/MM/yyyy HH:mm', { locale: vi })}
-                        {' '}bởi {version.last_updated_by_name}
+                        Last updated: {format(new Date(version.updated_at), 'dd/MM/yyyy HH:mm', { locale: vi })}
+                        {' '}by {version.last_updated_by_name}
                       </p>
                     </div>
                     <ChevronDown
@@ -305,9 +305,9 @@ function AboutUsManagement() {
                   </button>
                   {expandedId === version.id && (
                     <div className="mt-4 space-y-2 text-gray-600">
-                      <p><strong>Sứ mệnh:</strong> {version.mission}</p>
-                      <p><strong>Tầm nhìn:</strong> {version.vision}</p>
-                      <p><strong>Giá trị cốt lõi:</strong> {version.core_values}</p>
+                      <p><strong>Mission:</strong> {version.mission}</p>
+                      <p><strong>Vision:</strong> {version.vision}</p>
+                      <p><strong>Core values:</strong> {version.core_values}</p>
                     </div>
                   )}
                 </div>
@@ -315,14 +315,14 @@ function AboutUsManagement() {
                   <button
                     onClick={() => handleViewVersion(version)}
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
-                    title="Xem chi tiết"
+                    title="View detail"
                   >
                     <Eye size={18} />
                   </button>
                   <button
                     onClick={() => handleEditClick(version)}
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
-                    title="Chỉnh sửa"
+                    title="Edit"
                   >
                     <Edit size={18} />
                   </button>
@@ -333,7 +333,7 @@ function AboutUsManagement() {
                         ? 'text-red-600 hover:bg-red-50' 
                         : 'text-gray-400 cursor-not-allowed'
                     }`}
-                    title={canDelete() ? 'Xóa' : 'Không thể xóa phiên bản duy nhất'}
+                    title={canDelete() ? 'Delete' : 'Cannot delete the only version'}
                     disabled={!canDelete()}
                   >
                     <Trash2 size={18} />
@@ -361,7 +361,7 @@ function AboutUsManagement() {
             >
               <div className="flex justify-between items-center px-6 py-4 border-b sticky top-0 bg-white">
                 <h2 className="text-xl font-semibold">
-                  Chi tiết About Us - Phiên bản {selectedVersion.version}
+                  About Us Detail - Version {selectedVersion.version}
                 </h2>
                 <button
                   onClick={() => {
@@ -376,38 +376,38 @@ function AboutUsManagement() {
 
               <div className="p-6 space-y-6">
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">Tiêu đề</h3>
+                  <h3 className="font-medium text-gray-900 mb-2">Title</h3>
                   <p className="text-gray-600">{selectedVersion.title}</p>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">Nội dung</h3>
+                  <h3 className="font-medium text-gray-900 mb-2">Content</h3>
                   <p className="text-gray-600">{selectedVersion.content}</p>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">Sứ mệnh</h3>
+                  <h3 className="font-medium text-gray-900 mb-2">Mission</h3>
                   <p className="text-gray-600">{selectedVersion.mission}</p>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">Tầm nhìn</h3>
+                  <h3 className="font-medium text-gray-900 mb-2">Vision</h3>
                   <p className="text-gray-600">{selectedVersion.vision}</p>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">Giá trị cốt lõi</h3>
+                  <h3 className="font-medium text-gray-900 mb-2">Core values</h3>
                   <p className="text-gray-600">{selectedVersion.core_values}</p>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">Mô tả về đội ngũ</h3>
+                  <h3 className="font-medium text-gray-900 mb-2">Team description</h3>
                   <p className="text-gray-600">{selectedVersion.team_description}</p>
                 </div>
 
                 {selectedVersion.banner_image && (
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-2">Ảnh banner</h3>
+                    <h3 className="font-medium text-gray-900 mb-2">Banner image</h3>
                     <img 
                       src={selectedVersion.banner_image} 
                       alt="Banner"
@@ -417,8 +417,8 @@ function AboutUsManagement() {
                 )}
 
                 <div className="text-sm text-gray-500">
-                  <p>Cập nhật lần cuối: {format(new Date(selectedVersion.updated_at), 'dd/MM/yyyy HH:mm', { locale: vi })}</p>
-                  <p>Người cập nhật: {selectedVersion.last_updated_by_name}</p>
+                  <p>Last updated: {format(new Date(selectedVersion.updated_at), 'dd/MM/yyyy HH:mm', { locale: vi })}</p>
+                  <p>Updated by: {selectedVersion.last_updated_by_name}</p>
                 </div>
               </div>
             </div>
@@ -438,7 +438,7 @@ function AboutUsManagement() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center px-6 py-4 border-b sticky top-0 bg-white">
-                <h2 className="text-xl font-semibold">Thêm phiên bản About Us mới</h2>
+                <h2 className="text-xl font-semibold">Add new About Us version</h2>
                 <button
                   onClick={() => setIsCreating(false)}
                   className="text-gray-400 hover:text-gray-500"
@@ -450,7 +450,7 @@ function AboutUsManagement() {
               <form onSubmit={handleSubmit} className="p-6 space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tiêu đề <span className="text-red-500">*</span>
+                    Title <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -466,7 +466,7 @@ function AboutUsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nội dung <span className="text-red-500">*</span>
+                    Content <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="content"
@@ -482,7 +482,7 @@ function AboutUsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Sứ mệnh <span className="text-red-500">*</span>
+                    Mission <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="mission"
@@ -498,7 +498,7 @@ function AboutUsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tầm nhìn <span className="text-red-500">*</span>
+                    Vision <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="vision"
@@ -514,7 +514,7 @@ function AboutUsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Giá trị cốt lõi <span className="text-red-500">*</span>
+                    Core values <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="core_values"
@@ -530,7 +530,7 @@ function AboutUsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Mô tả về đội ngũ <span className="text-red-500">*</span>
+                    Team description <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="team_description"
@@ -551,7 +551,7 @@ function AboutUsManagement() {
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                     disabled={isSubmittingAboutUs}
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="submit"
@@ -561,10 +561,10 @@ function AboutUsManagement() {
                     {isSubmittingAboutUs ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang lưu...</span>
+                        <span>Saving...</span>
                       </>
                     ) : (
-                      'Lưu'
+                      'Save'
                     )}
                   </button>
                 </div>
@@ -586,7 +586,7 @@ function AboutUsManagement() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center px-6 py-4 border-b sticky top-0 bg-white">
-                <h2 className="text-xl font-semibold">Thêm phiên bản About Us mới</h2>
+                <h2 className="text-xl font-semibold">Add new About Us version</h2>
                 <button
                   onClick={() => setIsEditing(false)}
                   className="text-gray-400 hover:text-gray-500"
@@ -598,7 +598,7 @@ function AboutUsManagement() {
               <form onSubmit={handleUpdate} className="p-6 space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tiêu đề <span className="text-red-500">*</span>
+                    Title <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -614,7 +614,7 @@ function AboutUsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nội dung <span className="text-red-500">*</span>
+                    Content <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="content"
@@ -630,7 +630,7 @@ function AboutUsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Sứ mệnh <span className="text-red-500">*</span>
+                    Mission <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="mission"
@@ -646,7 +646,7 @@ function AboutUsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tầm nhìn <span className="text-red-500">*</span>
+                    Vision <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="vision"
@@ -662,7 +662,7 @@ function AboutUsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Giá trị cốt lõi <span className="text-red-500">*</span>
+                    Core values <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="core_values"
@@ -678,7 +678,7 @@ function AboutUsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Mô tả về đội ngũ <span className="text-red-500">*</span>
+                    Team description <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="team_description"
@@ -699,7 +699,7 @@ function AboutUsManagement() {
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                     disabled={isSubmittingAboutUs}
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="submit"
@@ -709,10 +709,10 @@ function AboutUsManagement() {
                     {isSubmittingAboutUs ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang lưu...</span>
+                        <span>Saving...</span>
                       </>
                     ) : (
-                      'Lưu'
+                      'Save'
                     )}
                   </button>
                 </div>
@@ -741,16 +741,16 @@ function AboutUsManagement() {
                   <AlertTriangle className="w-6 h-6 text-red-600" />
                 </div>
                 <h3 className="mb-4 text-xl font-medium text-center text-gray-900">
-                  Xác nhận xóa
+                  Confirm delete
                 </h3>
                 <p className="text-center text-gray-500">
-                  Bạn có chắc chắn muốn xóa phiên bản {deletingVersion.version}? 
+                  Are you sure you want to delete version {deletingVersion.version}? 
                   {isLatestVersion(deletingVersion) && (
                     <span className="block mt-2 font-medium text-red-600">
-                      Lưu ý: Đây là phiên bản đang được sử dụng!
+                      Note: This is the version being used!
                     </span>
                   )}
-                  Hành động này không thể hoàn tác.
+                  This action cannot be undone.
                 </p>
                 <div className="flex justify-end gap-2 mt-6">
                   <button
@@ -762,7 +762,7 @@ function AboutUsManagement() {
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                     disabled={isSubmittingAboutUs}
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="button"
@@ -773,10 +773,10 @@ function AboutUsManagement() {
                     {isSubmittingAboutUs ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang xóa...</span>
+                        <span>Deleting...</span>
                       </>
                     ) : (
-                      'Xóa'
+                      'Delete'
                     )}
                   </button>
                 </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { getBlogPosts } from "../../services/blogPostService";
+import { blogPostService } from '../../services/blogPostService';
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 
@@ -11,9 +11,24 @@ function HomeBlogs() {
   const [recentBlogs, setRecentBlogs] = useState([]);
 
   useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await blogPostService.getPosts();
+        if (response.success) {
+          setBlogs(response.data.posts);
+        }
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+  useEffect(() => {
     const fetchRecentBlogs = async () => {
       try {
-        const response = await getBlogPosts();
+        const response = await blogPostService.getPosts();
         if (response.success && response.data.posts) {
           const blogsData = response.data.posts;
           setBlogs(blogsData);
@@ -32,7 +47,7 @@ function HomeBlogs() {
           setRecentBlogs(formattedBlogs);
         }
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách bài viết:", error);
+        console.error("Error fetching blogs:", error);
       }
     };
 
@@ -56,7 +71,7 @@ function HomeBlogs() {
           {recentBlogs.map((blog) => (
             <Link
               key={blog.id}
-              to={`/bloglist/${blog.slug}`}
+              to={`/blog/${blog.slug}`}
               className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow no-underline"
             >
               <img

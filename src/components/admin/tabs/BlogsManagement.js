@@ -1,12 +1,30 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Search, Plus, Edit, Trash2, Eye, RefreshCw, Trash } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Eye, RefreshCw, Trash, X, Loader2 } from "lucide-react";
 import { deleteBlog, updateBlogStatus, fetchBlogPosts, fetchDeletedBlogs, createBlogPost, updateBlogPost, toggleDeleteBlog, deleteBlogPermanently } from "../../../redux/slices/adminSlice";
 import { useToast } from '../../../context/ToastContext';
+import { useTranslation } from 'react-i18next';
 
 const POST_TYPES = ['BLOG', 'NEWS', 'EVENT'];
 const STATUS_TYPES = ['DRAFT', 'PENDING', 'PUBLISHED', 'ARCHIVED'];
 const CATEGORIES = ['PET_CARE', 'PET_HEALTH', 'PET_TRAINING', 'PET_FOOD', 'PET_LIFESTYLE'];
+const BLOG_TAGS = [
+  'Health Tips',
+  'Pet Care',
+  'Nutrition',
+  'Behavior',
+  'Training',
+  'Grooming',
+  'Vaccination',
+  'Disease Prevention',
+  'First Aid',
+  'Mental Health',
+  'Exercise',
+  'Breeding',
+  'Senior Pet Care',
+  'Puppy Care',
+  'Emergency Care'
+];
 
 function BlogsManagement() {
   const dispatch = useDispatch();
@@ -26,7 +44,7 @@ function BlogsManagement() {
     summary: '',
     post_type: 'BLOG',
     category: 'PET_CARE',
-    tags: '',
+    tags: [],
     status: 'DRAFT',
     meta_title: '',
     meta_description: '',
@@ -43,6 +61,12 @@ function BlogsManagement() {
   // Thêm state để quản lý phân trang
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+
+  // Thêm state cho confirm modal
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [blogToDelete, setBlogToDelete] = useState(null);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (activeTab === "list") {
@@ -78,7 +102,7 @@ function BlogsManagement() {
     if (!formData.title || formData.title.trim().length < 10) {
       addToast({
         type: "error",
-        message: "Tiêu đề không được trống và phải có ít nhất 10 ký tự"
+        message: "Title cannot be empty and must be at least 10 characters"
       });
       return false;
     }
@@ -87,7 +111,7 @@ function BlogsManagement() {
     if (!formData.content || formData.content.trim().length < 50) {
       addToast({
         type: "error",
-        message: "Nội dung không được trống và phải có ít nhất 50 ký tự"
+        message: "Content cannot be empty and must be at least 50 characters"
       });
       return false;
     }
@@ -128,18 +152,18 @@ function BlogsManagement() {
         result = await dispatch(createBlogPost(formDataToSubmit)).unwrap();
       }
 
-      // Kiểm tra kết quả từ API
+      // Check the result from the API
       if (result?.status === 'error') {
         addToast({
           type: "error",
-          message: `Có lỗi xảy ra: ${result.message || 'Invalid data'}`
+          message: `An error occurred: ${result.message || 'Invalid data'}`
         });
         return;
       }
 
       addToast({
         type: "success",
-        message: `${selectedBlog ? "Cập nhật" : "Tạo"} bài viết thành công`
+        message: `${selectedBlog ? "Updated" : "Created"} blog successfully`
       });
 
       setShowCreateModal(false);
@@ -149,7 +173,7 @@ function BlogsManagement() {
     } catch (error) {
       addToast({
         type: "error",
-        message: `Có lỗi xảy ra: ${error.message || 'Invalid data'}`
+        message: `An error occurred: ${error.message || 'Invalid data'}`
       });
       console.error('API Error:', error);
     } finally {
@@ -158,17 +182,17 @@ function BlogsManagement() {
   };
 
   const handleDelete = async (blogId) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
+    if (window.confirm("Are you sure you want to delete this blog?")) {
       try {
         await dispatch(deleteBlog(blogId));
         addToast({ 
           type: "success", 
-          message: "Xóa bài viết thành công" 
+          message: "Deleted blog successfully" 
         });
       } catch (error) {
         const errorMessage = error?.response?.data?.message || 
                             error?.message || 
-                            "Có lỗi xảy ra khi xóa bài viết";
+                            "An error occurred when deleting the blog";
         
         addToast({
           type: "error",
@@ -191,7 +215,7 @@ function BlogsManagement() {
       summary: blog.summary,
       post_type: blog.post_type,
       category: blog.category,
-      tags: blog.tags,
+      tags: blog.tags.split(',').map(tag => tag.trim()),
       status: blog.status,
       meta_title: blog.meta_title || '',
       meta_description: blog.meta_description || '',
@@ -216,7 +240,7 @@ function BlogsManagement() {
       if (result?.status === 'error') {
         addToast({
           type: "error",
-          message: `Có lỗi xảy ra: ${result.message || 'Invalid data'}`
+          message: `An error occurred: ${result.message || 'Invalid data'}`
         });
         return;
       }
@@ -229,30 +253,32 @@ function BlogsManagement() {
 
       addToast({
         type: "success",
-        message: `${activeTab === "list" ? "Xóa" : "Khôi phục"} bài viết thành công`
+        message: `${activeTab === "list" ? "Deleted" : "Restored"} blog successfully`
       });
     } catch (error) {
       addToast({
         type: "error",
-        message: `Có lỗi xảy ra: ${error.message || 'Invalid data'}`
+        message: `An error occurred: ${error.message || 'Invalid data'}`
       });
     }
   };
 
   const handleHardDelete = async (blogId) => {
-    try {
-      if (!window.confirm("Bạn có chắc chắn muốn xóa vĩnh viễn bài viết này? Hành động này không thể hoàn tác!")) {
-        return;
-      }
+    setBlogToDelete(blogId);
+    setShowConfirmModal(true);
+  };
 
-      await dispatch(deleteBlogPermanently(blogId)).unwrap();
+  const handleConfirmHardDelete = async () => {
+    try {
+      setFormLoading(true);
+      await dispatch(deleteBlogPermanently(blogToDelete)).unwrap();
       
       addToast({
         type: "success",
-        message: "Xóa vĩnh viễn bài viết thành công"
+        message: "Permanently deleted blog successfully"
       });
 
-      // Refresh danh sách
+      // Refresh list
       if (activeTab === "list") {
         dispatch(fetchBlogPosts({ page: currentPage, limit: itemsPerPage }));
       } else {
@@ -260,23 +286,27 @@ function BlogsManagement() {
       }
 
     } catch (error) {
-      // Xử lý các trường hợp lỗi cụ thể
+      // Handle specific error cases
       if (error?.response?.status === 404) {
         addToast({
           type: "error", 
-          message: "Không tìm thấy bài viết"
+          message: "Blog not found"
         });
       } else if (error?.response?.status === 403) {
         addToast({
           type: "error",
-          message: "Bạn không có quyền xóa vĩnh viễn bài viết"
+          message: "You do not have permission to delete this blog"
         });
       } else {
         addToast({
           type: "error",
-          message: "Có lỗi xảy ra khi xóa bài viết"
+          message: "An error occurred when deleting the blog"
         });
       }
+    } finally {
+      setFormLoading(false);
+      setShowConfirmModal(false);
+      setBlogToDelete(null);
     }
   };
 
@@ -305,7 +335,7 @@ function BlogsManagement() {
       summary: '',
       post_type: 'BLOG',
       category: 'PET_CARE',
-      tags: '',
+      tags: [],
       status: 'DRAFT',
       meta_title: '',
       meta_description: '',
@@ -326,14 +356,14 @@ function BlogsManagement() {
     setShowCreateModal(true);
   };
 
-  // Modal xem chi tiết với giao diện giống form chỉnh sửa
+  // Modal view with similar interface to edit form
   const ViewModal = () => (
     <div className="fixed inset-0 flex items-center justify-center z-[110]">
       <div className="absolute inset-0 bg-black/50" onClick={() => setShowViewModal(false)} />
       <div className="bg-white rounded-lg w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto relative z-10">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Chi tiết bài viết</h2>
+            <h2 className="text-xl font-semibold">Blog details</h2>
             <button
               onClick={() => setShowViewModal(false)}
               className="text-gray-500 hover:text-gray-700"
@@ -345,11 +375,11 @@ function BlogsManagement() {
           </div>
 
           <div className="space-y-6">
-            {/* Thông tin cơ bản */}
+            {/* Basic information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tiêu đề
+                  Title
                 </label>
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
                   {selectedBlog.title}
@@ -358,7 +388,7 @@ function BlogsManagement() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tóm tắt
+                  Summary
                 </label>
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
                   {selectedBlog.summary}
@@ -366,21 +396,21 @@ function BlogsManagement() {
               </div>
             </div>
 
-            {/* Nội dung */}
+            {/* Content */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nội dung
+                Content
               </label>
               <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 min-h-[150px]">
                 {selectedBlog.content}
               </div>
             </div>
 
-            {/* Ảnh */}
+            {/* Images */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Ảnh thu nhỏ
+                  Thumbnail
                 </label>
                 <img
                   src={selectedBlog.thumbnail_image}
@@ -391,7 +421,7 @@ function BlogsManagement() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Ảnh đại diện
+                  Featured image
                 </label>
                 <img
                   src={selectedBlog.featured_image}
@@ -401,11 +431,11 @@ function BlogsManagement() {
               </div>
             </div>
 
-            {/* Loại và trạng thái */}
+            {/* Type and status */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Loại bài viết
+                  Blog type
                 </label>
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
                   {selectedBlog.post_type}
@@ -414,7 +444,7 @@ function BlogsManagement() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Danh mục
+                  Category
                 </label>
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
                   {selectedBlog.category}
@@ -423,7 +453,7 @@ function BlogsManagement() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Trạng thái
+                  Status
                 </label>
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
                   {selectedBlog.status}
@@ -437,14 +467,21 @@ function BlogsManagement() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Tags
                 </label>
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
-                  {selectedBlog.tags}
+                <div className="flex flex-wrap gap-2">
+                  {selectedBlog.tags.split(',').map(tag => (
+                    <span 
+                      key={tag}
+                      className="px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-700"
+                    >
+                      {tag.trim()}
+                    </span>
+                  ))}
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  ID Bệnh viện
+                  Hospital ID
                 </label>
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
                   {selectedBlog.hospital_id}
@@ -452,7 +489,7 @@ function BlogsManagement() {
               </div>
             </div>
 
-            {/* SEO và nguồn */}
+            {/* SEO and source */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -476,7 +513,7 @@ function BlogsManagement() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nguồn
+                  Source
                 </label>
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
                   {selectedBlog.source}
@@ -485,7 +522,7 @@ function BlogsManagement() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Link nguồn
+                  Source link
                 </label>
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
                   {selectedBlog.external_link}
@@ -493,7 +530,7 @@ function BlogsManagement() {
               </div>
             </div>
 
-            {/* Thông tin tác giả */}
+            {/* Author information */}
             <div className="flex items-center space-x-4 border-t pt-4">
               <img
                 src={selectedBlog.author_avatar}
@@ -501,9 +538,9 @@ function BlogsManagement() {
                 className="h-10 w-10 rounded-full"
               />
               <div>
-                <p className="text-sm font-medium">Tác giả: {selectedBlog.author_name}</p>
+                <p className="text-sm font-medium">Author: {selectedBlog.author_name}</p>
                 <p className="text-xs text-gray-500">
-                  Ngày tạo: {new Date(selectedBlog.created_at).toLocaleDateString('vi-VN')}
+                  Created at: {new Date(selectedBlog.created_at).toLocaleDateString('vi-VN')}
                 </p>
               </div>
             </div>
@@ -513,7 +550,52 @@ function BlogsManagement() {
     </div>
   );
 
-  if (loading) return <div className="p-4">Đang tải...</div>;
+  // Add function to handle tag selection
+  const handleTagChange = (tag) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.includes(tag)
+        ? prev.tags.filter(t => t !== tag)
+        : [...prev.tags, tag]
+    }));
+  };
+
+  // Add component ConfirmDeleteModal
+  const ConfirmDeleteModal = ({ onClose, onConfirm, loading }) => {
+    const { t } = useTranslation();
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+          <h3 className="text-lg font-semibold mb-4">
+            {t("Confirm delete permanently")}
+          </h3>
+          <p className="text-gray-600 mb-6">
+            {t("Are you sure you want to delete this blog permanently? This action cannot be undone!")}
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
+              disabled={loading}
+            >
+              {t("Cancel")}
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={loading}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 flex items-center gap-2"
+            >
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              {t("Delete permanently")}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  if (loading) return <div className="p-4">Loading...</div>;
 
   return (
     <div className="p-4 md:p-6">
@@ -529,7 +611,7 @@ function BlogsManagement() {
                 : "bg-gray-100 text-gray-500 hover:bg-gray-200"
             }`}
           >
-            Danh sách bài viết
+            List
           </button>
           <button
             onClick={() => setActiveTab("trash")}
@@ -539,7 +621,7 @@ function BlogsManagement() {
                 : "bg-gray-100 text-gray-500 hover:bg-gray-200"
             }`}
           >
-            Thùng rác
+            Trash
           </button>
         </div>
 
@@ -549,7 +631,7 @@ function BlogsManagement() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
-              placeholder="Tìm kiếm bài viết..."
+              placeholder="Search blog..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D6EFD] focus:border-transparent"
@@ -562,7 +644,7 @@ function BlogsManagement() {
               className="flex items-center gap-2 px-4 py-2 bg-[#0D6EFD] text-white rounded-lg hover:bg-[#0B5ED7] transition-colors"
             >
               <Plus size={20} />
-              Thêm bài viết
+              Add blog
             </button>
           )}
         </div>
@@ -575,25 +657,25 @@ function BlogsManagement() {
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tiêu đề
+                  Title
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tác giả
+                  Author
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Danh mục
+                  Category
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Trạng thái
+                  Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ảnh
+                  Image
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ngày tạo
+                  Created at
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Thao tác
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -662,14 +744,14 @@ function BlogsManagement() {
                           <button
                             onClick={() => handleToggleDelete(blog)}
                             className="text-green-600 hover:text-green-800 p-2"
-                            title="Khôi phục"
+                            title="Restore"
                           >
                             <RefreshCw size={20} />
                           </button>
                           <button
                             onClick={() => handleHardDelete(blog.id)}
                             className="text-red-600 hover:text-red-800 p-2"
-                            title="Xóa vĩnh viễn"
+                            title="Permanently delete"
                           >
                             <Trash2 size={20} />
                           </button>
@@ -768,7 +850,7 @@ function BlogsManagement() {
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold">
-                  {selectedBlog ? "Chỉnh sửa bài viết" : "Tạo bài viết mới"}
+                  {selectedBlog ? "Edit blog" : "Create new blog"}
                 </h2>
                 <button 
                   onClick={() => {
@@ -791,7 +873,7 @@ function BlogsManagement() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tiêu đề <span className="text-red-500">*</span>
+                      Title <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -800,13 +882,13 @@ function BlogsManagement() {
                       value={formData.title}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Nhập tiêu đề (ít nhất 10 ký tự)"
+                      placeholder="Enter title (at least 10 characters)"
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tóm tắt
+                      Summary
                     </label>
                     <input
                       type="text"
@@ -822,7 +904,7 @@ function BlogsManagement() {
                 {/* Nội dung */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nội dung <span className="text-red-500">*</span>
+                    Content <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="content"
@@ -831,7 +913,7 @@ function BlogsManagement() {
                     onChange={handleInputChange}
                     rows={6}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Nhập nội dung (ít nhất 50 ký tự)"
+                    placeholder="Enter content (at least 50 characters)"
                   />
                 </div>
 
@@ -839,7 +921,7 @@ function BlogsManagement() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ảnh thu nhỏ
+                      Thumbnail
                     </label>
                     <input
                       type="file"
@@ -858,7 +940,7 @@ function BlogsManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ảnh đại diện
+                      Featured image
                     </label>
                     <input
                       type="file"
@@ -880,7 +962,7 @@ function BlogsManagement() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Loại bài viết
+                      Blog type
                     </label>
                     <select
                       name="post_type"
@@ -897,7 +979,7 @@ function BlogsManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Danh mục
+                      Category
                     </label>
                     <select
                       name="category"
@@ -914,7 +996,7 @@ function BlogsManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Trạng thái
+                      Status
                     </label>
                     <select
                       name="status"
@@ -931,23 +1013,53 @@ function BlogsManagement() {
                 </div>
 
                 {/* Tags và SEO */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tags <span className="text-red-500">*</span>
+                  </label>
+                  <div className="p-3 border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-blue-500">
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {formData.tags.map(tag => (
+                        <span 
+                          key={tag}
+                          className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-700"
+                        >
+                          {tag}
+                          <button
+                            type="button"
+                            onClick={() => handleTagChange(tag)}
+                            className="ml-1 hover:text-blue-900"
+                          >
+                            <X size={14} />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {BLOG_TAGS.filter(tag => !formData.tags.includes(tag)).map(tag => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => handleTagChange(tag)}
+                          className="px-2 py-1 rounded-full text-sm border border-gray-300 hover:border-blue-500 hover:bg-blue-50"
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {formData.tags.length === 0 && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Vui lòng chọn ít nhất 1 tag
+                    </p>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tags (phân cách bằng dấu phẩy)
-                    </label>
-                    <input
-                      type="text"
-                      name="tags"
-                      value={formData.tags}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ID Bệnh viện (nếu có)
+                      Hospital ID (if any)
                     </label>
                     <input
                       type="number"
@@ -959,7 +1071,7 @@ function BlogsManagement() {
                   </div>
                 </div>
 
-                {/* SEO và nguồn */}
+                {/* SEO and source */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -991,7 +1103,7 @@ function BlogsManagement() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nguồn
+                      Source
                     </label>
                     <input
                       type="text"
@@ -1004,7 +1116,7 @@ function BlogsManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Link nguồn
+                      Source link
                     </label>
                     <input
                       type="url"
@@ -1024,7 +1136,7 @@ function BlogsManagement() {
                     disabled={isSubmitting}
                     className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="submit"
@@ -1034,14 +1146,14 @@ function BlogsManagement() {
                     {isSubmitting ? (
                       <>
                         <span className="opacity-0">
-                          {selectedBlog ? "Cập nhật" : "Thêm mới"}
+                          {selectedBlog ? "Update" : "Add new"}
                         </span>
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         </div>
                       </>
                     ) : (
-                      selectedBlog ? "Cập nhật" : "Thêm mới"
+                      selectedBlog ? "Update" : "Add new"
                     )}
                   </button>
                 </div>
@@ -1060,7 +1172,7 @@ function BlogsManagement() {
           <div className="bg-white p-4 rounded-lg shadow-lg">
             <div className="flex items-center space-x-3">
               <div className="w-6 h-6 border-2 border-[#40B8D3] border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-gray-700">Đang tải...</span>
+              <span className="text-gray-700">Loading...</span>
             </div>
           </div>
         </div>
@@ -1072,26 +1184,26 @@ function BlogsManagement() {
           {searchTerm ? (
             <>
               <Search className="w-12 h-12 text-gray-400 mb-4" />
-              <p className="text-gray-500 text-lg">Không tìm thấy kết quả phù hợp</p>
+              <p className="text-gray-500 text-lg">No results found</p>
             </>
           ) : activeTab === "list" ? (
             <>
               <Plus className="w-12 h-12 text-gray-400 mb-4" />
-              <p className="text-gray-500 text-lg">Chưa có bài viết nào</p>
+              <p className="text-gray-500 text-lg">No blog created yet</p>
               <button 
                 onClick={handleCreateNew}
                 className="mt-4 flex items-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
               >
                 <Plus size={20} />
-                Tạo bài viết
+                Create blog
               </button>
             </>
           ) : (
             <>
               <Trash className="w-12 h-12 text-gray-400 mb-4" />
-              <p className="text-gray-500 text-lg">Thùng rác trống</p>
+              <p className="text-gray-500 text-lg">Trash is empty</p>
               <p className="text-gray-400 text-sm mt-2">
-                Các bài viết đã xóa sẽ xuất hiện ở đây
+                Deleted blogs will appear here
               </p>
             </>
           )}
@@ -1156,6 +1268,18 @@ function BlogsManagement() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Confirm Delete Modal */}
+      {showConfirmModal && (
+        <ConfirmDeleteModal
+          onClose={() => {
+            setShowConfirmModal(false);
+            setBlogToDelete(null);
+          }}
+          onConfirm={handleConfirmHardDelete}
+          loading={formLoading}
+        />
       )}
     </div>
   );

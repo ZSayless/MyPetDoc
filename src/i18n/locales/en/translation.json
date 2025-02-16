@@ -239,6 +239,11 @@
     }
   },
   "blog": {
+    "card": {
+      "views": "views",
+      "likes": "likes",
+      "comments": "comments"
+    },
     "comments": {
       "title": "Comments",
       "writeComment": "Write a comment...",
@@ -270,7 +275,16 @@
         "nutrition": "Nutrition",
         "training": "Training",
         "behavior": "Behavior",
-        "grooming": "Grooming"
+        "grooming": "Grooming",
+        "vaccination": "Vaccination",
+        "diseasePrevention": "Disease Prevention",
+        "firstAid": "First Aid",
+        "mentalHealth": "Mental Health",
+        "exercise": "Exercise",
+        "breeding": "Breeding",
+        "seniorPetCare": "Senior Pet Care",
+        "puppyCare": "Puppy Care",
+        "emergencyCare": "Emergency Care"
       },
       "noBlogsFound": "No blogs found"
     },

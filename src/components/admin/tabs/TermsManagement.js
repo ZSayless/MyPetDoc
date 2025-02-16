@@ -50,7 +50,7 @@ function TermsManagement() {
     if (!canDeleteTerms) {
       addToast({
         type: 'error',
-        message: 'Không thể xóa điều khoản duy nhất'
+        message: 'Cannot delete the only terms'
       });
       return;
     }
@@ -63,7 +63,7 @@ function TermsManagement() {
       await dispatch(deleteTerms(deletingTerms.id)).unwrap();
       addToast({
         type: 'success',
-        message: 'Xóa điều khoản thành công!'
+        message: 'Delete terms successfully!'
       });
       setIsDeleting(false);
       setDeletingTerms(null);
@@ -71,7 +71,7 @@ function TermsManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi xóa điều khoản'
+        message: error.message || 'An error occurred while deleting the terms'
       });
     }
   };
@@ -113,7 +113,7 @@ function TermsManagement() {
       
       addToast({
         type: 'success',
-        message: 'Cập nhật điều khoản thành công!'
+        message: 'Update terms successfully!'
       });
       
       setIsEditing(false);
@@ -128,7 +128,7 @@ function TermsManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi cập nhật điều khoản'
+        message: error.message || 'An error occurred while updating the terms'
       });
     }
   };
@@ -137,17 +137,17 @@ function TermsManagement() {
     const errors = {};
     
     if (!formData.title.trim()) {
-      errors.title = 'Tiêu đề là bắt buộc';
+      errors.title = 'Title is required';
     } else if (formData.title.length > 255) {
-      errors.title = 'Tiêu đề không được vượt quá 255 ký tự';
+      errors.title = 'Title cannot exceed 255 characters';
     }
 
     if (!formData.content.trim()) {
-      errors.content = 'Nội dung là bắt buộc';
+      errors.content = 'Content is required';
     }
 
     if (!formData.effective_date) {
-      errors.effective_date = 'Ngày hiệu lực là bắt buộc';
+      errors.effective_date = 'Effective date is required';
     } else {
       const selectedDate = new Date(formData.effective_date);
       const today = new Date();
@@ -156,11 +156,11 @@ function TermsManagement() {
       if (isEditing) {
         const currentEffectiveDate = editingTerms ? new Date(editingTerms.effective_date) : null;
         if (selectedDate < today && (!currentEffectiveDate || selectedDate.getTime() !== currentEffectiveDate.getTime())) {
-          errors.effective_date = 'Ngày hiệu lực phải từ ngày hiện tại trở đi';
+          errors.effective_date = 'Effective date must be from today onwards';
         }
       } else {
         if (selectedDate < today) {
-          errors.effective_date = 'Ngày hiệu lực phải từ ngày hiện tại trở đi';
+          errors.effective_date = 'Effective date must be from today onwards';
         }
       }
     }
@@ -177,7 +177,7 @@ function TermsManagement() {
       await dispatch(createTerms(formData)).unwrap();
       addToast({
         type: 'success',
-        message: 'Thêm điều khoản mới thành công!'
+        message: 'Add new terms successfully!'
       });
       setIsCreating(false);
       setFormData({
@@ -188,7 +188,7 @@ function TermsManagement() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: error.message || 'Có lỗi xảy ra khi thêm điều khoản'
+        message: error.message || 'An error occurred while adding the terms'
       });
     }
   };
@@ -208,7 +208,7 @@ function TermsManagement() {
   if (termsError) {
     return (
       <div className="p-4 text-center text-red-500">
-        Có lỗi xảy ra khi tải danh sách điều khoản: {termsError.message}
+        An error occurred while loading the terms list: {termsError.message}
       </div>
     );
   }
@@ -216,20 +216,20 @@ function TermsManagement() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Quản lý Điều khoản sử dụng</h2>
+        <h2 className="text-xl font-semibold">Terms Management</h2>
         <button
           onClick={() => setIsCreating(true)}
           className="flex items-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
         >
           <Plus size={20} />
-          Thêm điều khoản mới
+          Add new terms
         </button>
       </div>
 
       <div className="space-y-4">
         {termsList?.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            Chưa có điều khoản nào. Hãy thêm mới!
+            No terms found. Please add new terms!
           </div>
         ) : (
           <>
@@ -249,11 +249,11 @@ function TermsManagement() {
                           {terms.title}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          Cập nhật lần cuối: {format(new Date(terms.updated_at), 'dd/MM/yyyy HH:mm', { locale: vi })}
-                          {' '}bởi {terms.last_updated_by_name}
+                          Last updated: {format(new Date(terms.updated_at), 'dd/MM/yyyy HH:mm', { locale: vi })}
+                          {' '}by {terms.last_updated_by_name}
                         </p>
                         <p className="text-sm text-gray-500">
-                          Ngày hiệu lực: {format(new Date(terms.effective_date), 'dd/MM/yyyy', { locale: vi })}
+                          Effective date: {format(new Date(terms.effective_date), 'dd/MM/yyyy', { locale: vi })}
                         </p>
                       </div>
                       <ChevronDown
@@ -272,14 +272,14 @@ function TermsManagement() {
                     <button
                       onClick={() => handleViewTerms(terms)}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
-                      title="Xem chi tiết"
+                      title="View details"
                     >
                       <Eye size={18} />
                     </button>
                     <button
                       onClick={() => handleEditClick(terms)}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
-                      title="Chỉnh sửa"
+                      title="Edit"
                     >
                       <Edit size={18} />
                     </button>
@@ -290,7 +290,7 @@ function TermsManagement() {
                           ? 'text-red-600 hover:bg-red-50' 
                           : 'text-gray-400 cursor-not-allowed'
                       }`}
-                      title={canDeleteTerms ? 'Xóa' : 'Không thể xóa điều khoản duy nhất'}
+                      title={canDeleteTerms ? 'Delete' : 'Cannot delete the only terms'}
                       disabled={!canDeleteTerms}
                     >
                       <Trash2 size={18} />
@@ -308,7 +308,7 @@ function TermsManagement() {
                     disabled={currentPage === 1}
                     className="p-2 text-gray-600 hover:text-blue-600 disabled:text-gray-400"
                   >
-                    Trước
+                    Previous
                   </button>
                   {[...Array(termsPagination.totalPages)].map((_, index) => (
                     <button
@@ -328,7 +328,7 @@ function TermsManagement() {
                     disabled={currentPage === termsPagination.totalPages}
                     className="p-2 text-gray-600 hover:text-blue-600 disabled:text-gray-400"
                   >
-                    Sau
+                    Next
                   </button>
                 </nav>
               </div>
@@ -338,7 +338,7 @@ function TermsManagement() {
       </div>
 
       <div className="mt-4 text-sm text-gray-500 text-center">
-        Hiển thị {termsList?.length} trên tổng số {termsPagination.total} điều khoản
+        Displaying {termsList?.length} out of {termsPagination.total} terms
       </div>
 
       {/* Modal xem chi tiết */}
@@ -358,7 +358,7 @@ function TermsManagement() {
             >
               <div className="flex justify-between items-center px-6 py-4 border-b">
                 <h2 className="text-xl font-semibold">
-                  Chi tiết Điều khoản
+                  Terms details
                 </h2>
                 <button
                   onClick={() => {
@@ -372,22 +372,22 @@ function TermsManagement() {
               </div>
               <div className="p-6 space-y-4">
                 <div>
-                  <h3 className="font-medium mb-2">Tiêu đề</h3>
+                  <h3 className="font-medium mb-2">Title</h3>
                   <p>{selectedTerms.title}</p>
                 </div>
                 <div>
-                  <h3 className="font-medium mb-2">Nội dung</h3>
+                  <h3 className="font-medium mb-2">Content</h3>
                   <div className="whitespace-pre-wrap">{selectedTerms.content}</div>
                 </div>
                 <div>
-                  <h3 className="font-medium mb-2">Ngày hiệu lực</h3>
+                  <h3 className="font-medium mb-2">Effective date</h3>
                   <p>{format(new Date(selectedTerms.effective_date), 'dd/MM/yyyy', { locale: vi })}</p>
                 </div>
                 <div>
-                  <h3 className="font-medium mb-2">Thông tin cập nhật</h3>
+                  <h3 className="font-medium mb-2">Update information</h3>
                   <p>
-                    Cập nhật lần cuối: {format(new Date(selectedTerms.updated_at), 'dd/MM/yyyy HH:mm', { locale: vi })}
-                    {' '}bởi {selectedTerms.last_updated_by_name}
+                    Last updated: {format(new Date(selectedTerms.updated_at), 'dd/MM/yyyy HH:mm', { locale: vi })}
+                    {' '}by {selectedTerms.last_updated_by_name}
                   </p>
                 </div>
               </div>
@@ -396,7 +396,7 @@ function TermsManagement() {
         </>
       )}
 
-      {/* Thêm modal tạo mới */}
+      {/* Add new modal */}
       {isCreating && (
         <>
           <div 
@@ -410,7 +410,7 @@ function TermsManagement() {
             >
               <div className="flex justify-between items-center px-6 py-4 border-b">
                 <h2 className="text-xl font-semibold">
-                  Thêm điều khoản mới
+                  Add new terms
                 </h2>
                 <button
                   onClick={() => setIsCreating(false)}
@@ -422,7 +422,7 @@ function TermsManagement() {
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tiêu đề <span className="text-red-500">*</span>
+                    Title <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -434,7 +434,7 @@ function TermsManagement() {
                     className={`w-full p-2 border rounded-lg ${
                       formErrors.title ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Nhập tiêu đề điều khoản"
+                    placeholder="Enter the title of the terms"
                   />
                   {formErrors.title && (
                     <p className="mt-1 text-sm text-red-500">{formErrors.title}</p>
@@ -443,7 +443,7 @@ function TermsManagement() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nội dung <span className="text-red-500">*</span>
+                    Content <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     value={formData.content}
@@ -455,7 +455,7 @@ function TermsManagement() {
                     className={`w-full p-2 border rounded-lg ${
                       formErrors.content ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Nhập nội dung điều khoản"
+                    placeholder="Enter the content of the terms"
                   />
                   {formErrors.content && (
                     <p className="mt-1 text-sm text-red-500">{formErrors.content}</p>
@@ -464,7 +464,7 @@ function TermsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ngày hiệu lực <span className="text-red-500">*</span>
+                    Effective date <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="date"
@@ -490,7 +490,7 @@ function TermsManagement() {
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                     disabled={isSubmittingTerms}
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="submit"
@@ -500,10 +500,10 @@ function TermsManagement() {
                     {isSubmittingTerms ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang lưu...</span>
+                        <span>Saving...</span>
                       </>
                     ) : (
-                      'Lưu'
+                      'Save'
                     )}
                   </button>
                 </div>
@@ -513,7 +513,7 @@ function TermsManagement() {
         </>
       )}
 
-      {/* Thêm modal xác nhận xóa */}
+      {/* Delete confirmation modal */}
       {isDeleting && deletingTerms && (
         <>
           <div 
@@ -533,11 +533,11 @@ function TermsManagement() {
                   <AlertTriangle className="w-6 h-6 text-red-600" />
                 </div>
                 <h3 className="mb-4 text-xl font-medium text-center text-gray-900">
-                  Xác nhận xóa
+                  Confirm delete
                 </h3>
                 <p className="text-center text-gray-500">
-                  Bạn có chắc chắn muốn xóa điều khoản "{deletingTerms.title}"? 
-                  Hành động này không thể hoàn tác.
+                  Are you sure you want to delete the terms "{deletingTerms.title}"? 
+                  This action cannot be undone.
                 </p>
                 <div className="flex justify-end gap-2 mt-6">
                   <button
@@ -549,7 +549,7 @@ function TermsManagement() {
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                     disabled={isSubmittingTerms}
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="button"
@@ -560,10 +560,10 @@ function TermsManagement() {
                     {isSubmittingTerms ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang xóa...</span>
+                        <span>Deleting...</span>
                       </>
                     ) : (
-                      'Xóa'
+                      'Delete'
                     )}
                   </button>
                 </div>
@@ -573,7 +573,7 @@ function TermsManagement() {
         </>
       )}
 
-      {/* Thêm modal chỉnh sửa */}
+      {/* Edit modal */}
       {isEditing && editingTerms && (
         <>
           <div 
@@ -587,7 +587,7 @@ function TermsManagement() {
             >
               <div className="flex justify-between items-center px-6 py-4 border-b">
                 <h2 className="text-xl font-semibold">
-                  Chỉnh sửa điều khoản
+                  Edit terms
                 </h2>
                 <button
                   onClick={handleCloseEditModal}
@@ -599,7 +599,7 @@ function TermsManagement() {
               <form onSubmit={handleUpdate} className="p-6 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tiêu đề <span className="text-red-500">*</span>
+                    Title <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -611,7 +611,7 @@ function TermsManagement() {
                     className={`w-full p-2 border rounded-lg ${
                       formErrors.title ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Nhập tiêu đề điều khoản"
+                    placeholder="Enter the title of the terms"
                   />
                   {formErrors.title && (
                     <p className="mt-1 text-sm text-red-500">{formErrors.title}</p>
@@ -620,7 +620,7 @@ function TermsManagement() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nội dung <span className="text-red-500">*</span>
+                    Content <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     value={formData.content}
@@ -632,7 +632,7 @@ function TermsManagement() {
                     className={`w-full p-2 border rounded-lg ${
                       formErrors.content ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Nhập nội dung điều khoản"
+                    placeholder="Enter the content of the terms"
                   />
                   {formErrors.content && (
                     <p className="mt-1 text-sm text-red-500">{formErrors.content}</p>
@@ -641,7 +641,7 @@ function TermsManagement() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ngày hiệu lực <span className="text-red-500">*</span>
+                    Effective date <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="date"
@@ -667,7 +667,7 @@ function TermsManagement() {
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                     disabled={isSubmittingTerms}
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="submit"
@@ -677,10 +677,10 @@ function TermsManagement() {
                     {isSubmittingTerms ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang lưu...</span>
+                        <span>Saving...</span>
                       </>
                     ) : (
-                      'Lưu'
+                      'Save'
                     )}
                   </button>
                 </div>

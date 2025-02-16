@@ -10,10 +10,10 @@ function CommunityManagement() {
   const { posts, isLoadingPosts, postsError, postsPagination, isUpdatingStatus, isDeletingPost } = useSelector((state) => state.admin);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPost, setSelectedPost] = useState(null);
-  const [modalMode, setModalMode] = useState("view"); // chỉ còn "view"
+  const [modalMode, setModalMode] = useState("view");
   const [postToDelete, setPostToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const limit = 10; // số items mỗi trang
+  const limit = 10;
 
   useEffect(() => {
     dispatch(fetchPosts({ page: currentPage, limit }));
@@ -41,12 +41,12 @@ function CommunityManagement() {
       
       addToast({
         type: "success",
-        message: `Đã ${newStatus === 'ACTIVE' ? 'kích hoạt' : 'tạm khóa'} bài viết thành công!`
+        message: `Successfully ${newStatus === 'ACTIVE' ? 'activated' : 'temporarily locked'} the post!`
       });
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "Có lỗi xảy ra khi cập nhật trạng thái!"
+        message: error.message || "An error occurred while updating the status!"
       });
     }
   };
@@ -56,13 +56,13 @@ function CommunityManagement() {
       await dispatch(deletePostPermanently(postToDelete.id)).unwrap();
       addToast({
         type: "success",
-        message: "Xóa bài viết thành công!"
+        message: "Successfully deleted the post!"
       });
       setPostToDelete(null);
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "Có lỗi xảy ra khi xóa bài viết!"
+        message: error.message || "An error occurred while deleting the post!"
       });
     }
   };
@@ -71,7 +71,7 @@ function CommunityManagement() {
     <div className="p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Quản lý bài viết cộng đồng</h2>
+        <h2 className="text-xl font-semibold">Community Post Management</h2>
       </div>
 
       {/* Search */}
@@ -81,7 +81,7 @@ function CommunityManagement() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Tìm kiếm bài viết..."
+            placeholder="Search posts..."
             className="w-full px-4 py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
           />
           <Search 
@@ -106,25 +106,25 @@ function CommunityManagement() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Bài viết
+                  Post
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Loại thú cưng
+                  Pet type
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Trạng thái
+                  Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tác giả
+                  Author
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tương tác
+                  Interaction
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ngày tạo
+                  Created date
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Thao tác
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -172,12 +172,12 @@ function CommunityManagement() {
                       {post.status === 'ACTIVE' ? (
                         <>
                           <Check size={16} />
-                          Hoạt động
+                          Active
                         </>
                       ) : (
                         <>
                           <X size={16} />
-                          Tạm khóa
+                          Temporarily locked
                         </>
                       )}
                     </button>
@@ -194,8 +194,8 @@ function CommunityManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center gap-4">
-                      <span>{post.likes_count} thích</span>
-                      <span>{post.comments_count} bình luận</span>
+                      <span>{post.likes_count} likes</span>
+                      <span>{post.comments_count} comments</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -237,14 +237,14 @@ function CommunityManagement() {
       {/* Error State */}
       {postsError && (
         <div className="text-center py-8 text-red-500">
-          {postsError.message || 'Có lỗi xảy ra khi tải dữ liệu'}
+          {postsError.message || 'An error occurred while loading data'}
         </div>
       )}
 
       {/* Empty State */}
       {!isLoadingPosts && !postsError && filteredPosts.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          {searchTerm ? 'Không tìm thấy bài viết phù hợp' : 'Chưa có bài viết nào'}
+          {searchTerm ? 'No posts found' : 'No posts created yet'}
         </div>
       )}
 
@@ -262,7 +262,7 @@ function CommunityManagement() {
             >
               <div className="flex justify-between items-center px-6 py-4 border-b shrink-0">
                 <h2 className="text-xl font-semibold">
-                  Chi tiết bài viết
+                  Post details
                 </h2>
                 <button
                   onClick={() => setModalMode("")}
@@ -272,10 +272,10 @@ function CommunityManagement() {
                 </button>
               </div>
               
-              {/* Thêm scroll cho phần nội dung */}
+              {/* Add scroll for content */}
               <div className="p-6 overflow-y-auto">
                 <div className="space-y-6">
-                  {/* Hình ảnh bài viết */}
+                  {/* Post image */}
                   <div className="flex justify-center">
                     <img 
                       src={selectedPost.image_url} 
@@ -284,14 +284,14 @@ function CommunityManagement() {
                     />
                   </div>
 
-                  {/* Thông tin cơ bản */}
+                  {/* Basic information */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Tiêu đề</h3>
+                    <h3 className="text-sm font-medium text-gray-500">Title</h3>
                     <p className="mt-1 text-lg font-medium">{selectedPost.caption}</p>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Nội dung</h3>
+                    <h3 className="text-sm font-medium text-gray-500">Content</h3>
                     <p className="mt-1 whitespace-pre-line text-gray-700">{selectedPost.description}</p>
                   </div>
 
@@ -310,10 +310,10 @@ function CommunityManagement() {
                     </div>
                   </div>
 
-                  {/* Thông tin phân loại */}
+                  {/* Classification information */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Loại thú cưng</h3>
+                      <h3 className="text-sm font-medium text-gray-500">Pet type</h3>
                       <span className={`mt-1 px-2 py-1 inline-flex text-sm font-semibold rounded-full ${
                         selectedPost.pet_type === 'DOG' 
                           ? 'bg-blue-100 text-blue-800'
@@ -325,20 +325,20 @@ function CommunityManagement() {
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Trạng thái</h3>
+                      <h3 className="text-sm font-medium text-gray-500">Status</h3>
                       <span className={`mt-1 px-2 py-1 inline-flex text-sm font-semibold rounded-full ${
                         selectedPost.status === 'ACTIVE'
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {selectedPost.status === 'ACTIVE' ? 'Hoạt động' : 'Tạm khóa'}
+                        {selectedPost.status === 'ACTIVE' ? 'Active' : 'Temporarily locked'}
                       </span>
                     </div>
                   </div>
 
-                  {/* Thông tin tác giả */}
+                  {/* Author information */}
                   <div className="border-t pt-4">
-                    <h3 className="text-sm font-medium text-gray-500 mb-2">Thông tin tác giả</h3>
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Author information</h3>
                     <div className="flex items-center">
                       <img 
                         src={selectedPost.user_avatar} 
@@ -352,33 +352,33 @@ function CommunityManagement() {
                     </div>
                   </div>
 
-                  {/* Thống kê tương tác */}
+                  {/* Interaction statistics */}
                   <div className="border-t pt-4">
-                    <h3 className="text-sm font-medium text-gray-500 mb-2">Thống kê tương tác</h3>
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Interaction statistics</h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
                         <p className="text-2xl font-semibold text-blue-600">{selectedPost.likes_count}</p>
-                        <p className="text-sm text-gray-500">Lượt thích</p>
+                        <p className="text-sm text-gray-500">Likes</p>
                       </div>
                       <div>
                         <p className="text-2xl font-semibold text-green-600">{selectedPost.comments_count}</p>
-                        <p className="text-sm text-gray-500">Bình luận</p>
+                        <p className="text-sm text-gray-500">Comments</p>
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-purple-600">
                           {new Date(selectedPost.created_at).toLocaleDateString('vi-VN')}
                         </p>
-                        <p className="text-sm text-gray-500">Ngày đăng</p>
+                        <p className="text-sm text-gray-500">Created date</p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Thông tin bổ sung */}
+                  {/* Additional information */}
                   <div className="border-t pt-4">
-                    <h3 className="text-sm font-medium text-gray-500 mb-2">Thông tin bổ sung</h3>
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Additional information</h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-500">Ngày cập nhật cuối</p>
+                        <p className="text-gray-500">Last updated date</p>
                         <p>{new Date(selectedPost.updated_at).toLocaleString('vi-VN')}</p>
                       </div>
                       <div>
@@ -411,14 +411,14 @@ function CommunityManagement() {
                   <AlertTriangle className="w-6 h-6 text-red-600" />
                 </div>
                 <h3 className="mb-2 text-lg font-medium text-center text-gray-900">
-                  Xóa bài viết
+                  Delete post
                 </h3>
                 <p className="text-sm text-center text-gray-500">
                   {postToDelete && (
                     <>
-                      Bạn có chắc chắn muốn xóa bài viết "{postToDelete.caption}"? 
+                      Are you sure you want to delete the post "{postToDelete.caption}"? 
                       <br />
-                      Hành động này không thể hoàn tác.
+                      This action cannot be undone.
                     </>
                   )}
                 </p>
@@ -429,7 +429,7 @@ function CommunityManagement() {
                     onClick={() => setPostToDelete(null)}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="button"
@@ -440,10 +440,10 @@ function CommunityManagement() {
                     {isDeletingPost ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang xóa...</span>
+                        <span>Deleting...</span>
                       </>
                     ) : (
-                      'Xóa'
+                      'Delete'
                     )}
                   </button>
                 </div>
