@@ -1,12 +1,30 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Search, Plus, Edit, Trash2, Eye, RefreshCw, Trash } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Eye, RefreshCw, Trash, X, Loader2 } from "lucide-react";
 import { deleteBlog, updateBlogStatus, fetchBlogPosts, fetchDeletedBlogs, createBlogPost, updateBlogPost, toggleDeleteBlog, deleteBlogPermanently } from "../../../redux/slices/adminSlice";
 import { useToast } from '../../../context/ToastContext';
+import { useTranslation } from 'react-i18next';
 
 const POST_TYPES = ['BLOG', 'NEWS', 'EVENT'];
 const STATUS_TYPES = ['DRAFT', 'PENDING', 'PUBLISHED', 'ARCHIVED'];
 const CATEGORIES = ['PET_CARE', 'PET_HEALTH', 'PET_TRAINING', 'PET_FOOD', 'PET_LIFESTYLE'];
+const BLOG_TAGS = [
+  'Health Tips',
+  'Pet Care',
+  'Nutrition',
+  'Behavior',
+  'Training',
+  'Grooming',
+  'Vaccination',
+  'Disease Prevention',
+  'First Aid',
+  'Mental Health',
+  'Exercise',
+  'Breeding',
+  'Senior Pet Care',
+  'Puppy Care',
+  'Emergency Care'
+];
 
 function BlogsManagement() {
   const dispatch = useDispatch();
@@ -26,7 +44,7 @@ function BlogsManagement() {
     summary: '',
     post_type: 'BLOG',
     category: 'PET_CARE',
-    tags: '',
+    tags: [],
     status: 'DRAFT',
     meta_title: '',
     meta_description: '',
@@ -43,6 +61,12 @@ function BlogsManagement() {
   // Thêm state để quản lý phân trang
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+
+  // Thêm state cho confirm modal
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [blogToDelete, setBlogToDelete] = useState(null);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (activeTab === "list") {
@@ -191,7 +215,7 @@ function BlogsManagement() {
       summary: blog.summary,
       post_type: blog.post_type,
       category: blog.category,
-      tags: blog.tags,
+      tags: blog.tags.split(',').map(tag => tag.trim()),
       status: blog.status,
       meta_title: blog.meta_title || '',
       meta_description: blog.meta_description || '',
@@ -240,12 +264,14 @@ function BlogsManagement() {
   };
 
   const handleHardDelete = async (blogId) => {
-    try {
-      if (!window.confirm("Are you sure you want to permanently delete this blog? This action cannot be undone!")) {
-        return;
-      }
+    setBlogToDelete(blogId);
+    setShowConfirmModal(true);
+  };
 
-      await dispatch(deleteBlogPermanently(blogId)).unwrap();
+  const handleConfirmHardDelete = async () => {
+    try {
+      setFormLoading(true);
+      await dispatch(deleteBlogPermanently(blogToDelete)).unwrap();
       
       addToast({
         type: "success",
@@ -269,7 +295,7 @@ function BlogsManagement() {
       } else if (error?.response?.status === 403) {
         addToast({
           type: "error",
-          message: "You do not have permission to permanently delete this blog"
+          message: "You do not have permission to delete this blog"
         });
       } else {
         addToast({
@@ -277,6 +303,10 @@ function BlogsManagement() {
           message: "An error occurred when deleting the blog"
         });
       }
+    } finally {
+      setFormLoading(false);
+      setShowConfirmModal(false);
+      setBlogToDelete(null);
     }
   };
 
@@ -305,7 +335,7 @@ function BlogsManagement() {
       summary: '',
       post_type: 'BLOG',
       category: 'PET_CARE',
-      tags: '',
+      tags: [],
       status: 'DRAFT',
       meta_title: '',
       meta_description: '',
@@ -437,8 +467,15 @@ function BlogsManagement() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Tags
                 </label>
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
-                  {selectedBlog.tags}
+                <div className="flex flex-wrap gap-2">
+                  {selectedBlog.tags.split(',').map(tag => (
+                    <span 
+                      key={tag}
+                      className="px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-700"
+                    >
+                      {tag.trim()}
+                    </span>
+                  ))}
                 </div>
               </div>
 
@@ -512,6 +549,51 @@ function BlogsManagement() {
       </div>
     </div>
   );
+
+  // Add function to handle tag selection
+  const handleTagChange = (tag) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.includes(tag)
+        ? prev.tags.filter(t => t !== tag)
+        : [...prev.tags, tag]
+    }));
+  };
+
+  // Add component ConfirmDeleteModal
+  const ConfirmDeleteModal = ({ onClose, onConfirm, loading }) => {
+    const { t } = useTranslation();
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+          <h3 className="text-lg font-semibold mb-4">
+            {t("Confirm delete permanently")}
+          </h3>
+          <p className="text-gray-600 mb-6">
+            {t("Are you sure you want to delete this blog permanently? This action cannot be undone!")}
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
+              disabled={loading}
+            >
+              {t("Cancel")}
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={loading}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 flex items-center gap-2"
+            >
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              {t("Delete permanently")}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   if (loading) return <div className="p-4">Loading...</div>;
 
@@ -931,20 +1013,50 @@ function BlogsManagement() {
                 </div>
 
                 {/* Tags và SEO */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tags (separated by commas)
-                    </label>
-                    <input
-                      type="text"
-                      name="tags"
-                      value={formData.tags}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tags <span className="text-red-500">*</span>
+                  </label>
+                  <div className="p-3 border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-blue-500">
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {formData.tags.map(tag => (
+                        <span 
+                          key={tag}
+                          className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-700"
+                        >
+                          {tag}
+                          <button
+                            type="button"
+                            onClick={() => handleTagChange(tag)}
+                            className="ml-1 hover:text-blue-900"
+                          >
+                            <X size={14} />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {BLOG_TAGS.filter(tag => !formData.tags.includes(tag)).map(tag => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => handleTagChange(tag)}
+                          className="px-2 py-1 rounded-full text-sm border border-gray-300 hover:border-blue-500 hover:bg-blue-50"
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
                   </div>
+                  {formData.tags.length === 0 && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Vui lòng chọn ít nhất 1 tag
+                    </p>
+                  )}
+                </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Hospital ID (if any)
@@ -1156,6 +1268,18 @@ function BlogsManagement() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Confirm Delete Modal */}
+      {showConfirmModal && (
+        <ConfirmDeleteModal
+          onClose={() => {
+            setShowConfirmModal(false);
+            setBlogToDelete(null);
+          }}
+          onConfirm={handleConfirmHardDelete}
+          loading={formLoading}
+        />
       )}
     </div>
   );

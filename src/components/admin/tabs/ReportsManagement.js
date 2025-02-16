@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Search, Eye, Check, Trash2, Trash } from "lucide-react";
 import { useToast } from "../../../context/ToastContext";
-import { resolveReport, fetchReports, deleteReviewPermanently, deleteReportPermanently, deleteGalleryComment } from "../../../redux/slices/adminSlice";
+import { resolveReport, fetchReports, deleteReviewPermanently, deleteReportPermanently, deleteGalleryComment, deleteBlogComment } from "../../../redux/slices/adminSlice";
 
 function ReportsManagement() {
   const dispatch = useDispatch();
   const { addToast } = useToast();
-  const { reports, isLoadingReports } = useSelector((state) => state.admin);
+  const { reports, isLoadingReports, isDeletingBlogComment } = useSelector((state) => state.admin);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedReport, setSelectedReport] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -59,6 +59,10 @@ function ReportsManagement() {
           reviewId: report.reported_content.id,
           reportId: report.id
         })).unwrap();
+
+        const response = await dispatch(fetchReports(currentPage)).unwrap();
+        setPagination(response.pagination);
+
         addToast({
           type: "success",
           message: "Deleted review permanently"
@@ -80,6 +84,10 @@ function ReportsManagement() {
           type: "success",
           message: "Deleted report permanently"
         });
+
+        const response = await dispatch(fetchReports(currentPage)).unwrap();
+        setPagination(response.pagination);
+
       } catch (error) {
         addToast({
           type: "error",
@@ -96,6 +104,10 @@ function ReportsManagement() {
           commentId: report.reported_content.id,
           reportId: report.id
         })).unwrap();
+
+        const response = await dispatch(fetchReports(currentPage)).unwrap();
+        setPagination(response.pagination);
+
         addToast({
           type: "success",
           message: "Deleted comment"
@@ -104,6 +116,30 @@ function ReportsManagement() {
         addToast({
           type: "error",
           message: error.message || "An error occurred while deleting the comment"
+        });
+      }
+    }
+  };
+
+  const handleDeleteBlogComment = async (report) => {
+    if (window.confirm('Are you sure you want to delete this comment?')) {
+      try {
+        await dispatch(deleteBlogComment({
+          commentId: report.reported_content.id,
+          reportId: report.id
+        })).unwrap();
+        
+        const response = await dispatch(fetchReports(currentPage)).unwrap();
+        setPagination(response.pagination);
+        
+        addToast({
+          type: "success",
+          message: "Deleted comment"
+        });
+      } catch (error) {
+        addToast({
+          type: "error",
+          message: error.message || "An error occurred when deleting the comment"
         });
       }
     }
@@ -226,7 +262,7 @@ function ReportsManagement() {
                       <button
                         onClick={() => handleView(report)}
                         className="text-blue-600 hover:text-blue-900"
-                        title="View details"
+                        title="Xem chi tiết"
                       >
                         <Eye size={18} />
                       </button>
@@ -248,10 +284,31 @@ function ReportsManagement() {
                           <Trash2 size={18} />
                         </button>
                       )}
+                      {report?.reported_content?.type === 'post_comment' && (
+                        <button
+                          onClick={() => handleDeleteBlogComment(report)}
+                          disabled={isDeletingBlogComment}
+                          className={`text-red-600 hover:text-red-900 relative ${
+                            isDeletingBlogComment ? 'cursor-not-allowed opacity-50' : ''
+                          }`}
+                          title="Delete comment"
+                        >
+                          {isDeletingBlogComment ? (
+                            <>
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                              </div>
+                              <Trash2 size={18} className="opacity-0" />
+                            </>
+                          ) : (
+                            <Trash2 size={18} />
+                          )}
+                        </button>
+                      )}
                       <button
                         onClick={() => handleDeleteReport(report.id)}
                         className="text-red-600 hover:text-red-900"
-                        title="Delete report permanently"
+                        title="Delete report"
                       >
                         <Trash size={18} />
                       </button>
@@ -330,6 +387,27 @@ function ReportsManagement() {
                   <Trash2 size={18} />
                 </button>
               )}
+              {report?.reported_content?.type === 'post_comment' && (
+                <button
+                  onClick={() => handleDeleteBlogComment(report)}
+                  disabled={isDeletingBlogComment}
+                  className={`p-2 text-red-600 hover:bg-red-50 rounded-full relative ${
+                    isDeletingBlogComment ? 'cursor-not-allowed opacity-50' : ''
+                  }`}
+                  title="Delete comment"
+                >
+                  {isDeletingBlogComment ? (
+                    <>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                      <Trash2 size={18} className="opacity-0" />
+                    </>
+                  ) : (
+                    <Trash2 size={18} />
+                  )}
+                </button>
+              )}
               <button
                 onClick={() => handleDeleteReport(report.id)}
                 className="p-2 text-red-600 hover:bg-red-50 rounded-full"
@@ -397,7 +475,7 @@ function ReportsManagement() {
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.reported_content.type}
+                    value={selectedReport.reported_content?.type || 'N/A'}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -408,24 +486,34 @@ function ReportsManagement() {
                     Content
                   </label>
                   <textarea
-                    value={selectedReport.reported_content.content}
+                    value={selectedReport.reported_content?.content || 'N/A'}
                     readOnly
-                    rows={3}
+                    rows={4}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
                 </div>
 
+                {selectedReport.reported_content?.type === 'post' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      value={selectedReport.reported_content?.caption || 'N/A'}
+                      readOnly
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    />
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Reported content
+                    Report reason
                   </label>
                   <input
                     type="text"
-                    value={
-                      selectedReport.reported_content.type === 'review'
-                        ? selectedReport.reported_content.details.hospital.name
-                        : selectedReport.reported_content.details.gallery.caption
-                    }
+                    value={selectedReport.reason || 'N/A'}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -437,7 +525,7 @@ function ReportsManagement() {
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.reporter.full_name}
+                    value={selectedReport.reporter?.full_name || 'N/A'}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -449,31 +537,20 @@ function ReportsManagement() {
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.resolved ? "Resolved" : "Pending"}
+                    value={selectedReport.resolved ? 'Resolved' : 'Pending'}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
                 </div>
               </div>
 
-              <div className="mt-6 flex justify-end gap-2">
+              <div className="mt-6 flex justify-end">
                 <button
                   onClick={() => setSelectedReport(null)}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                 >
                   Close
                 </button>
-                {!selectedReport.resolved && (
-                  <button
-                    onClick={() => {
-                      handleResolve(selectedReport.id);
-                      setSelectedReport(null);
-                    }}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                  >
-                    Mark as resolved
-                  </button>
-                )}
               </div>
             </div>
           </div>
