@@ -71,7 +71,7 @@ function HomeBlogs() {
           {recentBlogs.map((blog) => (
             <Link
               key={blog.id}
-              to={`/bloglist/${blog.slug}`}
+              to={`/blog/${blog.slug}`}
               className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow no-underline"
             >
               <img
