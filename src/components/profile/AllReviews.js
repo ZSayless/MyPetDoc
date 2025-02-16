@@ -1,24 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Star, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { getAllReviews } from "../../services/reviewService";
 
 function AllReviews() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const reviews = [
-    // Thêm nhiều reviews hơn vào đây
-    {
-      id: 1,
-      hospitalName: "PetCare Hospital",
-      rating: 4.5,
-      comment:
-        "Great service and friendly staff! The doctors were very professional and caring with my cat.",
-      date: "2024-03-15",
-      image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
-    },
-    // ... thêm reviews khác
-  ];
+  const [reviewError, setReviewError] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [pagination, setPagination] = useState({})
+
+  const fetchAllReviews = async (page) => {
+    try {
+      const data = await getAllReviews(page);
+      const reviewsRes = Array.isArray(data.data.reviews) ? data.data.reviews : []
+      setPagination(data.data.pagination)
+
+      setReviews(reviewsRes);
+    } catch (error) {
+      console.error("Error fetching banners:", error);
+      setReviewError(true);
+    }
+  };
+
+  const handleChangePage = (isIncrease = false) => {
+
+    fetchAllReviews(isIncrease ? pagination.page + 1 : pagination.page - 1)
+  }
+
+  useEffect(() => {
+    fetchAllReviews();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -43,14 +56,18 @@ function AllReviews() {
                 className="bg-white rounded-lg shadow-sm p-6"
               >
                 <div className="flex items-start gap-4">
-                  <img
-                    src={review.image}
-                    alt={review.hospitalName}
-                    className="w-24 h-24 object-cover rounded-lg"
-                  />
+                  {
+                    review.photo &&
+
+                    <img
+                      src={review.photo.image_url}
+                      alt={review.photo.description}
+                      className="w-24 h-24 object-cover rounded-lg"
+                    />
+                  }
                   <div>
                     <h3 className="font-semibold text-lg">
-                      {review.hospitalName}
+                      {review.hospital_name}
                     </h3>
                     <div className="flex items-center mt-1">
                       <div className="flex items-center text-yellow-400">
@@ -72,6 +89,23 @@ function AllReviews() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="flex justify-end gap-2 mt-4">
+            <button
+              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              disabled={pagination.page === 1}
+              onClick={() => handleChangePage()}
+            >
+              Trước
+            </button>
+            <button
+              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              disabled={pagination.page === pagination.totalPages}
+              onClick={() => handleChangePage(true)}
+            >
+              Sau
+            </button>
           </div>
         </div>
       </div>

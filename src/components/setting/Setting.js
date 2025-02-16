@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -23,8 +23,8 @@ function Setting() {
   // Memoize initial form data
   const initialFormData = useCallback(
     () => ({
-      name: user?.name || "Admin User",
-      avatar: user?.avatar || user?.name?.charAt(0) || "A",
+      name: user?.full_name || "Admin User",
+      avatar: user?.avatar || user?.full_name?.charAt(0) || "A",
       bio: user?.bio || "",
       socialMedia: {
         facebook: user?.socialMedia?.facebook || "",
@@ -34,6 +34,8 @@ function Setting() {
     }),
     [user]
   );
+
+  console.log('avatar', user.avatar);
 
   const [formData, setFormData] = useState(initialFormData);
 
@@ -127,7 +129,7 @@ function Setting() {
                 {t("setting.personal.basic.fullName")}
               </div>
               <div className="text-gray-600 mt-1">
-                {user?.name || "Admin User"}
+                {user?.full_name || "Admin User"}
               </div>
             </div>
             <span className="text-gray-400 text-xl">›</span>
@@ -143,7 +145,7 @@ function Setting() {
                   {t("setting.personal.basic.avatar")}
                 </div>
                 <div className="mt-2 w-12 h-12 rounded-full overflow-hidden">
-                  {user?.avatar?.startsWith("data:image") ? (
+                  {user?.avatar?.startsWith("https://") ? (
                     <img
                       src={user.avatar}
                       alt="User avatar"
@@ -151,7 +153,7 @@ function Setting() {
                     />
                   ) : (
                     <div className="w-full h-full bg-green-600 flex items-center justify-center text-white text-xl">
-                      {user?.name?.charAt(0) || "A"}
+                      {user?.full_name?.charAt(0) || "A"}
                     </div>
                   )}
                 </div>
@@ -170,7 +172,7 @@ function Setting() {
                   {t("setting.personal.basic.phone")}
                 </div>
                 <div className="text-gray-600 mt-1">
-                  {user?.phone || t("setting.personal.basic.addPhone")}
+                  {user?.phone_number || t("setting.personal.basic.addPhone")}
                 </div>
               </div>
               <span className="text-gray-400 text-xl">›</span>
@@ -300,21 +302,19 @@ function Setting() {
               {/* Mobile tabs */}
               <div className="flex lg:hidden overflow-x-auto mb-6 -mx-4 px-4">
                 <button
-                  className={`flex-shrink-0 px-4 py-2 rounded-full mr-2 ${
-                    activeTab === "personal"
-                      ? "bg-[#1A1A37] text-white"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
+                  className={`flex-shrink-0 px-4 py-2 rounded-full mr-2 ${activeTab === "personal"
+                    ? "bg-[#1A1A37] text-white"
+                    : "bg-gray-100 text-gray-700"
+                    }`}
                   onClick={() => setActiveTab("personal")}
                 >
                   Personal Info
                 </button>
                 <button
-                  className={`flex-shrink-0 px-4 py-2 rounded-full ${
-                    activeTab === "security"
-                      ? "bg-[#1A1A37] text-white"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
+                  className={`flex-shrink-0 px-4 py-2 rounded-full ${activeTab === "security"
+                    ? "bg-[#1A1A37] text-white"
+                    : "bg-gray-100 text-gray-700"
+                    }`}
                   onClick={() => setActiveTab("security")}
                 >
                   Password & Security
@@ -324,9 +324,8 @@ function Setting() {
               {/* Desktop sidebar */}
               <div className="hidden lg:block sticky top-20">
                 <button
-                  className={`w-full text-left p-3 rounded-xl flex items-center space-x-3 ${
-                    activeTab === "personal" ? "bg-[#1A1A37] text-white" : ""
-                  }`}
+                  className={`w-full text-left p-3 rounded-xl flex items-center space-x-3 ${activeTab === "personal" ? "bg-[#1A1A37] text-white" : ""
+                    }`}
                   onClick={() => setActiveTab("personal")}
                 >
                   <span className="text-xl">👤</span>
@@ -335,9 +334,8 @@ function Setting() {
                   </span>
                 </button>
                 <button
-                  className={`w-full text-left p-3 rounded-xl flex items-center space-x-3 mt-1 ${
-                    activeTab === "security" ? "bg-[#1A1A37] text-white" : ""
-                  }`}
+                  className={`w-full text-left p-3 rounded-xl flex items-center space-x-3 mt-1 ${activeTab === "security" ? "bg-[#1A1A37] text-white" : ""
+                    }`}
                   onClick={() => setActiveTab("security")}
                 >
                   <span className="text-xl">🔒</span>
@@ -367,9 +365,9 @@ function Setting() {
           isOpen={showEditAvatar}
           onClose={() => setShowEditAvatar(false)}
           currentAvatar={user?.avatar || user?.name?.charAt(0) || "A"}
-          onSubmit={(base64Image) => {
+          onSubmit={(avatar) => {
             updateUser({
-              avatar: base64Image,
+              avatar: avatar,
             });
           }}
         />

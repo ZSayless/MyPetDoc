@@ -1,11 +1,15 @@
-import { X } from "lucide-react";
+import { Loader2Icon, LoaderIcon, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
+import { updateInfo } from "../../../services/authService";
+import { useAuth } from "../../../context/AuthContext";
 
 function EditAvatarModal({ isOpen, onClose, currentAvatar, onSubmit }) {
   const { t } = useTranslation();
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
+  const { user, updateUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (!isOpen) {
@@ -24,24 +28,24 @@ function EditAvatarModal({ isOpen, onClose, currentAvatar, onSubmit }) {
 
   if (!isOpen) return null;
 
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedFile) {
       try {
-        const base64Image = await convertToBase64(selectedFile);
-        onSubmit(base64Image);
+        setIsLoading(true)
+        const formData = new FormData()
+        formData.append('avatar', selectedFile);
+        formData.append('id', user.id)
+        const data = await updateInfo(formData);
+
+        updateUser(data.data)
+
+        onSubmit(data.data.avatar)
         onClose();
       } catch (error) {
         console.error("Error converting image:", error);
+      } finally {
+        setIsLoading(false)
       }
     }
   };
@@ -85,7 +89,7 @@ function EditAvatarModal({ isOpen, onClose, currentAvatar, onSubmit }) {
             <div className="mb-6">
               <div className="flex justify-center mb-4">
                 <div className="w-24 h-24 rounded-full overflow-hidden">
-                  {currentAvatar?.startsWith("data:image") ? (
+                  {currentAvatar?.startsWith("https://") ? (
                     <img
                       src={preview || currentAvatar}
                       alt="Avatar"
@@ -128,10 +132,15 @@ function EditAvatarModal({ isOpen, onClose, currentAvatar, onSubmit }) {
                 {t("setting.modal.editAvatar.cancel")}
               </button>
               <button
+                disabled={isLoading}
                 type="submit"
                 className="px-6 py-3 bg-[#98E9E9] text-gray-700 rounded-xl hover:bg-[#7CD5D5]"
               >
-                {t("setting.modal.editAvatar.save")}
+                {
+                  isLoading ? <LoaderIcon className="animate-spin" />
+                    :
+                    t("setting.modal.editAvatar.save")
+                }
               </button>
             </div>
           </form>

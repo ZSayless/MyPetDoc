@@ -1,23 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Star, MapPin, ArrowLeft } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { getHospitalFavorites } from "../../services/favoriteService";
 
 function AllFavorites() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const favorites = [
-    // Thêm nhiều favorites hơn vào đây
-    {
-      id: 1,
-      name: "PetCare Hospital",
-      image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
-      address: "123 Nguyen Van Linh, District 7, HCMC",
-      rating: 4.8,
-      reviews: 128,
-    },
-    // ... thêm favorites khác
-  ];
+
+  const [favoriteError, setFavoriteError] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const [pagination, setPagination] = useState({})
+
+  const fetchAllFavorites = async (page) => {
+    try {
+      const data = await getHospitalFavorites(page);
+      const favoritesRes = Array.isArray(data.data.favorites) ? data.data.favorites : []
+      setPagination(data.data.pagination)
+
+      setFavorites(favoritesRes);
+    } catch (error) {
+      console.error("Error fetching banners:", error);
+      setFavoriteError(true);
+    }
+  };
+
+  const handleChangePage = (isIncrease = false) => {
+
+    fetchAllFavorites(isIncrease ? pagination.page + 1 : pagination.page - 1)
+  }
+
+  useEffect(() => {
+    fetchAllFavorites();
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -43,7 +59,7 @@ function AllFavorites() {
                 className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
               >
                 <img
-                  src={hospital.image}
+                  src={hospital.thumbnail}
                   alt={hospital.name}
                   className="w-full h-48 object-cover"
                 />
@@ -54,7 +70,7 @@ function AllFavorites() {
                     <span className="ml-1 text-sm">{hospital.rating}</span>
                     <span className="mx-1 text-gray-500">·</span>
                     <span className="text-sm text-gray-500">
-                      {hospital.reviews} {t("common.reviews")}
+                      {hospital.favorites} {t("common.favorites")}
                     </span>
                   </div>
                   <div className="flex items-center mt-2 text-gray-600">
@@ -64,6 +80,23 @@ function AllFavorites() {
                 </div>
               </Link>
             ))}
+          </div>
+
+          <div className="flex justify-end gap-2 mt-4">
+            <button
+              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              disabled={pagination.page === 1}
+              onClick={() => handleChangePage()}
+            >
+              Trước
+            </button>
+            <button
+              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              disabled={pagination.page === pagination.totalPages}
+              onClick={() => handleChangePage(true)}
+            >
+              Sau
+            </button>
           </div>
         </div>
       </div>

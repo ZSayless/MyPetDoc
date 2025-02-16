@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Star,
@@ -13,6 +13,8 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
+import { getAllReviews } from "../../services/reviewService";
+import { getHospitalFavorites } from "../../services/favoriteService";
 
 const socialIcons = {
   facebook: Facebook,
@@ -26,6 +28,43 @@ function Profile() {
   const { user, updateUser } = useAuth();
   const { t } = useTranslation();
   const { showToast } = useToast();
+  const [favoriteError, setFavoriteError] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const [reviewError, setReviewError] = useState(false);
+  const [reviews, setReviews] = useState([]);
+
+  const fetchSomeReviews = async () => {
+    try {
+      const data = await getAllReviews();
+      console.log(data.data.reviews);
+      const reviewsRes = Array.isArray(data.data.reviews) ? data.data.reviews : []
+      const reviewData = reviewsRes.filter((_, index) => index < 2)
+
+      setReviews(reviewData);
+    } catch (error) {
+      console.error("Error fetching banners:", error);
+      setReviewError(true);
+    }
+  };
+
+  const fetchSomeFavorites = async () => {
+    try {
+      const data = await getHospitalFavorites();
+      console.log(data.data.favorites);
+      const favoritesRes = Array.isArray(data.data.favorites) ? data.data.favorites : []
+      const reviewData = favoritesRes.filter((_, index) => index < 2)
+
+      setFavorites(reviewData);
+    } catch (error) {
+      console.error("Error fetching banners:", error);
+      setFavoriteError(true);
+    }
+  };
+
+  useEffect(() => {
+    fetchSomeReviews();
+    fetchSomeFavorites();
+  }, []);
 
   // Memoize joinedDate để tránh tính toán lại không cần thiết
   const joinedDate = useMemo(() => {
@@ -39,12 +78,12 @@ function Profile() {
   // Memoize user info để tránh re-render không cần thiết
   const userInfo = useMemo(
     () => ({
-      name: user?.name || "User",
+      name: user?.full_name || "User",
       email: user?.email || "",
       phone: user?.phone || "",
       address: user?.location || "",
-      avatar: user?.avatar || user?.name?.charAt(0) || "U",
-      role: user?.role || "user",
+      avatar: user?.avatar || user?.full_name?.charAt(0) || "U",
+      role: user?.role || "GENERAL_USER",
       socialMedia: user?.socialMedia || {},
     }),
     [user]
@@ -71,54 +110,12 @@ function Profile() {
     }
   };
 
-  const reviews = [
-    {
-      id: 1,
-      hospitalName: "PetCare Hospital",
-      rating: 4.5,
-      comment:
-        "Great service and friendly staff! The doctors were very professional and caring with my cat.",
-      date: "2024-03-15",
-      image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
-    },
-    {
-      id: 2,
-      hospitalName: "VetCare Clinic",
-      rating: 5,
-      comment:
-        "Excellent facilities and professional doctors. They have the latest equipment and very clean environment.",
-      date: "2024-03-10",
-      image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee",
-    },
-  ];
-
-  const favoriteHospitals = [
-    {
-      id: 1,
-      name: "PetCare Hospital",
-      image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
-      address: "123 Nguyen Van Linh, District 7, HCMC",
-      rating: 4.8,
-      reviews: 128,
-    },
-    {
-      id: 2,
-      name: "VetCare Clinic",
-      image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee",
-      address: "456 Le Van Viet, District 9, HCMC",
-      rating: 4.6,
-      reviews: 96,
-    },
-  ];
-
-  const [favorites, setFavorites] = useState(favoriteHospitals);
-
   const handleRemoveFavorite = (hospitalId) => {
     setFavorites(favorites.filter((hospital) => hospital.id !== hospitalId));
   };
 
   const renderAvatar = () => {
-    if (user?.avatar && user.avatar.startsWith("data:image")) {
+    if (user?.avatar && user.avatar.startsWith("https://")) {
       return (
         <img
           src={user.avatar}
@@ -188,15 +185,15 @@ function Profile() {
               >
                 {t("profile.editProfile")}
               </Link>
-              {(userInfo.role === "veterinarian" ||
-                userInfo.role === "admin") && (
-                <Link
-                  to="/add-hospital"
-                  className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors"
-                >
-                  {t("profile.registerHospital")}
-                </Link>
-              )}
+              {(userInfo.role === "HOSPITAL_ADMIN" ||
+                userInfo.role === "ADMIN") && (
+                  <Link
+                    to="/add-hospital"
+                    className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors"
+                  >
+                    {t("profile.registerHospital")}
+                  </Link>
+                )}
             </div>
           </div>
 
@@ -210,7 +207,7 @@ function Profile() {
                   {t("profile.recentReviews")}
                 </h2>
                 <div className="space-y-4">
-                  {reviews.map((review) => (
+                  {reviews?.map((review) => (
                     <div
                       key={review.id}
                       className="border-b pb-4 last:border-0"
@@ -260,7 +257,7 @@ function Profile() {
                     className="bg-white rounded-lg shadow-sm overflow-hidden"
                   >
                     <LazyLoadImage
-                      src={hospital.image}
+                      src={hospital.thumbnail}
                       alt={hospital.name}
                       effect="blur"
                       className="w-full h-48 object-cover"

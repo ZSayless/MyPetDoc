@@ -1,3 +1,4 @@
+import axios from "axios";
 const API_URL = process.env.REACT_APP_API_URL;
 
 export const registerWithGoogle = async (userData) => {
@@ -52,19 +53,19 @@ export const login = async (email, password) => {
 
 export const register = async (userData) => {
   try {
-    console.log("Register service - Request data:", 
-      userData instanceof FormData 
-        ? Object.fromEntries(userData.entries()) 
+    console.log("Register service - Request data:",
+      userData instanceof FormData
+        ? Object.fromEntries(userData.entries())
         : userData
     );
 
     const response = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
-      headers: userData instanceof FormData 
-        ? {} 
+      headers: userData instanceof FormData
+        ? {}
         : {
-            "Content-Type": "application/json",
-          },
+          "Content-Type": "application/json",
+        },
       credentials: "include",
       body: userData instanceof FormData ? userData : JSON.stringify(userData),
     });
@@ -210,6 +211,28 @@ export const completeGoogleSignup = async (userData) => {
       success: true,
       data: data.data,
     };
+  } catch (error) {
+    console.error("Complete signup error:", error);
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const updateInfo = async (userData) => {
+  try {
+    const response = await axios.put(
+      `${process.env.REACT_APP_API_URL}/users/profile/update`,
+      userData,
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+
+    return response.data;
   } catch (error) {
     console.error("Complete signup error:", error);
     return {

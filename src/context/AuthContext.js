@@ -78,10 +78,22 @@ export function AuthProvider({ children }) {
 
   // Thêm hàm updateUser
   const updateUser = (updates) => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      ...updates,
-    }));
+    console.log('updates', updates);
+
+    setUser((prevUser) => {
+      const updatedUser = {
+        ...prevUser,
+        user: {
+          ...prevUser.user,
+          ...updates
+        }
+      };
+
+      // Cập nhật localStorage với dữ liệu mới
+      localStorage.setItem("user", JSON.stringify(updatedUser.user));
+
+      return updatedUser;
+    });
   };
 
   const value = {
