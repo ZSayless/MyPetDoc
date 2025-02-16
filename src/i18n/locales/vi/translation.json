@@ -229,6 +229,11 @@
     }
   },
   "blog": {
+    "card": {
+      "views": "lượt xem",
+      "likes": "lượt thích",
+      "comments": "bình luận"
+    },
     "comments": {
       "title": "Bình Luận",
       "writeComment": "Viết bình luận...",
@@ -261,7 +266,16 @@
         "nutrition": "Dinh Dưỡng",
         "training": "Huấn Luyện",
         "behavior": "Hành Vi",
-        "grooming": "Làm Đẹp"
+        "grooming": "Làm Đẹp",
+        "vaccination": "Tiêm Phòng",
+        "diseasePrevention": "Phòng Bệnh",
+        "firstAid": "Cấp Cứu",
+        "mentalHealth": "Tâm Lý",
+        "exercise": "Tập Thể Dục",
+        "breeding": "Sinh Sản",
+        "seniorPetCare": "Chăm Sóc Thú Cưng Già",
+        "puppyCare": "Chăm Sóc Thú Cưng Trẻ",
+        "emergencyCare": "Chăm Sóc Khẩn Cấp"
       }
     },
 

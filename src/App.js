@@ -102,7 +102,7 @@ function App() {
               }
             />
             <Route
-              path="/blogdetail/:id"
+              path="/blog/:slug"
               element={
                 <MainLayout>
                   <BlogDetail />

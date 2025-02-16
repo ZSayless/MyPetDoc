@@ -341,6 +341,22 @@ export const adminService = {
       throw error.response?.data || error;
     }
   },
+  // // Delete a comment in blog
+  deleteCommentBlog: async (commentId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/blog-posts/comments/${commentId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
   // Lấy danh sách banners
   getBanners: async () => {
     try {

@@ -117,6 +117,8 @@ const initialState = {
   },
   isLoadingContactInfo: false,
   contactInfoError: null,
+  isDeletingBlogComment: false,
+  deleteBlogCommentError: null,
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -796,6 +798,19 @@ export const deleteContactInfo = createAsyncThunk(
     try {
       await adminService.deleteContactInfo(id);
       return id;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteBlogComment = createAsyncThunk(
+  'admin/deleteBlogComment',
+  async ({ commentId, reportId }, { dispatch, rejectWithValue }) => {
+    try {
+      await adminService.deleteCommentBlog(commentId);
+      dispatch(resolveReport(reportId));
+      return { commentId, reportId };
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -1536,6 +1551,24 @@ const adminSlice = createSlice({
       .addCase(deleteContactInfo.rejected, (state, action) => {
         state.isSubmittingContactInfo = false;
         state.contactInfoError = action.payload;
+      })
+      .addCase(deleteBlogComment.pending, (state) => {
+        state.isDeletingBlogComment = true;
+        state.deleteBlogCommentError = null;
+      })
+      .addCase(deleteBlogComment.fulfilled, (state, action) => {
+        state.isDeletingBlogComment = false;
+        state.deleteBlogCommentError = null;
+        const reportIndex = state.reports.findIndex(
+          report => report.id === action.payload.reportId
+        );
+        if (reportIndex !== -1) {
+          state.reports[reportIndex].resolved = true;
+        }
+      })
+      .addCase(deleteBlogComment.rejected, (state, action) => {
+        state.isDeletingBlogComment = false;
+        state.deleteBlogCommentError = action.payload;
       });
   }
 });
