@@ -1,11 +1,15 @@
-import { X } from "lucide-react";
+import { LoaderIcon, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { updateInfo } from "../../../services/authService";
+import { useAuth } from "../../../context/AuthContext";
 
-function EditPhoneModal({ isOpen, onClose, currentPhone, onSubmit }) {
+function EditPhoneModal({ isOpen, onClose, }) {
   const { t } = useTranslation();
-  const [phone, setPhone] = useState(currentPhone || "");
   const [error, setError] = useState("");
+  const { user, updateUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(false)
+  const [phone, setPhone] = useState(user.phone_number);
 
   if (!isOpen) return null;
 
@@ -15,7 +19,7 @@ function EditPhoneModal({ isOpen, onClose, currentPhone, onSubmit }) {
     return phoneRegex.test(value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!phone.trim()) {
       setError(t("setting.modal.editPhone.errors.required"));
@@ -25,8 +29,19 @@ function EditPhoneModal({ isOpen, onClose, currentPhone, onSubmit }) {
       setError(t("setting.modal.editPhone.errors.invalid"));
       return;
     }
-    onSubmit(phone);
-    onClose();
+    const data = { phone_number: phone }
+    updateUser(data)
+    // submit
+    try {
+      setIsLoading(true)
+      await updateInfo(data);
+    } catch (error) {
+      console.error("Error converting image:", error);
+    } finally {
+      setIsLoading(false)
+      onClose();
+    }
+
   };
 
   return (
@@ -60,9 +75,8 @@ function EditPhoneModal({ isOpen, onClose, currentPhone, onSubmit }) {
                   setPhone(e.target.value);
                   setError("");
                 }}
-                className={`w-full px-4 py-3 border ${
-                  error ? "border-red-500" : "border-gray-200"
-                } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400`}
+                className={`w-full px-4 py-3 border ${error ? "border-red-500" : "border-gray-200"
+                  } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400`}
                 placeholder={t("setting.modal.editPhone.placeholder")}
               />
               {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
@@ -77,10 +91,15 @@ function EditPhoneModal({ isOpen, onClose, currentPhone, onSubmit }) {
                 {t("setting.modal.editPhone.cancel")}
               </button>
               <button
+                disabled={isLoading}
                 type="submit"
                 className="px-6 py-3 bg-[#98E9E9] text-gray-700 rounded-xl hover:bg-[#7CD5D5]"
               >
-                {t("setting.modal.editPhone.save")}
+                {
+                  isLoading ? <LoaderIcon className="animate-spin" />
+                    :
+                    t("setting.modal.editPhone.save")
+                }
               </button>
             </div>
           </form>

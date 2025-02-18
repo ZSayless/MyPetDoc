@@ -5,103 +5,21 @@ import { useTranslation } from "react-i18next";
 import EditNameModal from "./modals/EditNameModal";
 import EditAvatarModal from "./modals/EditAvatarModal";
 import ChangePasswordModal from "./modals/ChangePasswordModal";
-import EditSocialMediaModal from "./modals/EditSocialMediaModal";
 import EditPhoneModal from "./modals/EditPhoneModal";
 import { useAuth } from "../../context/AuthContext";
 
 function Setting() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("personal");
   const [showEditName, setShowEditName] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showEditAvatar, setShowEditAvatar] = useState(false);
-  const [selectedSocial, setSelectedSocial] = useState(null);
   const [showEditPhone, setShowEditPhone] = useState(false);
-
-  // Memoize initial form data
-  const initialFormData = useCallback(
-    () => ({
-      name: user?.full_name || "Admin User",
-      avatar: user?.avatar || user?.full_name?.charAt(0) || "A",
-      bio: user?.bio || "",
-      socialMedia: {
-        facebook: user?.socialMedia?.facebook || "",
-        x: user?.socialMedia?.x || "",
-        instagram: user?.socialMedia?.instagram || "",
-      },
-    }),
-    [user]
-  );
-
-  console.log('avatar', user.avatar);
-
-  const [formData, setFormData] = useState(initialFormData);
-
-  // Memoize handlers
-  const handleEditSocial = useCallback(
-    (platform) => {
-      const socialMedia = user?.socialMedia || {};
-      setSelectedSocial({
-        platform,
-        value: socialMedia[platform.toLowerCase()] || "",
-      });
-    },
-    [user?.socialMedia]
-  );
-
-  const handleUpdateSocial = useCallback(
-    (newValue) => {
-      const currentSocialMedia = user?.socialMedia || {};
-      updateUser({
-        socialMedia: {
-          ...currentSocialMedia,
-          [selectedSocial.platform.toLowerCase()]: newValue,
-        },
-      });
-      setSelectedSocial(null);
-    },
-    [user?.socialMedia, selectedSocial, updateUser]
-  );
 
   const handleClose = () => {
     navigate(-1); // Quay lại trang trước đó
-  };
-
-  const updateUserProfile = async (data) => {
-    try {
-      // TODO: Thay thế bằng API call thực tế
-      console.log("Updating profile with:", data);
-      await updateUser(data);
-    } catch (error) {
-      throw new Error("Failed to update profile");
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await updateUserProfile(formData);
-      // Hiển thị thông báo thành công
-    } catch (error) {
-      console.error("Failed to update profile:", error);
-      // Hiển thị thông báo lỗi
-    }
-  };
-
-  const handleSocialLinkChange = (platform, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      socialMedia: {
-        ...prev.socialMedia,
-        [platform]: value,
-      },
-    }));
-  };
-
-  const handleLanguageChange = (language) => {
-    i18n.changeLanguage(language);
   };
 
   const renderPersonalInfo = () => (
@@ -181,40 +99,6 @@ function Setting() {
         </div>
       </div>
 
-      {/* Social Media Section */}
-      <div className="bg-[#F8F9FF] rounded-2xl mt-8">
-        <div className="p-4">
-          <h3 className="text-base font-medium mb-1">
-            {t("setting.personal.social.title")}
-          </h3>
-          <p className="text-gray-600 text-sm">
-            {t("setting.personal.social.description")}
-          </p>
-        </div>
-
-        <div className="bg-white rounded-2xl">
-          {["Facebook", "X", "Instagram"].map((platform) => (
-            <div key={platform} className="border-t first:border-t-0">
-              <div
-                className="flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer"
-                onClick={() => handleEditSocial(platform)}
-              >
-                <div>
-                  <div className="font-medium">
-                    {t(`setting.personal.social.${platform.toLowerCase()}`)}
-                  </div>
-                  <div className="text-gray-600 mt-1">
-                    {(user?.socialMedia &&
-                      user.socialMedia[platform.toLowerCase()]) ||
-                      t("setting.personal.social.notLinked")}
-                  </div>
-                </div>
-                <span className="text-gray-400 text-xl">›</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 
@@ -358,27 +242,12 @@ function Setting() {
         <EditNameModal
           isOpen={showEditName}
           onClose={() => setShowEditName(false)}
-          currentName={user?.name || "Admin User"}
-          onSubmit={(newName) => updateUser({ name: newName })}
         />
         <EditAvatarModal
           isOpen={showEditAvatar}
           onClose={() => setShowEditAvatar(false)}
           currentAvatar={user?.avatar || user?.name?.charAt(0) || "A"}
-          onSubmit={(avatar) => {
-            updateUser({
-              avatar: avatar,
-            });
-          }}
         />
-        {selectedSocial && (
-          <EditSocialMediaModal
-            platform={selectedSocial.platform}
-            value={selectedSocial.value}
-            onClose={() => setSelectedSocial(null)}
-            onSubmit={handleUpdateSocial}
-          />
-        )}
         {showChangePassword && (
           <ChangePasswordModal
             isOpen={showChangePassword}
@@ -388,8 +257,6 @@ function Setting() {
         <EditPhoneModal
           isOpen={showEditPhone}
           onClose={() => setShowEditPhone(false)}
-          currentPhone={user?.phone}
-          onSubmit={(newPhone) => updateUser({ phone: newPhone })}
         />
       </div>
     </div>

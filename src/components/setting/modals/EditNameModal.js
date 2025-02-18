@@ -1,17 +1,31 @@
-import { X } from "lucide-react";
+import { LoaderIcon, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../../context/AuthContext";
+import { useState } from "react";
+import { updateInfo } from "../../../services/authService";
 
-function EditNameModal({ isOpen, onClose, currentName, onSubmit }) {
+function EditNameModal({ isOpen, onClose }) {
   const { t } = useTranslation();
+  const { user, updateUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(false)
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const newName = formData.get("name");
     if (newName.trim()) {
-      onSubmit(newName.trim());
+      const data = { full_name: newName }
+      updateUser(data)
+      try {
+        setIsLoading(true)
+        await updateInfo(data);
+      } catch (error) {
+        console.error("Error converting image:", error);
+      } finally {
+        setIsLoading(false)
+      }
     }
     onClose();
   };
@@ -43,7 +57,7 @@ function EditNameModal({ isOpen, onClose, currentName, onSubmit }) {
               <input
                 type="text"
                 name="name"
-                defaultValue={currentName}
+                defaultValue={user.full_name}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
                 placeholder={t("setting.modal.editName.placeholder")}
               />
@@ -58,10 +72,15 @@ function EditNameModal({ isOpen, onClose, currentName, onSubmit }) {
                 {t("setting.modal.editName.cancel")}
               </button>
               <button
+                disabled={isLoading}
                 type="submit"
                 className="px-6 py-3 bg-[#98E9E9] text-gray-700 rounded-xl hover:bg-[#7CD5D5]"
               >
-                {t("setting.modal.editName.save")}
+                {
+                  isLoading ? <LoaderIcon className="animate-spin" />
+                    :
+                    t("setting.modal.editAvatar.save")
+                }
               </button>
             </div>
           </form>

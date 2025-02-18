@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { updateInfo } from "../../../services/authService";
 import { useAuth } from "../../../context/AuthContext";
 
-function EditAvatarModal({ isOpen, onClose, currentAvatar, onSubmit }) {
+function EditAvatarModal({ isOpen, onClose, currentAvatar }) {
   const { t } = useTranslation();
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -40,7 +40,6 @@ function EditAvatarModal({ isOpen, onClose, currentAvatar, onSubmit }) {
 
         updateUser(data.data)
 
-        onSubmit(data.data.avatar)
         onClose();
       } catch (error) {
         console.error("Error converting image:", error);
