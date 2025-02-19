@@ -1,10 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Mail, Phone, Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { getContactInfo } from "../../services/contactInformationService";
+
+const ContactSkeleton = () => {
+  return (
+    <div>
+      <div className="mb-4">
+        <div className="h-5 w-1/4 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+
+      <div className="space-y-2">
+        {/* Address */}
+        <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
+
+        {/* Email */}
+        <div className="flex items-center">
+          <div className="w-4 h-4 bg-gray-200 rounded mr-2 animate-pulse"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+        </div>
+
+        {/* Phone */}
+        <div className="flex items-center">
+          <div className="w-4 h-4 bg-gray-200 rounded mr-2 animate-pulse"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse"></div>
+        </div>
+
+        {/* Hours */}
+        <div className="flex items-center">
+          <div className="w-4 h-4 bg-gray-200 rounded mr-2 animate-pulse"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/4 animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 function Footer() {
   const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false)
+  const [contact, setContact] = useState({})
+
+  const fetchCurrentContact = async () => {
+    try {
+      setIsLoading(true)
+      const data = await getContactInfo();
+      setContact(data)
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchCurrentContact()
+  }, [])
 
   return (
     <footer id="contact" className="bg-white text-gray-700 border-t">
@@ -96,36 +148,39 @@ function Footer() {
           </div>
 
           {/* Contact */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-[#1A3C8E]">
-              {t("footer.contact.title")}
-            </h3>
-            <div className="space-y-2 text-gray-600">
-              <p>{t("footer.contact.address")}</p>
-              <p className="flex items-center">
-                <Mail size={16} className="mr-2 text-[#1A3C8E]" />
-                <a
-                  href="mailto:support@mypetdoc.com"
-                  className="hover:text-[#98E9E9] transition-colors"
-                >
-                  {t("footer.contact.email")}
-                </a>
-              </p>
-              <p className="flex items-center">
-                <Phone size={16} className="mr-2 text-[#1A3C8E]" />
-                <a
-                  href="tel:19001234"
-                  className="hover:text-[#98E9E9] transition-colors"
-                >
-                  1900 1234
-                </a>
-              </p>
-              <p className="flex items-center">
-                <Clock size={16} className="mr-2 text-[#1A3C8E]" />
-                <span>24/7</span>
-              </p>
-            </div>
-          </div>
+          {
+            isLoading ? <ContactSkeleton /> :
+              <div>
+                <h3 className="text-lg font-semibold mb-4 text-[#1A3C8E]">
+                  {t("footer.contact.title")}
+                </h3>
+                <div className="space-y-2 text-gray-600">
+                  <p>{contact.address}</p>
+                  <p className="flex items-center">
+                    <Mail size={16} className="mr-2 text-[#1A3C8E]" />
+                    <a
+                      href={`mailto:${contact.email}`}
+                      className="hover:text-[#98E9E9] transition-colors"
+                    >
+                      {contact.email}
+                    </a>
+                  </p>
+                  <p className="flex items-center">
+                    <Phone size={16} className="mr-2 text-[#1A3C8E]" />
+                    <a
+                      href={`tel:${contact.phone}`}
+                      className="hover:text-[#98E9E9] transition-colors"
+                    >
+                      {contact.phone}
+                    </a>
+                  </p>
+                  <p className="flex items-center">
+                    <Clock size={16} className="mr-2 text-[#1A3C8E]" />
+                    <span>{contact.support_hours}</span>
+                  </p>
+                </div>
+              </div>
+          }
         </div>
 
         {/* Bottom Bar */}
