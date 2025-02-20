@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Star, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { getAllReviews } from "../../services/reviewService";
+import { getAllReviewsByAuth } from "../../services/reviewService";
 
 function AllReviews() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ function AllReviews() {
 
   const fetchAllReviews = async (page) => {
     try {
-      const data = await getAllReviews(page);
+      const data = await getAllReviewsByAuth(page);
       const reviewsRes = Array.isArray(data.data.reviews) ? data.data.reviews : []
       setPagination(data.data.pagination)
 

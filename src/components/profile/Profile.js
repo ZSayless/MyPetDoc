@@ -13,7 +13,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
-import { getAllReviews } from "../../services/reviewService";
+import { getAllReviewsByAuth } from "../../services/reviewService";
 import { getHospitalFavorites } from "../../services/favoriteService";
 
 const socialIcons = {
@@ -35,7 +35,7 @@ function Profile() {
 
   const fetchSomeReviews = async () => {
     try {
-      const data = await getAllReviews();
+      const data = await getAllReviewsByAuth();
       console.log(data.data.reviews);
       const reviewsRes = Array.isArray(data.data.reviews) ? data.data.reviews : []
       const reviewData = reviewsRes.filter((_, index) => index < 2)
