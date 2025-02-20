@@ -106,46 +106,47 @@ function Register({ onClose, onLoginClick }) {
     // Validate phone number (Vietnam format)
     const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
     if (!phoneRegex.test(formData.phone)) {
-      setError("Số điện thoại không hợp lệ");
+      setError(t("auth.register.errors.phoneInvalid"));
       return false;
     }
 
-    // Validate password
-    if (formData.password.length < 6) {
-      setError("Mật khẩu phải có ít nhất 6 ký tự");
+    // Validate password với ít nhất 1 chữ hoa HOẶC 1 ký tự đặc biệt
+    const passwordRegex = /^(?=.*([A-Z]|[!@#$%^&*]))[A-Za-z\d!@#$%^&*]{6,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      setError(t("auth.register.errors.passwordInvalid"));
       return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Mật khẩu xác nhận không khớp");
+      setError(t("auth.register.errors.passwordMismatch"));
       return false;
     }
 
     // Validate name fields
     if (formData.firstName.trim().length < 2 || formData.lastName.trim().length < 2) {
-      setError("Họ và tên phải có ít nhất 2 ký tự");
+      setError(t("auth.register.errors.nameRequired"));
       return false;
     }
 
     // Validate pet information if pet type is selected
-    if (userType === "general" && formData.petType) {
-      if (!formData.petAge) {
-        setError("Vui lòng nhập tuổi thú cưng");
-        return false;
-      }
-      if (!formData.petPhoto) {
-        setError("Vui lòng tải lên ảnh thú cưng");
-        return false;
-      }
-      if (!formData.petNotes || formData.petNotes.trim().length < 10) {
-        setError("Vui lòng nhập mô tả về thú cưng (ít nhất 10 ký tự)");
-        return false;
-      }
-    }
+    // if (userType === "general" && formData.petType) {
+    //   if (!formData.petAge) {
+    //     setError("Vui lòng nhập tuổi thú cưng");
+    //     return false;
+    //   }
+    //   if (!formData.petPhoto) {
+    //     setError("Vui lòng tải lên ảnh thú cưng");
+    //     return false;
+    //   }
+    //   if (!formData.petNotes || formData.petNotes.trim().length < 10) {
+    //     setError("Vui lòng nhập mô tả về thú cưng (ít nhất 10 ký tự)");
+    //     return false;
+    //   }
+    // }
 
     // Validate terms agreement
     if (!formData.agreeToTerms) {
-      setError("Vui lòng đồng ý với điều khoản sử dụng");
+      setError(t("auth.register.errors.termsRequired"));
       return false;
     }
 
@@ -166,9 +167,6 @@ function Register({ onClose, onLoginClick }) {
     try {
       const role = userType === "general" ? "GENERAL_USER" : "HOSPITAL_ADMIN";
 
-      // Log để kiểm tra dữ liệu trước khi xử lý
-      console.log("Initial form data:", formData);
-
       let registerData = {
         email: formData.email,
         password: formData.password,
@@ -179,24 +177,21 @@ function Register({ onClose, onLoginClick }) {
 
       // Chỉ thêm thông tin thú cưng nếu userType là general và có chọn petType
       if (userType === "general" && formData.petType) {
-        // Log để kiểm tra thông tin pet
-        console.log("Adding pet information");
-        
+
         if (formData.petPhoto) {
-          console.log("Pet photo detected, creating FormData");
           const formDataWithFile = new FormData();
-          
+
           // Thêm các trường cơ bản
           Object.keys(registerData).forEach(key => {
             formDataWithFile.append(key, registerData[key]);
           });
-          
+
           // Thêm thông tin về thú cưng
           formDataWithFile.append('pet_type', formData.petType);
           formDataWithFile.append('pet_age', formData.petAge);
           formDataWithFile.append('pet_notes', formData.petNotes);
           formDataWithFile.append('pet_photo', formData.petPhoto);
-          
+
           registerData = formDataWithFile;
         } else {
           // Nếu không có ảnh, thêm thông tin pet vào object
@@ -207,23 +202,22 @@ function Register({ onClose, onLoginClick }) {
       }
 
       // Log dữ liệu cuối cùng trước khi gửi request
-      console.log("Final register data:", 
-        registerData instanceof FormData 
-          ? Object.fromEntries(registerData.entries()) 
-          : registerData
-      );
+      // console.log("Final register data:", 
+      //   registerData instanceof FormData 
+      //     ? Object.fromEntries(registerData.entries()) 
+      //     : registerData
+      // );
 
       const result = await register(registerData);
-      console.log("Registration result:", result);
 
       if (result.success) {
-        setSuccess(result.message || "Đăng ký thành công");
+        setSuccess(result.message || t("auth.register.success"));
         setTimeout(() => {
           onClose();
           onLoginClick();
-        }, 3000);
+        }, 5000);
       } else {
-        setError(result.error || "Đăng ký thất bại");
+        setError(result.error || t("auth.errors.registrationFailed"));
         console.error("Registration error details:", result.details);
       }
     } catch (error) {
@@ -236,7 +230,7 @@ function Register({ onClose, onLoginClick }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-[30px] w-full max-w-md relative my-8">
+      <div className="bg-white rounded-[30px] w-full max-w-md relative my-8 max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 right-0 pt-4 pr-4 bg-white rounded-t-[30px] z-10 flex justify-end">
           <button
             onClick={onClose}
@@ -246,7 +240,7 @@ function Register({ onClose, onLoginClick }) {
           </button>
         </div>
 
-        <div className="px-6 pb-6">
+        <div className="px-6 pb-6 overflow-y-auto">
           <div className="text-center mb-6">
             <h3 className="text-2xl font-bold text-gray-800">
               {showRoleSelection
@@ -265,22 +259,20 @@ function Register({ onClose, onLoginClick }) {
               <div className="flex space-x-4 p-1 bg-gray-100 rounded-[20px]">
                 <button
                   type="button"
-                  className={`flex-1 py-2 px-4 rounded-[15px] text-sm font-medium transition-colors ${
-                    userType === "general"
-                      ? "bg-white text-gray-800 shadow"
-                      : "text-gray-600 hover:text-gray-800"
-                  }`}
+                  className={`flex-1 py-2 px-4 rounded-[15px] text-sm font-medium transition-colors ${userType === "general"
+                    ? "bg-white text-gray-800 shadow"
+                    : "text-gray-600 hover:text-gray-800"
+                    }`}
                   onClick={() => setUserType("general")}
                 >
                   {t("auth.register.roles.petOwnerButton")}
                 </button>
                 <button
                   type="button"
-                  className={`flex-1 py-2 px-4 rounded-[15px] text-sm font-medium transition-colors ${
-                    userType === "hospital"
-                      ? "bg-white text-gray-800 shadow"
-                      : "text-gray-600 hover:text-gray-800"
-                  }`}
+                  className={`flex-1 py-2 px-4 rounded-[15px] text-sm font-medium transition-colors ${userType === "hospital"
+                    ? "bg-white text-gray-800 shadow"
+                    : "text-gray-600 hover:text-gray-800"
+                    }`}
                   onClick={() => setUserType("hospital")}
                 >
                   {t("auth.register.roles.veterinarianButton")}
@@ -288,45 +280,65 @@ function Register({ onClose, onLoginClick }) {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t("auth.register.firstName")} <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                    placeholder={t("auth.register.firstName")}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t("auth.register.lastName")} <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                    placeholder={t("auth.register.lastName")}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("auth.register.email")} <span className="text-red-500">*</span>
+                </label>
                 <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
+                  type="email"
+                  name="email"
+                  value={formData.email}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                  placeholder={t("auth.register.firstName")}
-                  required
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                  placeholder={t("auth.register.lastName")}
+                  placeholder={t("auth.register.email")}
                   required
                 />
               </div>
 
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                placeholder={t("auth.register.email")}
-                required
-              />
-
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                placeholder={t("auth.register.phonePlaceholder")}
-                required
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("auth.register.phone")} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                  placeholder={t("auth.register.phonePlaceholder")}
+                  required
+                />
+              </div>
 
               {userType === "general" && (
                 <div className="space-y-3">
@@ -404,24 +416,43 @@ function Register({ onClose, onLoginClick }) {
                 </div>
               )}
 
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                placeholder={t("auth.register.password")}
-                required
-              />
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                placeholder={t("auth.register.confirmPassword")}
-                required
-              />
+              <div className="text-sm text-gray-600 mt-1">
+                <p>{t("auth.register.passwordRequirements.title")}</p>
+                <ul className="list-disc pl-5">
+                  <li>{t("auth.register.passwordRequirements.atLeast6Characters")}</li>
+                  <li>{t("auth.register.passwordRequirements.atLeast1UpperCaseOrSpecialCharacter")}</li>
+                </ul>
+                <p className="mt-1">{t("auth.register.passwordRequirements.example")}</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("auth.register.password")} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                  placeholder={t("auth.register.password")}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("auth.register.confirmPassword")} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                  placeholder={t("auth.register.confirmPassword")}
+                  required
+                />
+              </div>
 
               <div className="flex items-start">
                 <input

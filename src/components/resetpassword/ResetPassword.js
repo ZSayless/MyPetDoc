@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../../services/authService";
+import { useTranslation } from "react-i18next";
 
 function ResetPassword() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: ""
@@ -32,13 +34,14 @@ function ResetPassword() {
   };
 
   const validateForm = () => {
-    if (formData.password !== formData.confirmPassword) {
-      setError("Mật khẩu không khớp");
+    const passwordRegex = /^(?=.*([A-Z]|[!@#$%^&*]))[A-Za-z\d!@#$%^&*]{6,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      setError(t("auth.validation.passwordRequirements"));
       return false;
     }
 
-    if (formData.password.length < 6) {
-      setError("Mật khẩu phải có ít nhất 6 ký tự");
+    if (formData.password !== formData.confirmPassword) {
+      setError(t("auth.validation.passwordMismatch"));
       return false;
     }
 
@@ -86,20 +89,20 @@ function ResetPassword() {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Đặt lại mật khẩu
+            {t("auth.resetPassword.title")}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Vui lòng nhập mật khẩu mới của bạn
+            {t("auth.resetPassword.subtitle")}
           </p>
         </div>
 
         {success ? (
           <div className="text-center space-y-4">
             <div className="text-green-600 font-medium">
-              Đặt lại mật khẩu thành công!
+              {t("auth.resetPassword.success")}
             </div>
             <p className="text-gray-500">
-              Đang chuyển hướng về trang đăng nhập...
+              {t("auth.resetPassword.redirecting")}
             </p>
           </div>
         ) : (
@@ -113,7 +116,7 @@ function ResetPassword() {
             <div className="space-y-4">
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Mật khẩu mới
+                  {t("auth.resetPassword.newPassword")}
                 </label>
                 <input
                   id="password"
@@ -122,14 +125,23 @@ function ResetPassword() {
                   value={formData.password}
                   onChange={handleChange}
                   className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                  placeholder="Nhập mật khẩu mới"
+                  placeholder={t("auth.resetPassword.newPasswordPlaceholder")}
                   required
                 />
               </div>
 
+              <div className="text-sm text-gray-600">
+                <p>{t("auth.validation.passwordRequirementsTitle")}:</p>
+                <ul className="list-disc pl-5">
+                  <li>{t("auth.validation.minLength")}</li>
+                  <li>{t("auth.validation.specialChar")}</li>
+                </ul>
+                <p className="mt-1">{t("auth.validation.examples")}: Password123, password@123</p>
+              </div>
+
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Xác nhận mật khẩu
+                  {t("auth.resetPassword.confirmPassword")}
                 </label>
                 <input
                   id="confirmPassword"
@@ -138,7 +150,7 @@ function ResetPassword() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
-                  placeholder="Nhập lại mật khẩu mới"
+                  placeholder={t("auth.resetPassword.confirmPasswordPlaceholder")}
                   required
                 />
               </div>
@@ -155,10 +167,10 @@ function ResetPassword() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Đang xử lý...
+                  {t("auth.resetPassword.processing")}
                 </span>
               ) : (
-                "Đặt lại mật khẩu"
+                t("auth.resetPassword.submit")
               )}
             </button>
           </form>
