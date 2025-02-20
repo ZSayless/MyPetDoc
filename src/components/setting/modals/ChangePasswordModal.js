@@ -1,300 +1,124 @@
-import { X, Eye, EyeOff } from "lucide-react";
+import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import logo from "../../../assets/img/logocustom.png";
+import { forgotPassword } from "../../../services/authService";
 
 function ChangePasswordModal({ onClose }) {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-  const [showPasswords, setShowPasswords] = useState({
-    currentPassword: false,
-    newPassword: false,
-    confirmPassword: false,
-  });
-  const [passwordStrength, setPasswordStrength] = useState(0);
-  const [errors, setErrors] = useState({});
-
-  // Kiểm tra độ mạnh của mật khẩu
-  const checkPasswordStrength = (password) => {
-    let strength = 0;
-    if (password.length >= 8) strength += 1;
-    if (password.match(/[a-z]+/)) strength += 1;
-    if (password.match(/[A-Z]+/)) strength += 1;
-    if (password.match(/[0-9]+/)) strength += 1;
-    if (password.match(/[$@#&!]+/)) strength += 1;
-    return strength;
-  };
-
-  const getPasswordStrengthColor = () => {
-    switch (passwordStrength) {
-      case 0:
-      case 1:
-        return "bg-red-500";
-      case 2:
-        return "bg-orange-500";
-      case 3:
-        return "bg-yellow-500";
-      case 4:
-        return "bg-blue-500";
-      case 5:
-        return "bg-green-500";
-      default:
-        return "bg-gray-200";
-    }
-  };
-
-  const getPasswordStrengthText = () => {
-    switch (passwordStrength) {
-      case 0:
-      case 1:
-        return t("setting.modal.changePassword.strength.veryWeak");
-      case 2:
-        return t("setting.modal.changePassword.strength.weak");
-      case 3:
-        return t("setting.modal.changePassword.strength.medium");
-      case 4:
-        return t("setting.modal.changePassword.strength.strong");
-      case 5:
-        return t("setting.modal.changePassword.strength.veryStrong");
-      default:
-        return "";
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-
-    if (name === "newPassword") {
-      setPasswordStrength(checkPasswordStrength(value));
-      // Xóa lỗi khi người dùng bắt đầu nhập lại
-      setErrors((prev) => ({ ...prev, newPassword: "", confirmPassword: "" }));
-    }
-
-    if (name === "confirmPassword") {
-      setErrors((prev) => ({ ...prev, confirmPassword: "" }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.currentPassword) {
-      newErrors.currentPassword = t(
-        "setting.modal.changePassword.errors.currentPasswordRequired"
-      );
-    }
-
-    if (!formData.newPassword) {
-      newErrors.newPassword = t(
-        "setting.modal.changePassword.errors.newPasswordRequired"
-      );
-    } else if (passwordStrength < 3) {
-      newErrors.newPassword = t(
-        "setting.modal.changePassword.errors.passwordTooWeak"
-      );
-    }
-
-    if (formData.newPassword !== formData.confirmPassword) {
-      newErrors.confirmPassword = t(
-        "setting.modal.changePassword.errors.passwordsDoNotMatch"
-      );
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      try {
-        // TODO: Gọi API để đổi mật khẩu
-        console.log("Password changed successfully");
-        onClose();
-      } catch (error) {
-        setErrors({
-          submit: t("setting.modal.changePassword.errors.changeFailed"),
-        });
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await forgotPassword(email);
+      if (result.success) {
+        setSuccess(true);
+        setTimeout(() => {
+          onClose();
+        }, 5000);
+      } else {
+        setError(result.error);
       }
+    } catch (error) {
+      setError(t("setting.modal.changePassword.errors.changeFailed"));
+    } finally {
+      setLoading(false);
     }
   };
 
-  const togglePasswordVisibility = (field) => {
-    setShowPasswords((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
-
   return (
-    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl w-full max-w-md">
-        <div className="p-6">
-          <h3 className="text-2xl font-semibold mb-2">
-            {t("setting.modal.changePassword.title")}
-          </h3>
-          <p className="text-gray-600 mb-6">
-            {t("setting.modal.changePassword.description")}
-          </p>
-
-          <form onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t("setting.modal.changePassword.currentPassword")}
-              </label>
-              <div className="relative">
-                <input
-                  type={showPasswords.currentPassword ? "text" : "password"}
-                  name="currentPassword"
-                  value={formData.currentPassword}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border ${
-                    errors.currentPassword
-                      ? "border-red-500"
-                      : "border-gray-200"
-                  } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 pr-12`}
-                  placeholder={t(
-                    "setting.modal.changePassword.currentPasswordPlaceholder"
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={() => togglePasswordVisibility("currentPassword")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPasswords.currentPassword ? (
-                    <EyeOff size={20} />
-                  ) : (
-                    <Eye size={20} />
-                  )}
-                </button>
-              </div>
-              {errors.currentPassword && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.currentPassword}
-                </p>
-              )}
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t("setting.modal.changePassword.newPassword")}
-              </label>
-              <div className="relative">
-                <input
-                  type={showPasswords.newPassword ? "text" : "password"}
-                  name="newPassword"
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border ${
-                    errors.newPassword ? "border-red-500" : "border-gray-200"
-                  } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 pr-12`}
-                  placeholder={t(
-                    "setting.modal.changePassword.newPasswordPlaceholder"
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={() => togglePasswordVisibility("newPassword")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPasswords.newPassword ? (
-                    <EyeOff size={20} />
-                  ) : (
-                    <Eye size={20} />
-                  )}
-                </button>
-              </div>
-              {formData.newPassword && (
-                <div className="mt-2">
-                  <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full ${getPasswordStrengthColor()} transition-all duration-300`}
-                      style={{ width: `${(passwordStrength / 5) * 100}%` }}
-                    ></div>
-                  </div>
-                  <p
-                    className={`mt-1 text-sm ${
-                      passwordStrength >= 4
-                        ? "text-green-600"
-                        : passwordStrength >= 3
-                        ? "text-yellow-600"
-                        : "text-red-500"
-                    }`}
-                  >
-                    {getPasswordStrengthText()}
-                  </p>
-                </div>
-              )}
-              {errors.newPassword && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.newPassword}
-                </p>
-              )}
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t("setting.modal.changePassword.confirmPassword")}
-              </label>
-              <div className="relative">
-                <input
-                  type={showPasswords.confirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border ${
-                    errors.confirmPassword
-                      ? "border-red-500"
-                      : "border-gray-200"
-                  } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 pr-12`}
-                  placeholder={t(
-                    "setting.modal.changePassword.confirmPasswordPlaceholder"
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={() => togglePasswordVisibility("confirmPassword")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPasswords.confirmPassword ? (
-                    <EyeOff size={20} />
-                  ) : (
-                    <Eye size={20} />
-                  )}
-                </button>
-              </div>
-              {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.confirmPassword}
-                </p>
-              )}
-            </div>
-
-            {errors.submit && (
-              <p className="mb-4 text-sm text-red-500">{errors.submit}</p>
-            )}
-
-            <div className="flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-6 py-3 text-gray-700 border border-gray-200 rounded-xl hover:bg-gray-50"
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl w-full max-w-md relative">
+        <div className="p-8">
+          <div className="flex items-center mb-6">
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
               >
-                {t("setting.modal.changePassword.cancel")}
-              </button>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <span className="text-xl font-medium ml-4">
+              {t("setting.modal.changePassword.back")}
+            </span>
+            <button
+              onClick={onClose}
+              className="ml-auto text-gray-400 hover:text-gray-600"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          <div className="text-center mb-8">
+            <img src={logo} alt="Logo" className="w-48 h-auto mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-gray-800">
+              {t("setting.modal.changePassword.title")}
+            </h3>
+            <p className="text-gray-600 mt-2">
+              {t("setting.modal.changePassword.description")}
+            </p>
+          </div>
+
+          {success ? (
+            <div className="text-center space-y-4">
+              <div className="text-green-600 font-medium">
+                {t("setting.modal.changePassword.success")}
+              </div>
+              <p className="text-gray-500">
+                {t("setting.modal.changePassword.checkEmail")}
+              </p>
+            </div>
+          ) : (
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {error && (
+                <div className="text-red-500 text-sm text-center">{error}</div>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("setting.modal.changePassword.emailLabel")}
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors"
+                  placeholder={t("auth.emailPlaceholder")}
+                  required
+                />
+              </div>
+
               <button
                 type="submit"
-                className="px-6 py-3 bg-[#98E9E9] text-gray-700 rounded-xl hover:bg-[#7CD5D5]"
+                disabled={loading}
+                className="w-full bg-[#98E9E9] text-gray-700 py-3 rounded-lg font-medium hover:bg-[#7CD5D5] transition-colors disabled:opacity-50"
               >
-                {t("setting.modal.changePassword.save")}
+                {loading
+                  ? t("setting.modal.changePassword.sending")
+                  : t("setting.modal.changePassword.sendRequest")}
               </button>
-            </div>
-          </form>
+            </form>
+          )}
         </div>
       </div>
     </div>

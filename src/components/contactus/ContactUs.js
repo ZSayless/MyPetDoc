@@ -27,9 +27,9 @@ const ContactUs = () => {
         const user = JSON.parse(userStr);
         setFormData(prev => ({
           ...prev,
-          name: user.fullName || user.name || "",
+          name: user.full_name || user.name || "",
           email: user.email || "",
-          phone: user.phone || "",
+          phone: user.phone_number || "",
         }));
       } catch (error) {
         console.error("Error parsing user data:", error);
@@ -156,8 +156,10 @@ const ContactUs = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      disabled
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
+                      disabled={isLoggedIn && formData.name !== ""}
+                      className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 ${
+                        isLoggedIn && formData.name !== "" ? "bg-gray-50" : "bg-white"
+                      }`}
                     />
                   </div>
                   <div>
@@ -170,8 +172,10 @@ const ContactUs = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       required
-                      disabled
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
+                      disabled={isLoggedIn && formData.phone !== ""}
+                      className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 ${
+                        isLoggedIn && formData.phone !== "" ? "bg-gray-50" : "bg-white"
+                      }`}
                     />
                   </div>
                 </div>
@@ -185,8 +189,10 @@ const ContactUs = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    disabled
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
+                    disabled={isLoggedIn && formData.email !== ""}
+                    className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 ${
+                      isLoggedIn && formData.email !== "" ? "bg-gray-50" : "bg-white"
+                    }`}
                   />
                 </div>
                 <div className="mb-6">

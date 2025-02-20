@@ -13,6 +13,26 @@
     "orContinueWith": "Hoặc tiếp tục với",
     "googleSignIn": "Đăng nhập với Google",
     "noAccount": "Chưa có tài khoản?",
+    "resetPassword": {
+      "title": "Đặt lại mật khẩu",
+      "subtitle": "Vui lòng nhập mật khẩu mới của bạn",
+      "newPassword": "Mật khẩu mới",
+      "newPasswordPlaceholder": "Nhập mật khẩu mới",
+      "confirmPassword": "Xác nhận mật khẩu",
+      "confirmPasswordPlaceholder": "Nhập lại mật khẩu mới",
+      "submit": "Đặt lại mật khẩu",
+      "processing": "Đang xử lý...",
+      "success": "Đặt lại mật khẩu thành công!",
+      "redirecting": "Đang chuyển hướng về trang đăng nhập..."
+    },
+    "validation": {
+      "passwordRequirements": "Mật khẩu phải có ít nhất 6 ký tự và phải chứa ít nhất 1 chữ hoa hoặc 1 ký tự đặc biệt (!@#$%^&*)",
+      "passwordMismatch": "Mật khẩu xác nhận không khớp",
+      "passwordRequirementsTitle": "Mật khẩu hợp lệ cần",
+      "minLength": "Ít nhất 6 ký tự",
+      "specialChar": "Chứa ít nhất 1 chữ hoa (A-Z) hoặc 1 ký tự đặc biệt (!@#$%^&*)",
+      "examples": "Ví dụ"
+    },
     "register": {
       "title": "Tạo Tài Khoản",
       "subtitle": "Đăng ký để bắt đầu",
@@ -24,11 +44,11 @@
       "petAgePlaceholder": "Nhập tuổi thú cưng",
       "petNotesPlaceholder": "Nhập ghi chú thú cưng",
       "petPhotoPlaceholder": "Tải ảnh thú cưng",
-      "email": "Nhập email của bạn",
+      "email": "Nhập email của bạn (example@gmail.com)",
       "phone": "Số điện thoại",
-      "phonePlaceholder": "Nhập số điện thoại của bạn",
+      "phonePlaceholder": "Nhập số điện thoại của bạn (0912345678)",
       "password": "Tạo mật khẩu",
-      "confirmPassword": "Xác nhận mật khẩu",
+      "confirmPassword": "Xác nhận mật khẩu (giống như trên)",
       "termsAgree": "Tôi đồng ý với",
       "termsLink": "Điều khoản dịch vụ",
       "and": "và",
@@ -39,12 +59,7 @@
       "googleSignUp": "Đăng ký với Google",
       "haveAccount": "Đã có tài khoản?",
       "signIn": "Đăng nhập",
-      "roles": {
-        "petOwner": "Chủ Thú Cưng",
-        "veterinarian": "Bác Sĩ Thú Y",
-        "petOwnerDesc": "Tìm và đặt lịch với bệnh viện thú y",
-        "veterinarianDesc": "Quản lý hồ sơ và lịch hẹn của bệnh viện thú y"
-      },
+      "success": "Đăng ký thành công",
       "petType": {
         "label": "Bạn nuôi thú cưng gì?",
         "placeholder": "Chọn loại thú cưng",
@@ -53,17 +68,32 @@
         "rabbit": "Thỏ",
         "hamster": "Chuột hamster",
         "bird": "Chim",
+        "fish": "Cá",
+        "reptile": "Rắn",
         "other": "Khác"
       },
       "chooseAccountType": "Chọn Loại Tài Khoản",
       "selectAccountType": "Chọn loại tài khoản bạn muốn tạo",
       "roles": {
         "petOwnerButton": "Chủ Thú Cưng",
-        "veterinarianButton": "Bác Sĩ Thú Y"
+        "veterinarianButton": "Bác Sĩ Thú Y",
+        "petOwnerDesc": "Tìm và đặt lịch với bệnh viện thú y",
+        "veterinarianDesc": "Quản lý hồ sơ và lịch hẹn của bệnh viện thú y"
       },
       "errors": {
         "termsRequired": "Vui lòng đồng ý với điều khoản sử dụng",
-        "petTypeRequired": "Vui lòng chọn loại thú cưng"
+        "petTypeRequired": "Vui lòng chọn loại thú cưng",
+        "phoneInvalid": "Số điện thoại không hợp lệ",
+        "passwordInvalid": "Mật khẩu không hợp lệ",
+        "passwordMismatch": "Mật khẩu xác nhận không khớp",
+        "nameRequired": "Vui lòng nhập họ và tên",
+        "registrationFailed": "Đăng ký thất bại"
+      },
+      "passwordRequirements": {
+        "title": "Yêu Cầu Mật Khẩu",
+        "atLeast6Characters": "Ít nhất 6 ký tự",
+        "atLeast1UpperCaseOrSpecialCharacter": "Ít nhất 1 chữ hoa (A-Z) hoặc 1 ký tự đặc biệt (!@#$%^&*)",
+        "example": "Ví dụ: Password123 hoặc password@123"
       }
     },
     "termsAgree": "Tôi đồng ý với",
@@ -530,6 +560,12 @@
         "currentPasswordPlaceholder": "Nhập mật khẩu hiện tại",
         "newPasswordPlaceholder": "Nhập mật khẩu mới",
         "confirmPasswordPlaceholder": "Xác nhận mật khẩu mới",
+        "back": "Quay Lại",
+        "emailLabel": "Email",
+        "sendRequest": "Gửi Yêu Cầu",
+        "success": "Mật khẩu đã được cập nhật thành công",
+        "checkEmail": "Vui lòng kiểm tra email của bạn để lấy link đổi mật khẩu",
+        "sending": "Đang gửi...",
         "strength": {
           "veryWeak": "Rất Yếu",
           "weak": "Yếu",
@@ -702,7 +738,7 @@
   },
   "faq": {
     "title": "Hỗ trợ FAQ",
-    "greeting": "Xin chào! 👋 Tôi có thể giúp gì cho bạn?",
+    "description": "Xin chào! 👋 Chúng tôi có thể giúp gì cho bạn?",
     "placeholder": "Nhập câu hỏi của bạn...",
     "status": "Đang hoạt động",
     "welcome": "Vui lòng chọn chủ đề bạn cần hỗ trợ:",
