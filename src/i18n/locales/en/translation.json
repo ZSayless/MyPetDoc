@@ -44,12 +44,32 @@
         "sendFailed": "Failed to send request. Please try again."
       }
     },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Please enter your new password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter new password",
+      "submit": "Reset Password",
+      "processing": "Processing...",
+      "success": "Password reset successful!",
+      "redirecting": "Redirecting to login page..."
+    },
+    "validation": {
+      "passwordRequirements": "Password must be at least 6 characters and contain at least 1 uppercase letter or 1 special character (!@#$%^&*)",
+      "passwordMismatch": "Passwords do not match",
+      "passwordRequirementsTitle": "Password requirements",
+      "minLength": "At least 6 characters",
+      "specialChar": "Contains at least 1 uppercase letter (A-Z) or 1 special character (!@#$%^&*)",
+      "examples": "Examples"
+    },
     "register": {
       "title": "Create Account",
       "subtitle": "Sign up to get started",
       "firstName": "First name",
       "lastName": "Last name",
-      "email": "Enter your email",
+      "email": "Enter your email (example@gmail.com)",
       "petAge": "Pet Age",
       "petNotes": "Pet Notes",
       "petPhoto": "Pet Photo",
@@ -57,9 +77,9 @@
       "petNotesPlaceholder": "Enter your pet notes",
       "petPhotoPlaceholder": "Upload your pet photo",
       "phone": "Phone number",
-      "phonePlaceholder": "Enter your phone number",
+      "phonePlaceholder": "Enter your phone number (0912345678)",
       "password": "Create a password",
-      "confirmPassword": "Confirm your password",
+      "confirmPassword": "Confirm your password (same as above)",
       "termsAgree": "I agree to the",
       "termsLink": "Terms of Service",
       "and": "and",
@@ -70,6 +90,7 @@
       "googleSignUp": "Sign up with Google",
       "haveAccount": "Already have an account?",
       "signIn": "Sign in",
+      "success": "Sign up successful",
       "petType": {
         "label": "What pet do you have?",
         "placeholder": "Select your pet type",
@@ -78,17 +99,32 @@
         "rabbit": "Rabbit",
         "hamster": "Hamster",
         "bird": "Bird",
+        "fish": "Fish",
+        "reptile": "Reptile",
         "other": "Other"
       },
       "chooseAccountType": "Choose Account Type",
       "selectAccountType": "Select the type of account you want to create",
       "roles": {
         "petOwnerButton": "Pet Owner",
-        "veterinarianButton": "Veterinarian"
+        "veterinarianButton": "Veterinarian",
+        "petOwnerDesc": "Find veterinary care and connect with professionals",
+        "veterinarianDesc": "Provide care and share expertise with pet owners"
       },
       "errors": {
         "termsRequired": "Please agree to the terms of service",
-        "petTypeRequired": "Please select your pet type"
+        "petTypeRequired": "Please select your pet type",
+        "phoneInvalid": "Phone number is not valid",
+        "passwordInvalid": "Password is not valid",
+        "passwordMismatch": "Passwords do not match",
+        "nameRequired": "First name and last name are required",
+        "registrationFailed": "Registration failed. Please try again"
+      },
+      "passwordRequirements": {
+        "title": "Password Requirements",
+        "atLeast6Characters": "At least 6 characters",
+        "atLeast1UpperCaseOrSpecialCharacter": "At least 1 uppercase or special character",
+        "example": "Example: Password123 or password@123"
       }
     },
     "logout": "Logout",
@@ -492,6 +528,7 @@
         "notChanged": "Password not changed"
       }
     },
+    
     "modal": {
       "editName": {
         "title": "Edit Full Name",
@@ -540,6 +577,12 @@
         "currentPasswordPlaceholder": "Enter current password",
         "newPasswordPlaceholder": "Enter new password",
         "confirmPasswordPlaceholder": "Confirm new password",
+        "back": "Back",
+        "emailLabel": "Email",
+        "sendRequest": "Send Request",
+        "success": "Password updated successfully",
+        "checkEmail": "Please check your email for the password reset link",
+        "sending": "Sending...",
         "strength": {
           "veryWeak": "Very Weak",
           "weak": "Weak",
@@ -599,6 +642,10 @@
     "errors": {
       "sendFailed": "Could not send message. Please try again later."
     }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "description": "Hello! 👋 How can we help you?"
   },
   "footer": {
     "about": {
