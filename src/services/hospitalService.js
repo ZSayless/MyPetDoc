@@ -198,6 +198,44 @@ const toggleFavorite = async (hospitalId) => {
   }
 };
 
+const replyToReview = async (reviewId, reply) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(
+      `${BASE_URL}/reviews/${reviewId}/reply`,
+      { reply },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error replying to review:", error);
+    throw error;
+  }
+};
+
+const deleteReviewReply = async (reviewId) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.delete(
+      `${BASE_URL}/reviews/${reviewId}/reply`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting reply:", error);
+    throw error;
+  }
+};
+
 export { 
   getHospitals, 
   getHospitalDetail,
@@ -210,5 +248,7 @@ export {
   deleteReviewPermanently,
   getHospitalReviews,
   checkFavorite,
-  toggleFavorite
+  toggleFavorite,
+  replyToReview,
+  deleteReviewReply
 };
