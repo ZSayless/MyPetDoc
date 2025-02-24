@@ -22,14 +22,12 @@ import Terms from "./components/terms/Terms";
 import Setting from "./components/setting/Setting";
 import HospitalDetail from "./components/hospital/HospitalDetail";
 import FindHospital from "./components/hospital/FindHospital";
-import WriteBlog from "./components/blog/WriteBlog";
 import Profile from "./components/profile/Profile";
 import AllReviews from "./components/profile/AllReviews";
 import AllFavorites from "./components/profile/AllFavorites";
 // import CommunityList from "./components/community/CommunityList";
 import PostDetail from "./components/community/PostDetail";
 import AddHospital from "./components/hospital/AddHospital";
-import MyBlogs from "./components/blog/MyBlogs";
 import ResetPassword from "./components/resetpassword/ResetPassword";
 import AuthCallback from "./components/auth/AuthCallback";
 import AuthError from "./components/auth/AuthError";
@@ -107,14 +105,6 @@ function App() {
               element={
                 <MainLayout>
                   <BlogDetail />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/write-blog"
-              element={
-                <MainLayout>
-                  <WriteBlog />
                 </MainLayout>
               }
             />
@@ -211,22 +201,6 @@ function App() {
               element={
                 <MainLayout>
                   <Terms />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/my-blogs"
-              element={
-                <MainLayout>
-                  <MyBlogs />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/edit-blog/:id"
-              element={
-                <MainLayout>
-                  <WriteBlog />
                 </MainLayout>
               }
             />

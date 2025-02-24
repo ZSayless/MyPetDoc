@@ -12,15 +12,11 @@ const HospitalList = ({
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
 
-  const canViewDetails = useCallback(() => {
-    return isAuthenticated && user && ["admin", "user"].includes(user.role);
-  }, [isAuthenticated, user]);
-
   // Debug log
   // useEffect(() => {
   //   console.log("Auth state in list:", { isAuthenticated, user });
   // }, [isAuthenticated, user]);
-  
+
   return (
     <div
       className="bg-white rounded-lg shadow-sm overflow-y-auto"
@@ -33,13 +29,7 @@ const HospitalList = ({
             className={`bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
               selectedHospital?.id === hospital.id ? "ring-2 ring-blue-500" : ""
             }`}
-            onClick={() => {
-              if (canViewDetails()) {
-                onHospitalClick(hospital);
-              } else {
-                alert("Please login to view hospital details");
-              }
-            }}
+            onClick={() => onHospitalClick(hospital)}
           >
             <div className="p-3 lg:p-4">
               <div className="flex gap-3 lg:gap-4">
@@ -80,8 +70,7 @@ const HospitalList = ({
                         navigate(`/hospital/${hospital.slug}`);
                       }}
                     >
-                      Get Directions
-
+                      Details
                     </button>
                   </div>
                 </div>

@@ -395,15 +395,6 @@ function Header() {
                             {t("header.auth.profile")}
                           </Link>
 
-                          {/* Ẩn menu item My Blogs
-                          <Link
-                            to="/my-blogs"
-                            className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
-                          >
-                            {t("header.auth.myBlogs")}
-                          </Link>
-                          */}
-
                           {user.role === "ADMIN" && (
                             <Link
                               to="/admin"
@@ -477,7 +468,7 @@ function Header() {
               )}
 
               <div className="p-6">
-                <nav className="space-y-6">
+                <nav className="space-y-3">
                   <div className="space-y-2">
                     <Link
                       to="/"
@@ -524,43 +515,27 @@ function Header() {
                     </a>
                   </div>
 
-                  <div>
-                    <div className="text-[#1A3C8E] uppercase text-sm font-medium px-3 mb-2">
-                      {t("header.menu.exploreMore")}
-                    </div>
-                    <div className="space-y-2">
-                      <Link
-                        to="/find-hospital"
-                        className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
-                        onClick={toggleMenu}
-                      >
-                        <Search className="w-5 h-5" />
-                        {t("header.menu.findHospital")}
-                      </Link>
-                      <Link
-                        to="/bloglist"
-                        className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
-                        onClick={toggleMenu}
-                      >
-                        <FileText className="w-5 h-5" />
-                        {t("header.menu.blog")}
-                      </Link>
-                      <Link
-                        to="/community"
-                        className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
-                        onClick={toggleMenu}
-                      >
-                        <Users className="w-5 h-5" />
-                        {t("header.menu.community")}
-                      </Link>
-                    </div>
+                  <div className="space-y-2">
+                    <Link
+                      to="/find-hospital"
+                      className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
+                      onClick={toggleMenu}
+                    >
+                      <Search className="w-5 h-5" />
+                      {t("header.menu.findHospital")}
+                    </Link>
+                    <Link
+                      to="/bloglist"
+                      className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
+                      onClick={toggleMenu}
+                    >
+                      <FileText className="w-5 h-5" />
+                      {t("header.menu.blog")}
+                    </Link>
                   </div>
 
                   {isAuthenticated ? (
                     <div className="space-y-2">
-                      <div className="text-[#1A3C8E] uppercase text-sm font-medium px-3 mb-2">
-                        {t("header.auth.account")}
-                      </div>
                       <Link
                         to="/profile"
                         className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
@@ -568,14 +543,6 @@ function Header() {
                       >
                         <User className="w-5 h-5" />
                         {t("header.auth.profile")}
-                      </Link>
-                      <Link
-                        to="/my-blogs"
-                        className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
-                        onClick={toggleMenu}
-                      >
-                        <FileEdit className="w-5 h-5" />
-                        {t("header.auth.myBlogs")}
                       </Link>
 
                       {user.role === "ADMIN" && (

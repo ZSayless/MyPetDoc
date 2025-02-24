@@ -1,9 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ArrowUp } from "lucide-react";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
+  const [showButton, setShowButton] = useState(false);
 
+  // Xử lý scroll to top khi chuyển trang
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -11,7 +14,36 @@ function ScrollToTop() {
     });
   }, [pathname]);
 
-  return null;
+  // Xử lý hiển thị nút scroll to top
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowButton(window.scrollY > 400);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <>
+      {showButton && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-[100px] right-6 p-3 bg-[#98E9E9] hover:bg-[#7CD5D5] rounded-full shadow-lg transition-all duration-300 z-[1000]"
+          aria-label="Scroll to top"
+        >
+          <ArrowUp className="w-6 h-6 text-gray-700" />
+        </button>
+      )}
+    </>
+  );
 }
 
 export default ScrollToTop;

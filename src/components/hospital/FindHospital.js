@@ -93,9 +93,8 @@ const FindHospital = () => {
         setLoading(true);
         const response = await getHospitals();
         const formattedHospitals = response.hospitals
-          .filter(hospital => 
-            hospital.is_active === true && 
-            !hospital.is_deleted 
+          .filter(
+            (hospital) => hospital.is_active === true && !hospital.is_deleted
           )
           .map((hospital) => ({
             id: hospital.id,
@@ -109,7 +108,7 @@ const FindHospital = () => {
             mapUrl: hospital.map_location,
             slug: hospital.slug,
             isActive: hospital.is_active,
-            isDeleted: hospital.is_deleted
+            isDeleted: hospital.is_deleted,
           }));
         setHospitals(formattedHospitals);
         setFilteredHospitals(formattedHospitals);
@@ -269,6 +268,10 @@ const FindHospital = () => {
 
   const handleHospitalClick = (hospital) => {
     setSelectedHospital(hospital);
+
+    if (hospital.slug) {
+      navigate(`/hospital/${hospital.slug}`);
+    }
   };
 
   return (
@@ -288,7 +291,7 @@ const FindHospital = () => {
                 <input
                   type="text"
                   placeholder={t("findHospital.search.placeholder")}
-                  className="w-full pl-12 pr-4 py-3 rounded-full bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#98E9E9] text-gray-700 text-sm md:text-base shadow-sm"
+                  className="w-full pl-12 pr-4 py-2.5 rounded-full bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#98E9E9] text-gray-700 text-sm md:text-base shadow-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -298,7 +301,7 @@ const FindHospital = () => {
               {/* City Dropdown */}
               <div className="relative">
                 <button
-                  className="w-full md:w-60 px-4 py-3 bg-white/80 backdrop-blur-sm rounded-lg flex items-center justify-between hover:bg-white/90 transition-colors"
+                  className="w-full md:w-30 px-4 py-2.5 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-between hover:bg-white/90 transition-colors"
                   onClick={() => setShowCityDropdown(!showCityDropdown)}
                 >
                   <span>
@@ -314,7 +317,7 @@ const FindHospital = () => {
                 {showCityDropdown && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg z-10">
                     <button
-                      className="w-full px-4 py-2 text-left hover:bg-gray-50"
+                      className="w-full px-4 py-2 text-left hover:bg-gray-50 text-sm rounded-t-lg"
                       onClick={() => {
                         setSelectedCity("all");
                         setShowCityDropdown(false);
@@ -322,10 +325,12 @@ const FindHospital = () => {
                     >
                       {t("findHospital.cityFilter.allCities")}
                     </button>
-                    {CITIES.map((city) => (
+                    {CITIES.map((city, index) => (
                       <button
                         key={city.id}
-                        className="w-full px-4 py-2 text-left hover:bg-gray-50"
+                        className={`w-full px-4 py-2 text-left hover:bg-gray-50 text-sm ${
+                          index === CITIES.length - 1 ? "rounded-b-lg" : ""
+                        }`}
                         onClick={() => {
                           setSelectedCity(city.id);
                           setShowCityDropdown(false);
