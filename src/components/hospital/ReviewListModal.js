@@ -11,7 +11,7 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
     total: 0,
     page: 1,
     limit: 10,
-    totalPages: 0
+    totalPages: 0,
   });
 
   const fetchReviews = async (page = 1) => {
@@ -41,7 +41,10 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-xl font-semibold">{t("All Reviews")}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
             <X size={24} />
           </button>
         </div>
@@ -69,7 +72,7 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
                           </span>
                         )}
                       </div>
-                      
+
                       {/* Rating Stars */}
                       <div className="flex items-center gap-1 text-yellow-400 mt-1">
                         {[...Array(5)].map((_, i) => (
@@ -80,7 +83,7 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
                           />
                         ))}
                       </div>
-                      
+
                       <time className="text-sm text-gray-500 mt-1 block">
                         {new Date(review.created_at).toLocaleDateString()}
                       </time>
@@ -119,11 +122,15 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
                                   {review.replied_by_name}
                                 </h4>
                                 <time className="text-xs text-gray-500">
-                                  {new Date(review.replied_at).toLocaleDateString()}
+                                  {new Date(
+                                    review.replied_at
+                                  ).toLocaleDateString()}
                                 </time>
                               </div>
                             </div>
-                            <p className="text-gray-600 text-sm">{review.reply}</p>
+                            <p className="text-gray-600 text-sm">
+                              {review.reply}
+                            </p>
                           </div>
                         </div>
                       )}
@@ -145,7 +152,7 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
             >
               <ChevronLeft size={20} />
             </button>
-            
+
             {[...Array(pagination.totalPages)].map((_, i) => (
               <button
                 key={i}
@@ -159,7 +166,7 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
                 {i + 1}
               </button>
             ))}
-            
+
             <button
               onClick={() => fetchReviews(pagination.page + 1)}
               disabled={pagination.page === pagination.totalPages}
@@ -174,4 +181,4 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
   );
 };
 
-export default ReviewListModal; 
+export default ReviewListModal;

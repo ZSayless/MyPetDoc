@@ -26,60 +26,36 @@ function AdminDashboard() {
 
   const renderTab = () => {
     switch (activeTab) {
-      case "users": return <UsersManagement />;
-      case "hospitals": return <HospitalsManagement />;
-      case "blogs": return <BlogsManagement />;
-      case "reports": return <ReportsManagement />;
-      case "messages": return <ContactMessages />;
-      case "pending": return <PendingApprovals />;
-      case "faq": return <FAQManagement />;
-      case "community": return <CommunityManagement />;
-      case "banner": return <BannerManagement />;
-      case "aboutus": return <AboutUsManagement />;
-      case "terms": return <TermsManagement />;
-      case "contact": return <ContactInfoManagement />;
-      default: return <UsersManagement />;
+      case "users":
+        return <UsersManagement />;
+      case "hospitals":
+        return <HospitalsManagement />;
+      case "blogs":
+        return <BlogsManagement />;
+      case "reports":
+        return <ReportsManagement />;
+      case "messages":
+        return <ContactMessages />;
+      case "pending":
+        return <PendingApprovals />;
+      case "faq":
+        return <FAQManagement />;
+      case "community":
+        return <CommunityManagement />;
+      case "banner":
+        return <BannerManagement />;
+      case "aboutus":
+        return <AboutUsManagement />;
+      case "terms":
+        return <TermsManagement />;
+      case "contact":
+        return <ContactInfoManagement />;
+      default:
+        return <UsersManagement />;
     }
   };
 
-  const statsCards = [
-    {
-      title: "Total Users",
-      value: "1,234",
-      change: "+12%",
-      changeType: "increase",
-      period: "from last month",
-      icon: <Users className="w-5 h-5 text-blue-500" />,
-      bgColor: "bg-blue-50"
-    },
-    {
-      title: "Total Hospitals",
-      value: "56",
-      change: "+3",
-      changeType: "new",
-      period: "this month",
-      icon: <Building2 className="w-5 h-5 text-purple-500" />,
-      bgColor: "bg-purple-50"
-    },
-    {
-      title: "Total Blogs",
-      value: "892",
-      change: "+25%",
-      changeType: "increase",
-      period: "from last month",
-      icon: <FileText className="w-5 h-5 text-green-500" />,
-      bgColor: "bg-green-50"
-    },
-    {
-      title: "Pending Approvals",
-      value: "12",
-      change: "Active",
-      changeType: "warning",
-      period: "requires attention",
-      icon: <AlertCircle className="w-5 h-5 text-yellow-500" />,
-      bgColor: "bg-yellow-50"
-    }
-  ];
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -97,11 +73,13 @@ function AdminDashboard() {
 
       <div className="flex min-h-screen">
         {/* Sidebar */}
-        <div className={`fixed md:sticky top-0 inset-y-0 left-0 transform ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 transition-transform duration-300 ease-in-out z-40 bg-white w-64 border-r`}>
-          <AdminSidebar 
-            activeTab={activeTab} 
+        <div
+          className={`fixed md:sticky top-0 inset-y-0 left-0 transform ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0 transition-transform duration-300 ease-in-out z-40 bg-white w-64 border-r`}
+        >
+          <AdminSidebar
+            activeTab={activeTab}
             setActiveTab={(tab) => {
               setActiveTab(tab);
               setIsSidebarOpen(false);
@@ -120,39 +98,8 @@ function AdminDashboard() {
         {/* Main Content */}
         <div className="flex-1 md:ml-0">
           <div className="container mx-auto">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-              {statsCards.map((card, index) => (
-                <div key={index} className="bg-white rounded-lg shadow-sm p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-gray-500">{card.title}</h3>
-                    <span className={`p-2 rounded-lg ${card.bgColor}`}>
-                      {card.icon}
-                    </span>
-                  </div>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-xl md:text-2xl font-bold text-gray-800">
-                      {card.value}
-                    </p>
-                    <span className={`text-sm font-medium ${
-                      card.changeType === 'increase' ? 'text-green-500' :
-                      card.changeType === 'warning' ? 'text-yellow-500' : 
-                      'text-blue-500'
-                    }`}>
-                      {card.change}
-                    </span>
-                  </div>
-                  <p className="text-xs md:text-sm text-gray-500 mt-1">
-                    {card.period}
-                  </p>
-                </div>
-              ))}
-            </div>
-
             {/* Tab Content */}
-            <div className="p-4">
-              {renderTab()}
-            </div>
+            <div className="p-4">{renderTab()}</div>
           </div>
         </div>
       </div>

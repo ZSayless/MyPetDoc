@@ -39,35 +39,33 @@ const ContactSkeleton = () => {
 
 function Footer() {
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState(false)
-  const [contact, setContact] = useState({})
+  const [isLoading, setIsLoading] = useState(false);
+  const [contact, setContact] = useState({});
 
   const fetchCurrentContact = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const data = await getContactInfo();
-      setContact(data)
+      setContact(data);
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchCurrentContact()
-  }, [])
+    fetchCurrentContact();
+  }, []);
 
   return (
-    <footer id="contact" className="bg-white text-gray-700 border-t">
+    <footer id="contact" className="bg-[#1A3C8E] text-white border-t">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* About Column */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-[#1A3C8E]">
-              MyPetDoc
-            </h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="text-lg font-semibold mb-4 text-white">MyPetDoc</h3>
+            <p className="text-sm text-white/80">
               {t("footer.about.description")}
             </p>
             <div className="flex space-x-4 mt-4">
@@ -75,7 +73,7 @@ function Footer() {
                 href="https://facebook.com/mypetdoc"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#1A3C8E] hover:text-[#98E9E9] transition-colors"
+                className="text-white hover:text-[#98E9E9] transition-colors"
               >
                 <Facebook size={20} />
               </a>
@@ -83,7 +81,7 @@ function Footer() {
                 href="https://twitter.com/mypetdoc"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#1A3C8E] hover:text-[#98E9E9] transition-colors"
+                className="text-white hover:text-[#98E9E9] transition-colors"
               >
                 <Twitter size={20} />
               </a>
@@ -91,7 +89,7 @@ function Footer() {
                 href="https://instagram.com/mypetdoc"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#1A3C8E] hover:text-[#98E9E9] transition-colors"
+                className="text-white hover:text-[#98E9E9] transition-colors"
               >
                 <Instagram size={20} />
               </a>
@@ -100,14 +98,14 @@ function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-[#1A3C8E]">
+            <h3 className="text-lg font-semibold mb-4 text-white">
               {t("footer.quickLinks.title")}
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   to="/"
-                  className="text-gray-600 hover:text-[#98E9E9] transition-colors"
+                  className="text-white/80 hover:text-[#98E9E9] transition-colors"
                 >
                   {t("footer.quickLinks.home")}
                 </Link>
@@ -115,7 +113,7 @@ function Footer() {
               <li>
                 <Link
                   to="/aboutus"
-                  className="text-gray-600 hover:text-[#98E9E9] transition-colors"
+                  className="text-white/80 hover:text-[#98E9E9] transition-colors"
                 >
                   {t("footer.quickLinks.aboutUs")}
                 </Link>
@@ -123,7 +121,7 @@ function Footer() {
               <li>
                 <Link
                   to="/find-hospital"
-                  className="text-gray-600 hover:text-[#98E9E9] transition-colors"
+                  className="text-white/80 hover:text-[#98E9E9] transition-colors"
                 >
                   {t("footer.quickLinks.findHospital")}
                 </Link>
@@ -131,7 +129,7 @@ function Footer() {
               <li>
                 <Link
                   to="/bloglist"
-                  className="text-gray-600 hover:text-[#98E9E9] transition-colors"
+                  className="text-white/80 hover:text-[#98E9E9] transition-colors"
                 >
                   {t("footer.quickLinks.blog")}
                 </Link>
@@ -139,7 +137,7 @@ function Footer() {
               <li>
                 <Link
                   to="/contact-us"
-                  className="text-gray-600 hover:text-[#98E9E9] transition-colors"
+                  className="text-white/80 hover:text-[#98E9E9] transition-colors"
                 >
                   {t("footer.quickLinks.contactUs")}
                 </Link>
@@ -148,57 +146,52 @@ function Footer() {
           </div>
 
           {/* Contact */}
-          {
-            isLoading ? <ContactSkeleton /> :
-              <div>
-                <h3 className="text-lg font-semibold mb-4 text-[#1A3C8E]">
-                  {t("footer.contact.title")}
-                </h3>
-                <div className="space-y-2 text-gray-600">
-                  <p>{contact.address}</p>
-                  <p className="flex items-center">
-                    <Mail size={16} className="mr-2 text-[#1A3C8E]" />
-                    <a
-                      href={`mailto:${contact.email}`}
-                      className="hover:text-[#98E9E9] transition-colors"
-                    >
-                      {contact.email}
-                    </a>
-                  </p>
-                  <p className="flex items-center">
-                    <Phone size={16} className="mr-2 text-[#1A3C8E]" />
-                    <a
-                      href={`tel:${contact.phone}`}
-                      className="hover:text-[#98E9E9] transition-colors"
-                    >
-                      {contact.phone}
-                    </a>
-                  </p>
-                  <p className="flex items-center">
-                    <Clock size={16} className="mr-2 text-[#1A3C8E]" />
-                    <span>{contact.support_hours}</span>
-                  </p>
-                </div>
+          {isLoading ? (
+            <ContactSkeleton />
+          ) : (
+            <div>
+              <h3 className="text-lg font-semibold mb-4 text-white">
+                {t("footer.contact.title")}
+              </h3>
+              <div className="space-y-2 text-white/80">
+                <p>{contact.address}</p>
+                <p className="flex items-center">
+                  <Mail size={16} className="mr-2 text-[#98E9E9]" />
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="hover:text-[#98E9E9] transition-colors"
+                  >
+                    {contact.email}
+                  </a>
+                </p>
+                <p className="flex items-center">
+                  <Phone size={16} className="mr-2 text-[#98E9E9]" />
+                  <a
+                    href={`tel:${contact.phone}`}
+                    className="hover:text-[#98E9E9] transition-colors"
+                  >
+                    {contact.phone}
+                  </a>
+                </p>
+                <p className="flex items-center">
+                  <Clock size={16} className="mr-2 text-[#98E9E9]" />
+                  <span>{contact.support_hours}</span>
+                </p>
               </div>
-          }
+            </div>
+          )}
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t mt-8 pt-8">
+        <div className="border-t border-white/10 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-white/80">
               {t("footer.legal.copyright")}
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link
-                to="/privacy"
-                className="text-sm text-gray-600 hover:text-[#98E9E9] transition-colors"
-              >
-                {t("footer.legal.privacy")}
-              </Link>
-              <Link
                 to="/terms"
-                className="text-sm text-gray-600 hover:text-[#98E9E9] transition-colors"
+                className="text-sm text-white/80 hover:text-[#98E9E9] transition-colors"
               >
                 {t("footer.legal.terms")}
               </Link>

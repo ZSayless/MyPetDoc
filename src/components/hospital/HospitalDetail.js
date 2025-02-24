@@ -5,7 +5,13 @@ import Login from "../login/Login";
 import { useAuth } from "../../context/AuthContext";
 import WriteReviewModal from "./WriteReviewModal";
 import Reviews from "./Reviews";
-import { getHospitalDetail, toggleLikeHospitalImage, checkImageLikeStatus, toggleFavorite, checkFavorite } from "../../services/hospitalService";
+import {
+  getHospitalDetail,
+  toggleLikeHospitalImage,
+  checkImageLikeStatus,
+  toggleFavorite,
+  checkFavorite,
+} from "../../services/hospitalService";
 import { useTranslation } from "react-i18next";
 import { HOSPITAL_SERVICES } from "../../constants/services";
 import { useToast } from "../../context/ToastContext";
@@ -44,7 +50,7 @@ const HospitalDetail = () => {
 
         if (response.status === "success" && response.data) {
           const data = response.data;
-          
+
           // Format dữ liệu
           const formattedHospital = {
             id: data.id,
@@ -57,14 +63,14 @@ const HospitalDetail = () => {
             mapUrl: data.map_location,
             description: data.description,
             workingHours: data.operating_hours,
-            services: data.specialties 
-              ? data.specialties.split(",").map(s => s.trim())
+            services: data.specialties
+              ? data.specialties.split(",").map((s) => s.trim())
               : [],
-            gallery: data.images.map(image => ({
+            gallery: data.images.map((image) => ({
               id: image.id,
               url: image.url,
               title: `Hospital Image ${image.id}`,
-              likes: image.likesCount || 0, 
+              likes: image.likesCount || 0,
               createdAt: image.createdAt,
               comments: [],
             })),
@@ -75,7 +81,7 @@ const HospitalDetail = () => {
               four_star: 0,
               three_star: 0,
               two_star: 0,
-              one_star: 0
+              one_star: 0,
             },
             staffDescription: data.staff_description,
             staffCredentials: data.staff_credentials,
@@ -130,7 +136,7 @@ const HospitalDetail = () => {
           console.error("Error checking favorite status:", error);
           addToast({
             type: "error",
-            message: t("Error checking favorite status")
+            message: t("Error checking favorite status"),
           });
         }
       }
@@ -223,18 +229,18 @@ const HospitalDetail = () => {
     try {
       const newFavoriteStatus = await toggleFavorite(hospital.id);
       setIsFavorite(newFavoriteStatus);
-      
+
       addToast({
         type: "success",
-        message: newFavoriteStatus 
-          ? t("Added to favorites successfully") 
-          : t("Removed from favorites successfully")
+        message: newFavoriteStatus
+          ? t("Added to favorites successfully")
+          : t("Removed from favorites successfully"),
       });
     } catch (error) {
       console.error("Error toggling favorite:", error);
       addToast({
         type: "error",
-        message: t("Error updating favorite status")
+        message: t("Error updating favorite status"),
       });
     }
   };
@@ -243,7 +249,7 @@ const HospitalDetail = () => {
     if (!isAuthenticated) {
       addToast({
         type: "error",
-        message: t("Please login to like images")
+        message: t("Please login to like images"),
       });
       setShowLoginModal(true);
       return;
@@ -251,38 +257,38 @@ const HospitalDetail = () => {
 
     try {
       const response = await toggleLikeHospitalImage(hospital.id, imageId);
-      
+
       // Cập nhật UI dựa trên trạng thái like hiện tại
       const currentLikeStatus = imageLikes[imageId];
-      
-      setGalleryPhotos(prevPhotos =>
-        prevPhotos.map(photo =>
+
+      setGalleryPhotos((prevPhotos) =>
+        prevPhotos.map((photo) =>
           photo.id === imageId
             ? {
                 ...photo,
-                likes: currentLikeStatus ? photo.likes - 1 : photo.likes + 1
+                likes: currentLikeStatus ? photo.likes - 1 : photo.likes + 1,
               }
             : photo
         )
       );
-      
+
       // Cập nhật trạng thái like mới
-      setImageLikes(prev => ({
+      setImageLikes((prev) => ({
         ...prev,
-        [imageId]: !currentLikeStatus
+        [imageId]: !currentLikeStatus,
       }));
 
       addToast({
         type: "success",
-        message: !currentLikeStatus 
-          ? t("Liked successfully") 
-          : t("Unliked successfully")
+        message: !currentLikeStatus
+          ? t("Liked successfully")
+          : t("Unliked successfully"),
       });
     } catch (error) {
       console.error("Error toggling like:", error);
       addToast({
         type: "error",
-        message: t("Error liking image")
+        message: t("Error liking image"),
       });
     }
   };
@@ -450,19 +456,9 @@ const HospitalDetail = () => {
                   fill={isFavorite ? "currentColor" : "none"}
                 />
                 <span className="text-center">
-                  {isFavorite ? (
-                    <>
-                      Remove
-                      <br className="md:hidden" />
-                      Favorite
-                    </>
-                  ) : (
-                    <>
-                      Add
-                      <br className="md:hidden" />
-                      Favorite
-                    </>
-                  )}
+                  {isFavorite
+                    ? t("hospitalDetail.actions.removeFavorite")
+                    : t("hospitalDetail.actions.addFavorite")}
                 </span>
               </button>
               <button
@@ -471,9 +467,7 @@ const HospitalDetail = () => {
               >
                 <Phone className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="text-center">
-                  Call
-                  <br className="md:hidden" />
-                  Now
+                  {t("hospitalDetail.actions.callNow")}
                 </span>
               </button>
               <button
@@ -482,9 +476,7 @@ const HospitalDetail = () => {
               >
                 <MapPin className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="text-center">
-                  Get
-                  <br className="md:hidden" />
-                  Directions
+                  {t("hospitalDetail.actions.getDirections")}
                 </span>
               </button>
             </div>
@@ -513,7 +505,7 @@ const HospitalDetail = () => {
                   <p className="text-gray-600">{hospital.department}</p>
                 </div>
               )}
-              
+
               {hospital?.specialties && (
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
@@ -535,7 +527,7 @@ const HospitalDetail = () => {
             {/* Hospital Info */}
             <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
               <h2 className="text-lg md:text-xl font-semibold mb-4">
-                Hospital Information
+                {t("hospitalDetail.information.title")}
               </h2>
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
@@ -544,35 +536,47 @@ const HospitalDetail = () => {
                     <span className="font-medium">{hospital.rating}</span>
                   </div>
                   <span className="text-gray-500">
-                    ({hospital.reviewCount} {t("reviews")})
+                    ({hospital.reviewCount} {t("hospitalDetail.reviewCount")})
                   </span>
                 </div>
 
                 <div className="flex flex-col md:flex-row md:gap-12">
                   <div>
-                    <h3 className="font-medium">Address</h3>
+                    <h3 className="font-medium">
+                      {t("hospitalDetail.information.address")}
+                    </h3>
                     <p className="text-sm md:text-base text-gray-600">
                       {hospital.address}
                     </p>
                   </div>
                   <div>
-                    <h3 className="font-medium">Phone</h3>
+                    <h3 className="font-medium">
+                      {t("hospitalDetail.information.phone")}
+                    </h3>
                     <p className="text-sm md:text-base text-gray-600">
                       {hospital.phone}
                     </p>
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-medium mb-2">Working Hours</h3>
+                  <h3 className="font-medium mb-2">
+                    {t("hospitalDetail.information.workingHours")}
+                  </h3>
                   <div className="text-sm md:text-base text-gray-600">
                     {hospital.workingHours}
                   </div>
                 </div>
                 {hospital.link_website && (
                   <div>
-                    <h3 className="font-medium">Website</h3>
-                    <a 
-                      href={hospital.link_website.startsWith('http') ? hospital.link_website : `https://${hospital.link_website}`}
+                    <h3 className="font-medium">
+                      {t("hospitalDetail.information.website")}
+                    </h3>
+                    <a
+                      href={
+                        hospital.link_website.startsWith("http")
+                          ? hospital.link_website
+                          : `https://${hospital.link_website}`
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm md:text-base text-blue-600 hover:text-blue-700 hover:underline"
@@ -591,9 +595,14 @@ const HospitalDetail = () => {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                 {hospital?.services?.map((service, index) => (
-                  <div key={index} className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg"
+                  >
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                    <span className="text-sm md:text-base text-gray-700">{service}</span>
+                    <span className="text-sm md:text-base text-gray-700">
+                      {t(`hospitalDetail.services.${service}`)}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -602,7 +611,7 @@ const HospitalDetail = () => {
 
           {/* Right Column - Map */}
           <div className="h-[300px] lg:h-auto">
-            {hospital.mapUrl && hospital.mapUrl.startsWith('http') ? (
+            {hospital.mapUrl && hospital.mapUrl.startsWith("http") ? (
               <iframe
                 src={hospital.mapUrl}
                 width="100%"
@@ -627,8 +636,10 @@ const HospitalDetail = () => {
       {/* Gallery Section */}
       <section className="py-8">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-6">{t("Gallery")}</h2>
-          
+          <h2 className="text-2xl font-bold mb-6">
+            {t("hospitalDetail.gallery.title")}
+          </h2>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {galleryPhotos.map((photo) => (
               <div key={photo.id} className="relative group">
@@ -638,7 +649,7 @@ const HospitalDetail = () => {
                   className="w-full h-64 object-cover rounded-lg shadow-md"
                   onClick={() => setSelectedPhoto(photo)}
                 />
-                
+
                 {/* Overlay with like button and created time */}
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-200 rounded-lg">
                   <div className="absolute bottom-2 right-2 flex items-center gap-2">
@@ -654,8 +665,8 @@ const HospitalDetail = () => {
                     >
                       <Heart
                         className={`w-4 h-4 ${
-                          imageLikes[photo.id] 
-                            ? "fill-red-500 text-red-500" 
+                          imageLikes[photo.id]
+                            ? "fill-red-500 text-red-500"
                             : "text-gray-600"
                         }`}
                       />

@@ -272,6 +272,81 @@
       "title": "Start Your Search Today",
       "subtitle": "Find the perfect veterinary hospital for your pet",
       "button": "Find a Hospital"
+    },
+    "hero": {
+      "title": "Where Love Meets Care for Your Pets",
+      "subtitle": "Because every pet deserves the best."
+    },
+    "ourDream": {
+      "title": "Our Dream",
+      "section1": {
+        "title": "Happy Pets, Happy Owners",
+        "description": "mypetdoc.vn was created with a dream of a world where pets and their owners live happily together."
+      },
+      "section2": {
+        "title": "Reliable Information",
+        "description": "We believe that providing reliable and easily accessible information is the key to ensuring that pets lead healthy and joyful lives."
+      }
+    },
+    "ourFirstStep": {
+      "title": "Our First Step",
+      "steps": {
+        "1": {
+          "title": "Trusted Pet Hospital Info",
+          "description": "We are offering trusted information about pet hospitals."
+        },
+        "2": {
+          "title": "Expert Partnerships",
+          "description": "We plan to collaborate with expert partners to provide insights on pet food and treats."
+        },
+        "3": {
+          "title": "Educational Content",
+          "description": "We will provide educational training content and personalized services."
+        }
+      }
+    },
+    "weAreHere": {
+      "title": "We Are Here For You",
+      "points": {
+        "1": "We are always here to help you make the best choices for your furry companions.",
+        "2": "We provide insights on pet food and treats.",
+        "3": "We offer educational training content."
+      }
+    },
+    "ourPromise": {
+      "title": "Our Promise",
+      "promises": {
+        "1": {
+          "title": "Reliable Information",
+          "description": "Trusted resources for pet care."
+        },
+        "2": {
+          "title": "Expert Advice",
+          "description": "Insights from pet professionals."
+        },
+        "3": {
+          "title": "Personalized Services",
+          "description": "Tailored support for your pet's needs."
+        }
+      }
+    },
+    "contactUs": {
+      "button": "Contact Us"
+    },
+    "logo": {
+      "title": "MYPETDOC LOGO",
+      "colorScheme": {
+        "title": "Color Scheme:",
+        "description": "Add warm, friendly colors to your logo to make it more approachable. Use pastel shades of blue and green to symbolize trust and nature."
+      },
+      "symbols": {
+        "title": "Symbols:",
+        "description": "Incorporate a dog or cat silhouette symbol into your logo to instantly convey the purpose of your website."
+      },
+      "fontStyle": {
+        "title": "Font Style:",
+        "description": "Use a softer, more modern font to convey professionalism and friendliness at the same time."
+      }
     }
   },
   "blog": {
@@ -528,7 +603,7 @@
         "notChanged": "Password not changed"
       }
     },
-    
+
     "modal": {
       "editName": {
         "title": "Edit Full Name",
@@ -671,20 +746,17 @@
     }
   },
   "hospitalDetail": {
-    "info": {
+    "information": {
       "title": "Hospital Information",
       "address": "Address",
       "phone": "Phone",
-      "workingHours": "Working Hours"
-    },
-    "services": {
-      "title": "Services"
+      "workingHours": "Working Hours",
+      "website": "Website"
     },
     "gallery": {
-      "title": "Photo Gallery",
-      "uploadButton": "Upload Photo",
-      "viewDetails": "View Details"
+      "title": "Gallery"
     },
+    "reviewCount": "reviews",
     "reviews": {
       "title": "Customer Reviews",
       "writeReview": "Write a Review",
@@ -692,46 +764,43 @@
       "viewAll": "View All Reviews",
       "noReviews": "No reviews yet"
     },
+    "services": {
+      "title": "Services",
+      "Khoa Nội": "Internal Medicine",
+      "Khoa Ngoại": "Surgery"
+    },
     "actions": {
+      "addFavorite": "Add favorite",
+      "removeFavorite": "Remove favorite",
       "callNow": "Call Now",
-      "getDirections": "Get Directions",
-      "addFavorite": "Add Favorite",
-      "removeFavorite": "Remove Favorite"
+      "getDirections": "Get Directions"
     },
     "modal": {
-      "uploadPhoto": {
-        "title": "Upload Photo",
-        "photoTitle": "Title",
-        "titlePlaceholder": "Enter photo title",
-        "selectPhoto": "Select Photo",
-        "upload": "Upload Photo",
-        "uploading": "Uploading...",
-        "cancel": "Cancel"
-      },
       "writeReview": {
         "title": "Write a Review",
+        "titleUpdate": "Update Review",
         "rating": "Your Rating",
         "review": "Your Review",
         "reviewPlaceholder": "Share your experience...",
-        "addPhotos": "Add Photos (max 5)",
-        "uploadPhotos": "Click to upload",
+        "addPhoto": "Add Photo",
+        "uploadPhoto": "Click to upload",
+        "imageLimit": "Maximum file size: 5MB (JPG, PNG)",
+        "imageDescription": "Image Description",
+        "imageDescriptionPlaceholder": "Describe your photo",
         "submit": "Submit Review",
+        "update": "Update Review",
         "submitting": "Submitting...",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "errors": {
+          "loginRequired": "Please login to write a review",
+          "ratingRequired": "Please select a rating",
+          "reviewRequired": "Please write your review",
+          "imageSizeLimit": "Image size should be less than 5MB",
+          "imageTypeInvalid": "Only JPG and PNG images are allowed",
+          "submitError": "Failed to submit review. Please try again"
+        }
       }
-    },
-    "alerts": {
-      "loginRequired": "Please login to perform this action",
-      "uploadSuccess": "Photo uploaded successfully",
-      "uploadError": "Failed to upload photo",
-      "reviewSuccess": "Review submitted successfully",
-      "reviewError": "Failed to submit review",
-      "favoriteAdded": "Added to favorites",
-      "favoriteRemoved": "Removed from favorites"
     }
-  },
-  "common": {
-    "reviews": "reviews"
   },
   "header": {
     "menu": {
@@ -751,7 +820,6 @@
     "auth": {
       "login": "Login",
       "register": "Register",
-      "welcome": "Welcome",
       "profile": "Profile",
       "myBlogs": "My Blogs",
       "admin": "Admin Dashboard",

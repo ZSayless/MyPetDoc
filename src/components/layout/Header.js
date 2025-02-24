@@ -14,6 +14,7 @@ import {
   FileEdit,
   LogOut,
   Check,
+  Building2,
 } from "lucide-react";
 import { useState, useEffect, useRef, Fragment } from "react";
 import logo from "../../assets/img/logocustom.png";
@@ -240,10 +241,26 @@ function Header() {
                   </li>
                   <li>
                     <Link
-                      to="/aboutus"
+                      to="/find-hospital"
                       className="text-gray-700 hover:text-blue-600"
                     >
-                      {t("header.menu.aboutUs")}
+                      {t("header.menu.findHospital")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/bloglist"
+                      className="text-gray-700 hover:text-blue-600"
+                    >
+                      {t("header.menu.blog")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/lucete"
+                      className="text-gray-700 hover:text-blue-600"
+                    >
+                      Lucete
                     </Link>
                   </li>
                   <li>
@@ -254,63 +271,6 @@ function Header() {
                     >
                       {t("header.menu.contactUs")}
                     </a>
-                  </li>
-                  <li>
-                    <Link
-                      to="/find-hospital"
-                      className="text-gray-700 hover:text-blue-600"
-                    >
-                      {t("header.menu.findHospital")}
-                    </Link>
-                  </li>
-                  <li className="relative" ref={servicesDropdownRef}>
-                    <button
-                      onClick={handleServicesClick}
-                      className="flex items-center text-gray-700 hover:text-blue-600"
-                    >
-                      {t("header.menu.exploreMore")}
-                      <ChevronDown className="w-4 h-4 ml-1" />
-                    </button>
-                    {showServices && (
-                      <div className="absolute left-0 mt-2 w-60 bg-white rounded-lg shadow-lg border py-1">
-                        <Link
-                          to="/bloglist"
-                          className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
-                          onClick={() => setShowServices(false)}
-                        >
-                          <div className="font-medium">
-                            {t("header.menu.blog")}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            {t("header.menu.blogDesc")}
-                          </div>
-                        </Link>
-                        <Link
-                          to="/community"
-                          className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
-                          onClick={() => setShowServices(false)}
-                        >
-                          <div className="font-medium">
-                            {t("header.menu.community")}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            {t("header.menu.communityDesc")}
-                          </div>
-                        </Link>
-                        <Link
-                          to="/terms"
-                          className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
-                          onClick={() => setShowServices(false)}
-                        >
-                          <div className="font-medium">
-                            {t("header.menu.terms")}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            {t("header.menu.termsDesc")}
-                          </div>
-                        </Link>
-                      </div>
-                    )}
                   </li>
                 </ul>
               </nav>
@@ -401,7 +361,6 @@ function Header() {
               ) : (
                 <div ref={dropdownRef} className="relative flex items-center">
                   <span className="mr-3 text-gray-700">
-                    {t("header.auth.welcome")}
                     <span className="font-medium">{user?.full_name}</span>
                   </span>
 
@@ -423,7 +382,7 @@ function Header() {
                           <div className="font-medium text-gray-900">
                             {user.full_name}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500 truncate max-w-[180px]">
                             {user.email}
                           </div>
                         </div>
@@ -436,12 +395,14 @@ function Header() {
                             {t("header.auth.profile")}
                           </Link>
 
+                          {/* Ẩn menu item My Blogs
                           <Link
                             to="/my-blogs"
                             className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
                           >
                             {t("header.auth.myBlogs")}
                           </Link>
+                          */}
 
                           {user.role === "ADMIN" && (
                             <Link
@@ -507,7 +468,9 @@ function Header() {
                       <div className="text-gray-800 font-medium">
                         {user?.full_name}
                       </div>
-                      <div className="text-gray-600 text-sm">{user?.email}</div>
+                      <div className="text-gray-600 text-sm truncate max-w-[200px]">
+                        {user?.email}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -525,21 +488,40 @@ function Header() {
                       {t("header.menu.home")}
                     </Link>
                     <Link
-                      to="/aboutus"
+                      to="/find-hospital"
                       className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
                       onClick={toggleMenu}
                     >
-                      <Info className="w-5 h-5" />
-                      {t("header.menu.aboutUs")}
+                      <Search className="w-5 h-5" />
+                      {t("header.menu.findHospital")}
                     </Link>
                     <Link
-                      to="/contactus"
+                      to="/bloglist"
                       className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
                       onClick={toggleMenu}
+                    >
+                      <FileText className="w-5 h-5" />
+                      {t("header.menu.blog")}
+                    </Link>
+                    <Link
+                      to="/lucete"
+                      className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
+                      onClick={toggleMenu}
+                    >
+                      <Building2 className="w-5 h-5" />
+                      Lucete
+                    </Link>
+                    <a
+                      href="#contact"
+                      onClick={(e) => {
+                        handleContactClick(e);
+                        toggleMenu();
+                      }}
+                      className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
                     >
                       <Mail className="w-5 h-5" />
                       {t("header.menu.contactUs")}
-                    </Link>
+                    </a>
                   </div>
 
                   <div>

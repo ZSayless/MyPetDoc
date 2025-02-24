@@ -1,223 +1,347 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter } from "lucide-react";
-import { getAboutInfo } from "../../services/aboutService";
-
+import aboutus2 from "../../assets/img/aboutus2.png";
+import aboutus1 from "../../assets/img/aboutus1.jpg";
+import { motion } from "framer-motion";
+import "./AboutUs.css";
+import logocustom from "../../assets/img/logocustom.png";
+import { useTranslation } from "react-i18next";
 
 function AboutUs() {
-
-  const [aboutInfo, setAboutInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchAboutInfo = async () => {
-      try {
-        const data = await getAboutInfo();
-        setAboutInfo(data);
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAboutInfo();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  const teamMembers = [
-    {
-      name: "Dr. Nguyen Van A",
-      role: "Founder & CEO",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-      bio: "With over 15 years of veterinary experience, Dr. Nguyen leads our mission to transform pet healthcare.",
-      social: {
-        facebook: "https://facebook.com/drnguyen",
-        twitter: "https://twitter.com/drnguyen",
-        linkedin: "https://linkedin.com/in/drnguyen",
-      },
-    },
-    {
-      name: "Dr. Tran Thi B",
-      role: "Chief Medical Officer",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-      bio: "Specializing in small animal medicine, Dr. Tran ensures the highest quality of care across our network.",
-      social: {
-        facebook: "https://facebook.com/drtran",
-        twitter: "https://twitter.com/drtran",
-        linkedin: "https://linkedin.com/in/drtran",
-      },
-    },
-    {
-      name: "Le Van C",
-      role: "Technical Director",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-      bio: "Leading our tech team in developing innovative solutions for pet healthcare accessibility.",
-      social: {
-        facebook: "https://facebook.com/levanc",
-        twitter: "https://twitter.com/levanc",
-        linkedin: "https://linkedin.com/in/levanc",
-      },
-    },
-  ];
-
-  const testimonials = [
-    {
-      name: "Mai Anh",
-      role: "Pet Owner",
-      content:
-        "MyPetDoc made finding the right vet for my cat so easy. Excellent service!",
-      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
-    },
-    {
-      name: "Dr. Hoang",
-      role: "Veterinarian",
-      content:
-        "The platform helps us connect with pet owners efficiently. Great technology!",
-      image: "https://images.unsplash.com/photo-1556157382-97eda2f9e2bf",
-    },
-  ];
+  const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <div className="bg-gradient-to-b from-[#98E9E9] to-white">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-6 text-[#1A3C8E]">
-              About MyPetDoc
+    <div className="min-h-screen bg-white">
+      {/* Hero Section - Full width image with text overlay */}
+      <div className="relative h-[500px]">
+        <div className="absolute inset-0">
+          <img
+            src={aboutus1}
+            alt="Happy pets"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40"></div>{" "}
+          {/* Overlay để text dễ đọc */}
+        </div>
+        <div className="relative h-full flex items-center justify-center">
+          <div className="text-center text-white">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              {t("aboutUs.hero.title")}
             </h1>
-            <p className="text-xl text-gray-700">
-              Connecting pet owners with quality veterinary care across Vietnam
+            <p className="text-xl md:text-2xl font-medium">
+              {t("aboutUs.hero.subtitle")}
             </p>
           </div>
         </div>
       </div>
 
-      {/* About Section */}
-      <div className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            {/* <h2 className="text-3xl font-bold mb-8 text-center">Our Story</h2> */}
-            <div className="space-y-6 text-gray-600">
-              <p>{aboutInfo?.content}</p>
-              <p>{aboutInfo?.vision}</p>
-              <p>{aboutInfo?.mission}</p>
-              <p>{aboutInfo?.core_values}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Team Section */}
-      <div className="py-16 bg-gray-50">
+      {/* Our Dream Section */}
+      <div className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold mb-12 text-center">Our Team</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {teamMembers.map((member, index) => (
-                <div key={index} className="bg-white p-6 rounded-lg shadow-sm">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                  />
-                  <h3 className="text-xl font-bold text-center mb-2">
-                    {member.name}
-                  </h3>
-                  <p className="text-blue-600 text-center mb-4">
-                    {member.role}
-                  </p>
-                  <p className="text-gray-600 text-center mb-6">{member.bio}</p>
-                  <div className="flex justify-center items-center gap-4">
-                    <a
-                      href={member.social.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-blue-600 transition-colors"
-                    >
-                      <Facebook size={20} />
-                    </a>
-                    <a
-                      href={member.social.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-blue-500 transition-colors"
-                    >
-                      <Twitter size={20} />
-                    </a>
-                    <a
-                      href={member.social.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-blue-700 transition-colors"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Testimonial Section */}
-      <div className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold mb-12 text-center">
-              What People Say
+            <h2 className="text-3xl md:text-5xl font-bold mb-12">
+              {t("aboutUs.ourDream.title")}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <div key={index} className="bg-gray-50 p-8 rounded-lg">
-                  <div className="flex items-center mb-6">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div className="ml-4">
-                      <h4 className="font-semibold">{testimonial.name}</h4>
-                      <p className="text-sm text-gray-600">
-                        {testimonial.role}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 italic">
-                    "{testimonial.content}"
-                  </p>
-                </div>
-              ))}
+            <div className="grid md:grid-cols-2 gap-20">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-semibold mb-6">
+                  {t("aboutUs.ourDream.section1.title")}
+                </h3>
+                <p className="text-gray-700 text-lg font-medium">
+                  {t("aboutUs.ourDream.section1.description")}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-2xl md:text-3xl font-semibold mb-6">
+                  {t("aboutUs.ourDream.section2.title")}
+                </h3>
+                <p className="text-gray-700 text-lg font-medium">
+                  {t("aboutUs.ourDream.section2.description")}
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className="bg-[#1A3C8E] text-white py-16">
+      {/* Our First Steps Section */}
+      <div className="bg-[#7CD5D5] py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6">Start Your Search Today</h2>
-            <p className="text-lg text-white/80 mb-8">
-              Find the perfect veterinary hospital for your pet
-            </p>
-            <Link
-              to="/find-hospital"
-              className="inline-block bg-white text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+          <div className="bg-white rounded-lg p-12 max-w-6xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-bold mb-12">
+              {t("aboutUs.ourFirstStep.title")}
+            </h2>
+            <div className="grid md:grid-cols-3 gap-16">
+              <div className="flex gap-4">
+                <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center shrink-0">
+                  <span className="text-xl font-medium text-gray-700">1</span>
+                </div>
+                <div>
+                  <h3 className="text-xl md:text-2xl font-semibold mb-4">
+                    {t("aboutUs.ourFirstStep.steps.1.title")}
+                  </h3>
+                  <p className="text-gray-700 text-lg font-medium">
+                    {t("aboutUs.ourFirstStep.steps.1.description")}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center shrink-0">
+                  <span className="text-xl font-medium text-gray-700">2</span>
+                </div>
+                <div>
+                  <h3 className="text-xl md:text-2xl font-semibold mb-4">
+                    {t("aboutUs.ourFirstStep.steps.2.title")}
+                  </h3>
+                  <p className="text-gray-700 text-lg font-medium">
+                    {t("aboutUs.ourFirstStep.steps.2.description")}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center shrink-0">
+                  <span className="text-xl font-medium text-gray-700">3</span>
+                </div>
+                <div>
+                  <h3 className="text-xl md:text-2xl font-semibold mb-4">
+                    {t("aboutUs.ourFirstStep.steps.3.title")}
+                  </h3>
+                  <p className="text-gray-700 text-lg font-medium">
+                    {t("aboutUs.ourFirstStep.steps.3.description")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* We Are Here For You Section */}
+      <div className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+            {/* Left side - Image */}
+            <div>
+              <img
+                src={aboutus2}
+                alt="Veterinarian with happy dog"
+                className="w-[600px] h-auto rounded-lg"
+              />
+            </div>
+
+            {/* Right side - Content */}
+            <div>
+              <h2 className="text-3xl md:text-5xl font-bold mb-16">
+                {t("aboutUs.weAreHere.title")}
+              </h2>
+              <div className="space-y-12">
+                <div className="flex items-center gap-6">
+                  <div className="shrink-0">
+                    <svg
+                      className="w-8 h-8 text-[#7CD5D5]"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-gray-700 text-lg font-medium">
+                    {t("aboutUs.weAreHere.points.1")}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <div className="shrink-0">
+                    <svg
+                      className="w-8 h-8 text-[#7CD5D5]"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-gray-700 text-lg font-medium">
+                    {t("aboutUs.weAreHere.points.2")}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <div className="shrink-0">
+                    <svg
+                      className="w-8 h-8 text-[#7CD5D5]"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-gray-700 text-lg font-medium">
+                    {t("aboutUs.weAreHere.points.3")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Our Promise Section */}
+      <div className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <motion.h2
+              className="text-3xl md:text-5xl font-bold mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              Find a Hospital
+              {t("aboutUs.ourPromise.title")}
+            </motion.h2>
+
+            <div className="flex flex-col md:flex-row gap-0">
+              <motion.div
+                className="flex-1"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="arrow-step">
+                  <span className="text-2xl font-medium text-gray-600">1</span>
+                </div>
+                <div className="mt-8">
+                  <h3 className="text-2xl font-semibold mb-4">
+                    {t("aboutUs.ourPromise.promises.1.title")}
+                  </h3>
+                  <p className="text-gray-600 text-lg">
+                    {t("aboutUs.ourPromise.promises.1.description")}
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="flex-1"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <div className="arrow-step">
+                  <span className="text-2xl font-medium text-gray-600">2</span>
+                </div>
+                <div className="mt-8">
+                  <h3 className="text-2xl font-semibold mb-4">
+                    {t("aboutUs.ourPromise.promises.2.title")}
+                  </h3>
+                  <p className="text-gray-600 text-lg">
+                    {t("aboutUs.ourPromise.promises.2.description")}
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="flex-1"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <div className="arrow-step">
+                  <span className="text-2xl font-medium text-gray-600">3</span>
+                </div>
+                <div className="mt-8">
+                  <h3 className="text-2xl font-semibold mb-4">
+                    {t("aboutUs.ourPromise.promises.3.title")}
+                  </h3>
+                  <p className="text-gray-600 text-lg">
+                    {t("aboutUs.ourPromise.promises.3.description")}
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Us CTA Section */}
+      <div className="bg-[#7CD5D5] py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto flex justify-center">
+            <Link
+              to="/contactus"
+              className="bg-white text-[#4A4A4A] px-8 py-4 rounded-lg text-xl font-medium hover:bg-gray-50 transition duration-300"
+            >
+              {t("aboutUs.contactUs.button")}
             </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* MYPETDOC LOGO Section */}
+      <div className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-[#4A4A4A] text-2xl md:text-3xl font-bold mb-12">
+              {t("aboutUs.logo.title")}
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-16">
+              {/* Left side - Logo */}
+              <div className="mt-8">
+                <img
+                  src={logocustom}
+                  alt="MyPetDoc Logo"
+                  className="w-[400px]"
+                />
+              </div>
+
+              {/* Right side - Description */}
+              <div className="space-y-8">
+                <div>
+                  <p className="text-[#4A4A4A] text-lg md:text-xl font-medium">
+                    <span className="font-bold">
+                      {t("aboutUs.logo.colorScheme.title")}
+                    </span>{" "}
+                    {t("aboutUs.logo.colorScheme.description")}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-[#4A4A4A] text-lg md:text-xl font-medium">
+                    <span className="font-bold">
+                      {t("aboutUs.logo.symbols.title")}
+                    </span>{" "}
+                    {t("aboutUs.logo.symbols.description")}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-[#4A4A4A] text-lg md:text-xl font-medium">
+                    <span className="font-bold">
+                      {t("aboutUs.logo.fontStyle.title")}
+                    </span>{" "}
+                    {t("aboutUs.logo.fontStyle.description")}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

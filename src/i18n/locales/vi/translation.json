@@ -256,6 +256,81 @@
       "title": "Bắt Đầu Tìm Kiếm Ngay",
       "subtitle": "Tìm bệnh viện thú y phù hợp cho thú cưng của bạn",
       "button": "Tìm Bệnh Viện"
+    },
+    "hero": {
+      "title": "Nơi Tình Yêu Gặp Gỡ Sự Chăm Sóc Cho Thú Cưng",
+      "subtitle": "Bởi vì mọi thú cưng đều xứng đáng được chăm sóc tốt nhất."
+    },
+    "ourDream": {
+      "title": "Ước Mơ Của Chúng Tôi",
+      "section1": {
+        "title": "Thú Cưng Hạnh Phúc, Chủ Nhân Hạnh Phúc",
+        "description": "mypetdoc.vn được tạo ra với ước mơ về một thế giới nơi thú cưng và chủ nhân sống hạnh phúc bên nhau."
+      },
+      "section2": {
+        "title": "Thông Tin Đáng Tin Cậy",
+        "description": "Chúng tôi tin rằng việc cung cấp thông tin đáng tin cậy và dễ tiếp cận là chìa khóa để đảm bảo thú cưng có cuộc sống khỏe mạnh và vui vẻ."
+      }
+    },
+    "ourFirstStep": {
+      "title": "Bước Đầu Tiên",
+      "steps": {
+        "1": {
+          "title": "Thông Tin Bệnh Viện Thú Y Uy Tín",
+          "description": "Chúng tôi đang cung cấp thông tin đáng tin cậy về các bệnh viện thú y."
+        },
+        "2": {
+          "title": "Hợp Tác Chuyên Gia",
+          "description": "Chúng tôi dự định hợp tác với các đối tác chuyên gia để cung cấp thông tin về thức ăn và đồ ăn vặt cho thú cưng."
+        },
+        "3": {
+          "title": "Nội Dung Giáo Dục",
+          "description": "Chúng tôi sẽ cung cấp nội dung đào tạo giáo dục và dịch vụ cá nhân hóa."
+        }
+      }
+    },
+    "weAreHere": {
+      "title": "Chúng Tôi Luôn Ở Đây Vì Bạn",
+      "points": {
+        "1": "Chúng tôi luôn sẵn sàng giúp bạn đưa ra những lựa chọn tốt nhất cho những người bạn lông xù của bạn.",
+        "2": "Chúng tôi cung cấp thông tin về thức ăn và đồ ăn vặt cho thú cưng.",
+        "3": "Chúng tôi cung cấp nội dung đào tạo giáo dục."
+      }
+    },
+    "ourPromise": {
+      "title": "Cam Kết Của Chúng Tôi",
+      "promises": {
+        "1": {
+          "title": "Thông Tin Đáng Tin Cậy",
+          "description": "Nguồn thông tin đáng tin cậy về chăm sóc thú cưng."
+        },
+        "2": {
+          "title": "Tư Vấn Chuyên Gia",
+          "description": "Thông tin từ các chuyên gia thú y."
+        },
+        "3": {
+          "title": "Dịch Vụ Cá Nhân Hóa",
+          "description": "Hỗ trợ phù hợp với nhu cầu của thú cưng của bạn."
+        }
+      }
+    },
+    "contactUs": {
+      "button": "Liên Hệ"
+    },
+    "logo": {
+      "title": "LOGO MYPETDOC",
+      "colorScheme": {
+        "title": "Màu Sắc:",
+        "description": "Thêm màu sắc ấm áp, thân thiện vào logo để tạo cảm giác gần gũi hơn. Sử dụng màu xanh dương và xanh lá pastel để tượng trưng cho sự tin cậy và thiên nhiên."
+      },
+      "symbols": {
+        "title": "Biểu Tượng:",
+        "description": "Kết hợp hình bóng chó hoặc mèo vào logo để ngay lập tức truyền tải mục đích của trang web."
+      },
+      "fontStyle": {
+        "title": "Phong Cách Chữ:",
+        "description": "Sử dụng font chữ mềm mại, hiện đại hơn để thể hiện sự chuyên nghiệp và thân thiện cùng một lúc."
+      }
     }
   },
   "blog": {
@@ -618,20 +693,17 @@
     }
   },
   "hospitalDetail": {
-    "info": {
+    "information": {
       "title": "Thông Tin Bệnh Viện",
       "address": "Địa Chỉ",
       "phone": "Điện Thoại",
-      "workingHours": "Giờ Làm Việc"
-    },
-    "services": {
-      "title": "Dịch Vụ"
+      "workingHours": "Giờ Làm Việc",
+      "website": "Trang Web"
     },
     "gallery": {
-      "title": "Thư Viện Ảnh",
-      "uploadButton": "Tải Ảnh Lên",
-      "viewDetails": "Xem Chi Tiết"
+      "title": "Thư Viện Ảnh"
     },
+    "reviewCount": "đánh giá",
     "reviews": {
       "title": "Đánh Giá Từ Khách Hàng",
       "writeReview": "Viết Đánh Giá",
@@ -639,46 +711,43 @@
       "viewAll": "Xem Tất Cả Đánh Giá",
       "noReviews": "Chưa có đánh giá nào"
     },
-    "actions": {
-      "callNow": "Gọi Ngay",
-      "getDirections": "Chỉ Đường",
-      "addFavorite": "Thêm Yêu Thích",
-      "removeFavorite": "Bỏ Yêu Thích"
-    },
     "modal": {
-      "uploadPhoto": {
-        "title": "Tải Ảnh Lên",
-        "photoTitle": "Tiêu Đề",
-        "titlePlaceholder": "Nhập tiêu đề ảnh",
-        "selectPhoto": "Chọn Ảnh",
-        "upload": "Tải Lên",
-        "uploading": "Đang tải...",
-        "cancel": "Hủy"
-      },
       "writeReview": {
         "title": "Viết Đánh Giá",
+        "titleUpdate": "Cập Nhật Đánh Giá",
         "rating": "Đánh Giá Của Bạn",
         "review": "Nội Dung Đánh Giá",
         "reviewPlaceholder": "Chia sẻ trải nghiệm của bạn...",
-        "addPhotos": "Thêm Ảnh (tối đa 5)",
-        "uploadPhotos": "Nhấp để tải lên",
+        "addPhoto": "Thêm Ảnh",
+        "uploadPhoto": "Nhấp để tải lên",
+        "imageLimit": "Kích thước tối đa: 5MB (JPG, PNG)",
+        "imageDescription": "Mô Tả Ảnh",
+        "imageDescriptionPlaceholder": "Mô tả ảnh của bạn",
         "submit": "Gửi Đánh Giá",
+        "update": "Cập Nhật Đánh Giá",
         "submitting": "Đang gửi...",
-        "cancel": "Hủy"
+        "cancel": "Hủy",
+        "errors": {
+          "loginRequired": "Vui lòng đăng nhập để viết đánh giá",
+          "ratingRequired": "Vui lòng chọn số sao đánh giá",
+          "reviewRequired": "Vui lòng viết nội dung đánh giá",
+          "imageSizeLimit": "Kích thước ảnh phải nhỏ hơn 5MB",
+          "imageTypeInvalid": "Chỉ chấp nhận ảnh định dạng JPG và PNG",
+          "submitError": "Không thể gửi đánh giá. Vui lòng thử lại"
+        }
       }
     },
-    "alerts": {
-      "loginRequired": "Vui lòng đăng nhập để thực hiện thao tác này",
-      "uploadSuccess": "Tải ảnh lên thành công",
-      "uploadError": "Tải ảnh thất bại",
-      "reviewSuccess": "Gửi đánh giá thành công",
-      "reviewError": "Gửi đánh giá thất bại",
-      "favoriteAdded": "Đã thêm vào yêu thích",
-      "favoriteRemoved": "Đã xóa khỏi yêu thích"
+    "actions": {
+      "addFavorite": "Thêm vào yêu thích",
+      "removeFavorite": "Bỏ yêu thích",
+      "callNow": "Gọi ngay",
+      "getDirections": "Chỉ đường"
+    },
+    "services": {
+      "title": "Dịch Vụ",
+      "Khoa Nội": "Khoa Nội",
+      "Khoa Ngoại": "Khoa Ngoại"
     }
-  },
-  "common": {
-    "reviews": "đánh giá"
   },
   "header": {
     "menu": {
@@ -698,7 +767,6 @@
     "auth": {
       "login": "Đăng Nhập",
       "register": "Đăng Ký",
-      "welcome": "Xin Chào",
       "profile": "Hồ Sơ",
       "myBlogs": "Blog Của Tôi",
       "admin": "Quản Trị",
@@ -738,15 +806,6 @@
   },
   "faq": {
     "title": "Hỗ trợ FAQ",
-    "description": "Xin chào! 👋 Chúng tôi có thể giúp gì cho bạn?",
-    "placeholder": "Nhập câu hỏi của bạn...",
-    "status": "Đang hoạt động",
-    "welcome": "Vui lòng chọn chủ đề bạn cần hỗ trợ:",
-    "topics": {
-      "findHospital": "Tìm Bệnh Viện",
-      "services": "Dịch Vụ",
-      "appointment": "Đặt Lịch Hẹn",
-      "account": "Tài Khoản & Hồ Sơ"
-    }
+    "description": "Xin chào! 👋 Chúng tôi có thể giúp gì cho bạn?"
   }
 }

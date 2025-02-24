@@ -37,8 +37,10 @@ function Profile() {
     try {
       const data = await getAllReviewsByAuth();
       console.log(data.data.reviews);
-      const reviewsRes = Array.isArray(data.data.reviews) ? data.data.reviews : []
-      const reviewData = reviewsRes.filter((_, index) => index < 2)
+      const reviewsRes = Array.isArray(data.data.reviews)
+        ? data.data.reviews
+        : [];
+      const reviewData = reviewsRes.filter((_, index) => index < 2);
 
       setReviews(reviewData);
     } catch (error) {
@@ -51,8 +53,10 @@ function Profile() {
     try {
       const data = await getHospitalFavorites();
       console.log(data.data.favorites);
-      const favoritesRes = Array.isArray(data.data.favorites) ? data.data.favorites : []
-      const reviewData = favoritesRes.filter((_, index) => index < 2)
+      const favoritesRes = Array.isArray(data.data.favorites)
+        ? data.data.favorites
+        : [];
+      const reviewData = favoritesRes.filter((_, index) => index < 2);
 
       setFavorites(reviewData);
     } catch (error) {
@@ -187,13 +191,13 @@ function Profile() {
               </Link>
               {(userInfo.role === "HOSPITAL_ADMIN" ||
                 userInfo.role === "ADMIN") && (
-                  <Link
-                    to="/add-hospital"
-                    className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors"
-                  >
-                    {t("profile.registerHospital")}
-                  </Link>
-                )}
+                <Link
+                  to="/add-hospital"
+                  className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors"
+                >
+                  {t("profile.registerHospital")}
+                </Link>
+              )}
             </div>
           </div>
 
@@ -247,45 +251,49 @@ function Profile() {
 
             {/* Right Column - Favorite Hospitals */}
             <div className="md:col-span-2">
-              <h2 className="text-xl font-semibold mb-4">
-                {t("profile.favoriteHospitals")}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {favorites.map((hospital) => (
-                  <div
-                    key={hospital.id}
-                    className="bg-white rounded-lg shadow-sm overflow-hidden"
-                  >
-                    <LazyLoadImage
-                      src={hospital.thumbnail}
-                      alt={hospital.name}
-                      effect="blur"
-                      className="w-full h-48 object-cover"
-                      placeholderSrc="/placeholder-hospital.jpg"
-                    />
-                    <div className="p-4">
-                      <h3 className="font-medium">{hospital.name}</h3>
-                      <div className="flex items-center mt-1">
-                        <Star className="text-yellow-400" size={16} />
-                        <span className="ml-1 text-sm">{hospital.rating}</span>
-                        <span className="mx-1 text-gray-500">·</span>
-                        <span className="text-sm text-gray-500">
-                          {hospital.reviews} reviews
-                        </span>
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-xl font-semibold mb-4">
+                  {t("profile.favoriteHospitals")}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {favorites.map((hospital) => (
+                    <div
+                      key={hospital.id}
+                      className="bg-white rounded-lg shadow-sm overflow-hidden"
+                    >
+                      <LazyLoadImage
+                        src={hospital.thumbnail}
+                        alt={hospital.name}
+                        effect="blur"
+                        className="w-full h-48 object-cover"
+                        placeholderSrc="/placeholder-hospital.jpg"
+                      />
+                      <div className="p-4">
+                        <h3 className="font-medium">{hospital.name}</h3>
+                        <div className="flex items-center mt-1">
+                          <Star className="text-yellow-400" size={16} />
+                          <span className="ml-1 text-sm">
+                            {hospital.rating}
+                          </span>
+                          <span className="mx-1 text-gray-500">·</span>
+                          <span className="text-sm text-gray-500">
+                            {hospital.reviews} reviews
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-2">
+                          {hospital.address}
+                        </p>
                       </div>
-                      <p className="text-sm text-gray-600 mt-2">
-                        {hospital.address}
-                      </p>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                <Link
+                  to="/profile/favorites"
+                  className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
+                >
+                  {t("profile.viewAllFavorites")}
+                </Link>
               </div>
-              <Link
-                to="/profile/favorites"
-                className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
-              >
-                {t("profile.viewAllFavorites")}
-              </Link>
             </div>
           </div>
         </div>

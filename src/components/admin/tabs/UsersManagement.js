@@ -1,6 +1,18 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Search, Eye, Edit, Trash2, Plus, Lock, Unlock, ToggleLeft, ToggleRight, X, RefreshCw } from "lucide-react";
+import {
+  Search,
+  Eye,
+  Edit,
+  Trash2,
+  Plus,
+  Lock,
+  Unlock,
+  ToggleLeft,
+  ToggleRight,
+  X,
+  RefreshCw,
+} from "lucide-react";
 import {
   deleteUser,
   updateUserStatus,
@@ -18,24 +30,18 @@ import { useToast } from "../../../context/ToastContext";
 
 function UsersManagement() {
   const dispatch = useDispatch();
-  const { 
-    users, 
-    deletedUsers, 
-    pagination, 
-    deletedPagination,
-    loading, 
-    error 
-  } = useSelector((state) => state.admin);
+  const { users, deletedUsers, pagination, deletedPagination, loading, error } =
+    useSelector((state) => state.admin);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [isAddingUser, setIsAddingUser] = useState(false);
   const [newUser, setNewUser] = useState({
-    email: '',
-    full_name: '',
-    password: '',
-    role: 'GENERAL_USER',
+    email: "",
+    full_name: "",
+    password: "",
+    role: "GENERAL_USER",
     avatar: null,
-    phone_number: ''
+    phone_number: "",
   });
   const [modalMode, setModalMode] = useState("view"); // "view" or "edit"
   const [errors, setErrors] = useState({});
@@ -43,36 +49,38 @@ function UsersManagement() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [modalState, setModalState] = useState({
     isOpen: false,
-    mode: 'view', // 'view' | 'edit' | 'add'
-    user: null
+    mode: "view", // 'view' | 'edit' | 'add'
+    user: null,
   });
-  const [activeTab, setActiveTab] = useState('active'); // 'active' | 'trash'
-  const [lockTab, setLockTab] = useState('active'); // 'active' | 'trash'
+  const [activeTab, setActiveTab] = useState("active"); // 'active' | 'trash'
+  const [lockTab, setLockTab] = useState("active"); // 'active' | 'trash'
   const [showCreateModal, setShowCreateModal] = useState(false);
   const fileInputRef = useRef(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editForm, setEditForm] = useState({
-    email: '',
-    full_name: '',
-    password: '',
-    role: '',
-    phone_number: '',
-    pet_type: '',
-    pet_age: '',
-    pet_notes: '',
+    email: "",
+    full_name: "",
+    password: "",
+    role: "",
+    phone_number: "",
+    pet_type: "",
+    pet_age: "",
+    pet_notes: "",
     is_active: true,
     is_locked: false,
     avatar: null,
-    pet_photo: null
+    pet_photo: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     // Fetch users based on the active tab
-    if (activeTab === 'active') {
+    if (activeTab === "active") {
       dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
     } else {
-      dispatch(fetchDeletedUsers({ page: pagination.page, limit: pagination.limit }));
+      dispatch(
+        fetchDeletedUsers({ page: pagination.page, limit: pagination.limit })
+      );
     }
   }, [dispatch, pagination.page, pagination.limit, activeTab]);
 
@@ -90,15 +98,15 @@ function UsersManagement() {
   const handleView = (user) => {
     setModalState({
       isOpen: true,
-      mode: 'view',
-      user
+      mode: "view",
+      user,
     });
   };
 
   const handleEdit = (user) => {
     setEditForm({
       ...user,
-      password: ''
+      password: "",
     });
     // Reset errors
     setErrors({});
@@ -107,28 +115,36 @@ function UsersManagement() {
 
   const handleToggleLock = async (userId, currentLockState) => {
     try {
-      const message = currentLockState 
-        ? "Are you sure you want to unlock this user?" 
+      const message = currentLockState
+        ? "Are you sure you want to unlock this user?"
         : "Are you sure you want to lock this user?";
-      
+
       if (window.confirm(message)) {
         await dispatch(toggleLockUser(userId)).unwrap();
         addToast({
           type: "success",
-          message: `${currentLockState ? 'Unlock' : 'Lock'} user successfully!`
+          message: `${currentLockState ? "Unlock" : "Lock"} user successfully!`,
         });
         // Refresh both lists
-        if (lockTab === 'active') {
-          dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
+        if (lockTab === "active") {
+          dispatch(
+            fetchUsers({ page: pagination.page, limit: pagination.limit })
+          );
         } else {
-          dispatch(fetchDeletedUsers({ page: pagination.page, limit: pagination.limit }));
+          dispatch(
+            fetchDeletedUsers({
+              page: pagination.page,
+              limit: pagination.limit,
+            })
+          );
         }
       }
     } catch (error) {
-      const errorMessage = error?.message || "An error occurred while performing the operation!";
+      const errorMessage =
+        error?.message || "An error occurred while performing the operation!";
       addToast({
         type: "error",
-        message: errorMessage
+        message: errorMessage,
       });
     }
   };
@@ -138,33 +154,43 @@ function UsersManagement() {
       if (!userId) {
         addToast({
           type: "error",
-          message: "User ID not found!"
+          message: "User ID not found!",
         });
         return;
       }
 
-      const message = currentActiveState 
-        ? "Are you sure you want to disable this user?" 
+      const message = currentActiveState
+        ? "Are you sure you want to disable this user?"
         : "Are you sure you want to activate this user?";
-      
+
       if (window.confirm(message)) {
         await dispatch(toggleActiveUser(userId)).unwrap();
         addToast({
           type: "success",
-          message: `${currentActiveState ? 'Disable' : 'Activate'} user successfully!`
+          message: `${
+            currentActiveState ? "Disable" : "Activate"
+          } user successfully!`,
         });
         // Refresh both lists
-        if (activeTab === 'active') {
-          dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
+        if (activeTab === "active") {
+          dispatch(
+            fetchUsers({ page: pagination.page, limit: pagination.limit })
+          );
         } else {
-          dispatch(fetchDeletedUsers({ page: pagination.page, limit: pagination.limit }));
+          dispatch(
+            fetchDeletedUsers({
+              page: pagination.page,
+              limit: pagination.limit,
+            })
+          );
         }
       }
     } catch (error) {
-      const errorMessage = error?.message || "An error occurred while performing the operation!";
+      const errorMessage =
+        error?.message || "An error occurred while performing the operation!";
       addToast({
         type: "error",
-        message: errorMessage
+        message: errorMessage,
       });
     }
   };
@@ -179,20 +205,28 @@ function UsersManagement() {
         await dispatch(toggleDeleteUser(userId)).unwrap();
         addToast({
           type: "success",
-          message: `${isDeleted ? 'Restore' : 'Delete'} user successfully!`
+          message: `${isDeleted ? "Restore" : "Delete"} user successfully!`,
         });
         // Refresh both lists
-        if (activeTab === 'active') {
-          dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
+        if (activeTab === "active") {
+          dispatch(
+            fetchUsers({ page: pagination.page, limit: pagination.limit })
+          );
         } else {
-          dispatch(fetchDeletedUsers({ page: pagination.page, limit: pagination.limit }));
+          dispatch(
+            fetchDeletedUsers({
+              page: pagination.page,
+              limit: pagination.limit,
+            })
+          );
         }
       }
     } catch (error) {
-      const errorMessage = error?.message || "An error occurred while performing the operation!";
+      const errorMessage =
+        error?.message || "An error occurred while performing the operation!";
       addToast({
         type: "error",
-        message: errorMessage
+        message: errorMessage,
       });
     }
   };
@@ -200,35 +234,36 @@ function UsersManagement() {
   const handlePermanentDelete = async (userId) => {
     try {
       const confirmed = window.confirm(
-        'Are you sure you want to permanently delete this user? This action cannot be undone and will delete all related data.'
+        "Are you sure you want to permanently delete this user? This action cannot be undone and will delete all related data."
       );
 
       if (!confirmed) return;
 
       const result = await dispatch(deleteUserPermanently(userId)).unwrap();
-      
+
       addToast({
-        type: 'success',
-        message: result.message || 'Delete user successfully!'
+        type: "success",
+        message: result.message || "Delete user successfully!",
       });
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while deleting the user'
+        type: "error",
+        message: error.message || "An error occurred while deleting the user",
       });
     }
   };
 
   // Filter users based on searchTerm
   const filteredUsers = useMemo(() => {
-    const currentUsers = activeTab === 'active' ? users : deletedUsers;
+    const currentUsers = activeTab === "active" ? users : deletedUsers;
     if (!searchTerm.trim()) return currentUsers;
 
     const searchValue = searchTerm.toLowerCase().trim();
-    return currentUsers.filter(user => 
-      (user.full_name?.toLowerCase() || '').includes(searchValue) ||
-      (user.email?.toLowerCase() || '').includes(searchValue) ||
-      (user.phone_number || '').includes(searchValue)
+    return currentUsers.filter(
+      (user) =>
+        (user.full_name?.toLowerCase() || "").includes(searchValue) ||
+        (user.email?.toLowerCase() || "").includes(searchValue) ||
+        (user.phone_number || "").includes(searchValue)
     );
   }, [users, deletedUsers, searchTerm, activeTab]);
 
@@ -284,7 +319,10 @@ function UsersManagement() {
     }
 
     if (newUser.phone_number && !/^[0-9]{10}$/.test(newUser.phone_number)) {
-      setErrors((prev) => ({ ...prev, phone_number: 'Invalid phone number (10 digits)' }));
+      setErrors((prev) => ({
+        ...prev,
+        phone_number: "Invalid phone number (10 digits)",
+      }));
       hasError = true;
     }
 
@@ -306,41 +344,43 @@ function UsersManagement() {
       role: "Pet Owner",
       password: "",
       confirmPassword: "",
-      phone_number: '',
+      phone_number: "",
     });
   };
 
   const handleUpdateUser = async (e) => {
     e.preventDefault();
-    
+
     const validationErrors = validateForm(editForm, true);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       // Display the first error message
       const firstError = Object.values(validationErrors)[0];
       addToast({
-        type: 'error',
-        message: firstError
+        type: "error",
+        message: firstError,
       });
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await dispatch(updateUserInfo({
-        userId: editForm.id,
-        userData: editForm
-      })).unwrap();
-      
+      await dispatch(
+        updateUserInfo({
+          userId: editForm.id,
+          userData: editForm,
+        })
+      ).unwrap();
+
       addToast({
-        type: 'success',
-        message: 'Update user successfully!'
+        type: "success",
+        message: "Update user successfully!",
       });
       setShowEditModal(false);
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while updating the user'
+        type: "error",
+        message: error.message || "An error occurred while updating the user",
       });
     } finally {
       setIsSubmitting(false);
@@ -350,100 +390,108 @@ function UsersManagement() {
   const handleFileChange = (e, field) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB
         addToast({
-          type: 'error',
-          message: 'File size must not exceed 5MB'
+          type: "error",
+          message: "File size must not exceed 5MB",
         });
         return;
       }
-      setEditForm(prev => ({ ...prev, [field]: file }));
+      setEditForm((prev) => ({ ...prev, [field]: file }));
     }
   };
 
   const closeModal = () => {
     setModalState({
       isOpen: false,
-      mode: 'view',
-      user: null
+      mode: "view",
+      user: null,
     });
   };
 
   const validateForm = (formData, isEdit = false) => {
     const errors = {};
-    
+
     // Validate email
     if (!formData.email) {
-      errors.email = 'Email is required';
+      errors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = 'Invalid email address';
+      errors.email = "Invalid email address";
     }
 
     // Validate họ tên
     if (!formData.full_name) {
-      errors.full_name = 'Full name is required';
+      errors.full_name = "Full name is required";
     } else if (formData.full_name.length < 2) {
-      errors.full_name = 'Full name must be at least 2 characters';
+      errors.full_name = "Full name must be at least 2 characters";
     } else if (formData.full_name.length > 50) {
-      errors.full_name = 'Full name must not exceed 50 characters';
+      errors.full_name = "Full name must not exceed 50 characters";
     }
 
     // Validate password (only required when creating a new user)
     if (!isEdit && !formData.password) {
-      errors.password = 'Password is required';
+      errors.password = "Password is required";
     } else if (formData.password && formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+      errors.password = "Password must be at least 6 characters";
     } else if (formData.password && formData.password.length > 50) {
-      errors.password = 'Password must not exceed 50 characters';
-    } else if (formData.password && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      errors.password = 'Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number';
+      errors.password = "Password must not exceed 50 characters";
+    } else if (
+      formData.password &&
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)
+    ) {
+      errors.password =
+        "Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number";
     }
 
     // Validate số điện thoại
     if (formData.phone_number) {
       if (!/^[0-9]{10}$/.test(formData.phone_number)) {
-        errors.phone_number = 'Phone number must be 10 digits';
+        errors.phone_number = "Phone number must be 10 digits";
       } else if (!/^(0[3|5|7|8|9])/.test(formData.phone_number)) {
-        errors.phone_number = 'Invalid phone number';
+        errors.phone_number = "Invalid phone number";
       }
     }
 
     // Validate role
     if (!formData.role) {
-      errors.role = 'Role is required';
+      errors.role = "Role is required";
     }
 
     // Validate file ảnh
     if (formData.avatar instanceof File) {
       if (formData.avatar.size > 5 * 1024 * 1024) {
-        errors.avatar = 'Image size must not exceed 5MB';
+        errors.avatar = "Image size must not exceed 5MB";
       }
-      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      const validTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validTypes.includes(formData.avatar.type)) {
-        errors.avatar = 'Only JPG, PNG, and GIF images are supported';
+        errors.avatar = "Only JPG, PNG, and GIF images are supported";
       }
     }
 
     // Validate thông tin thú cưng (nếu có)
     if (formData.pet_age && isNaN(formData.pet_age)) {
-      errors.pet_age = 'Pet age must be a number';
+      errors.pet_age = "Pet age must be a number";
     }
 
-    if (formData.pet_type && !['DOG', 'CAT', 'OTHER'].includes(formData.pet_type)) {
-      errors.pet_type = 'Invalid pet type';
+    if (
+      formData.pet_type &&
+      !["DOG", "CAT", "OTHER"].includes(formData.pet_type)
+    ) {
+      errors.pet_type = "Invalid pet type";
     }
 
     if (formData.pet_notes && formData.pet_notes.length > 500) {
-      errors.pet_notes = 'Notes must not exceed 500 characters';
+      errors.pet_notes = "Notes must not exceed 500 characters";
     }
 
     if (formData.pet_photo instanceof File) {
       if (formData.pet_photo.size > 5 * 1024 * 1024) {
-        errors.pet_photo = 'Image size must not exceed 5MB';
+        errors.pet_photo = "Image size must not exceed 5MB";
       }
-      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      const validTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validTypes.includes(formData.pet_photo.type)) {
-        errors.pet_photo = 'Only JPG, PNG, and GIF images are supported';
+        errors.pet_photo = "Only JPG, PNG, and GIF images are supported";
       }
     }
 
@@ -452,15 +500,15 @@ function UsersManagement() {
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
-    
+
     const validationErrors = validateForm(newUser);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       // Hiển thị thông báo lỗi đầu tiên
       const firstError = Object.values(validationErrors)[0];
       addToast({
-        type: 'error',
-        message: firstError
+        type: "error",
+        message: firstError,
       });
       return;
     }
@@ -469,23 +517,23 @@ function UsersManagement() {
     try {
       await dispatch(createUser(newUser)).unwrap();
       addToast({
-        type: 'success',
-        message: 'Create user successfully!'
+        type: "success",
+        message: "Create user successfully!",
       });
       setShowCreateModal(false);
       setNewUser({
-        email: '',
-        full_name: '',
-        password: '',
-        role: 'GENERAL_USER',
+        email: "",
+        full_name: "",
+        password: "",
+        role: "GENERAL_USER",
         avatar: null,
-        phone_number: ''
+        phone_number: "",
       });
       dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while creating the user'
+        type: "error",
+        message: error.message || "An error occurred while creating the user",
       });
     } finally {
       setIsSubmitting(false);
@@ -493,7 +541,7 @@ function UsersManagement() {
   };
 
   // Render data dựa theo tab
-  const displayedUsers = activeTab === 'active' ? users : deletedUsers;
+  const displayedUsers = activeTab === "active" ? users : deletedUsers;
 
   if (loading) {
     return (
@@ -506,7 +554,8 @@ function UsersManagement() {
   if (error) {
     return (
       <div className="text-center text-red-500 p-4">
-        Error loading users: {error?.message || "An error occurred while loading data"}
+        Error loading users:{" "}
+        {error?.message || "An error occurred while loading data"}
       </div>
     );
   }
@@ -516,21 +565,21 @@ function UsersManagement() {
       {/* Tabs */}
       <div className="flex space-x-4 mb-4">
         <button
-          onClick={() => setActiveTab('active')}
+          onClick={() => setActiveTab("active")}
           className={`px-4 py-2 rounded-lg ${
-            activeTab === 'active'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            activeTab === "active"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
         >
           User List
         </button>
         <button
-          onClick={() => setActiveTab('trash')}
+          onClick={() => setActiveTab("trash")}
           className={`px-4 py-2 rounded-lg ${
-            activeTab === 'trash'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            activeTab === "trash"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
         >
           Trash
@@ -549,8 +598,8 @@ function UsersManagement() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
             />
-            <Search 
-              size={20} 
+            <Search
+              size={20}
               className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
             />
           </div>
@@ -569,9 +618,7 @@ function UsersManagement() {
       {/* Empty State khi không có kết quả tìm kiếm */}
       {filteredUsers.length === 0 && searchTerm && (
         <div className="text-center py-8">
-          <p className="text-gray-500">
-            No users found
-          </p>
+          <p className="text-gray-500">No users found</p>
         </div>
       )}
 
@@ -607,7 +654,9 @@ function UsersManagement() {
             <tbody className="divide-y divide-gray-200">
               {filteredUsers.map((user) => (
                 <tr key={user.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{user.full_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {user.full_name}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
@@ -622,23 +671,31 @@ function UsersManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        user.is_active 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {user.is_active ? 'Active' : 'Inactive'}
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          user.is_active
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {user.is_active ? "Active" : "Inactive"}
                       </span>
                       <button
-                        onClick={() => handleToggleActive(user.id, user.is_active)}
+                        onClick={() =>
+                          handleToggleActive(user.id, user.is_active)
+                        }
                         className={`p-1 rounded hover:bg-gray-100 ${
-                          user.is_active 
-                            ? 'text-green-600' 
-                            : 'text-red-600'
+                          user.is_active ? "text-green-600" : "text-red-600"
                         }`}
-                        title={user.is_active ? 'Deactivate user' : 'Activate user'}
+                        title={
+                          user.is_active ? "Deactivate user" : "Activate user"
+                        }
                       >
-                        {user.is_active ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+                        {user.is_active ? (
+                          <ToggleRight size={18} />
+                        ) : (
+                          <ToggleLeft size={18} />
+                        )}
                       </button>
                     </div>
                   </td>
@@ -647,23 +704,29 @@ function UsersManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        user.is_locked 
-                          ? 'bg-red-100 text-red-800' 
-                          : 'bg-green-100 text-green-800'
-                      }`}>
-                        {user.is_locked ? 'Locked' : 'Unlocked'}
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          user.is_locked
+                            ? "bg-red-100 text-red-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {user.is_locked ? "Locked" : "Unlocked"}
                       </span>
                       <button
-                        onClick={() => handleToggleLock(user.id, user.is_locked)}
+                        onClick={() =>
+                          handleToggleLock(user.id, user.is_locked)
+                        }
                         className={`p-1 rounded hover:bg-gray-100 ${
-                          user.is_locked 
-                            ? 'text-green-600' 
-                            : 'text-red-600'
+                          user.is_locked ? "text-green-600" : "text-red-600"
                         }`}
-                        title={user.is_locked ? 'Unlock user' : 'Lock user'}
+                        title={user.is_locked ? "Unlock user" : "Lock user"}
                       >
-                        {user.is_locked ? <Unlock size={18} /> : <Lock size={18} />}
+                        {user.is_locked ? (
+                          <Unlock size={18} />
+                        ) : (
+                          <Lock size={18} />
+                        )}
                       </button>
                     </div>
                   </td>
@@ -682,15 +745,21 @@ function UsersManagement() {
                         <Edit size={18} />
                       </button>
                       <button
-                        onClick={() => handleToggleDelete(user.id, user.is_deleted)}
+                        onClick={() =>
+                          handleToggleDelete(user.id, user.is_deleted)
+                        }
                         className={`text-red-600 hover:text-red-900 ${
-                          user.is_deleted ? 'text-green-600' : ''
+                          user.is_deleted ? "text-green-600" : ""
                         }`}
-                        title={user.is_deleted ? 'Restore' : 'Delete'}
+                        title={user.is_deleted ? "Restore" : "Delete"}
                       >
-                        {user.is_deleted ? <RefreshCw size={18} /> : <Trash2 size={18} />}
+                        {user.is_deleted ? (
+                          <RefreshCw size={18} />
+                        ) : (
+                          <Trash2 size={18} />
+                        )}
                       </button>
-                      {activeTab === 'trash' && (
+                      {activeTab === "trash" && (
                         <button
                           onClick={() => handlePermanentDelete(user.id)}
                           className="p-1 rounded hover:bg-gray-100 text-red-600"
@@ -712,18 +781,27 @@ function UsersManagement() {
       {(activeTab === "active" ? users : deletedUsers)?.length > 0 && (
         <div className="flex items-center justify-between py-3">
           <div className="text-sm text-gray-500">
-            Showing {activeTab === "active" ? pagination.page : deletedPagination.page} of{" "}
-              {activeTab === "active" ? pagination.totalPages : deletedPagination.totalPages} pages
+            Showing{" "}
+            {activeTab === "active" ? pagination.page : deletedPagination.page}{" "}
+            of{" "}
+            {activeTab === "active"
+              ? pagination.totalPages
+              : deletedPagination.totalPages}{" "}
+            pages
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => {
-                const action = activeTab === "active" ? fetchUsers : fetchDeletedUsers;
-                const currentPage = activeTab === "active" ? pagination.page : deletedPagination.page;
+                const action =
+                  activeTab === "active" ? fetchUsers : fetchDeletedUsers;
+                const currentPage =
+                  activeTab === "active"
+                    ? pagination.page
+                    : deletedPagination.page;
                 dispatch(action({ page: currentPage - 1, limit: 10 }));
               }}
               disabled={
-                activeTab === "active" 
+                activeTab === "active"
                   ? pagination.page === 1 || users.length === 0
                   : deletedPagination.page === 1 || deletedUsers.length === 0
               }
@@ -733,15 +811,24 @@ function UsersManagement() {
             </button>
             <button
               onClick={() => {
-                const action = activeTab === "active" ? fetchUsers : fetchDeletedUsers;
-                const currentPage = activeTab === "active" ? pagination.page : deletedPagination.page;
-                const totalPages = activeTab === "active" ? pagination.totalPages : deletedPagination.totalPages;
+                const action =
+                  activeTab === "active" ? fetchUsers : fetchDeletedUsers;
+                const currentPage =
+                  activeTab === "active"
+                    ? pagination.page
+                    : deletedPagination.page;
+                const totalPages =
+                  activeTab === "active"
+                    ? pagination.totalPages
+                    : deletedPagination.totalPages;
                 dispatch(action({ page: currentPage + 1, limit: 10 }));
               }}
               disabled={
                 activeTab === "active"
-                  ? pagination.page === pagination.totalPages || users.length === 0
-                  : deletedPagination.page === deletedPagination.totalPages || deletedUsers.length === 0
+                  ? pagination.page === pagination.totalPages ||
+                    users.length === 0
+                  : deletedPagination.page === deletedPagination.totalPages ||
+                    deletedUsers.length === 0
               }
               className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
@@ -752,11 +839,12 @@ function UsersManagement() {
       )}
 
       {/* Empty State */}
-      {!loading && (activeTab === "active" ? users : deletedUsers)?.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          {activeTab === "active" ? "No users found" : "Trash is empty"}
-        </div>
-      )}
+      {!loading &&
+        (activeTab === "active" ? users : deletedUsers)?.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            {activeTab === "active" ? "No users found" : "Trash is empty"}
+          </div>
+        )}
 
       {/* User Detail Modal */}
       {modalState.isOpen && (
@@ -779,10 +867,14 @@ function UsersManagement() {
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {/* Content sections */}
               <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-4">Basic Information</h4>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">
+                  Basic Information
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">ID</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      ID
+                    </label>
                     <input
                       type="text"
                       value={modalState.user.id}
@@ -798,7 +890,7 @@ function UsersManagement() {
                     <input
                       type="text"
                       value={modalState.user.full_name}
-                      readOnly={modalState.mode === 'view'}
+                      readOnly={modalState.mode === "view"}
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                     />
                   </div>
@@ -810,7 +902,7 @@ function UsersManagement() {
                     <input
                       type="email"
                       value={modalState.user.email}
-                      readOnly={modalState.mode === 'view'}
+                      readOnly={modalState.mode === "view"}
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                     />
                   </div>
@@ -821,8 +913,8 @@ function UsersManagement() {
                     </label>
                     <input
                       type="text"
-                      value={modalState.user.phone_number || 'Chưa cập nhật'}
-                      readOnly={modalState.mode === 'view'}
+                      value={modalState.user.phone_number || "Chưa cập nhật"}
+                      readOnly={modalState.mode === "view"}
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                     />
                   </div>
@@ -834,7 +926,7 @@ function UsersManagement() {
                     <input
                       type="text"
                       value={modalState.user.role}
-                      readOnly={modalState.mode === 'view'}
+                      readOnly={modalState.mode === "view"}
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                     />
                   </div>
@@ -845,7 +937,7 @@ function UsersManagement() {
                     </label>
                     <input
                       type="text"
-                      value={modalState.user.hospital_id || 'Chưa có'}
+                      value={modalState.user.hospital_id || "Chưa có"}
                       readOnly
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                     />
@@ -854,19 +946,25 @@ function UsersManagement() {
               </div>
 
               <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-4">Account Status</h4>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">
+                  Account Status
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Active Status
                     </label>
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        modalState.user.is_active 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {modalState.user.is_active ? 'Đang hoạt động' : 'Đã vô hiệu hóa'}
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          modalState.user.is_active
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {modalState.user.is_active
+                          ? "Đang hoạt động"
+                          : "Đã vô hiệu hóa"}
                       </span>
                     </div>
                   </div>
@@ -876,12 +974,14 @@ function UsersManagement() {
                       Lock Status
                     </label>
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        modalState.user.is_locked 
-                          ? 'bg-red-100 text-red-800' 
-                          : 'bg-green-100 text-green-800'
-                      }`}>
-                        {modalState.user.is_locked ? 'Locked' : 'Unlocked'}
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          modalState.user.is_locked
+                            ? "bg-red-100 text-red-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {modalState.user.is_locked ? "Locked" : "Unlocked"}
                       </span>
                     </div>
                   </div>
@@ -891,12 +991,14 @@ function UsersManagement() {
                       Deleted
                     </label>
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        modalState.user.is_deleted 
-                          ? 'bg-red-100 text-red-800' 
-                          : 'bg-green-100 text-green-800'
-                      }`}>
-                        {modalState.user.is_deleted ? 'Deleted' : 'Not Deleted'}
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          modalState.user.is_deleted
+                            ? "bg-red-100 text-red-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {modalState.user.is_deleted ? "Deleted" : "Not Deleted"}
                       </span>
                     </div>
                   </div>
@@ -916,7 +1018,9 @@ function UsersManagement() {
               </div>
 
               <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-4">Authentication Information</h4>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">
+                  Authentication Information
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -924,7 +1028,7 @@ function UsersManagement() {
                     </label>
                     <input
                       type="text"
-                      value={modalState.user.google_id || 'Không có'}
+                      value={modalState.user.google_id || "Không có"}
                       readOnly
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                     />
@@ -935,7 +1039,7 @@ function UsersManagement() {
                       Avatar
                     </label>
                     {modalState.user.avatar ? (
-                      <img 
+                      <img
                         src={modalState.user.avatar}
                         alt="Avatar"
                         className="w-20 h-20 rounded-full object-cover"
@@ -947,9 +1051,14 @@ function UsersManagement() {
                 </div>
               </div>
 
-              {(modalState.user.pet_type || modalState.user.pet_age || modalState.user.pet_photo || modalState.user.pet_notes) && (
+              {(modalState.user.pet_type ||
+                modalState.user.pet_age ||
+                modalState.user.pet_photo ||
+                modalState.user.pet_notes) && (
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-4">Pet Information</h4>
+                  <h4 className="text-sm font-medium text-gray-500 mb-4">
+                    Pet Information
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -957,7 +1066,7 @@ function UsersManagement() {
                       </label>
                       <input
                         type="text"
-                        value={modalState.user.pet_type || 'Not updated'}
+                        value={modalState.user.pet_type || "Not updated"}
                         readOnly
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                       />
@@ -969,7 +1078,11 @@ function UsersManagement() {
                       </label>
                       <input
                         type="text"
-                        value={modalState.user.pet_age ? `${modalState.user.pet_age} years old` : 'Not updated'}
+                        value={
+                          modalState.user.pet_age
+                            ? `${modalState.user.pet_age} years old`
+                            : "Not updated"
+                        }
                         readOnly
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                       />
@@ -981,7 +1094,7 @@ function UsersManagement() {
                       </label>
                       <input
                         type="text"
-                        value={modalState.user.pet_notes || 'No notes'}
+                        value={modalState.user.pet_notes || "No notes"}
                         readOnly
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                       />
@@ -992,7 +1105,7 @@ function UsersManagement() {
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Pet Image
                         </label>
-                        <img 
+                        <img
                           src={modalState.user.pet_photo}
                           alt="Pet"
                           className="w-32 h-32 object-cover rounded-lg"
@@ -1012,7 +1125,9 @@ function UsersManagement() {
                     </label>
                     <input
                       type="text"
-                      value={new Date(modalState.user.created_at).toLocaleString()}
+                      value={new Date(
+                        modalState.user.created_at
+                      ).toLocaleString()}
                       readOnly
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                     />
@@ -1024,7 +1139,9 @@ function UsersManagement() {
                     </label>
                     <input
                       type="text"
-                      value={new Date(modalState.user.updated_at).toLocaleString()}
+                      value={new Date(
+                        modalState.user.updated_at
+                      ).toLocaleString()}
                       readOnly
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                     />
@@ -1041,14 +1158,16 @@ function UsersManagement() {
               >
                 Close
               </button>
-              {modalState.mode !== 'view' && (
+              {modalState.mode !== "view" && (
                 <button
                   onClick={() => {
-                    modalState.mode === 'edit' ? handleUpdateUser(modalState.user) : handleAddUser();
+                    modalState.mode === "edit"
+                      ? handleUpdateUser(modalState.user)
+                      : handleAddUser();
                   }}
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
                 >
-                  {modalState.mode === 'edit' ? 'Save changes' : 'Add user'}
+                  {modalState.mode === "edit" ? "Save changes" : "Add user"}
                 </button>
               )}
             </div>
@@ -1078,9 +1197,11 @@ function UsersManagement() {
                 <input
                   type="email"
                   value={newUser.email}
-                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, email: e.target.value })
+                  }
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.email ? 'border-red-500' : 'border-gray-300'
+                    errors.email ? "border-red-500" : "border-gray-300"
                   }`}
                 />
                 {errors.email && (
@@ -1095,13 +1216,17 @@ function UsersManagement() {
                 <input
                   type="text"
                   value={newUser.full_name}
-                  onChange={(e) => setNewUser({ ...newUser, full_name: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, full_name: e.target.value })
+                  }
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.full_name ? 'border-red-500' : 'border-gray-300'
+                    errors.full_name ? "border-red-500" : "border-gray-300"
                   }`}
                 />
                 {errors.full_name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.full_name}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.full_name}
+                  </p>
                 )}
               </div>
 
@@ -1112,14 +1237,18 @@ function UsersManagement() {
                 <input
                   type="tel"
                   value={newUser.phone_number}
-                  onChange={(e) => setNewUser({ ...newUser, phone_number: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, phone_number: e.target.value })
+                  }
                   placeholder="Enter phone number"
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.phone_number ? 'border-red-500' : 'border-gray-300'
+                    errors.phone_number ? "border-red-500" : "border-gray-300"
                   }`}
                 />
                 {errors.phone_number && (
-                  <p className="mt-1 text-sm text-red-600">{errors.phone_number}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.phone_number}
+                  </p>
                 )}
               </div>
 
@@ -1130,9 +1259,11 @@ function UsersManagement() {
                 <input
                   type="password"
                   value={newUser.password}
-                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, password: e.target.value })
+                  }
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.password ? 'border-red-500' : 'border-gray-300'
+                    errors.password ? "border-red-500" : "border-gray-300"
                   }`}
                 />
                 {errors.password && (
@@ -1146,9 +1277,11 @@ function UsersManagement() {
                 </label>
                 <select
                   value={newUser.role}
-                  onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, role: e.target.value })
+                  }
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.role ? 'border-red-500' : 'border-gray-300'
+                    errors.role ? "border-red-500" : "border-gray-300"
                   }`}
                 >
                   <option value="GENERAL_USER">General User</option>
@@ -1164,10 +1297,10 @@ function UsersManagement() {
                 <input
                   type="file"
                   ref={fileInputRef}
-                  onChange={(e) => handleFileChange(e, 'avatar')}
+                  onChange={(e) => handleFileChange(e, "avatar")}
                   accept="image/*"
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.avatar ? 'border-red-500' : 'border-gray-300'
+                    errors.avatar ? "border-red-500" : "border-gray-300"
                   }`}
                 />
               </div>
@@ -1184,17 +1317,39 @@ function UsersManagement() {
                   type="submit"
                   disabled={isSubmitting}
                   className={`px-4 py-2 text-sm font-medium text-white rounded-md 
-                    ${isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                    ${
+                      isSubmitting
+                        ? "bg-blue-400 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                    }`}
                 >
                   {isSubmitting ? (
                     <div className="flex items-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
                       Processing...
                     </div>
-                  ) : 'Create user'}
+                  ) : (
+                    "Create user"
+                  )}
                 </button>
               </div>
             </form>
@@ -1216,7 +1371,10 @@ function UsersManagement() {
               </button>
             </div>
 
-            <form onSubmit={handleUpdateUser} className="p-6 grid grid-cols-2 gap-6">
+            <form
+              onSubmit={handleUpdateUser}
+              className="p-6 grid grid-cols-2 gap-6"
+            >
               {/* Cột trái */}
               <div className="space-y-6">
                 <div>
@@ -1226,9 +1384,11 @@ function UsersManagement() {
                   <input
                     type="email"
                     value={editForm.email}
-                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, email: e.target.value })
+                    }
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.email ? 'border-red-500' : 'border-gray-300'
+                      errors.email ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                 </div>
@@ -1240,9 +1400,11 @@ function UsersManagement() {
                   <input
                     type="text"
                     value={editForm.full_name}
-                    onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, full_name: e.target.value })
+                    }
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.full_name ? 'border-red-500' : 'border-gray-300'
+                      errors.full_name ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                 </div>
@@ -1254,10 +1416,12 @@ function UsersManagement() {
                   <input
                     type="password"
                     value={editForm.password}
-                    onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, password: e.target.value })
+                    }
                     placeholder="Leave blank if you don't want to change"
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.password ? 'border-red-500' : 'border-gray-300'
+                      errors.password ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                 </div>
@@ -1269,9 +1433,11 @@ function UsersManagement() {
                   <input
                     type="tel"
                     value={editForm.phone_number}
-                    onChange={(e) => setEditForm({ ...editForm, phone_number: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, phone_number: e.target.value })
+                    }
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.phone_number ? 'border-red-500' : 'border-gray-300'
+                      errors.phone_number ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                 </div>
@@ -1282,9 +1448,11 @@ function UsersManagement() {
                   </label>
                   <select
                     value={editForm.role}
-                    onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, role: e.target.value })
+                    }
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.role ? 'border-red-500' : 'border-gray-300'
+                      errors.role ? "border-red-500" : "border-gray-300"
                     }`}
                   >
                     <option value="GENERAL_USER">General User</option>
@@ -1299,10 +1467,10 @@ function UsersManagement() {
                   </label>
                   <input
                     type="file"
-                    onChange={(e) => handleFileChange(e, 'avatar')}
+                    onChange={(e) => handleFileChange(e, "avatar")}
                     accept="image/*"
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.avatar ? 'border-red-500' : 'border-gray-300'
+                      errors.avatar ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                 </div>
@@ -1315,10 +1483,12 @@ function UsersManagement() {
                     Pet Type
                   </label>
                   <select
-                    value={editForm.pet_type || ''}
-                    onChange={(e) => setEditForm({ ...editForm, pet_type: e.target.value })}
+                    value={editForm.pet_type || ""}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, pet_type: e.target.value })
+                    }
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.pet_type ? 'border-red-500' : 'border-gray-300'
+                      errors.pet_type ? "border-red-500" : "border-gray-300"
                     }`}
                   >
                     <option value="">Select pet type</option>
@@ -1338,10 +1508,12 @@ function UsersManagement() {
                   </label>
                   <input
                     type="number"
-                    value={editForm.pet_age || ''}
-                    onChange={(e) => setEditForm({ ...editForm, pet_age: e.target.value })}
+                    value={editForm.pet_age || ""}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, pet_age: e.target.value })
+                    }
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.pet_age ? 'border-red-500' : 'border-gray-300'
+                      errors.pet_age ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                 </div>
@@ -1351,10 +1523,12 @@ function UsersManagement() {
                     Pet Notes
                   </label>
                   <textarea
-                    value={editForm.pet_notes || ''}
-                    onChange={(e) => setEditForm({ ...editForm, pet_notes: e.target.value })}
+                    value={editForm.pet_notes || ""}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, pet_notes: e.target.value })
+                    }
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.pet_notes ? 'border-red-500' : 'border-gray-300'
+                      errors.pet_notes ? "border-red-500" : "border-gray-300"
                     }`}
                     rows="3"
                   />
@@ -1366,10 +1540,10 @@ function UsersManagement() {
                   </label>
                   <input
                     type="file"
-                    onChange={(e) => handleFileChange(e, 'pet_photo')}
+                    onChange={(e) => handleFileChange(e, "pet_photo")}
                     accept="image/*"
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.pet_photo ? 'border-red-500' : 'border-gray-300'
+                      errors.pet_photo ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                 </div>
@@ -1388,17 +1562,39 @@ function UsersManagement() {
                   type="submit"
                   disabled={isSubmitting}
                   className={`px-4 py-2 text-sm font-medium text-white rounded-md 
-                    ${isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                    ${
+                      isSubmitting
+                        ? "bg-blue-400 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                    }`}
                 >
                   {isSubmitting ? (
                     <div className="flex items-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
                       Processing...
                     </div>
-                  ) : 'Update'}
+                  ) : (
+                    "Update"
+                  )}
                 </button>
               </div>
             </form>

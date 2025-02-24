@@ -26,7 +26,7 @@ import WriteBlog from "./components/blog/WriteBlog";
 import Profile from "./components/profile/Profile";
 import AllReviews from "./components/profile/AllReviews";
 import AllFavorites from "./components/profile/AllFavorites";
-import CommunityList from "./components/community/CommunityList";
+// import CommunityList from "./components/community/CommunityList";
 import PostDetail from "./components/community/PostDetail";
 import AddHospital from "./components/hospital/AddHospital";
 import MyBlogs from "./components/blog/MyBlogs";
@@ -35,6 +35,7 @@ import AuthCallback from "./components/auth/AuthCallback";
 import AuthError from "./components/auth/AuthError";
 import SelectRole from "./components/auth/SelectRole";
 import VerifyEmail from "./components/register/VerifyEmail";
+import Lucete from "./components/lucete/lucete";
 
 // Cấu hình AOS
 AOS.init({
@@ -117,14 +118,14 @@ function App() {
                 </MainLayout>
               }
             />
-            <Route
+            {/* <Route
               path="/community"
               element={
                 <MainLayout>
                   <CommunityList />
                 </MainLayout>
               }
-            />
+            /> */}
             <Route
               path="/community/post/:slug"
               element={
@@ -132,7 +133,7 @@ function App() {
                   <PostDetail />
                 </MainLayout>
               }
-            />  
+            />
             <Route
               path="/setting"
               element={
@@ -246,6 +247,14 @@ function App() {
               element={
                 <MainLayout>
                   <ContactUs />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/lucete"
+              element={
+                <MainLayout>
+                  <Lucete />
                 </MainLayout>
               }
             />

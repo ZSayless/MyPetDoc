@@ -1,20 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  mockHospitals,
-  mockBlogs,
-  mockReports,
-  mockMessages,
-  mockPendingApprovals,
-} from "../../data/mockData";
-import {adminService} from '../../services/adminService';
+import { adminService } from "../../services/adminService";
 
 const initialState = {
   users: [],
   deletedUsers: [],
-  hospitals: mockHospitals || [],
+  hospitals: [],
   blogs: [],
-  reports: mockReports || [],
-  messages: mockMessages || [],
+  reports: [],
+  messages: [],
   pendingApprovals:
     [
       {
@@ -44,14 +37,14 @@ const initialState = {
     page: 1,
     limit: 10,
     total: 0,
-    totalPages: 1
+    totalPages: 1,
   },
   deletedHospitals: [],
   deletedPagination: {
     page: 1,
     limit: 10,
     total: 0,
-    totalPages: 1
+    totalPages: 1,
   },
   isLoadingReports: false,
   reportsError: null,
@@ -61,7 +54,7 @@ const initialState = {
     page: 1,
     limit: 10,
     total: 0,
-    totalPages: 1
+    totalPages: 1,
   },
   isSubmittingBanner: false,
   isSubmittingBlog: false,
@@ -71,7 +64,7 @@ const initialState = {
     page: 1,
     limit: 10,
     total: 0,
-    totalPages: 1
+    totalPages: 1,
   },
   isLoadingFaqs: false,
   faqsError: null,
@@ -82,7 +75,7 @@ const initialState = {
     page: 1,
     limit: 10,
     total: 0,
-    totalPages: 1
+    totalPages: 1,
   },
   isLoadingPosts: false,
   postsError: null,
@@ -102,7 +95,7 @@ const initialState = {
     page: 1,
     limit: 10,
     total: 0,
-    totalPages: 1
+    totalPages: 1,
   },
   isLoadingTerms: false,
   termsError: null,
@@ -113,7 +106,7 @@ const initialState = {
     page: 1,
     limit: 10,
     total: 0,
-    totalPages: 1
+    totalPages: 1,
   },
   isLoadingContactInfo: false,
   contactInfoError: null,
@@ -122,7 +115,7 @@ const initialState = {
 };
 
 export const fetchUsers = createAsyncThunk(
-  'admin/fetchUsers',
+  "admin/fetchUsers",
   async ({ page, limit, isDeleted = false }, { rejectWithValue }) => {
     try {
       const response = await adminService.getUsers(page, limit, isDeleted);
@@ -134,7 +127,7 @@ export const fetchUsers = createAsyncThunk(
 );
 
 export const toggleDeleteUser = createAsyncThunk(
-  'admin/toggleDeleteUser',
+  "admin/toggleDeleteUser",
   async (userId, { rejectWithValue }) => {
     try {
       const response = await adminService.toggleDeleteUser(userId);
@@ -146,11 +139,11 @@ export const toggleDeleteUser = createAsyncThunk(
 );
 
 export const toggleLockUser = createAsyncThunk(
-  'admin/toggleLockUser',
+  "admin/toggleLockUser",
   async (userId, { rejectWithValue }) => {
     try {
       if (!userId) {
-        throw new Error('User ID is required');
+        throw new Error("User ID is required");
       }
       const response = await adminService.toggleLockUser(userId);
       return response.data;
@@ -161,11 +154,11 @@ export const toggleLockUser = createAsyncThunk(
 );
 
 export const toggleActiveUser = createAsyncThunk(
-  'admin/toggleActiveUser',
+  "admin/toggleActiveUser",
   async (userId, { rejectWithValue }) => {
     try {
       if (!userId) {
-        throw new Error('User ID is required');
+        throw new Error("User ID is required");
       }
       const response = await adminService.toggleActiveUser(userId);
       return response.data;
@@ -176,7 +169,7 @@ export const toggleActiveUser = createAsyncThunk(
 );
 
 export const fetchDeletedUsers = createAsyncThunk(
-  'admin/fetchDeletedUsers',
+  "admin/fetchDeletedUsers",
   async ({ page, limit }, { rejectWithValue }) => {
     try {
       const response = await adminService.getDeletedUsers(page, limit);
@@ -188,7 +181,7 @@ export const fetchDeletedUsers = createAsyncThunk(
 );
 
 export const createUser = createAsyncThunk(
-  'admin/createUser',
+  "admin/createUser",
   async (userData, { rejectWithValue }) => {
     try {
       const response = await adminService.createUser(userData);
@@ -200,7 +193,7 @@ export const createUser = createAsyncThunk(
 );
 
 export const updateUserInfo = createAsyncThunk(
-  'admin/updateUserInfo',
+  "admin/updateUserInfo",
   async ({ userId, userData }, { rejectWithValue }) => {
     try {
       const response = await adminService.updateUser(userId, userData);
@@ -212,7 +205,7 @@ export const updateUserInfo = createAsyncThunk(
 );
 
 export const deleteUserPermanently = createAsyncThunk(
-  'admin/deleteUserPermanently',
+  "admin/deleteUserPermanently",
   async (userId, { rejectWithValue }) => {
     try {
       const response = await adminService.deleteUserPermanently(userId);
@@ -224,7 +217,7 @@ export const deleteUserPermanently = createAsyncThunk(
 );
 
 export const fetchHospitals = createAsyncThunk(
-  'admin/fetchHospitals',
+  "admin/fetchHospitals",
   async (params, { rejectWithValue }) => {
     try {
       const response = await adminService.getHospitals(params);
@@ -236,7 +229,7 @@ export const fetchHospitals = createAsyncThunk(
 );
 
 export const toggleActiveHospital = createAsyncThunk(
-  'admin/toggleActiveHospital',
+  "admin/toggleActiveHospital",
   async (hospitalId, { rejectWithValue }) => {
     try {
       const response = await adminService.toggleActiveHospital(hospitalId);
@@ -248,7 +241,7 @@ export const toggleActiveHospital = createAsyncThunk(
 );
 
 export const fetchDeletedHospitals = createAsyncThunk(
-  'admin/fetchDeletedHospitals',
+  "admin/fetchDeletedHospitals",
   async ({ page, limit }, { rejectWithValue }) => {
     try {
       const response = await adminService.getDeletedHospitals(page, limit);
@@ -260,7 +253,7 @@ export const fetchDeletedHospitals = createAsyncThunk(
 );
 
 export const toggleDeleteHospital = createAsyncThunk(
-  'admin/toggleDeleteHospital',
+  "admin/toggleDeleteHospital",
   async (hospitalId, { rejectWithValue }) => {
     try {
       const response = await adminService.toggleDeleteHospital(hospitalId);
@@ -272,7 +265,7 @@ export const toggleDeleteHospital = createAsyncThunk(
 );
 
 export const updateHospital = createAsyncThunk(
-  'admin/updateHospital',
+  "admin/updateHospital",
   async ({ hospitalId, formData }, { rejectWithValue }) => {
     try {
       const response = await adminService.updateHospital(hospitalId, formData);
@@ -284,7 +277,7 @@ export const updateHospital = createAsyncThunk(
 );
 
 export const createHospital = createAsyncThunk(
-  'admin/createHospital',
+  "admin/createHospital",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await adminService.createHospital(formData);
@@ -296,7 +289,7 @@ export const createHospital = createAsyncThunk(
 );
 
 export const deleteHospitalPermanently = createAsyncThunk(
-  'admin/deleteHospitalPermanently',
+  "admin/deleteHospitalPermanently",
   async (hospitalId, { rejectWithValue }) => {
     try {
       await adminService.deleteHospitalPermanently(hospitalId);
@@ -308,7 +301,7 @@ export const deleteHospitalPermanently = createAsyncThunk(
 );
 
 export const fetchReports = createAsyncThunk(
-  'admin/fetchReports',
+  "admin/fetchReports",
   async (page = 1, { rejectWithValue }) => {
     try {
       const response = await adminService.getReports(page);
@@ -320,7 +313,7 @@ export const fetchReports = createAsyncThunk(
 );
 
 export const resolveReport = createAsyncThunk(
-  'admin/resolveReport',
+  "admin/resolveReport",
   async (reportId, { rejectWithValue }) => {
     try {
       await adminService.resolveReport(reportId);
@@ -332,7 +325,7 @@ export const resolveReport = createAsyncThunk(
 );
 
 export const deleteReviewPermanently = createAsyncThunk(
-  'admin/deleteReviewPermanently',
+  "admin/deleteReviewPermanently",
   async ({ reviewId, reportId }, { dispatch, rejectWithValue }) => {
     try {
       await adminService.deleteReviewPermanently(reviewId);
@@ -345,7 +338,7 @@ export const deleteReviewPermanently = createAsyncThunk(
 );
 
 export const deleteReportPermanently = createAsyncThunk(
-  'admin/deleteReportPermanently',
+  "admin/deleteReportPermanently",
   async (reportId, { rejectWithValue }) => {
     try {
       await adminService.deleteReportPermanently(reportId);
@@ -357,7 +350,7 @@ export const deleteReportPermanently = createAsyncThunk(
 );
 
 export const deleteGalleryComment = createAsyncThunk(
-  'admin/deleteGalleryComment',
+  "admin/deleteGalleryComment",
   async ({ commentId, reportId }, { dispatch, rejectWithValue }) => {
     try {
       await adminService.deleteGalleryComment(commentId);
@@ -370,7 +363,7 @@ export const deleteGalleryComment = createAsyncThunk(
 );
 
 export const fetchBanners = createAsyncThunk(
-  'admin/fetchBanners',
+  "admin/fetchBanners",
   async (_, { rejectWithValue }) => {
     try {
       const response = await adminService.getBanners();
@@ -382,7 +375,7 @@ export const fetchBanners = createAsyncThunk(
 );
 
 export const updateBanner = createAsyncThunk(
-  'admin/updateBanner',
+  "admin/updateBanner",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await adminService.updateBanner(id, data);
@@ -394,7 +387,7 @@ export const updateBanner = createAsyncThunk(
 );
 
 export const toggleActiveBanner = createAsyncThunk(
-  'admin/toggleActiveBanner',
+  "admin/toggleActiveBanner",
   async (id, { rejectWithValue }) => {
     try {
       const response = await adminService.toggleActiveBanner(id);
@@ -406,7 +399,7 @@ export const toggleActiveBanner = createAsyncThunk(
 );
 
 export const createBanner = createAsyncThunk(
-  'admin/createBanner',
+  "admin/createBanner",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await adminService.createBanner(formData);
@@ -418,7 +411,7 @@ export const createBanner = createAsyncThunk(
 );
 
 export const toggleDeleteBanner = createAsyncThunk(
-  'admin/toggleDeleteBanner',
+  "admin/toggleDeleteBanner",
   async (id, { rejectWithValue }) => {
     try {
       const response = await adminService.toggleDeleteBanner(id);
@@ -430,7 +423,7 @@ export const toggleDeleteBanner = createAsyncThunk(
 );
 
 export const hardDeleteBanner = createAsyncThunk(
-  'admin/hardDeleteBanner',
+  "admin/hardDeleteBanner",
   async (id, { rejectWithValue }) => {
     try {
       await adminService.hardDeleteBanner(id);
@@ -442,7 +435,7 @@ export const hardDeleteBanner = createAsyncThunk(
 );
 
 export const fetchBlogPosts = createAsyncThunk(
-  'admin/fetchBlogPosts',
+  "admin/fetchBlogPosts",
   async (params, { rejectWithValue }) => {
     try {
       const response = await adminService.getBlogPosts(params);
@@ -454,7 +447,7 @@ export const fetchBlogPosts = createAsyncThunk(
 );
 
 export const createBlogPost = createAsyncThunk(
-  'admin/createBlogPost',
+  "admin/createBlogPost",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await adminService.createBlogPost(formData);
@@ -466,7 +459,7 @@ export const createBlogPost = createAsyncThunk(
 );
 
 export const updateBlogPost = createAsyncThunk(
-  'admin/updateBlogPost',
+  "admin/updateBlogPost",
   async ({ id, formData }, { rejectWithValue }) => {
     try {
       const response = await adminService.updateBlogPost(id, formData);
@@ -478,7 +471,7 @@ export const updateBlogPost = createAsyncThunk(
 );
 
 export const fetchDeletedBlogs = createAsyncThunk(
-  'admin/fetchDeletedBlogs',
+  "admin/fetchDeletedBlogs",
   async (_, { rejectWithValue }) => {
     try {
       const response = await adminService.fetchDeletedBlogs();
@@ -490,7 +483,7 @@ export const fetchDeletedBlogs = createAsyncThunk(
 );
 
 export const toggleDeleteBlog = createAsyncThunk(
-  'admin/toggleDeleteBlog',
+  "admin/toggleDeleteBlog",
   async (blogId, { rejectWithValue }) => {
     try {
       const response = await adminService.toggleDeleteBlog(blogId);
@@ -502,7 +495,7 @@ export const toggleDeleteBlog = createAsyncThunk(
 );
 
 export const deleteBlogPermanently = createAsyncThunk(
-  'admin/deleteBlogPermanently',
+  "admin/deleteBlogPermanently",
   async (blogId, { rejectWithValue }) => {
     try {
       const response = await adminService.deleteBlogPermanently(blogId);
@@ -517,7 +510,7 @@ export const deleteBlogPermanently = createAsyncThunk(
 );
 
 export const fetchFaqs = createAsyncThunk(
-  'admin/fetchFaqs',
+  "admin/fetchFaqs",
   async (params, { rejectWithValue }) => {
     try {
       const response = await adminService.getFaqs(params);
@@ -529,7 +522,7 @@ export const fetchFaqs = createAsyncThunk(
 );
 
 export const createFaq = createAsyncThunk(
-  'admin/createFaq',
+  "admin/createFaq",
   async (data, { rejectWithValue }) => {
     try {
       const response = await adminService.createFaq(data);
@@ -541,7 +534,7 @@ export const createFaq = createAsyncThunk(
 );
 
 export const updateFaq = createAsyncThunk(
-  'admin/updateFaq',
+  "admin/updateFaq",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await adminService.updateFaq(id, data);
@@ -553,7 +546,7 @@ export const updateFaq = createAsyncThunk(
 );
 
 export const deleteFaq = createAsyncThunk(
-  'admin/deleteFaq',
+  "admin/deleteFaq",
   async (id, { rejectWithValue }) => {
     try {
       const response = await adminService.deleteFaq(id);
@@ -565,7 +558,7 @@ export const deleteFaq = createAsyncThunk(
 );
 
 export const fetchPosts = createAsyncThunk(
-  'admin/fetchPosts',
+  "admin/fetchPosts",
   async (params, { rejectWithValue }) => {
     try {
       const response = await adminService.getAllPosts(params);
@@ -577,7 +570,7 @@ export const fetchPosts = createAsyncThunk(
 );
 
 export const updatePostStatus = createAsyncThunk(
-  'admin/updatePostStatus',
+  "admin/updatePostStatus",
   async ({ id, status }, { rejectWithValue }) => {
     try {
       const response = await adminService.updatePostStatus(id, status);
@@ -589,7 +582,7 @@ export const updatePostStatus = createAsyncThunk(
 );
 
 export const deletePostPermanently = createAsyncThunk(
-  'admin/deletePostPermanently',
+  "admin/deletePostPermanently",
   async (id, { rejectWithValue }) => {
     try {
       await adminService.deletePostPermanently(id);
@@ -601,7 +594,7 @@ export const deletePostPermanently = createAsyncThunk(
 );
 
 export const fetchContactMessages = createAsyncThunk(
-  'admin/fetchContactMessages',
+  "admin/fetchContactMessages",
   async (params, { rejectWithValue }) => {
     try {
       const response = await adminService.getContactMessages(params);
@@ -613,10 +606,13 @@ export const fetchContactMessages = createAsyncThunk(
 );
 
 export const respondToMessage = createAsyncThunk(
-  'admin/respondToMessage',
+  "admin/respondToMessage",
   async ({ messageId, data }, { rejectWithValue }) => {
     try {
-      const response = await adminService.respondToContactMessage(messageId, data);
+      const response = await adminService.respondToContactMessage(
+        messageId,
+        data
+      );
       return response;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -625,7 +621,7 @@ export const respondToMessage = createAsyncThunk(
 );
 
 export const deleteContactMessagePermanently = createAsyncThunk(
-  'admin/deleteContactMessagePermanently',
+  "admin/deleteContactMessagePermanently",
   async (messageId, { rejectWithValue }) => {
     try {
       await adminService.deleteContactMessagePermanently(messageId);
@@ -637,7 +633,7 @@ export const deleteContactMessagePermanently = createAsyncThunk(
 );
 
 export const fetchAboutUsHistory = createAsyncThunk(
-  'admin/fetchAboutUsHistory',
+  "admin/fetchAboutUsHistory",
   async (params, { rejectWithValue }) => {
     try {
       const response = await adminService.getAboutUsHistory(params);
@@ -649,7 +645,7 @@ export const fetchAboutUsHistory = createAsyncThunk(
 );
 
 export const createAboutUs = createAsyncThunk(
-  'admin/createAboutUs',
+  "admin/createAboutUs",
   async (data, { rejectWithValue }) => {
     try {
       const response = await adminService.createAboutUs(data);
@@ -661,7 +657,7 @@ export const createAboutUs = createAsyncThunk(
 );
 
 export const updateAboutUs = createAsyncThunk(
-  'admin/updateAboutUs',
+  "admin/updateAboutUs",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await adminService.updateAboutUs(id, data);
@@ -673,7 +669,7 @@ export const updateAboutUs = createAsyncThunk(
 );
 
 export const fetchCurrentAboutUs = createAsyncThunk(
-  'admin/fetchCurrentAboutUs',
+  "admin/fetchCurrentAboutUs",
   async (_, { rejectWithValue }) => {
     try {
       const response = await adminService.getCurrentAboutUs();
@@ -685,7 +681,7 @@ export const fetchCurrentAboutUs = createAsyncThunk(
 );
 
 export const deleteAboutUs = createAsyncThunk(
-  'admin/deleteAboutUs',
+  "admin/deleteAboutUs",
   async (id, { rejectWithValue }) => {
     try {
       const response = await adminService.deleteAboutUs(id);
@@ -697,7 +693,7 @@ export const deleteAboutUs = createAsyncThunk(
 );
 
 export const fetchTermsList = createAsyncThunk(
-  'admin/fetchTermsList',
+  "admin/fetchTermsList",
   async (_, { rejectWithValue }) => {
     try {
       const response = await adminService.getTermsList();
@@ -709,7 +705,7 @@ export const fetchTermsList = createAsyncThunk(
 );
 
 export const createTerms = createAsyncThunk(
-  'admin/createTerms',
+  "admin/createTerms",
   async (data, { rejectWithValue }) => {
     try {
       const response = await adminService.createTerms(data);
@@ -721,7 +717,7 @@ export const createTerms = createAsyncThunk(
 );
 
 export const deleteTerms = createAsyncThunk(
-  'admin/deleteTerms',
+  "admin/deleteTerms",
   async (id, { rejectWithValue }) => {
     try {
       await adminService.deleteTerms(id);
@@ -733,7 +729,7 @@ export const deleteTerms = createAsyncThunk(
 );
 
 export const updateTerms = createAsyncThunk(
-  'admin/updateTerms',
+  "admin/updateTerms",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await adminService.updateTerms(id, data);
@@ -745,7 +741,7 @@ export const updateTerms = createAsyncThunk(
 );
 
 export const fetchContactInfoHistory = createAsyncThunk(
-  'admin/fetchContactInfoHistory',
+  "admin/fetchContactInfoHistory",
   async (params, { rejectWithValue }) => {
     try {
       const response = await adminService.getContactInfoHistory(params);
@@ -757,7 +753,7 @@ export const fetchContactInfoHistory = createAsyncThunk(
 );
 
 export const fetchCurrentContactInfo = createAsyncThunk(
-  'admin/fetchCurrentContactInfo',
+  "admin/fetchCurrentContactInfo",
   async (_, { rejectWithValue }) => {
     try {
       const response = await adminService.getCurrentContactInfo();
@@ -769,7 +765,7 @@ export const fetchCurrentContactInfo = createAsyncThunk(
 );
 
 export const createContactInfo = createAsyncThunk(
-  'admin/createContactInfo',
+  "admin/createContactInfo",
   async (data, { rejectWithValue }) => {
     try {
       const response = await adminService.createContactInfo(data);
@@ -781,7 +777,7 @@ export const createContactInfo = createAsyncThunk(
 );
 
 export const updateContactInfo = createAsyncThunk(
-  'admin/updateContactInfo',
+  "admin/updateContactInfo",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await adminService.updateContactInfo(id, data);
@@ -793,7 +789,7 @@ export const updateContactInfo = createAsyncThunk(
 );
 
 export const deleteContactInfo = createAsyncThunk(
-  'admin/deleteContactInfo',
+  "admin/deleteContactInfo",
   async (id, { rejectWithValue }) => {
     try {
       await adminService.deleteContactInfo(id);
@@ -805,7 +801,7 @@ export const deleteContactInfo = createAsyncThunk(
 );
 
 export const deleteBlogComment = createAsyncThunk(
-  'admin/deleteBlogComment',
+  "admin/deleteBlogComment",
   async ({ commentId, reportId }, { dispatch, rejectWithValue }) => {
     try {
       await adminService.deleteCommentBlog(commentId);
@@ -865,7 +861,9 @@ const adminSlice = createSlice({
 
     // Reports
     updateReportStatus: (state, action) => {
-      const report = state.reports.find((r) => r.id === action.payload.reportId);
+      const report = state.reports.find(
+        (r) => r.id === action.payload.reportId
+      );
       if (report) {
         report.status = action.payload.status;
       }
@@ -938,13 +936,13 @@ const adminSlice = createSlice({
         state.error = action.error.message || "Có lỗi xảy ra khi tải dữ liệu";
       })
       .addCase(toggleLockUser.fulfilled, (state, action) => {
-        const user = state.users.find(u => u.id === action.payload.userId);
+        const user = state.users.find((u) => u.id === action.payload.userId);
         if (user) {
           user.is_locked = !user.is_locked;
         }
       })
       .addCase(toggleActiveUser.fulfilled, (state, action) => {
-        const user = state.users.find(u => u.id === action.payload.userId);
+        const user = state.users.find((u) => u.id === action.payload.userId);
         if (user) {
           user.is_active = !user.is_active;
         }
@@ -961,7 +959,7 @@ const adminSlice = createSlice({
             page: 1,
             limit: 10,
             total: 0,
-            totalPages: 1
+            totalPages: 1,
           };
         } else {
           state.deletedUsers = [];
@@ -969,7 +967,7 @@ const adminSlice = createSlice({
             page: 1,
             limit: 10,
             total: 0,
-            totalPages: 1
+            totalPages: 1,
           };
         }
       })
@@ -985,13 +983,13 @@ const adminSlice = createSlice({
       })
       .addCase(updateUserInfo.fulfilled, (state, action) => {
         const updatedUser = action.payload.data;
-        state.users = state.users.map(user => 
+        state.users = state.users.map((user) =>
           user.id === updatedUser.id ? updatedUser : user
         );
       })
       .addCase(deleteUserPermanently.fulfilled, (state, action) => {
         state.deletedUsers = state.deletedUsers.filter(
-          user => user.id !== action.payload.userId
+          (user) => user.id !== action.payload.userId
         );
       })
       .addCase(fetchHospitals.pending, (state) => {
@@ -1014,7 +1012,7 @@ const adminSlice = createSlice({
       .addCase(toggleActiveHospital.fulfilled, (state, action) => {
         state.loading = false;
         const updatedHospital = action.payload;
-        state.hospitals = state.hospitals.map(hospital =>
+        state.hospitals = state.hospitals.map((hospital) =>
           hospital.id === updatedHospital.id ? updatedHospital : hospital
         );
       })
@@ -1039,20 +1037,28 @@ const adminSlice = createSlice({
       .addCase(toggleDeleteHospital.fulfilled, (state, action) => {
         const updatedHospital = action.payload.data.data;
         if (updatedHospital.is_deleted) {
-          state.hospitals = state.hospitals.filter(h => h.id !== updatedHospital.id);
-          if (!state.deletedHospitals.find(h => h.id === updatedHospital.id)) {
+          state.hospitals = state.hospitals.filter(
+            (h) => h.id !== updatedHospital.id
+          );
+          if (
+            !state.deletedHospitals.find((h) => h.id === updatedHospital.id)
+          ) {
             state.deletedHospitals.push(updatedHospital);
           }
         } else {
-          state.deletedHospitals = state.deletedHospitals.filter(h => h.id !== updatedHospital.id);
-          if (!state.hospitals.find(h => h.id === updatedHospital.id)) {
+          state.deletedHospitals = state.deletedHospitals.filter(
+            (h) => h.id !== updatedHospital.id
+          );
+          if (!state.hospitals.find((h) => h.id === updatedHospital.id)) {
             state.hospitals.push(updatedHospital);
           }
         }
       })
       .addCase(updateHospital.fulfilled, (state, action) => {
         const updatedHospital = action.payload.data.data;
-        const index = state.hospitals.findIndex(h => h.id === updatedHospital.id);
+        const index = state.hospitals.findIndex(
+          (h) => h.id === updatedHospital.id
+        );
         if (index !== -1) {
           state.hospitals[index] = updatedHospital;
         }
@@ -1062,7 +1068,7 @@ const adminSlice = createSlice({
       })
       .addCase(deleteHospitalPermanently.fulfilled, (state, action) => {
         state.deletedHospitals = state.deletedHospitals.filter(
-          hospital => hospital.id !== action.payload
+          (hospital) => hospital.id !== action.payload
         );
       })
       .addCase(fetchReports.pending, (state) => {
@@ -1080,7 +1086,7 @@ const adminSlice = createSlice({
       })
       .addCase(resolveReport.fulfilled, (state, action) => {
         const reportIndex = state.reports.findIndex(
-          report => report.id === action.payload
+          (report) => report.id === action.payload
         );
         if (reportIndex !== -1) {
           state.reports[reportIndex].resolved = true;
@@ -1088,18 +1094,20 @@ const adminSlice = createSlice({
       })
       .addCase(deleteReviewPermanently.fulfilled, (state, action) => {
         const reportIndex = state.reports.findIndex(
-          report => report.id === action.payload.reportId
+          (report) => report.id === action.payload.reportId
         );
         if (reportIndex !== -1) {
           state.reports[reportIndex].resolved = true;
         }
       })
       .addCase(deleteReportPermanently.fulfilled, (state, action) => {
-        state.reports = state.reports.filter(report => report.id !== action.payload);
+        state.reports = state.reports.filter(
+          (report) => report.id !== action.payload
+        );
       })
       .addCase(deleteGalleryComment.fulfilled, (state, action) => {
         const reportIndex = state.reports.findIndex(
-          report => report.id === action.payload.reportId
+          (report) => report.id === action.payload.reportId
         );
         if (reportIndex !== -1) {
           state.reports[reportIndex].resolved = true;
@@ -1123,7 +1131,9 @@ const adminSlice = createSlice({
       })
       .addCase(updateBanner.fulfilled, (state, action) => {
         state.isSubmittingBanner = false;
-        const index = state.banners.findIndex(banner => banner.id === action.payload.id);
+        const index = state.banners.findIndex(
+          (banner) => banner.id === action.payload.id
+        );
         if (index !== -1) {
           state.banners[index] = action.payload;
         }
@@ -1132,7 +1142,9 @@ const adminSlice = createSlice({
         state.isSubmittingBanner = false;
       })
       .addCase(toggleActiveBanner.fulfilled, (state, action) => {
-        const index = state.banners.findIndex(banner => banner.id === action.payload.id);
+        const index = state.banners.findIndex(
+          (banner) => banner.id === action.payload.id
+        );
         if (index !== -1) {
           state.banners[index] = action.payload;
         }
@@ -1148,13 +1160,17 @@ const adminSlice = createSlice({
         state.isSubmittingBanner = false;
       })
       .addCase(toggleDeleteBanner.fulfilled, (state, action) => {
-        const index = state.banners.findIndex(banner => banner.id === action.payload.id);
+        const index = state.banners.findIndex(
+          (banner) => banner.id === action.payload.id
+        );
         if (index !== -1) {
           state.banners[index] = action.payload;
         }
       })
       .addCase(hardDeleteBanner.fulfilled, (state, action) => {
-        state.banners = state.banners.filter(banner => banner.id !== action.payload);
+        state.banners = state.banners.filter(
+          (banner) => banner.id !== action.payload
+        );
       })
       .addCase(fetchBlogPosts.pending, (state) => {
         state.loading = true;
@@ -1188,7 +1204,9 @@ const adminSlice = createSlice({
       .addCase(updateBlogPost.fulfilled, (state, action) => {
         state.isSubmittingBlog = false;
         const updatedBlog = action.payload;
-        const index = state.blogs.findIndex(blog => blog.id === updatedBlog.id);
+        const index = state.blogs.findIndex(
+          (blog) => blog.id === updatedBlog.id
+        );
         if (index !== -1) {
           state.blogs[index] = updatedBlog;
         }
@@ -1205,11 +1223,17 @@ const adminSlice = createSlice({
       .addCase(toggleDeleteBlog.fulfilled, (state, action) => {
         const { id, is_deleted } = action.payload;
         if (is_deleted) {
-          state.blogs = state.blogs.filter(b => b.id !== id);
-          state.deletedBlogs.push({ ...state.blogs.find(b => b.id === id), is_deleted: true });
+          state.blogs = state.blogs.filter((b) => b.id !== id);
+          state.deletedBlogs.push({
+            ...state.blogs.find((b) => b.id === id),
+            is_deleted: true,
+          });
         } else {
-          state.deletedBlogs = state.deletedBlogs.filter(b => b.id !== id);
-          state.blogs.push({ ...state.deletedBlogs.find(b => b.id === id), is_deleted: false });
+          state.deletedBlogs = state.deletedBlogs.filter((b) => b.id !== id);
+          state.blogs.push({
+            ...state.deletedBlogs.find((b) => b.id === id),
+            is_deleted: false,
+          });
         }
       })
       .addCase(deleteBlogPermanently.pending, (state) => {
@@ -1234,7 +1258,7 @@ const adminSlice = createSlice({
           page: 1,
           limit: 10,
           total: 0,
-          totalPages: 1
+          totalPages: 1,
         };
       })
       .addCase(fetchFaqs.rejected, (state, action) => {
@@ -1260,7 +1284,7 @@ const adminSlice = createSlice({
       .addCase(updateFaq.fulfilled, (state, action) => {
         state.isSubmittingFaq = false;
         const updatedFaq = action.payload.data;
-        const index = state.faqs.findIndex(faq => faq.id === updatedFaq.id);
+        const index = state.faqs.findIndex((faq) => faq.id === updatedFaq.id);
         if (index !== -1) {
           state.faqs[index] = updatedFaq;
         }
@@ -1273,7 +1297,7 @@ const adminSlice = createSlice({
       })
       .addCase(deleteFaq.fulfilled, (state, action) => {
         state.isDeletingFaq = false;
-        state.faqs = state.faqs.filter(faq => faq.id !== action.payload.id);
+        state.faqs = state.faqs.filter((faq) => faq.id !== action.payload.id);
       })
       .addCase(deleteFaq.rejected, (state) => {
         state.isDeletingFaq = false;
@@ -1297,7 +1321,9 @@ const adminSlice = createSlice({
       .addCase(updatePostStatus.fulfilled, (state, action) => {
         state.isUpdatingStatus = false;
         const updatedPost = action.payload;
-        const index = state.posts.findIndex(post => post.id === updatedPost.id);
+        const index = state.posts.findIndex(
+          (post) => post.id === updatedPost.id
+        );
         if (index !== -1) {
           state.posts[index] = { ...state.posts[index], ...updatedPost };
         }
@@ -1310,7 +1336,7 @@ const adminSlice = createSlice({
       })
       .addCase(deletePostPermanently.fulfilled, (state, action) => {
         state.isDeletingPost = false;
-        state.posts = state.posts.filter(post => post.id !== action.payload);
+        state.posts = state.posts.filter((post) => post.id !== action.payload);
       })
       .addCase(deletePostPermanently.rejected, (state) => {
         state.isDeletingPost = false;
@@ -1335,7 +1361,9 @@ const adminSlice = createSlice({
       .addCase(respondToMessage.fulfilled, (state, action) => {
         state.isSubmitting = false;
         const updatedMessage = action.payload;
-        const index = state.contactMessages.findIndex(msg => msg.id === updatedMessage.id);
+        const index = state.contactMessages.findIndex(
+          (msg) => msg.id === updatedMessage.id
+        );
         if (index !== -1) {
           state.contactMessages[index] = updatedMessage;
         }
@@ -1351,7 +1379,7 @@ const adminSlice = createSlice({
       .addCase(deleteContactMessagePermanently.fulfilled, (state, action) => {
         state.isDeletingMessage = false;
         state.contactMessages = state.contactMessages.filter(
-          message => message.id !== action.payload
+          (message) => message.id !== action.payload
         );
         state.selectedMessage = null;
       })
@@ -1370,7 +1398,7 @@ const adminSlice = createSlice({
           page: 1,
           limit: 10,
           total: 0,
-          totalPages: 1
+          totalPages: 1,
         };
       })
       .addCase(fetchAboutUsHistory.rejected, (state, action) => {
@@ -1397,7 +1425,9 @@ const adminSlice = createSlice({
       .addCase(updateAboutUs.fulfilled, (state, action) => {
         state.isSubmittingAboutUs = false;
         const updatedVersion = action.payload.data;
-        const index = state.aboutUsVersions.findIndex(v => v.id === updatedVersion.id);
+        const index = state.aboutUsVersions.findIndex(
+          (v) => v.id === updatedVersion.id
+        );
         if (index !== -1) {
           state.aboutUsVersions[index] = updatedVersion;
         }
@@ -1426,7 +1456,7 @@ const adminSlice = createSlice({
       .addCase(deleteAboutUs.fulfilled, (state, action) => {
         state.isSubmittingAboutUs = false;
         state.aboutUsVersions = state.aboutUsVersions.filter(
-          version => version.id !== action.payload.id
+          (version) => version.id !== action.payload.id
         );
       })
       .addCase(deleteAboutUs.rejected, (state, action) => {
@@ -1464,7 +1494,9 @@ const adminSlice = createSlice({
       })
       .addCase(deleteTerms.fulfilled, (state, action) => {
         state.isSubmittingTerms = false;
-        state.termsList = state.termsList.filter(terms => terms.id !== action.payload);
+        state.termsList = state.termsList.filter(
+          (terms) => terms.id !== action.payload
+        );
       })
       .addCase(deleteTerms.rejected, (state, action) => {
         state.isSubmittingTerms = false;
@@ -1476,7 +1508,9 @@ const adminSlice = createSlice({
       })
       .addCase(updateTerms.fulfilled, (state, action) => {
         state.isSubmittingTerms = false;
-        const index = state.termsList.findIndex(terms => terms.id === action.payload.id);
+        const index = state.termsList.findIndex(
+          (terms) => terms.id === action.payload.id
+        );
         if (index !== -1) {
           state.termsList[index] = action.payload;
         }
@@ -1529,7 +1563,7 @@ const adminSlice = createSlice({
       })
       .addCase(updateContactInfo.fulfilled, (state, action) => {
         state.isSubmittingContactInfo = false;
-        state.contactInfoList = state.contactInfoList.map(info => 
+        state.contactInfoList = state.contactInfoList.map((info) =>
           info.id === action.payload.id ? action.payload : info
         );
       })
@@ -1544,7 +1578,7 @@ const adminSlice = createSlice({
       .addCase(deleteContactInfo.fulfilled, (state, action) => {
         state.isSubmittingContactInfo = false;
         state.contactInfoList = state.contactInfoList.filter(
-          info => info.id !== action.payload
+          (info) => info.id !== action.payload
         );
         state.contactInfoPagination.total -= 1;
       })
@@ -1560,7 +1594,7 @@ const adminSlice = createSlice({
         state.isDeletingBlogComment = false;
         state.deleteBlogCommentError = null;
         const reportIndex = state.reports.findIndex(
-          report => report.id === action.payload.reportId
+          (report) => report.id === action.payload.reportId
         );
         if (reportIndex !== -1) {
           state.reports[reportIndex].resolved = true;
@@ -1570,7 +1604,7 @@ const adminSlice = createSlice({
         state.isDeletingBlogComment = false;
         state.deleteBlogCommentError = action.payload;
       });
-  }
+  },
 });
 
 export const {
