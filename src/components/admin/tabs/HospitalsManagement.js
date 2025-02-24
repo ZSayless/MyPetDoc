@@ -1002,7 +1002,7 @@ function HospitalsManagement() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Website
+                        Website <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -1018,6 +1018,7 @@ function HospitalsManagement() {
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
+                        required
                       />
                       {formErrors.link_website && (
                         <p className="mt-1 text-sm text-red-500">
@@ -1053,7 +1054,7 @@ function HospitalsManagement() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Map location
+                        Map location <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -1069,6 +1070,7 @@ function HospitalsManagement() {
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
+                        required
                       />
                       {formErrors.map_location && (
                         <p className="mt-1 text-sm text-red-500">
@@ -1126,7 +1128,7 @@ function HospitalsManagement() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Department
+                        Department <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -1182,7 +1184,7 @@ function HospitalsManagement() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Description
+                        Description <span className="text-red-500">*</span>
                       </label>
                       <textarea
                         value={selectedHospital.description}
@@ -1224,7 +1226,6 @@ function HospitalsManagement() {
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
-                        required
                       />
                       {formErrors.staff_description && (
                         <p className="mt-1 text-sm text-red-500">
@@ -1250,7 +1251,6 @@ function HospitalsManagement() {
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
-                        required
                       />
                       {formErrors.staff_credentials && (
                         <p className="mt-1 text-sm text-red-500">
@@ -1642,7 +1642,7 @@ function HospitalsManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Website
+                      Website <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -1658,6 +1658,7 @@ function HospitalsManagement() {
                           ? "border-red-500"
                           : "border-gray-300"
                       }`}
+                      required
                     />
                     {formErrors.link_website && (
                       <p className="mt-1 text-sm text-red-500">
@@ -1667,7 +1668,7 @@ function HospitalsManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Map location
+                      Map location <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -1683,6 +1684,7 @@ function HospitalsManagement() {
                           ? "border-red-500"
                           : "border-gray-300"
                       }`}
+                      required
                     />
                     {formErrors.map_location && (
                       <p className="mt-1 text-sm text-red-500">
@@ -1740,7 +1742,7 @@ function HospitalsManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Department
+                      Department <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -1756,6 +1758,7 @@ function HospitalsManagement() {
                           ? "border-red-500"
                           : "border-gray-300"
                       }`}
+                      required
                     />
                     {formErrors.department && (
                       <p className="mt-1 text-sm text-red-500">
@@ -1795,7 +1798,7 @@ function HospitalsManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Description
+                      Description <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       value={newHospital.description}
@@ -1811,6 +1814,7 @@ function HospitalsManagement() {
                           ? "border-red-500"
                           : "border-gray-300"
                       }`}
+                      required
                     />
                     {formErrors.description && (
                       <p className="mt-1 text-sm text-red-500">
