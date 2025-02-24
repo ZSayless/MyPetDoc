@@ -19,7 +19,7 @@ function AuthCallback() {
         console.log("Callback result:", result);
 
         if (result.isNewUser) {
-          // Đảm bảo profile có đầy đủ thông tin
+          // Ensure profile has complete information
           const profileData = {
             email: result.profile.email,
             full_name: result.profile.full_name,
@@ -63,7 +63,7 @@ function AuthCallback() {
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Đang xử lý đăng nhập...</p>
+        <p className="mt-4 text-gray-600">Processing login...</p>
       </div>
     </div>
   );

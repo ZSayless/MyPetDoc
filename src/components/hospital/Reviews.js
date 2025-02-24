@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Star, Flag, MoreVertical, X, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
-import { reportReview, deleteReviewPermanently } from "../../services/hospitalService";
+import { reportReview, deleteReviewPermanently, replyToReview, deleteReviewReply } from "../../services/hospitalService";
+import { useToast } from "../../context/ToastContext";
 
 const ReportModal = ({ isOpen, onClose, onSubmit, loading }) => {
   const [reason, setReason] = useState("");
@@ -55,13 +56,20 @@ const ReportModal = ({ isOpen, onClose, onSubmit, loading }) => {
   );
 };
 
-const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
+const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews, hospitalId }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [showReportModal, setShowReportModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
   const [showOptionsFor, setShowOptionsFor] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [replyText, setReplyText] = useState("");
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyLoading, setReplyLoading] = useState(false);
+  const { addToast } = useToast();
+
+  const MIN_REPLY_LENGTH = 10;
+  const MAX_REPLY_LENGTH = 500;
 
   const handleReportClick = (review) => {
     setSelectedReview(review);
@@ -76,7 +84,7 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
       setLoading(true);
       await reportReview(selectedReview.id, reason);
       
-      // Cập nhật UI để hiển thị review đã được báo cáo
+      // Update UI to show review has been reported
       setReviews(prevReviews =>
         prevReviews.map(review =>
           review.id === selectedReview.id
@@ -87,10 +95,16 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
 
       setShowReportModal(false);
       setSelectedReview(null);
-      alert(t("hospitalDetail.reviews.report.success"));
+      addToast({
+        type: "success",
+        message: t("hospitalDetail.reviews.report.success")
+      });
     } catch (error) {
       console.error("Error reporting review:", error);
-      alert(t("hospitalDetail.reviews.report.error"));
+      addToast({
+        type: "error",
+        message: t("hospitalDetail.reviews.report.error")
+      });
     } finally {
       setLoading(false);
     }
@@ -105,7 +119,7 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
       setLoading(true);
       await deleteReviewPermanently(review.id);
       
-      // Cập nhật UI để hiển thị review đã bị xóa
+      // Update UI to show review has been deleted
       setReviews(prevReviews =>
         prevReviews.map(r =>
           r.id === review.id
@@ -114,13 +128,113 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
         )
       );
 
-      alert(t("hospitalDetail.reviews.deleteSuccess"));
+      addToast({
+        type: "success",
+        message: t("hospitalDetail.reviews.deleteSuccess")
+      });
     } catch (error) {
       console.error("Error deleting review:", error);
-      alert(t("hospitalDetail.reviews.deleteError"));
+      addToast({
+        type: "error",
+        message: t("hospitalDetail.reviews.deleteError")
+      });
     } finally {
       setLoading(false);
       setShowOptionsFor(null);
+    }
+  };
+
+  const handleReply = async (reviewId) => {
+    const trimmedReply = replyText.trim();
+    
+    // Validate length
+    if (trimmedReply.length < MIN_REPLY_LENGTH) {
+      addToast({
+        type: "error",
+        message: t("Reply must be at least {{min}} characters", { min: MIN_REPLY_LENGTH })
+      });
+      return;
+    }
+    
+    if (trimmedReply.length > MAX_REPLY_LENGTH) {
+      addToast({
+        type: "error",
+        message: t("Reply cannot exceed {{max}} characters", { max: MAX_REPLY_LENGTH })
+      });
+      return;
+    }
+
+    try {
+      setReplyLoading(true);
+      const response = await replyToReview(reviewId, trimmedReply);
+      
+      setReviews(prevReviews =>
+        prevReviews.map(review =>
+          review.id === reviewId
+            ? {
+                ...review,
+                reply: trimmedReply,
+                replied_at: new Date().toISOString(),
+                replied_by_name: user.name,
+                replied_by_avatar: user.avatar
+              }
+            : review
+        )
+      );
+
+      setReplyText("");
+      setReplyingTo(null);
+      addToast({
+        type: "success",
+        message: t("Reply posted successfully")
+      });
+    } catch (error) {
+      console.error("Error posting reply:", error);
+      addToast({
+        type: "error",
+        message: t("Error posting reply")
+      });
+    } finally {
+      setReplyLoading(false);
+    }
+  };
+
+  const handleDeleteReply = async (reviewId) => {
+    if (!window.confirm(t("Are you sure you want to delete this reply?"))) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await deleteReviewReply(reviewId);
+      
+      // Update UI to delete reply
+      setReviews(prevReviews =>
+        prevReviews.map(review =>
+          review.id === reviewId
+            ? { 
+                ...review, 
+                reply: null,
+                replied_at: null,
+                replied_by_name: null,
+                replied_by_avatar: null
+              }
+            : review
+        )
+      );
+
+      addToast({
+        type: "success",
+        message: t("Reply deleted successfully")
+      });
+    } catch (error) {
+      console.error("Error deleting reply:", error);
+      addToast({
+        type: "error",
+        message: t("Error deleting reply")
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -136,7 +250,7 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
     return (
       <div className="bg-white p-6 rounded-xl shadow-sm mb-6">
         <div className="flex items-center gap-6">
-          {/* Tổng quan đánh giá */}
+          {/* Summary of reviews */}
           <div className="text-center">
             <div className="text-3xl font-bold text-gray-900">{stats.average_rating}</div>
             <div className="flex items-center gap-1 text-yellow-400 mt-1">
@@ -153,7 +267,7 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
             </div>
           </div>
 
-          {/* Chi tiết đánh giá */}
+          {/* Detail of reviews */}
           <div className="flex-1 space-y-2">
             {Object.entries(stats.rating_counts).reverse().map(([key, count]) => (
               <div key={key} className="flex items-center gap-2">
@@ -174,6 +288,22 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
       </div>
     );
   };
+
+  // update function canManageReply  check permission with console.log to debug
+  const canManageReply = useCallback((review) => {
+    if (!user) return false;
+    
+    // Super admin can delete all
+    if (user.role === 'ADMIN') return true;
+    
+    // Hospital admin can delete reply of hospital
+    if (user.role === 'HOSPITAL_ADMIN') {
+      // Convert to number to compare
+      return Number(user.hospital_id) === Number(hospitalId);
+    }
+
+    return false;
+  }, [user, hospitalId]);
 
   return (
     <div>
@@ -298,32 +428,101 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
                   </div>
                 )}
 
-                {/* Hiển thị phản hồi từ bệnh viện */}
+                {/* Reply section for hospital admin - Use canManageReply instead of canReplyToReview */}
+                {canManageReply(review) && !review.reply && !review.is_deleted && (
+                  <div className="mt-4">
+                    {replyingTo === review.id ? (
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <textarea
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder={t("Type your reply... ({{min}}-{{max}} characters)", {
+                              min: MIN_REPLY_LENGTH,
+                              max: MAX_REPLY_LENGTH
+                            })}
+                            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            rows="3"
+                            maxLength={MAX_REPLY_LENGTH}
+                          />
+                          <div className="absolute bottom-2 right-2 text-sm text-gray-500">
+                            {replyText.length}/{MAX_REPLY_LENGTH}
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => {
+                              setReplyingTo(null);
+                              setReplyText("");
+                            }}
+                            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                          >
+                            {t("Cancel")}
+                          </button>
+                          <button
+                            onClick={() => handleReply(review.id)}
+                            disabled={
+                              !replyText.trim() || 
+                              replyText.trim().length < MIN_REPLY_LENGTH ||
+                              replyText.length > MAX_REPLY_LENGTH || 
+                              replyLoading
+                            }
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                          >
+                            {replyLoading ? t("Posting...") : t("Post Reply")}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setReplyingTo(review.id)}
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        {t("Reply to this review")}
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* Show reply from hospital with options */}
                 {review.reply && (
                   <div className="mt-4 pl-4 border-l-2 border-gray-200">
                     <div className="bg-gray-50 p-4 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 rounded-full overflow-hidden">
-                          {review.replied_by_avatar ? (
-                            <img
-                              src={review.replied_by_avatar}
-                              alt={review.replied_by_name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-blue-100 flex items-center justify-center">
-                              <span className="text-blue-600 font-medium text-sm">H</span>
-                            </div>
-                          )}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full overflow-hidden">
+                            {review.replied_by_avatar ? (
+                              <img
+                                src={review.replied_by_avatar}
+                                alt={review.replied_by_name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+                                <span className="text-blue-600 font-medium text-sm">H</span>
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-sm">
+                              {review.replied_by_name || "Hospital Response"}
+                            </h4>
+                            <time className="text-xs text-gray-500">
+                              {new Date(review.replied_at).toLocaleDateString()}
+                            </time>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="font-medium text-sm">
-                            {review.replied_by_name || "Hospital Response"}
-                          </h4>
-                          <time className="text-xs text-gray-500">
-                            {new Date(review.replied_at).toLocaleDateString()}
-                          </time>
-                        </div>
+
+                        {/* Options for reply - only show delete button for correct admin */}
+                        {canManageReply(review) && (
+                          <button
+                            onClick={() => handleDeleteReply(review.id)}
+                            className="p-1 hover:bg-gray-200 rounded-full text-gray-500 hover:text-red-500"
+                            title={t("Delete reply")}
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        )}
                       </div>
                       <p className="text-gray-600 text-sm">{review.reply}</p>
                     </div>
@@ -335,7 +534,7 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews }) => {
         ))}
       </div>
 
-      {/* Thêm nút See More */}
+      {/* Add button See More */}
       {reviews.length > 0 && (
         <button
           onClick={onViewAll}

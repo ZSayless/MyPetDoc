@@ -684,10 +684,11 @@ const HospitalDetail = () => {
       <div className="max-w-5xl mx-auto px-4 py-8">
         <Reviews
           reviews={reviews}
-          stats={hospital.stats}
+          stats={hospital?.stats}
           setReviews={setReviews}
           onViewAll={handleViewAllReviews}
           onWriteReview={() => setShowWriteReview(true)}
+          hospitalId={hospital?.id}
         />
       </div>
 
