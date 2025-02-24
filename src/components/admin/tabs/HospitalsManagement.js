@@ -27,6 +27,7 @@ import {
   deleteHospitalPermanently,
 } from "../../../redux/slices/adminSlice";
 import { useToast } from "../../../context/ToastContext";
+import { HOSPITAL_SERVICES } from "../../../constants/services";
 
 function HospitalsManagement() {
   const dispatch = useDispatch();
@@ -65,6 +66,16 @@ function HospitalsManagement() {
   const [hospitalToDelete, setHospitalToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [operatingHours, setOperatingHours] = useState({
+    weekdays: {
+      start: "08:00",
+      end: "17:00"
+    },
+    weekends: {
+      start: "08:00",
+      end: "12:00"
+    }
+  });
 
   useEffect(() => {
     if (activeTab === "list") {
@@ -73,6 +84,29 @@ function HospitalsManagement() {
       dispatch(fetchDeletedHospitals({ page: 1, limit: 10 }));
     }
   }, [dispatch, activeTab]);
+
+  useEffect(() => {
+    if (selectedHospital?.operating_hours) {
+      try {
+        const times = selectedHospital.operating_hours.split(',').map(t => t.trim());
+        const weekdayTimes = times[0].replace('Weekdays:', '').trim().split('-').map(t => t.trim());
+        const weekendTimes = times[1].replace('Weekends:', '').trim().split('-').map(t => t.trim());
+        
+        setOperatingHours({
+          weekdays: {
+            start: weekdayTimes[0],
+            end: weekdayTimes[1]
+          },
+          weekends: {
+            start: weekendTimes[0],
+            end: weekendTimes[1]
+          }
+        });
+      } catch (error) {
+        console.error('Error parsing operating hours:', error);
+      }
+    }
+  }, [selectedHospital?.operating_hours]);
 
   const handleApprove = (hospitalId) => {
     dispatch(approveHospital(hospitalId));
@@ -474,6 +508,62 @@ function HospitalsManagement() {
     }
 
     return errors;
+  };
+
+  const handleServiceSelection = (service, isCreating = false) => {
+    if (isCreating) {
+      let newSpecialties = newHospital.specialties ? newHospital.specialties.split(',').map(s => s.trim()) : [];
+      
+      if (newSpecialties.includes(service)) {
+        newSpecialties = newSpecialties.filter(s => s !== service);
+      } else {
+        newSpecialties.push(service);
+      }
+
+      setNewHospital(prev => ({
+        ...prev,
+        specialties: newSpecialties.join(', ')
+      }));
+    } else {
+      let newSpecialties = selectedHospital.specialties ? selectedHospital.specialties.split(',').map(s => s.trim()) : [];
+      
+      if (newSpecialties.includes(service)) {
+        newSpecialties = newSpecialties.filter(s => s !== service);
+      } else {
+        newSpecialties.push(service);
+      }
+
+      setSelectedHospital(prev => ({
+        ...prev,
+        specialties: newSpecialties.join(', ')
+      }));
+    }
+  };
+
+  const handleTimeChange = (period, type, time, isCreating = false) => {
+    const newTime = {
+      ...operatingHours,
+      [period]: {
+        ...operatingHours[period],
+        [type]: time
+      }
+    };
+    setOperatingHours(newTime);
+
+    // Cập nhật giá trị cho form
+    const timeString = `Weekdays: ${newTime.weekdays.start} - ${newTime.weekdays.end}, Weekends: ${newTime.weekends.start} - ${newTime.weekends.end}`;
+    
+    if (isCreating) {
+      setNewHospital(prev => ({
+        ...prev,
+        operating_hours: timeString
+      }));
+    } else {
+      setSelectedHospital(prev => ({
+        ...prev,
+        operating_hours: timeString
+      }));
+    }
   };
 
   return (
@@ -987,25 +1077,47 @@ function HospitalsManagement() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Working hours
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Working hours <span className="text-red-500">*</span>
                       </label>
-                      <input
-                        type="text"
-                        value={selectedHospital.operating_hours}
-                        onChange={(e) =>
-                          setSelectedHospital((prev) => ({
-                            ...prev,
-                            operating_hours: e.target.value,
-                          }))
-                        }
-                        className={`w-full p-2 border rounded-lg ${
-                          formErrors.operating_hours
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        }`}
-                        required
-                      />
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-sm text-gray-600 mb-2">Weekdays</p>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="time"
+                              value={operatingHours.weekdays.start}
+                              onChange={(e) => handleTimeChange('weekdays', 'start', e.target.value)}
+                              className="p-2 border rounded-lg"
+                            />
+                            <span className="text-gray-500">to</span>
+                            <input
+                              type="time"
+                              value={operatingHours.weekdays.end}
+                              onChange={(e) => handleTimeChange('weekdays', 'end', e.target.value)}
+                              className="p-2 border rounded-lg"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-600 mb-2">Weekends</p>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="time"
+                              value={operatingHours.weekends.start}
+                              onChange={(e) => handleTimeChange('weekends', 'start', e.target.value)}
+                              className="p-2 border rounded-lg"
+                            />
+                            <span className="text-gray-500">to</span>
+                            <input
+                              type="time"
+                              value={operatingHours.weekends.end}
+                              onChange={(e) => handleTimeChange('weekends', 'end', e.target.value)}
+                              className="p-2 border rounded-lg"
+                            />
+                          </div>
+                        </div>
+                      </div>
                       {formErrors.operating_hours && (
                         <p className="mt-1 text-sm text-red-500">
                           {formErrors.operating_hours}
@@ -1043,25 +1155,25 @@ function HospitalsManagement() {
                   {/* Textarea fields */}
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Specialties
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Specialties <span className="text-red-500">*</span>
                       </label>
-                      <textarea
-                        value={selectedHospital.specialties}
-                        onChange={(e) =>
-                          setSelectedHospital((prev) => ({
-                            ...prev,
-                            specialties: e.target.value,
-                          }))
-                        }
-                        rows={3}
-                        className={`w-full p-2 border rounded-lg ${
-                          formErrors.specialties
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        }`}
-                        required
-                      />
+                      <div className="flex flex-wrap gap-2">
+                        {HOSPITAL_SERVICES.filter(service => service !== "All Hospitals").map((service) => (
+                          <button
+                            key={service}
+                            type="button"
+                            onClick={() => handleServiceSelection(service)}
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                              selectedHospital.specialties?.includes(service)
+                                ? "bg-blue-100 text-blue-700 border-2 border-blue-200"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent"
+                            }`}
+                          >
+                            {service}
+                          </button>
+                        ))}
+                      </div>
                       {formErrors.specialties && (
                         <p className="mt-1 text-sm text-red-500">
                           {formErrors.specialties}
@@ -1580,23 +1692,46 @@ function HospitalsManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Working hours
+                      Working hours <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="text"
-                      value={newHospital.operating_hours}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          operating_hours: e.target.value,
-                        }))
-                      }
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.operating_hours
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm text-gray-600 mb-2">Weekdays</p>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="time"
+                            value={operatingHours.weekdays.start}
+                            onChange={(e) => handleTimeChange('weekdays', 'start', e.target.value, true)}
+                            className="p-2 border rounded-lg"
+                          />
+                          <span className="text-gray-500">to</span>
+                          <input
+                            type="time"
+                            value={operatingHours.weekdays.end}
+                            onChange={(e) => handleTimeChange('weekdays', 'end', e.target.value, true)}
+                            className="p-2 border rounded-lg"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 mb-2">Weekends</p>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="time"
+                            value={operatingHours.weekends.start}
+                            onChange={(e) => handleTimeChange('weekends', 'start', e.target.value, true)}
+                            className="p-2 border rounded-lg"
+                          />
+                          <span className="text-gray-500">to</span>
+                          <input
+                            type="time"
+                            value={operatingHours.weekends.end}
+                            onChange={(e) => handleTimeChange('weekends', 'end', e.target.value, true)}
+                            className="p-2 border rounded-lg"
+                          />
+                        </div>
+                      </div>
+                    </div>
                     {formErrors.operating_hours && (
                       <p className="mt-1 text-sm text-red-500">
                         {formErrors.operating_hours}
@@ -1634,23 +1769,24 @@ function HospitalsManagement() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Specialties
+                      Specialties <span className="text-red-500">*</span>
                     </label>
-                    <textarea
-                      value={newHospital.specialties}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          specialties: e.target.value,
-                        }))
-                      }
-                      rows={3}
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.specialties
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
+                    <div className="flex flex-wrap gap-2">
+                      {HOSPITAL_SERVICES.filter(service => service !== "All Hospitals").map((service) => (
+                        <button
+                          key={service}
+                          type="button"
+                          onClick={() => handleServiceSelection(service, true)}
+                          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                            newHospital.specialties?.includes(service)
+                              ? "bg-blue-100 text-blue-700 border-2 border-blue-200"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent"
+                          }`}
+                        >
+                          {service}
+                        </button>
+                      ))}
+                    </div>
                     {formErrors.specialties && (
                       <p className="mt-1 text-sm text-red-500">
                         {formErrors.specialties}
