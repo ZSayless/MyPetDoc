@@ -1,5 +1,5 @@
 import Header from "./components/layout/Header";
-import "./assets/css/global.css";
+import "./assets/css/style.css";
 import Footer from "./components/layout/Footer";
 import "aos/dist/aos.css";
 import AOS from "aos";
