@@ -427,123 +427,139 @@ function ContactMessages() {
           {/* Message Detail Modal for Mobile */}
           {selectedMessage && (
             <div className="md:hidden fixed inset-0 bg-white z-50">
-              <div className="p-4">
-                <button
-                  onClick={() => setSelectedMessage(null)}
-                  className="mb-4 text-gray-500 hover:text-gray-700"
-                >
-                  <X size={24} />
-                </button>
-
-                <div className="mb-6">
-                  <h2 className="text-xl font-semibold mb-1">
+              <div className="flex flex-col h-full">
+                <div className="flex items-center justify-between p-3 border-b sticky top-0 bg-white">
+                  <h2 className="text-base font-semibold">
                     Tin nhắn từ {selectedMessage.name}
                   </h2>
-                  <p className="text-sm text-gray-500">
-                    Email: {selectedMessage.email}
-                    {selectedMessage.phone &&
-                      ` | SĐT: ${selectedMessage.phone}`}
-                  </p>
+                  <button
+                    onClick={() => setSelectedMessage(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X size={18} />
+                  </button>
                 </div>
 
-                <div className="prose max-w-none mb-6">
-                  <p>{selectedMessage.message}</p>
-                </div>
-
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-medium mb-4">Reply to message</h3>
-                  <form onSubmit={handleRespond}>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Nội dung trả lời
-                        </label>
-                        <textarea
-                          value={response}
-                          onChange={(e) => setResponse(e.target.value)}
-                          rows={4}
-                          className={`w-full rounded-lg ${
-                            formErrors?.response
-                              ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                              : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                          }`}
-                          placeholder="Enter reply content..."
-                        />
-                        {formErrors?.response && (
-                          <p className="mt-1 text-sm text-red-500">
-                            {formErrors.response}
-                          </p>
-                        )}
-                        <p className="mt-1 text-sm text-gray-500">
-                          {response.length}/1000 ký tự
-                        </p>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Status
-                        </label>
-                        <select
-                          value={status}
-                          onChange={(e) => setStatus(e.target.value)}
-                          className={`w-full rounded-lg ${
-                            formErrors?.status
-                              ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                              : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                          }`}
-                        >
-                          <option value="completed">Completed</option>
-                          <option value="processing">Processing</option>
-                          <option value="cancelled">Cancelled</option>
-                        </select>
-                        {formErrors?.status && (
-                          <p className="mt-1 text-sm text-red-500">
-                            {formErrors.status}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="flex justify-end">
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                        >
-                          {isSubmitting ? (
-                            <>
-                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                              <span>Sending...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Send size={16} />
-                              <span>Send reply</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-
-                {selectedMessage.response && (
-                  <div className="mt-6 border-t pt-6">
-                    <h3 className="text-lg font-medium mb-2">Previous reply</h3>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="whitespace-pre-line">
-                        {selectedMessage.response}
-                      </p>
-                      <div className="mt-2 text-sm text-gray-500">
-                        <span>Status: {selectedMessage.status}</span>
-                        {selectedMessage.responded_at && (
-                          <span className="ml-4">
-                            Time: {formatDate(selectedMessage.responded_at)}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                <div className="flex-1 overflow-y-auto p-4">
+                  <div className="text-sm text-gray-500 mb-4">
+                    <p>Email: {selectedMessage.email}</p>
+                    {selectedMessage.phone && (
+                      <p>SĐT: {selectedMessage.phone}</p>
+                    )}
                   </div>
-                )}
+
+                  <div className="prose max-w-none mb-6">
+                    <p className="text-gray-700 whitespace-pre-line">
+                      {selectedMessage.message}
+                    </p>
+                  </div>
+
+                  {selectedMessage.response && (
+                    <div className="mt-6 border-t pt-4">
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">
+                        Previous reply
+                      </h3>
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="text-sm whitespace-pre-line">
+                          {selectedMessage.response}
+                        </p>
+                        <div className="mt-2 text-sm text-gray-500">
+                          <span>Status: {selectedMessage.status}</span>
+                          {selectedMessage.responded_at && (
+                            <span className="ml-4">
+                              Time: {formatDate(selectedMessage.responded_at)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-6 border-t pt-4">
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                      Reply to message
+                    </h3>
+                    <form onSubmit={handleRespond}>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Nội dung trả lời
+                          </label>
+                          <textarea
+                            value={response}
+                            onChange={(e) => setResponse(e.target.value)}
+                            rows={4}
+                            className={`w-full rounded-lg ${
+                              formErrors?.response
+                                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                                : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            }`}
+                            placeholder="Enter reply content..."
+                          />
+                          {formErrors?.response && (
+                            <p className="mt-1 text-sm text-red-500">
+                              {formErrors.response}
+                            </p>
+                          )}
+                          <p className="mt-1 text-sm text-gray-500">
+                            {response.length}/1000 ký tự
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Status
+                          </label>
+                          <select
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className={`w-full rounded-lg ${
+                              formErrors?.status
+                                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                                : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            }`}
+                          >
+                            <option value="completed">Completed</option>
+                            <option value="processing">Processing</option>
+                            <option value="cancelled">Cancelled</option>
+                          </select>
+                          {formErrors?.status && (
+                            <p className="mt-1 text-sm text-red-500">
+                              {formErrors.status}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                <span>Sending...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Send size={16} />
+                                <span>Send reply</span>
+                              </>
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedMessage(null)}
+                            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
             </div>
           )}
