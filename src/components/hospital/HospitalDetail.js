@@ -40,6 +40,11 @@ const HospitalDetail = () => {
   const [imageLikes, setImageLikes] = useState({});
   const { addToast } = useToast();
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState({
+    text: "",
+    type: "",
+  });
 
   // Fetch hospital data
   useEffect(() => {
@@ -229,13 +234,14 @@ const HospitalDetail = () => {
     try {
       const newFavoriteStatus = await toggleFavorite(hospital.id);
       setIsFavorite(newFavoriteStatus);
-
-      addToast({
-        type: "success",
-        message: newFavoriteStatus
-          ? t("Added to favorites successfully")
-          : t("Removed from favorites successfully"),
+      setToastMessage({
+        text: newFavoriteStatus
+          ? "Added to favorites successfully"
+          : "Removed from favorites successfully",
+        type: newFavoriteStatus ? "success" : "remove",
       });
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
       console.error("Error toggling favorite:", error);
       addToast({
@@ -429,7 +435,20 @@ const HospitalDetail = () => {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-12">
+      {/* Toast Notification */}
+      {showToast && (
+        <div
+          className={`fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg z-[9999] ${
+            toastMessage.type === "success"
+              ? "bg-green-500 text-white"
+              : "bg-red-500 text-white"
+          }`}
+        >
+          {toastMessage.text}
+        </div>
+      )}
+
       {/* Feature Section - Call Now & Get Directions */}
       <section className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 md:py-6">
@@ -982,6 +1001,19 @@ const HospitalDetail = () => {
         onSubmit={handleSubmitReview}
         hospitalId={hospital.id}
       />
+
+      <style jsx>{`
+        @keyframes slideIn {
+          from {
+            transform: translateY(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 };

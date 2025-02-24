@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, X } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useTranslation } from "react-i18next";
@@ -14,6 +14,16 @@ const BlogList = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+
+  // Popular categories to show on mobile
+  const popularCategories = [
+    t("blog.list.categories.allPosts"),
+    t("blog.list.categories.healthTips"),
+    t("blog.list.categories.petCare"),
+    t("blog.list.categories.nutrition"),
+    t("blog.list.categories.behavior"),
+  ];
 
   useEffect(() => {
     setSelectedCategories([t("blog.list.categories.allPosts")]);
@@ -55,7 +65,7 @@ const BlogList = () => {
     t("blog.list.categories.breeding"),
     t("blog.list.categories.seniorPetCare"),
     t("blog.list.categories.puppyCare"),
-    t("blog.list.categories.emergencyCare")
+    t("blog.list.categories.emergencyCare"),
   ];
 
   const categoryMapping = {
@@ -73,7 +83,7 @@ const BlogList = () => {
     [t("blog.list.categories.breeding")]: "Breeding",
     [t("blog.list.categories.seniorPetCare")]: "Senior Pet Care",
     [t("blog.list.categories.puppyCare")]: "Puppy Care",
-    [t("blog.list.categories.emergencyCare")]: "Emergency Care"
+    [t("blog.list.categories.emergencyCare")]: "Emergency Care",
   };
 
   const handleCategoryToggle = (category) => {
@@ -108,8 +118,7 @@ const BlogList = () => {
       selectedCategories.some((category) => {
         const actualCategory = categoryMapping[category] || category;
         return (
-          post.category === actualCategory || 
-          post.tags.includes(actualCategory)
+          post.category === actualCategory || post.tags.includes(actualCategory)
         );
       });
 
@@ -144,13 +153,21 @@ const BlogList = () => {
               />
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             </div>
-            <button className="md:w-auto w-full px-6 py-3 bg-gray-100 rounded-full hover:bg-gray-200 flex items-center justify-center gap-2">
+            <button
+              onClick={() => setShowFilterModal(true)}
+              className="md:hidden w-full px-6 py-3 bg-gray-100 rounded-full hover:bg-gray-200 flex items-center justify-center gap-2"
+            >
+              <Filter className="w-5 h-5" />
+              <span>Filter</span>
+            </button>
+            <button className="hidden md:flex md:w-auto w-full px-6 py-3 bg-gray-100 rounded-full hover:bg-gray-200 items-center justify-center gap-2">
               <Search className="w-5 h-5" />
               <span>{t("blog.list.search.button")}</span>
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-6">
+          {/* Desktop Categories */}
+          <div className="hidden md:flex flex-wrap gap-2 mt-6">
             {categories.map((category) => (
               <button
                 key={category}
@@ -177,6 +194,48 @@ const BlogList = () => {
           </div>
         </div>
       </div>
+
+      {/* Filter Modal for Mobile */}
+      {showFilterModal && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-end md:hidden">
+          <div className="bg-white w-full rounded-t-2xl max-h-[80vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white p-4 border-b flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Filter Categories</h3>
+              <button
+                onClick={() => setShowFilterModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-4 grid grid-cols-2 gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => {
+                    handleCategoryToggle(category);
+                  }}
+                  className={`px-4 py-2 rounded-full transition-all text-sm ${
+                    selectedCategories.includes(category)
+                      ? "bg-[#98E9E9] text-gray-900 font-medium"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+            <div className="p-4 border-t">
+              <button
+                onClick={() => setShowFilterModal(false)}
+                className="w-full py-3 bg-[#98E9E9] text-gray-900 font-medium rounded-full hover:bg-[#7CD5D5]"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {loading && (
         <p className="text-center text-gray-500 py-8">

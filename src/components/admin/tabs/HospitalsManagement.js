@@ -1476,7 +1476,7 @@ function HospitalsManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Số điện thoại <span className="text-red-500">*</span>
+                      Phone number <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"

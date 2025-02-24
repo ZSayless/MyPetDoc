@@ -36,7 +36,7 @@ function ScrollToTop() {
       {showButton && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-[100px] right-6 p-3 bg-[#98E9E9] hover:bg-[#7CD5D5] rounded-full shadow-lg transition-all duration-300 z-[1000]"
+          className="fixed bottom-6 right-[24px] w-[44px] h-[44px] flex items-center justify-center bg-[#98E9E9] hover:bg-[#7CD5D5] rounded-full shadow-lg transition-all duration-300 z-[1000] p-0"
           aria-label="Scroll to top"
         >
           <ArrowUp className="w-6 h-6 text-gray-700" />

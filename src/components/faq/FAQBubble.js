@@ -1,35 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { MessageCircle, X, ChevronDown } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import "./FAQBubble.css";
 import { faqService } from "../../services/faqService";
 import { useTranslation } from "react-i18next";
 
 const FAQBubble = () => {
   const { t } = useTranslation();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [faqs, setFaqs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  // Dữ liệu mẫu
-  const mockFaqs = [
-    {
-      id: 1,
-      question: "Làm thế nào để tìm bệnh viện gần nhất?",
-      answer: "Bạn có thể sử dụng tính năng 'Tìm Bệnh Viện' và cho phép truy cập vị trí của bạn để tìm các bệnh viện gần nhất.",
-    },
-    {
-      id: 2,
-      question: "Làm sao để xem đánh giá của bệnh viện?",
-      answer: "Trên trang chi tiết của mỗi bệnh viện, bạn có thể xem phần đánh giá và nhận xét từ những người đã sử dụng dịch vụ.",
-    },
-    {
-      id: 3,
-      question: "Các dịch vụ cơ bản của bệnh viện?",
-      answer: "Các dịch vụ cơ bản bao gồm khám tổng quát, tiêm phòng, phẫu thuật, chăm sóc nha khoa, và cấp cứu 24/7.",
-    },
-  ];
 
   useEffect(() => {
     const fetchFaqs = async () => {
@@ -42,8 +25,6 @@ const FAQBubble = () => {
       } catch (err) {
         console.error("Error fetching FAQs:", err);
         setError(err);
-        // Nếu có lỗi, sử dụng dữ liệu mẫu
-        setFaqs(mockFaqs);
       } finally {
         setLoading(false);
       }
@@ -55,6 +36,14 @@ const FAQBubble = () => {
   const toggleAnswer = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
+
+  // Check if current page is admin or settings
+  if (
+    location.pathname.includes("/admin") ||
+    location.pathname.includes("/setting")
+  ) {
+    return null;
+  }
 
   return (
     <div className="faq-bubble">
@@ -74,9 +63,7 @@ const FAQBubble = () => {
         <div className="faq-popup">
           <div className="faq-header">
             <h3 className="text-lg font-semibold">{t("faq.title")}</h3>
-            <p className="text-sm mt-1">
-              {t("faq.description")}
-            </p>
+            <p className="text-sm mt-1">{t("faq.description")}</p>
           </div>
 
           <div className="faq-content divide-y">
@@ -93,7 +80,9 @@ const FAQBubble = () => {
                     onClick={() => toggleAnswer(faq.id)}
                     className="w-full flex justify-between items-start gap-4"
                   >
-                    <span className="font-medium text-left">{faq.question}</span>
+                    <span className="font-medium text-left">
+                      {faq.question}
+                    </span>
                     <ChevronDown
                       className={`w-5 h-5 shrink-0 transition-transform ${
                         expandedId === faq.id ? "rotate-180" : ""

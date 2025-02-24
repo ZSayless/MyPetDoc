@@ -137,32 +137,34 @@ function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Profile Header with Banner */}
-      <div className="bg-gradient-to-r from-[#98E9E9] to-[#7CD5D5] h-60"></div>
+      {/* Profile Header with Banner - Giảm chiều cao trên mobile */}
+      <div className="bg-gradient-to-r from-[#98E9E9] to-[#7CD5D5] h-40 md:h-60"></div>
 
       <div className="container mx-auto px-4 -mt-20">
         {/* Main Profile Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-          {/* Profile Header */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-start gap-6">
-              {/* Avatar */}
-              <div className="w-24 h-24 rounded-full overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-lg p-4 md:p-8">
+          {/* Profile Header - Cải thiện layout trên mobile */}
+          <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+            <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-6">
+              {/* Avatar - Căn giữa trên mobile */}
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden mx-auto md:mx-0">
                 {renderAvatar()}
               </div>
 
-              {/* User Info */}
-              <div className="flex-1">
-                <h1 className="text-2xl font-semibold mb-2">{userInfo.name}</h1>
+              {/* User Info - Stack vertically trên mobile */}
+              <div className="flex-1 text-center md:text-left">
+                <h1 className="text-xl md:text-2xl font-semibold mb-2">
+                  {userInfo.name}
+                </h1>
                 <p className="text-gray-600 mt-2 max-w-2xl">{user?.bio}</p>
-                <div className="flex flex-wrap gap-4 mt-4 text-gray-600">
+                <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4 text-gray-600">
                   <div className="flex items-center">
                     <Mail size={18} className="mr-2" />
                     {userInfo.email}
                   </div>
                 </div>
-                {/* Social Media Links */}
-                <div className="flex gap-4 mt-4">
+                {/* Social Media Links - Căn giữa trên mobile */}
+                <div className="flex gap-4 mt-4 justify-center md:justify-start">
                   {userInfo.socialMedia &&
                     Object.entries(userInfo.socialMedia)
                       .filter(([platform, link]) => link && link.trim() !== "")
@@ -183,31 +185,35 @@ function Profile() {
                       })}
                 </div>
               </div>
-              <Link
-                to="/setting"
-                className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                {t("profile.editProfile")}
-              </Link>
-              {(userInfo.role === "HOSPITAL_ADMIN" ||
-                userInfo.role === "ADMIN") && (
+
+              {/* Action Buttons - Stack vertically trên mobile */}
+              <div className="flex flex-col gap-2 w-full md:w-auto mt-4 md:mt-0">
                 <Link
-                  to="/add-hospital"
-                  className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors"
+                  to="/setting"
+                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-center"
                 >
-                  {t("profile.registerHospital")}
+                  {t("profile.editProfile")}
                 </Link>
-              )}
+                {(userInfo.role === "HOSPITAL_ADMIN" ||
+                  userInfo.role === "ADMIN") && (
+                  <Link
+                    to="/add-hospital"
+                    className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors text-center"
+                  >
+                    {t("profile.registerHospital")}
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Content Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+          {/* Content Grid - Chuyển sang 1 cột trên mobile */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8 mt-4 md:mt-8">
             {/* Left Column */}
             <div>
               {/* Recent Reviews */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4">
+              <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-semibold mb-4">
                   {t("profile.recentReviews")}
                 </h2>
                 <div className="space-y-4">
@@ -222,7 +228,8 @@ function Profile() {
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
-                              size={16}
+                              size={14}
+                              className="md:w-4 md:h-4"
                               fill={i < review.rating ? "currentColor" : "none"}
                             />
                           ))}
@@ -231,7 +238,7 @@ function Profile() {
                           {review.rating}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mt-2">
+                      <p className="text-sm text-gray-600 mt-2 line-clamp-2">
                         {review.comment}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
@@ -242,7 +249,7 @@ function Profile() {
                 </div>
                 <Link
                   to="/profile/reviews"
-                  className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
+                  className="text-blue-600 hover:text-blue-800 text-sm mt-4 block text-center md:text-left"
                 >
                   {t("profile.viewAllReviews")}
                 </Link>
@@ -250,12 +257,12 @@ function Profile() {
             </div>
 
             {/* Right Column - Favorite Hospitals */}
-            <div className="md:col-span-2">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4">
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-semibold mb-4">
                   {t("profile.favoriteHospitals")}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {favorites.map((hospital) => (
                     <div
                       key={hospital.id}
@@ -265,13 +272,15 @@ function Profile() {
                         src={hospital.thumbnail}
                         alt={hospital.name}
                         effect="blur"
-                        className="w-full h-48 object-cover"
+                        className="w-full h-36 md:h-48 object-cover"
                         placeholderSrc="/placeholder-hospital.jpg"
                       />
-                      <div className="p-4">
-                        <h3 className="font-medium">{hospital.name}</h3>
+                      <div className="p-3 md:p-4">
+                        <h3 className="font-medium text-sm md:text-base">
+                          {hospital.name}
+                        </h3>
                         <div className="flex items-center mt-1">
-                          <Star className="text-yellow-400" size={16} />
+                          <Star className="text-yellow-400 w-4 h-4" />
                           <span className="ml-1 text-sm">
                             {hospital.rating}
                           </span>
@@ -280,7 +289,7 @@ function Profile() {
                             {hospital.reviews} reviews
                           </span>
                         </div>
-                        <p className="text-sm text-gray-600 mt-2">
+                        <p className="text-sm text-gray-600 mt-2 line-clamp-2">
                           {hospital.address}
                         </p>
                       </div>
@@ -289,7 +298,7 @@ function Profile() {
                 </div>
                 <Link
                   to="/profile/favorites"
-                  className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
+                  className="text-blue-600 hover:text-blue-800 text-sm mt-4 block text-center md:text-left"
                 >
                   {t("profile.viewAllFavorites")}
                 </Link>

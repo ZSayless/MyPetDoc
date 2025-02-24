@@ -439,7 +439,7 @@ function Header() {
               className="fixed inset-0 bg-black bg-opacity-50 z-40"
               onClick={toggleMenu}
             />
-            <div className="fixed inset-y-0 right-0 w-[280px] bg-white z-50 transform transition-transform duration-300 ease-in-out">
+            <div className="fixed inset-y-0 right-0 w-[240px] bg-white z-50 transform transition-transform duration-300 ease-in-out">
               <button
                 onClick={toggleMenu}
                 className="absolute top-4 right-4 text-gray-600 p-2 hover:bg-gray-100 rounded-full"
@@ -448,10 +448,10 @@ function Header() {
               </button>
 
               {isAuthenticated && (
-                <div className="p-6 border-b border-gray-200">
+                <div className="p-4 border-b border-gray-200">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-[#98E9E9] flex items-center justify-center">
-                      <span className="text-xl font-semibold text-gray-700">
+                    <div className="w-10 h-10 rounded-full bg-[#98E9E9] flex items-center justify-center">
+                      <span className="text-lg font-semibold text-gray-700">
                         {user?.full_name?.charAt(0)}
                       </span>
                     </div>
@@ -459,7 +459,7 @@ function Header() {
                       <div className="text-gray-800 font-medium">
                         {user?.full_name}
                       </div>
-                      <div className="text-gray-600 text-sm truncate max-w-[200px]">
+                      <div className="text-gray-600 text-sm truncate max-w-[160px]">
                         {user?.email}
                       </div>
                     </div>
@@ -467,9 +467,9 @@ function Header() {
                 </div>
               )}
 
-              <div className="p-6">
-                <nav className="space-y-3">
-                  <div className="space-y-2">
+              <div className="p-4">
+                <nav className="space-y-2">
+                  <div className="space-y-1">
                     <Link
                       to="/"
                       className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
@@ -515,27 +515,8 @@ function Header() {
                     </a>
                   </div>
 
-                  <div className="space-y-2">
-                    <Link
-                      to="/find-hospital"
-                      className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
-                      onClick={toggleMenu}
-                    >
-                      <Search className="w-5 h-5" />
-                      {t("header.menu.findHospital")}
-                    </Link>
-                    <Link
-                      to="/bloglist"
-                      className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
-                      onClick={toggleMenu}
-                    >
-                      <FileText className="w-5 h-5" />
-                      {t("header.menu.blog")}
-                    </Link>
-                  </div>
-
                   {isAuthenticated ? (
-                    <div className="space-y-2">
+                    <div className="space-y-1 pt-2 border-t border-gray-200">
                       <Link
                         to="/profile"
                         className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
@@ -565,7 +546,7 @@ function Header() {
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-2 pt-2 border-t border-gray-200">
                       <button
                         onClick={() => {
                           toggleMenu();
@@ -589,32 +570,32 @@ function Header() {
                 </nav>
               </div>
 
-              <div className="px-6 py-4 border-t border-gray-200">
-                <div className="py-4 px-3">
-                  <div className="text-[#1A3C8E] uppercase text-sm font-medium mb-3">
+              <div className="px-4 py-3 border-t border-gray-200">
+                <div className="py-2 px-3">
+                  <div className="text-[#1A3C8E] uppercase text-sm font-medium mb-2">
                     {t("header.menu.language")}
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => i18n.changeLanguage("vi")}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all ${
                         i18n.language === "vi"
                           ? "bg-[#1A3C8E] text-white"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                     >
-                      <VN className="w-5 h-5" title="Tiếng Việt" />
+                      <VN className="w-4 h-4" title="Tiếng Việt" />
                       <span className="text-sm font-medium">Tiếng Việt</span>
                     </button>
                     <button
                       onClick={() => i18n.changeLanguage("en")}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all ${
                         i18n.language === "en"
                           ? "bg-[#1A3C8E] text-white"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                     >
-                      <GB className="w-5 h-5" title="English" />
+                      <GB className="w-4 h-4" title="English" />
                       <span className="text-sm font-medium">English</span>
                     </button>
                   </div>
