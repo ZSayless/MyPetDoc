@@ -113,7 +113,7 @@ const FindHospital = () => {
         setHospitals(formattedHospitals);
         setFilteredHospitals(formattedHospitals);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách bệnh viện:", error);
+        console.error("Error when getting hospital list:", error);
       } finally {
         setLoading(false);
       }
@@ -150,7 +150,7 @@ const FindHospital = () => {
     }
   };
 
-  // Cập nhật filter logic
+  // Update filter logic
   useEffect(() => {
     setLoading(true);
     let results = hospitals;
