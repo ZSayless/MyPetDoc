@@ -1,29 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { format } from 'date-fns';
-import { Edit, Plus, X, Trash2 } from 'lucide-react';
-import { fetchContactInfoHistory, fetchCurrentContactInfo, createContactInfo, updateContactInfo, deleteContactInfo } from '../../../redux/slices/adminSlice';
-import { useToast } from '../../../context/ToastContext';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { format } from "date-fns";
+import { Edit, Plus, X, Trash2 } from "lucide-react";
+import {
+  fetchContactInfoHistory,
+  fetchCurrentContactInfo,
+  createContactInfo,
+  updateContactInfo,
+  deleteContactInfo,
+} from "../../../redux/slices/adminSlice";
+import { useToast } from "../../../context/ToastContext";
 
 function ContactInfoManagement() {
   const dispatch = useDispatch();
   const { addToast } = useToast();
-  const { 
-    contactInfoList, 
+  const {
+    contactInfoList,
     currentContactInfo,
     contactInfoPagination,
     isLoadingContactInfo,
-    isSubmittingContactInfo
+    isSubmittingContactInfo,
   } = useSelector((state) => state.admin);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingInfo, setEditingInfo] = useState(null);
   const [formData, setFormData] = useState({
-    email: '',
-    phone: '',
-    address: '',
-    support_hours: '',
-    support_description: ''
+    email: "",
+    phone: "",
+    address: "",
+    support_hours: "",
+    support_description: "",
   });
   const [formErrors, setFormErrors] = useState({});
   const [isDeletingId, setIsDeletingId] = useState(null);
@@ -36,52 +42,48 @@ function ContactInfoManagement() {
 
   const validateForm = (data) => {
     const errors = {};
-    
+
     // Email validation
     if (!data.email?.trim()) {
-      errors.email = 'Email is required';
+      errors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      errors.email = 'Email is not valid';
+      errors.email = "Email is not valid";
     }
 
     // Phone validation
     if (!data.phone?.trim()) {
-      errors.phone = 'Phone number is required';
+      errors.phone = "Phone number is required";
     } else if (!/^[0-9]{10,11}$/.test(data.phone)) {
-      errors.phone = 'Phone number must be 10-11 digits';
+      errors.phone = "Phone number must be 10-11 digits";
     }
 
     // Address validation
     if (!data.address?.trim()) {
-      errors.address = 'Address is required';
-    }
-    else if (data.address.length <= 5) {
-        errors.address = 'Address cannot be less than 5 characters';
-    }
-     else if (data.address.length > 255) {
-      errors.address = 'Address cannot be more than 255 characters';
+      errors.address = "Address is required";
+    } else if (data.address.length <= 5) {
+      errors.address = "Address cannot be less than 5 characters";
+    } else if (data.address.length > 255) {
+      errors.address = "Address cannot be more than 255 characters";
     }
 
     // Support hours validation
     if (!data.support_hours?.trim()) {
-      errors.support_hours = 'Support hours is required';
-    }
-    else if (data.support_hours.length <= 5) {
-        errors.support_hours = 'Support hours cannot be less than 5 characters';
-    }
-     else if (data.support_hours.length > 100) {
-      errors.support_hours = 'Support hours cannot be more than 100 characters';
+      errors.support_hours = "Support hours is required";
+    } else if (data.support_hours.length <= 5) {
+      errors.support_hours = "Support hours cannot be less than 5 characters";
+    } else if (data.support_hours.length > 100) {
+      errors.support_hours = "Support hours cannot be more than 100 characters";
     }
 
     // Support description validation
     if (!data.support_description?.trim()) {
-      errors.support_description = 'Description is required';
-    }
-    else if (data.support_description.length <= 5) {
-        errors.support_description = 'Description cannot be less than 5 characters';
-    }
-    else if (data.support_description.length > 100 ) {
-      errors.support_description = 'Description cannot be more than 100 characters';
+      errors.support_description = "Description is required";
+    } else if (data.support_description.length <= 5) {
+      errors.support_description =
+        "Description cannot be less than 5 characters";
+    } else if (data.support_description.length > 100) {
+      errors.support_description =
+        "Description cannot be more than 100 characters";
     }
 
     return errors;
@@ -89,7 +91,7 @@ function ContactInfoManagement() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm(formData)) {
       return;
     }
@@ -97,21 +99,22 @@ function ContactInfoManagement() {
     try {
       await dispatch(createContactInfo(formData)).unwrap();
       addToast({
-        type: 'success',
-        message: 'Add contact information successfully!'
+        type: "success",
+        message: "Add contact information successfully!",
       });
       setIsCreating(false);
       setFormData({
-        email: '',
-        phone: '',
-        address: '',
-        support_hours: '',
-        support_description: ''
+        email: "",
+        phone: "",
+        address: "",
+        support_hours: "",
+        support_description: "",
       });
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while adding contact information'
+        type: "error",
+        message:
+          error.message || "An error occurred while adding contact information",
       });
     }
   };
@@ -123,7 +126,7 @@ function ContactInfoManagement() {
       phone: info.phone,
       address: info.address,
       support_hours: info.support_hours,
-      support_description: info.support_description
+      support_description: info.support_description,
     });
     setFormErrors({});
     setIsEditing(true);
@@ -139,14 +142,16 @@ function ContactInfoManagement() {
     }
 
     try {
-      await dispatch(updateContactInfo({
-        id: editingInfo.id,
-        data: formData
-      })).unwrap();
-      
+      await dispatch(
+        updateContactInfo({
+          id: editingInfo.id,
+          data: formData,
+        })
+      ).unwrap();
+
       addToast({
-        type: 'success',
-        message: 'Update contact information successfully!'
+        type: "success",
+        message: "Update contact information successfully!",
       });
       setIsEditing(false);
       setEditingInfo(null);
@@ -154,8 +159,10 @@ function ContactInfoManagement() {
       dispatch(fetchCurrentContactInfo());
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while updating contact information'
+        type: "error",
+        message:
+          error.message ||
+          "An error occurred while updating contact information",
       });
     }
   };
@@ -163,16 +170,16 @@ function ContactInfoManagement() {
   const handleDeleteClick = (info) => {
     if (contactInfoList.length <= 1) {
       addToast({
-        type: 'error',
-        message: 'Cannot delete the only contact information'
+        type: "error",
+        message: "Cannot delete the only contact information",
       });
       return;
     }
 
     if (currentContactInfo?.id === info.id) {
       addToast({
-        type: 'error',
-        message: 'Cannot delete the active contact information'
+        type: "error",
+        message: "Cannot delete the active contact information",
       });
       return;
     }
@@ -185,15 +192,17 @@ function ContactInfoManagement() {
     try {
       await dispatch(deleteContactInfo(isDeletingId)).unwrap();
       addToast({
-        type: 'success',
-        message: 'Delete contact information successfully!'
+        type: "success",
+        message: "Delete contact information successfully!",
       });
       setShowDeleteConfirm(false);
       setIsDeletingId(null);
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while deleting contact information'
+        type: "error",
+        message:
+          error.message ||
+          "An error occurred while deleting contact information",
       });
     }
   };
@@ -207,11 +216,10 @@ function ContactInfoManagement() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Manage Contact Information</h2>
+    <div className="p-6 mt-12 md:mt-0">
+      <div className="flex justify-end mb-6">
         <button
-          className="flex items-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
+          className="flex items-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] w-full sm:w-auto justify-center"
           onClick={() => setIsCreating(true)}
         >
           <Plus size={20} />
@@ -226,29 +234,41 @@ function ContactInfoManagement() {
           </div>
         ) : (
           contactInfoList?.map((info) => (
-            <div 
+            <div
               key={info.id}
               className={`bg-white p-4 rounded-lg shadow-sm ${
-                currentContactInfo?.id === info.id ? 'border-2 border-[#98E9E9]' : ''
+                currentContactInfo?.id === info.id
+                  ? "border-2 border-[#98E9E9]"
+                  : ""
               }`}
             >
-              <div className="flex justify-between items-start">
-                <div className="space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="space-y-2 min-w-0">
                   {currentContactInfo?.id === info.id && (
                     <span className="inline-block px-2 py-1 text-xs font-medium text-teal-700 bg-teal-50 rounded-full mb-2">
                       Active
                     </span>
                   )}
-                  <h3 className="font-medium">Email: {info.email}</h3>
-                  <p className="text-gray-600">Phone number: {info.phone}</p>
-                  <p className="text-gray-600">Address: {info.address}</p>
-                  <p className="text-gray-600">Support hours: {info.support_hours}</p>
-                  <p className="text-gray-600">Description: {info.support_description}</p>
+                  <h3 className="font-medium break-all">Email: {info.email}</h3>
+                  <p className="text-gray-600 break-all">
+                    Phone number: {info.phone}
+                  </p>
+                  <p className="text-gray-600 break-words">
+                    Address: {info.address}
+                  </p>
+                  <p className="text-gray-600 break-words">
+                    Support hours: {info.support_hours}
+                  </p>
+                  <p className="text-gray-600 break-words">
+                    Description: {info.support_description}
+                  </p>
                   <p className="text-sm text-gray-500">
-                    Last updated: {format(new Date(info.updated_at), 'dd/MM/yyyy HH:mm')} by {info.last_updated_by_name}
+                    Last updated:{" "}
+                    {format(new Date(info.updated_at), "dd/MM/yyyy HH:mm")} by{" "}
+                    {info.last_updated_by_name}
                   </p>
                 </div>
-                <div className="flex gap-2 shrink-0">
+                <div className="flex gap-2 shrink-0 justify-end sm:flex-col">
                   <button
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
                     title="Edit"
@@ -258,19 +278,23 @@ function ContactInfoManagement() {
                   </button>
                   <button
                     className={`p-2 rounded-full ${
-                      currentContactInfo?.id === info.id || contactInfoList.length <= 1
-                        ? 'text-gray-400 cursor-not-allowed'
-                        : 'text-red-600 hover:bg-red-50'
+                      currentContactInfo?.id === info.id ||
+                      contactInfoList.length <= 1
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-red-600 hover:bg-red-50"
                     }`}
                     title={
                       currentContactInfo?.id === info.id
-                        ? 'Cannot delete the active contact information'
+                        ? "Cannot delete the active contact information"
                         : contactInfoList.length <= 1
-                        ? 'Cannot delete the only contact information'
-                        : 'Delete'
+                        ? "Cannot delete the only contact information"
+                        : "Delete"
                     }
                     onClick={() => handleDeleteClick(info)}
-                    disabled={currentContactInfo?.id === info.id || contactInfoList.length <= 1}
+                    disabled={
+                      currentContactInfo?.id === info.id ||
+                      contactInfoList.length <= 1
+                    }
                   >
                     <Trash2 size={18} />
                   </button>
@@ -282,18 +306,19 @@ function ContactInfoManagement() {
       </div>
 
       <div className="text-center text-gray-500 mt-4">
-        Display {contactInfoList?.length} on total {contactInfoPagination.total} contact information
+        Display {contactInfoList?.length} on total {contactInfoPagination.total}{" "}
+        contact information
       </div>
 
       {/* Modal tạo mới */}
       {isCreating && (
         <>
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
             onClick={() => setIsCreating(false)}
           />
           <div className="fixed inset-0 flex items-center justify-center z-[110] p-4">
-            <div 
+            <div
               className="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
@@ -317,16 +342,20 @@ function ContactInfoManagement() {
                   <input
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      email: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        email: e.target.value,
+                      })
+                    }
                     className={`w-full p-2 border rounded-lg ${
-                      formErrors.email ? 'border-red-500' : 'border-gray-300'
+                      formErrors.email ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                   {formErrors.email && (
-                    <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {formErrors.email}
+                    </p>
                   )}
                 </div>
 
@@ -337,16 +366,20 @@ function ContactInfoManagement() {
                   <input
                     type="tel"
                     value={formData.phone}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      phone: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        phone: e.target.value,
+                      })
+                    }
                     className={`w-full p-2 border rounded-lg ${
-                      formErrors.phone ? 'border-red-500' : 'border-gray-300'
+                      formErrors.phone ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                   {formErrors.phone && (
-                    <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {formErrors.phone}
+                    </p>
                   )}
                 </div>
 
@@ -357,16 +390,20 @@ function ContactInfoManagement() {
                   <input
                     type="text"
                     value={formData.address}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      address: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        address: e.target.value,
+                      })
+                    }
                     className={`w-full p-2 border rounded-lg ${
-                      formErrors.address ? 'border-red-500' : 'border-gray-300'
+                      formErrors.address ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                   {formErrors.address && (
-                    <p className="mt-1 text-sm text-red-500">{formErrors.address}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {formErrors.address}
+                    </p>
                   )}
                 </div>
 
@@ -377,16 +414,22 @@ function ContactInfoManagement() {
                   <input
                     type="text"
                     value={formData.support_hours}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      support_hours: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        support_hours: e.target.value,
+                      })
+                    }
                     className={`w-full p-2 border rounded-lg ${
-                      formErrors.support_hours ? 'border-red-500' : 'border-gray-300'
+                      formErrors.support_hours
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }`}
                   />
                   {formErrors.support_hours && (
-                    <p className="mt-1 text-sm text-red-500">{formErrors.support_hours}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {formErrors.support_hours}
+                    </p>
                   )}
                 </div>
 
@@ -396,17 +439,23 @@ function ContactInfoManagement() {
                   </label>
                   <textarea
                     value={formData.support_description}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      support_description: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        support_description: e.target.value,
+                      })
+                    }
                     rows={4}
                     className={`w-full p-2 border rounded-lg ${
-                      formErrors.support_description ? 'border-red-500' : 'border-gray-300'
+                      formErrors.support_description
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }`}
                   />
                   {formErrors.support_description && (
-                    <p className="mt-1 text-sm text-red-500">{formErrors.support_description}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {formErrors.support_description}
+                    </p>
                   )}
                 </div>
 
@@ -429,7 +478,7 @@ function ContactInfoManagement() {
                         <span>Saving...</span>
                       </>
                     ) : (
-                      'Save'
+                      "Save"
                     )}
                   </button>
                 </div>
@@ -442,12 +491,12 @@ function ContactInfoManagement() {
       {/* Modal chỉnh sửa */}
       {isEditing && (
         <>
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
             onClick={() => setIsEditing(false)}
           />
           <div className="fixed inset-0 flex items-center justify-center z-[110] p-4">
-            <div 
+            <div
               className="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
@@ -471,16 +520,20 @@ function ContactInfoManagement() {
                   <input
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      email: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        email: e.target.value,
+                      })
+                    }
                     className={`w-full p-2 border rounded-lg ${
-                      formErrors.email ? 'border-red-500' : 'border-gray-300'
+                      formErrors.email ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                   {formErrors.email && (
-                    <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {formErrors.email}
+                    </p>
                   )}
                 </div>
 
@@ -491,16 +544,20 @@ function ContactInfoManagement() {
                   <input
                     type="tel"
                     value={formData.phone}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      phone: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        phone: e.target.value,
+                      })
+                    }
                     className={`w-full p-2 border rounded-lg ${
-                      formErrors.phone ? 'border-red-500' : 'border-gray-300'
+                      formErrors.phone ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                   {formErrors.phone && (
-                    <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {formErrors.phone}
+                    </p>
                   )}
                 </div>
 
@@ -511,16 +568,20 @@ function ContactInfoManagement() {
                   <input
                     type="text"
                     value={formData.address}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      address: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        address: e.target.value,
+                      })
+                    }
                     className={`w-full p-2 border rounded-lg ${
-                      formErrors.address ? 'border-red-500' : 'border-gray-300'
+                      formErrors.address ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                   {formErrors.address && (
-                    <p className="mt-1 text-sm text-red-500">{formErrors.address}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {formErrors.address}
+                    </p>
                   )}
                 </div>
 
@@ -531,16 +592,22 @@ function ContactInfoManagement() {
                   <input
                     type="text"
                     value={formData.support_hours}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      support_hours: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        support_hours: e.target.value,
+                      })
+                    }
                     className={`w-full p-2 border rounded-lg ${
-                      formErrors.support_hours ? 'border-red-500' : 'border-gray-300'
+                      formErrors.support_hours
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }`}
                   />
                   {formErrors.support_hours && (
-                    <p className="mt-1 text-sm text-red-500">{formErrors.support_hours}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {formErrors.support_hours}
+                    </p>
                   )}
                 </div>
 
@@ -550,17 +617,23 @@ function ContactInfoManagement() {
                   </label>
                   <textarea
                     value={formData.support_description}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      support_description: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        support_description: e.target.value,
+                      })
+                    }
                     rows={4}
                     className={`w-full p-2 border rounded-lg ${
-                      formErrors.support_description ? 'border-red-500' : 'border-gray-300'
+                      formErrors.support_description
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }`}
                   />
                   {formErrors.support_description && (
-                    <p className="mt-1 text-sm text-red-500">{formErrors.support_description}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {formErrors.support_description}
+                    </p>
                   )}
                 </div>
 
@@ -583,7 +656,7 @@ function ContactInfoManagement() {
                         <span>Saving...</span>
                       </>
                     ) : (
-                      'Save'
+                      "Save"
                     )}
                   </button>
                 </div>
@@ -596,7 +669,7 @@ function ContactInfoManagement() {
       {/* Modal xác nhận xóa */}
       {showDeleteConfirm && (
         <>
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
             onClick={() => {
               setShowDeleteConfirm(false);
@@ -604,7 +677,7 @@ function ContactInfoManagement() {
             }}
           />
           <div className="fixed inset-0 flex items-center justify-center z-[110] p-4">
-            <div 
+            <div
               className="bg-white rounded-lg w-full max-w-md"
               onClick={(e) => e.stopPropagation()}
             >
@@ -613,7 +686,8 @@ function ContactInfoManagement() {
                   Confirm delete
                 </h3>
                 <p className="text-gray-500">
-                  Are you sure you want to delete this contact information? This action cannot be undone.
+                  Are you sure you want to delete this contact information? This
+                  action cannot be undone.
                 </p>
                 <div className="flex justify-end gap-2 mt-6">
                   <button
@@ -638,7 +712,7 @@ function ContactInfoManagement() {
                         <span>Deleting...</span>
                       </>
                     ) : (
-                      'Delete'
+                      "Delete"
                     )}
                   </button>
                 </div>
@@ -651,4 +725,4 @@ function ContactInfoManagement() {
   );
 }
 
-export default ContactInfoManagement; 
+export default ContactInfoManagement;

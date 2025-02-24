@@ -2,12 +2,21 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Search, Eye, Check, Trash2, Trash } from "lucide-react";
 import { useToast } from "../../../context/ToastContext";
-import { resolveReport, fetchReports, deleteReviewPermanently, deleteReportPermanently, deleteGalleryComment, deleteBlogComment } from "../../../redux/slices/adminSlice";
+import {
+  resolveReport,
+  fetchReports,
+  deleteReviewPermanently,
+  deleteReportPermanently,
+  deleteGalleryComment,
+  deleteBlogComment,
+} from "../../../redux/slices/adminSlice";
 
 function ReportsManagement() {
   const dispatch = useDispatch();
   const { addToast } = useToast();
-  const { reports, isLoadingReports, isDeletingBlogComment } = useSelector((state) => state.admin);
+  const { reports, isLoadingReports, isDeletingBlogComment } = useSelector(
+    (state) => state.admin
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedReport, setSelectedReport] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,7 +24,7 @@ function ReportsManagement() {
     page: 1,
     limit: 10,
     total: 0,
-    totalPages: 1
+    totalPages: 1,
   });
 
   useEffect(() => {
@@ -26,7 +35,8 @@ function ReportsManagement() {
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "An error occurred while loading the report list"
+          message:
+            error.message || "An error occurred while loading the report list",
         });
       }
     };
@@ -38,12 +48,13 @@ function ReportsManagement() {
       await dispatch(resolveReport(reportId)).unwrap();
       addToast({
         type: "success",
-        message: "Report marked as resolved"
+        message: "Report marked as resolved",
       });
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "An error occurred while resolving the report"
+        message:
+          error.message || "An error occurred while resolving the report",
       });
     }
   };
@@ -53,93 +64,106 @@ function ReportsManagement() {
   };
 
   const handleDeleteReview = async (report) => {
-    if (window.confirm('Are you sure you want to delete this review permanently?')) {
+    if (
+      window.confirm("Are you sure you want to delete this review permanently?")
+    ) {
       try {
-        await dispatch(deleteReviewPermanently({
-          reviewId: report.reported_content.id,
-          reportId: report.id
-        })).unwrap();
+        await dispatch(
+          deleteReviewPermanently({
+            reviewId: report.reported_content.id,
+            reportId: report.id,
+          })
+        ).unwrap();
 
         const response = await dispatch(fetchReports(currentPage)).unwrap();
         setPagination(response.pagination);
 
         addToast({
           type: "success",
-          message: "Deleted review permanently"
+          message: "Deleted review permanently",
         });
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "An error occurred while deleting the review"
+          message:
+            error.message || "An error occurred while deleting the review",
         });
       }
     }
   };
 
   const handleDeleteReport = async (reportId) => {
-    if (window.confirm('Are you sure you want to delete this report permanently?')) {
+    if (
+      window.confirm("Are you sure you want to delete this report permanently?")
+    ) {
       try {
         await dispatch(deleteReportPermanently(reportId)).unwrap();
         addToast({
           type: "success",
-          message: "Deleted report permanently"
+          message: "Deleted report permanently",
         });
 
         const response = await dispatch(fetchReports(currentPage)).unwrap();
         setPagination(response.pagination);
-
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "An error occurred while deleting the report"
+          message:
+            error.message || "An error occurred while deleting the report",
         });
       }
     }
   };
 
   const handleDeleteGalleryComment = async (report) => {
-    if (window.confirm('Are you sure you want to delete this comment?')) {
+    if (window.confirm("Are you sure you want to delete this comment?")) {
       try {
-        await dispatch(deleteGalleryComment({
-          commentId: report.reported_content.id,
-          reportId: report.id
-        })).unwrap();
+        await dispatch(
+          deleteGalleryComment({
+            commentId: report.reported_content.id,
+            reportId: report.id,
+          })
+        ).unwrap();
 
         const response = await dispatch(fetchReports(currentPage)).unwrap();
         setPagination(response.pagination);
 
         addToast({
           type: "success",
-          message: "Deleted comment"
+          message: "Deleted comment",
         });
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "An error occurred while deleting the comment"
+          message:
+            error.message || "An error occurred while deleting the comment",
         });
       }
     }
   };
 
   const handleDeleteBlogComment = async (report) => {
-    if (window.confirm('Are you sure you want to delete this comment?')) {
+    if (window.confirm("Are you sure you want to delete this comment?")) {
       try {
-        await dispatch(deleteBlogComment({
-          commentId: report.reported_content.id,
-          reportId: report.id
-        })).unwrap();
-        
+        await dispatch(
+          deleteBlogComment({
+            commentId: report.reported_content.id,
+            reportId: report.id,
+          })
+        ).unwrap();
+
         const response = await dispatch(fetchReports(currentPage)).unwrap();
         setPagination(response.pagination);
-        
+
         addToast({
           type: "success",
-          message: "Deleted comment"
+          message: "Deleted comment",
         });
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "An error occurred when deleting the comment"
+          message:
+            error.message || "An error occurred when deleting the comment",
         });
       }
     }
@@ -149,10 +173,13 @@ function ReportsManagement() {
     if (!searchTerm || !reports) return reports || [];
 
     const searchTermLower = searchTerm.toLowerCase().trim();
-    return reports.filter(report => 
-      report?.reason?.toLowerCase().includes(searchTermLower) ||
-      report?.reporter?.full_name?.toLowerCase().includes(searchTermLower) ||
-      report?.reported_content?.content?.toLowerCase().includes(searchTermLower)
+    return reports.filter(
+      (report) =>
+        report?.reason?.toLowerCase().includes(searchTermLower) ||
+        report?.reporter?.full_name?.toLowerCase().includes(searchTermLower) ||
+        report?.reported_content?.content
+          ?.toLowerCase()
+          .includes(searchTermLower)
     );
   };
 
@@ -165,7 +192,7 @@ function ReportsManagement() {
   }
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-4 md:p-6 mt-12 md:mt-0">
       {/* Search */}
       <div className="mb-6">
         <div className="relative">
@@ -210,12 +237,14 @@ function ReportsManagement() {
               {getFilteredReports()?.map((report) => (
                 <tr key={report.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      report?.reported_content?.type === "review"
-                        ? "bg-purple-100 text-purple-800"
-                        : "bg-blue-100 text-blue-800"
-                    }`}>
-                      {report?.reported_content?.type || 'N/A'}
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        report?.reported_content?.type === "review"
+                          ? "bg-purple-100 text-purple-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
+                      {report?.reported_content?.type || "N/A"}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -223,11 +252,13 @@ function ReportsManagement() {
                       <p className="text-sm text-gray-900 line-clamp-2">
                         {report?.reported_content?.content}
                       </p>
-                      {report?.reported_content?.type === "review" && report?.reported_content?.details?.hospital && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          Bệnh viện: {report.reported_content.details.hospital.name}
-                        </p>
-                      )}
+                      {report?.reported_content?.type === "review" &&
+                        report?.reported_content?.details?.hospital && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Bệnh viện:{" "}
+                            {report.reported_content.details.hospital.name}
+                          </p>
+                        )}
                       <p className="text-xs text-gray-500 mt-1">
                         Lý do: {report?.reason}
                       </p>
@@ -236,24 +267,30 @@ function ReportsManagement() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       {report?.reporter?.avatar && (
-                        <img 
-                          src={report.reporter.avatar} 
+                        <img
+                          src={report.reporter.avatar}
                           alt={report.reporter.full_name}
                           className="w-8 h-8 rounded-full"
                         />
                       )}
                       <div>
-                        <div className="text-sm font-medium">{report?.reporter?.full_name}</div>
-                        <div className="text-xs text-gray-500">{report?.reporter?.email}</div>
+                        <div className="text-sm font-medium">
+                          {report?.reporter?.full_name}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {report?.reporter?.email}
+                        </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      report?.resolved 
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        report?.resolved
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
                       {report?.resolved ? "Resolved" : "Pending"}
                     </span>
                   </td>
@@ -266,7 +303,7 @@ function ReportsManagement() {
                       >
                         <Eye size={18} />
                       </button>
-                      {report?.reported_content?.type === 'review' && (
+                      {report?.reported_content?.type === "review" && (
                         <button
                           onClick={() => handleDeleteReview(report)}
                           className="text-red-600 hover:text-red-900"
@@ -275,7 +312,7 @@ function ReportsManagement() {
                           <Trash2 size={18} />
                         </button>
                       )}
-                      {report?.reported_content?.type === 'gallery_comment' && (
+                      {report?.reported_content?.type === "gallery_comment" && (
                         <button
                           onClick={() => handleDeleteGalleryComment(report)}
                           className="text-red-600 hover:text-red-900"
@@ -284,12 +321,14 @@ function ReportsManagement() {
                           <Trash2 size={18} />
                         </button>
                       )}
-                      {report?.reported_content?.type === 'post_comment' && (
+                      {report?.reported_content?.type === "post_comment" && (
                         <button
                           onClick={() => handleDeleteBlogComment(report)}
                           disabled={isDeletingBlogComment}
                           className={`text-red-600 hover:text-red-900 relative ${
-                            isDeletingBlogComment ? 'cursor-not-allowed opacity-50' : ''
+                            isDeletingBlogComment
+                              ? "cursor-not-allowed opacity-50"
+                              : ""
                           }`}
                           title="Delete comment"
                         >
@@ -343,7 +382,7 @@ function ReportsManagement() {
                       : "bg-blue-100 text-blue-800"
                   }`}
                 >
-                  {report?.reported_content?.type || 'N/A'}
+                  {report?.reported_content?.type || "N/A"}
                 </span>
                 <p className="text-sm text-gray-500 mt-1">
                   By: {report?.reporter?.full_name}
@@ -371,7 +410,7 @@ function ReportsManagement() {
               >
                 <Eye size={18} />
               </button>
-              {report?.reported_content?.type === 'review' && (
+              {report?.reported_content?.type === "review" && (
                 <button
                   onClick={() => handleDeleteReview(report)}
                   className="p-2 text-red-600 hover:bg-red-50 rounded-full"
@@ -379,7 +418,7 @@ function ReportsManagement() {
                   <Trash2 size={18} />
                 </button>
               )}
-              {report?.reported_content?.type === 'gallery_comment' && (
+              {report?.reported_content?.type === "gallery_comment" && (
                 <button
                   onClick={() => handleDeleteGalleryComment(report)}
                   className="p-2 text-red-600 hover:bg-red-50 rounded-full"
@@ -387,12 +426,12 @@ function ReportsManagement() {
                   <Trash2 size={18} />
                 </button>
               )}
-              {report?.reported_content?.type === 'post_comment' && (
+              {report?.reported_content?.type === "post_comment" && (
                 <button
                   onClick={() => handleDeleteBlogComment(report)}
                   disabled={isDeletingBlogComment}
                   className={`p-2 text-red-600 hover:bg-red-50 rounded-full relative ${
-                    isDeletingBlogComment ? 'cursor-not-allowed opacity-50' : ''
+                    isDeletingBlogComment ? "cursor-not-allowed opacity-50" : ""
                   }`}
                   title="Delete comment"
                 >
@@ -434,23 +473,27 @@ function ReportsManagement() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
             className={`px-4 py-2 text-sm font-medium rounded-md ${
               currentPage === 1
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-white text-gray-700 hover:bg-gray-50 border'
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white text-gray-700 hover:bg-gray-50 border"
             }`}
           >
             Previous
           </button>
           <button
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) =>
+                Math.min(prev + 1, pagination.totalPages)
+              )
+            }
             disabled={currentPage === pagination.totalPages}
             className={`px-4 py-2 text-sm font-medium rounded-md ${
               currentPage === pagination.totalPages
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-white text-gray-700 hover:bg-gray-50 border'
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white text-gray-700 hover:bg-gray-50 border"
             }`}
           >
             Next
@@ -475,7 +518,7 @@ function ReportsManagement() {
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.reported_content?.type || 'N/A'}
+                    value={selectedReport.reported_content?.type || "N/A"}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -486,21 +529,21 @@ function ReportsManagement() {
                     Content
                   </label>
                   <textarea
-                    value={selectedReport.reported_content?.content || 'N/A'}
+                    value={selectedReport.reported_content?.content || "N/A"}
                     readOnly
                     rows={4}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
                 </div>
 
-                {selectedReport.reported_content?.type === 'post' && (
+                {selectedReport.reported_content?.type === "post" && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Title
                     </label>
                     <input
                       type="text"
-                      value={selectedReport.reported_content?.caption || 'N/A'}
+                      value={selectedReport.reported_content?.caption || "N/A"}
                       readOnly
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                     />
@@ -513,7 +556,7 @@ function ReportsManagement() {
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.reason || 'N/A'}
+                    value={selectedReport.reason || "N/A"}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -525,7 +568,7 @@ function ReportsManagement() {
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.reporter?.full_name || 'N/A'}
+                    value={selectedReport.reporter?.full_name || "N/A"}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -537,7 +580,7 @@ function ReportsManagement() {
                   </label>
                   <input
                     type="text"
-                    value={selectedReport.resolved ? 'Resolved' : 'Pending'}
+                    value={selectedReport.resolved ? "Resolved" : "Pending"}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                   />

@@ -1,61 +1,93 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Search, Plus, Edit, Trash2, Eye, RefreshCw, Trash, X, Loader2 } from "lucide-react";
-import { deleteBlog, updateBlogStatus, fetchBlogPosts, fetchDeletedBlogs, createBlogPost, updateBlogPost, toggleDeleteBlog, deleteBlogPermanently } from "../../../redux/slices/adminSlice";
-import { useToast } from '../../../context/ToastContext';
-import { useTranslation } from 'react-i18next';
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  RefreshCw,
+  Trash,
+  X,
+  Loader2,
+} from "lucide-react";
+import {
+  deleteBlog,
+  updateBlogStatus,
+  fetchBlogPosts,
+  fetchDeletedBlogs,
+  createBlogPost,
+  updateBlogPost,
+  toggleDeleteBlog,
+  deleteBlogPermanently,
+} from "../../../redux/slices/adminSlice";
+import { useToast } from "../../../context/ToastContext";
+import { useTranslation } from "react-i18next";
 
-const POST_TYPES = ['BLOG', 'NEWS', 'EVENT'];
-const STATUS_TYPES = ['DRAFT', 'PENDING', 'PUBLISHED', 'ARCHIVED'];
-const CATEGORIES = ['PET_CARE', 'PET_HEALTH', 'PET_TRAINING', 'PET_FOOD', 'PET_LIFESTYLE'];
+const POST_TYPES = ["BLOG", "NEWS", "EVENT"];
+const STATUS_TYPES = ["DRAFT", "PENDING", "PUBLISHED", "ARCHIVED"];
+const CATEGORIES = [
+  "PET_CARE",
+  "PET_HEALTH",
+  "PET_TRAINING",
+  "PET_FOOD",
+  "PET_LIFESTYLE",
+];
 const BLOG_TAGS = [
-  'Health Tips',
-  'Pet Care',
-  'Nutrition',
-  'Behavior',
-  'Training',
-  'Grooming',
-  'Vaccination',
-  'Disease Prevention',
-  'First Aid',
-  'Mental Health',
-  'Exercise',
-  'Breeding',
-  'Senior Pet Care',
-  'Puppy Care',
-  'Emergency Care'
+  "Health Tips",
+  "Pet Care",
+  "Nutrition",
+  "Behavior",
+  "Training",
+  "Grooming",
+  "Vaccination",
+  "Disease Prevention",
+  "First Aid",
+  "Mental Health",
+  "Exercise",
+  "Breeding",
+  "Senior Pet Care",
+  "Puppy Care",
+  "Emergency Care",
 ];
 
 function BlogsManagement() {
   const dispatch = useDispatch();
   const { addToast } = useToast();
-  const { blogs, deletedBlogs, loading, isSubmittingBlog, pagination, deletedPagination } = useSelector((state) => state.admin);
+  const {
+    blogs,
+    deletedBlogs,
+    loading,
+    isSubmittingBlog,
+    pagination,
+    deletedPagination,
+  } = useSelector((state) => state.admin);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("list");
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-  
+
   // State cho form tạo mới
   const [formLoading, setFormLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    summary: '',
-    post_type: 'BLOG',
-    category: 'PET_CARE',
+    title: "",
+    content: "",
+    summary: "",
+    post_type: "BLOG",
+    category: "PET_CARE",
     tags: [],
-    status: 'DRAFT',
-    meta_title: '',
-    meta_description: '',
-    source: '',
-    external_link: '',
-    hospital_id: '',
+    status: "DRAFT",
+    meta_title: "",
+    meta_description: "",
+    source: "",
+    external_link: "",
+    hospital_id: "",
   });
   const [thumbnailImage, setThumbnailImage] = useState(null);
   const [featuredImage, setFeaturedImage] = useState(null);
-  const [previewThumbnail, setPreviewThumbnail] = useState('');
-  const [previewFeatured, setPreviewFeatured] = useState('');
+  const [previewThumbnail, setPreviewThumbnail] = useState("");
+  const [previewFeatured, setPreviewFeatured] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Thêm state để quản lý phân trang
@@ -78,16 +110,16 @@ function BlogsManagement() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleImageChange = (e, type) => {
     const file = e.target.files[0];
     if (file) {
-      if (type === 'thumbnail') {
+      if (type === "thumbnail") {
         setThumbnailImage(file);
         setPreviewThumbnail(URL.createObjectURL(file));
       } else {
@@ -102,7 +134,7 @@ function BlogsManagement() {
     if (!formData.title || formData.title.trim().length < 10) {
       addToast({
         type: "error",
-        message: "Title cannot be empty and must be at least 10 characters"
+        message: "Title cannot be empty and must be at least 10 characters",
       });
       return false;
     }
@@ -111,7 +143,7 @@ function BlogsManagement() {
     if (!formData.content || formData.content.trim().length < 50) {
       addToast({
         type: "error",
-        message: "Content cannot be empty and must be at least 50 characters"
+        message: "Content cannot be empty and must be at least 50 characters",
       });
       return false;
     }
@@ -121,61 +153,62 @@ function BlogsManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    
+
     try {
       const formDataToSubmit = new FormData();
-      
-      Object.keys(formData).forEach(key => {
+
+      Object.keys(formData).forEach((key) => {
         if (formData[key]) {
           formDataToSubmit.append(key, formData[key]);
         }
       });
 
       if (thumbnailImage) {
-        formDataToSubmit.append('thumbnail_image', thumbnailImage);
+        formDataToSubmit.append("thumbnail_image", thumbnailImage);
       }
       if (featuredImage) {
-        formDataToSubmit.append('featured_image', featuredImage);
+        formDataToSubmit.append("featured_image", featuredImage);
       }
 
       let result;
       if (selectedBlog) {
-        result = await dispatch(updateBlogPost({
-          id: selectedBlog.id,
-          formData: formDataToSubmit
-        })).unwrap();
+        result = await dispatch(
+          updateBlogPost({
+            id: selectedBlog.id,
+            formData: formDataToSubmit,
+          })
+        ).unwrap();
       } else {
         result = await dispatch(createBlogPost(formDataToSubmit)).unwrap();
       }
 
       // Check the result from the API
-      if (result?.status === 'error') {
+      if (result?.status === "error") {
         addToast({
           type: "error",
-          message: `An error occurred: ${result.message || 'Invalid data'}`
+          message: `An error occurred: ${result.message || "Invalid data"}`,
         });
         return;
       }
 
       addToast({
         type: "success",
-        message: `${selectedBlog ? "Updated" : "Created"} blog successfully`
+        message: `${selectedBlog ? "Updated" : "Created"} blog successfully`,
       });
 
       setShowCreateModal(false);
       resetForm();
       dispatch(fetchBlogPosts({ page: currentPage, limit: itemsPerPage }));
-
     } catch (error) {
       addToast({
         type: "error",
-        message: `An error occurred: ${error.message || 'Invalid data'}`
+        message: `An error occurred: ${error.message || "Invalid data"}`,
       });
-      console.error('API Error:', error);
+      console.error("API Error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -185,18 +218,19 @@ function BlogsManagement() {
     if (window.confirm("Are you sure you want to delete this blog?")) {
       try {
         await dispatch(deleteBlog(blogId));
-        addToast({ 
-          type: "success", 
-          message: "Deleted blog successfully" 
+        addToast({
+          type: "success",
+          message: "Deleted blog successfully",
         });
       } catch (error) {
-        const errorMessage = error?.response?.data?.message || 
-                            error?.message || 
-                            "An error occurred when deleting the blog";
-        
+        const errorMessage =
+          error?.response?.data?.message ||
+          error?.message ||
+          "An error occurred when deleting the blog";
+
         addToast({
           type: "error",
-          message: errorMessage
+          message: errorMessage,
         });
       }
     }
@@ -215,13 +249,13 @@ function BlogsManagement() {
       summary: blog.summary,
       post_type: blog.post_type,
       category: blog.category,
-      tags: blog.tags.split(',').map(tag => tag.trim()),
+      tags: blog.tags.split(",").map((tag) => tag.trim()),
       status: blog.status,
-      meta_title: blog.meta_title || '',
-      meta_description: blog.meta_description || '',
-      source: blog.source || '',
-      external_link: blog.external_link || '',
-      hospital_id: blog.hospital_id || '',
+      meta_title: blog.meta_title || "",
+      meta_description: blog.meta_description || "",
+      source: blog.source || "",
+      external_link: blog.external_link || "",
+      hospital_id: blog.hospital_id || "",
     });
     setPreviewThumbnail(blog.thumbnail_image);
     setPreviewFeatured(blog.featured_image);
@@ -236,15 +270,15 @@ function BlogsManagement() {
   const handleToggleDelete = async (blog) => {
     try {
       const result = await dispatch(toggleDeleteBlog(blog.id)).unwrap();
-      
-      if (result?.status === 'error') {
+
+      if (result?.status === "error") {
         addToast({
           type: "error",
-          message: `An error occurred: ${result.message || 'Invalid data'}`
+          message: `An error occurred: ${result.message || "Invalid data"}`,
         });
         return;
       }
-      
+
       if (activeTab === "list") {
         dispatch(fetchBlogPosts({ page: currentPage, limit: itemsPerPage }));
       } else {
@@ -253,12 +287,14 @@ function BlogsManagement() {
 
       addToast({
         type: "success",
-        message: `${activeTab === "list" ? "Deleted" : "Restored"} blog successfully`
+        message: `${
+          activeTab === "list" ? "Deleted" : "Restored"
+        } blog successfully`,
       });
     } catch (error) {
       addToast({
         type: "error",
-        message: `An error occurred: ${error.message || 'Invalid data'}`
+        message: `An error occurred: ${error.message || "Invalid data"}`,
       });
     }
   };
@@ -272,10 +308,10 @@ function BlogsManagement() {
     try {
       setFormLoading(true);
       await dispatch(deleteBlogPermanently(blogToDelete)).unwrap();
-      
+
       addToast({
         type: "success",
-        message: "Permanently deleted blog successfully"
+        message: "Permanently deleted blog successfully",
       });
 
       // Refresh list
@@ -284,23 +320,22 @@ function BlogsManagement() {
       } else {
         dispatch(fetchDeletedBlogs({ page: currentPage, limit: itemsPerPage }));
       }
-
     } catch (error) {
       // Handle specific error cases
       if (error?.response?.status === 404) {
         addToast({
-          type: "error", 
-          message: "Blog not found"
+          type: "error",
+          message: "Blog not found",
         });
       } else if (error?.response?.status === 403) {
         addToast({
           type: "error",
-          message: "You do not have permission to delete this blog"
+          message: "You do not have permission to delete this blog",
         });
       } else {
         addToast({
           type: "error",
-          message: "An error occurred when deleting the blog"
+          message: "An error occurred when deleting the blog",
         });
       }
     } finally {
@@ -312,41 +347,41 @@ function BlogsManagement() {
 
   const getFilteredBlogs = () => {
     let blogsToFilter = [];
-    
+
     if (activeTab === "list") {
       blogsToFilter = Array.isArray(blogs) ? blogs : [];
     } else {
       blogsToFilter = Array.isArray(deletedBlogs) ? deletedBlogs : [];
     }
-    
-    
+
     if (!searchTerm) return blogsToFilter;
-    
-    return blogsToFilter.filter(blog => 
-      blog?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog?.author_name?.toLowerCase().includes(searchTerm.toLowerCase())
+
+    return blogsToFilter.filter(
+      (blog) =>
+        blog?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        blog?.author_name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
   const resetForm = () => {
     setFormData({
-      title: '',
-      content: '',
-      summary: '',
-      post_type: 'BLOG',
-      category: 'PET_CARE',
+      title: "",
+      content: "",
+      summary: "",
+      post_type: "BLOG",
+      category: "PET_CARE",
       tags: [],
-      status: 'DRAFT',
-      meta_title: '',
-      meta_description: '',
-      source: '',
-      external_link: '',
-      hospital_id: '',
+      status: "DRAFT",
+      meta_title: "",
+      meta_description: "",
+      source: "",
+      external_link: "",
+      hospital_id: "",
     });
     setThumbnailImage(null);
     setFeaturedImage(null);
-    setPreviewThumbnail('');
-    setPreviewFeatured('');
+    setPreviewThumbnail("");
+    setPreviewFeatured("");
     setIsSubmitting(false);
     setSelectedBlog(null);
   };
@@ -359,7 +394,10 @@ function BlogsManagement() {
   // Modal view with similar interface to edit form
   const ViewModal = () => (
     <div className="fixed inset-0 flex items-center justify-center z-[110]">
-      <div className="absolute inset-0 bg-black/50" onClick={() => setShowViewModal(false)} />
+      <div
+        className="absolute inset-0 bg-black/50"
+        onClick={() => setShowViewModal(false)}
+      />
       <div className="bg-white rounded-lg w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto relative z-10">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
@@ -368,8 +406,18 @@ function BlogsManagement() {
               onClick={() => setShowViewModal(false)}
               className="text-gray-500 hover:text-gray-700"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -468,8 +516,8 @@ function BlogsManagement() {
                   Tags
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {selectedBlog.tags.split(',').map(tag => (
-                    <span 
+                  {selectedBlog.tags.split(",").map((tag) => (
+                    <span
                       key={tag}
                       className="px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-700"
                     >
@@ -538,9 +586,14 @@ function BlogsManagement() {
                 className="h-10 w-10 rounded-full"
               />
               <div>
-                <p className="text-sm font-medium">Author: {selectedBlog.author_name}</p>
+                <p className="text-sm font-medium">
+                  Author: {selectedBlog.author_name}
+                </p>
                 <p className="text-xs text-gray-500">
-                  Created at: {new Date(selectedBlog.created_at).toLocaleDateString('vi-VN')}
+                  Created at:{" "}
+                  {new Date(selectedBlog.created_at).toLocaleDateString(
+                    "vi-VN"
+                  )}
                 </p>
               </div>
             </div>
@@ -552,18 +605,18 @@ function BlogsManagement() {
 
   // Add function to handle tag selection
   const handleTagChange = (tag) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       tags: prev.tags.includes(tag)
-        ? prev.tags.filter(t => t !== tag)
-        : [...prev.tags, tag]
+        ? prev.tags.filter((t) => t !== tag)
+        : [...prev.tags, tag],
     }));
   };
 
   // Add component ConfirmDeleteModal
   const ConfirmDeleteModal = ({ onClose, onConfirm, loading }) => {
     const { t } = useTranslation();
-    
+
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
@@ -571,7 +624,9 @@ function BlogsManagement() {
             {t("Confirm delete permanently")}
           </h3>
           <p className="text-gray-600 mb-6">
-            {t("Are you sure you want to delete this blog permanently? This action cannot be undone!")}
+            {t(
+              "Are you sure you want to delete this blog permanently? This action cannot be undone!"
+            )}
           </p>
           <div className="flex justify-end gap-3">
             <button
@@ -598,7 +653,7 @@ function BlogsManagement() {
   if (loading) return <div className="p-4">Loading...</div>;
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-4 md:p-6 mt-12 md:mt-0">
       {/* Header with Tabs */}
       <div className="flex flex-col gap-4">
         {/* Tabs */}
@@ -626,9 +681,12 @@ function BlogsManagement() {
         </div>
 
         {/* Search and Actions Bar */}
-        <div className="flex items-center justify-between">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="relative flex-1 max-w-lg">
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={20}
+            />
             <input
               type="text"
               placeholder="Search blog..."
@@ -637,11 +695,11 @@ function BlogsManagement() {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D6EFD] focus:border-transparent"
             />
           </div>
-          
+
           {activeTab === "list" && (
-            <button 
+            <button
               onClick={handleCreateNew}
-              className="flex items-center gap-2 px-4 py-2 bg-[#0D6EFD] text-white rounded-lg hover:bg-[#0B5ED7] transition-colors"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-[#0D6EFD] text-white rounded-lg hover:bg-[#0B5ED7] transition-colors w-full sm:w-auto"
             >
               <Plus size={20} />
               Add blog
@@ -685,8 +743,8 @@ function BlogsManagement() {
                   <td className="px-6 py-4 whitespace-nowrap">{blog.title}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <img 
-                        src={blog.author_avatar} 
+                      <img
+                        src={blog.author_avatar}
                         alt={blog.author_name}
                         className="h-8 w-8 rounded-full mr-2"
                       />
@@ -697,23 +755,25 @@ function BlogsManagement() {
                     {blog.category}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      blog.status === "PUBLISHED"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        blog.status === "PUBLISHED"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
                       {blog.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <img 
-                      src={blog.thumbnail_image} 
+                    <img
+                      src={blog.thumbnail_image}
                       alt={blog.title}
                       className="h-12 w-16 object-cover rounded"
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {new Date(blog.created_at).toLocaleDateString('vi-VN')}
+                    {new Date(blog.created_at).toLocaleDateString("vi-VN")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center justify-end space-x-2">
@@ -794,7 +854,9 @@ function BlogsManagement() {
                 {blog.views_count}
               </div>
               <span>•</span>
-              <span>{new Date(blog.created_at).toLocaleDateString('vi-VN')}</span>
+              <span>
+                {new Date(blog.created_at).toLocaleDateString("vi-VN")}
+              </span>
             </div>
 
             <div className="flex justify-end gap-2">
@@ -845,14 +907,17 @@ function BlogsManagement() {
       {/* Create/Edit Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 flex items-center justify-center z-[110]">
-          <div className="absolute inset-0 bg-black/50" onClick={() => !isSubmitting && setShowCreateModal(false)} />
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => !isSubmitting && setShowCreateModal(false)}
+          />
           <div className="bg-white rounded-lg w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto relative z-10">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold">
                   {selectedBlog ? "Edit blog" : "Create new blog"}
                 </h2>
-                <button 
+                <button
                   onClick={() => {
                     if (!isSubmitting) {
                       setShowCreateModal(false);
@@ -862,8 +927,18 @@ function BlogsManagement() {
                   disabled={isSubmitting}
                   className="text-gray-500 hover:text-gray-700 disabled:opacity-50"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -927,15 +1002,25 @@ function BlogsManagement() {
                       type="file"
                       accept="image/*"
                       required={!selectedBlog}
-                      onChange={(e) => handleImageChange(e, 'thumbnail')}
+                      onChange={(e) => handleImageChange(e, "thumbnail")}
                       className="w-full"
                     />
                     {previewThumbnail && (
-                      <img src={previewThumbnail} alt="Thumbnail preview" className="mt-2 h-32 object-cover rounded" />
+                      <img
+                        src={previewThumbnail}
+                        alt="Thumbnail preview"
+                        className="mt-2 h-32 object-cover rounded"
+                      />
                     )}
-                    {selectedBlog && !previewThumbnail && selectedBlog.thumbnail_image && (
-                      <img src={selectedBlog.thumbnail_image} alt="Current thumbnail" className="mt-2 h-32 object-cover rounded" />
-                    )}
+                    {selectedBlog &&
+                      !previewThumbnail &&
+                      selectedBlog.thumbnail_image && (
+                        <img
+                          src={selectedBlog.thumbnail_image}
+                          alt="Current thumbnail"
+                          className="mt-2 h-32 object-cover rounded"
+                        />
+                      )}
                   </div>
 
                   <div>
@@ -946,15 +1031,25 @@ function BlogsManagement() {
                       type="file"
                       accept="image/*"
                       required={!selectedBlog}
-                      onChange={(e) => handleImageChange(e, 'featured')}
+                      onChange={(e) => handleImageChange(e, "featured")}
                       className="w-full"
                     />
                     {previewFeatured && (
-                      <img src={previewFeatured} alt="Featured preview" className="mt-2 h-32 object-cover rounded" />
+                      <img
+                        src={previewFeatured}
+                        alt="Featured preview"
+                        className="mt-2 h-32 object-cover rounded"
+                      />
                     )}
-                    {selectedBlog && !previewFeatured && selectedBlog.featured_image && (
-                      <img src={selectedBlog.featured_image} alt="Current featured" className="mt-2 h-32 object-cover rounded" />
-                    )}
+                    {selectedBlog &&
+                      !previewFeatured &&
+                      selectedBlog.featured_image && (
+                        <img
+                          src={selectedBlog.featured_image}
+                          alt="Current featured"
+                          className="mt-2 h-32 object-cover rounded"
+                        />
+                      )}
                   </div>
                 </div>
 
@@ -971,8 +1066,10 @@ function BlogsManagement() {
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      {POST_TYPES.map(type => (
-                        <option key={type} value={type}>{type}</option>
+                      {POST_TYPES.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -988,8 +1085,10 @@ function BlogsManagement() {
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      {CATEGORIES.map(category => (
-                        <option key={category} value={category}>{category}</option>
+                      {CATEGORIES.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -1005,8 +1104,10 @@ function BlogsManagement() {
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      {STATUS_TYPES.map(status => (
-                        <option key={status} value={status}>{status}</option>
+                      {STATUS_TYPES.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -1019,8 +1120,8 @@ function BlogsManagement() {
                   </label>
                   <div className="p-3 border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-blue-500">
                     <div className="flex flex-wrap gap-2 mb-2">
-                      {formData.tags.map(tag => (
-                        <span 
+                      {formData.tags.map((tag) => (
+                        <span
                           key={tag}
                           className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-700"
                         >
@@ -1035,9 +1136,11 @@ function BlogsManagement() {
                         </span>
                       ))}
                     </div>
-                    
+
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {BLOG_TAGS.filter(tag => !formData.tags.includes(tag)).map(tag => (
+                      {BLOG_TAGS.filter(
+                        (tag) => !formData.tags.includes(tag)
+                      ).map((tag) => (
                         <button
                           key={tag}
                           type="button"
@@ -1152,8 +1255,10 @@ function BlogsManagement() {
                           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         </div>
                       </>
+                    ) : selectedBlog ? (
+                      "Update"
                     ) : (
-                      selectedBlog ? "Update" : "Add new"
+                      "Add new"
                     )}
                   </button>
                 </div>
@@ -1190,7 +1295,7 @@ function BlogsManagement() {
             <>
               <Plus className="w-12 h-12 text-gray-400 mb-4" />
               <p className="text-gray-500 text-lg">No blog created yet</p>
-              <button 
+              <button
                 onClick={handleCreateNew}
                 className="mt-4 flex items-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
               >
@@ -1216,52 +1321,93 @@ function BlogsManagement() {
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing{' '}
+                Showing <span className="font-medium">{currentPage}</span> of{" "}
                 <span className="font-medium">
-                  {currentPage}
-                </span>
-                {' '}of{' '}
-                <span className="font-medium">
-                  {Math.ceil(((activeTab === "list" ? pagination?.total : deletedPagination?.total) || 0) / itemsPerPage)}
-                </span>
-                {' '}pages
+                  {Math.ceil(
+                    ((activeTab === "list"
+                      ? pagination?.total
+                      : deletedPagination?.total) || 0) / itemsPerPage
+                  )}
+                </span>{" "}
+                pages
               </p>
             </div>
             <div>
-              <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+              <nav
+                className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                aria-label="Pagination"
+              >
                 <button
                   onClick={() => {
                     if (currentPage > 1) {
-                      setCurrentPage(prev => prev - 1);
-                      const action = activeTab === "list" ? fetchBlogPosts : fetchDeletedBlogs;
-                      dispatch(action({ page: currentPage - 1, limit: itemsPerPage }));
+                      setCurrentPage((prev) => prev - 1);
+                      const action =
+                        activeTab === "list"
+                          ? fetchBlogPosts
+                          : fetchDeletedBlogs;
+                      dispatch(
+                        action({ page: currentPage - 1, limit: itemsPerPage })
+                      );
                     }
                   }}
                   disabled={currentPage === 1}
                   className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-100"
                 >
                   <span className="sr-only">Previous</span>
-                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </button>
                 <button
                   onClick={() => {
-                    const totalPages = activeTab === "list" 
-                      ? Math.ceil((pagination?.total || 0) / itemsPerPage)
-                      : Math.ceil((deletedPagination?.total || 0) / itemsPerPage);
+                    const totalPages =
+                      activeTab === "list"
+                        ? Math.ceil((pagination?.total || 0) / itemsPerPage)
+                        : Math.ceil(
+                            (deletedPagination?.total || 0) / itemsPerPage
+                          );
                     if (currentPage < totalPages) {
-                      setCurrentPage(prev => prev + 1);
-                      const action = activeTab === "list" ? fetchBlogPosts : fetchDeletedBlogs;
-                      dispatch(action({ page: currentPage + 1, limit: itemsPerPage }));
+                      setCurrentPage((prev) => prev + 1);
+                      const action =
+                        activeTab === "list"
+                          ? fetchBlogPosts
+                          : fetchDeletedBlogs;
+                      dispatch(
+                        action({ page: currentPage + 1, limit: itemsPerPage })
+                      );
                     }
                   }}
-                  disabled={currentPage === Math.ceil(((activeTab === "list" ? pagination?.total : deletedPagination?.total) || 0) / itemsPerPage)}
+                  disabled={
+                    currentPage ===
+                    Math.ceil(
+                      ((activeTab === "list"
+                        ? pagination?.total
+                        : deletedPagination?.total) || 0) / itemsPerPage
+                    )
+                  }
                   className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-100"
                 >
                   <span className="sr-only">Next</span>
-                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </button>
               </nav>

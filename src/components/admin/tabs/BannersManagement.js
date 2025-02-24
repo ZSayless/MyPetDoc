@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Plus, Pencil, Trash2, Image, ToggleLeft, ToggleRight, Archive, ArchiveRestore, Trash } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Image,
+  ToggleLeft,
+  ToggleRight,
+  Archive,
+  ArchiveRestore,
+  Trash,
+} from "lucide-react";
 import { useToast } from "../../../context/ToastContext";
 import {
   fetchBanners,
@@ -8,13 +18,15 @@ import {
   updateBanner,
   toggleDeleteBanner,
   toggleActiveBanner,
-  hardDeleteBanner
+  hardDeleteBanner,
 } from "../../../redux/slices/adminSlice";
 
 function BannersManagement() {
   const dispatch = useDispatch();
   const { addToast } = useToast();
-  const { banners, isLoadingBanners, isSubmittingBanner } = useSelector((state) => state.admin);
+  const { banners, isLoadingBanners, isSubmittingBanner } = useSelector(
+    (state) => state.admin
+  );
   const [selectedBanner, setSelectedBanner] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,7 +35,7 @@ function BannersManagement() {
     link: "",
     description: "",
     image: null,
-    imagePreview: null
+    imagePreview: null,
   });
 
   useEffect(() => {
@@ -36,7 +48,7 @@ function BannersManagement() {
       setFormData({
         ...formData,
         image: file,
-        imagePreview: URL.createObjectURL(file)
+        imagePreview: URL.createObjectURL(file),
       });
     }
   };
@@ -51,7 +63,10 @@ function BannersManagement() {
       return false;
     }
     if (formData.description.trim().length < 10) {
-      addToast({ type: "error", message: "Description must be at least 10 characters" });
+      addToast({
+        type: "error",
+        message: "Description must be at least 10 characters",
+      });
       return false;
     }
     if (!selectedBanner && !formData.image) {
@@ -63,7 +78,7 @@ function BannersManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     try {
@@ -79,10 +94,12 @@ function BannersManagement() {
       }
 
       if (selectedBanner) {
-        await dispatch(updateBanner({ 
-          id: selectedBanner.id, 
-          data: formDataToSend 
-        })).unwrap();
+        await dispatch(
+          updateBanner({
+            id: selectedBanner.id,
+            data: formDataToSend,
+          })
+        ).unwrap();
         addToast({ type: "success", message: "Updated banner successfully" });
       } else {
         await dispatch(createBanner(formDataToSend)).unwrap();
@@ -94,7 +111,7 @@ function BannersManagement() {
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "An error occurred"
+        message: error.message || "An error occurred",
       });
     }
   };
@@ -107,29 +124,31 @@ function BannersManagement() {
       link: banner.link || "",
       description: banner.description,
       image: null,
-      imagePreview: banner.image_url
+      imagePreview: banner.image_url,
     });
     setIsModalOpen(true);
   };
 
   const handleToggleDelete = async (banner) => {
-    const message = banner.is_deleted 
+    const message = banner.is_deleted
       ? "Are you sure you want to restore this banner?"
       : "Are you sure you want to delete this banner?";
-      
+
     if (window.confirm(message)) {
       try {
         await dispatch(toggleDeleteBanner(banner.id)).unwrap();
-        addToast({ 
-          type: "success", 
-          message: banner.is_deleted 
-            ? "Restored banner successfully" 
-            : "Deleted banner successfully"
+        addToast({
+          type: "success",
+          message: banner.is_deleted
+            ? "Restored banner successfully"
+            : "Deleted banner successfully",
         });
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "An error occurred when changing the banner status"
+          message:
+            error.message ||
+            "An error occurred when changing the banner status",
         });
       }
     }
@@ -138,32 +157,37 @@ function BannersManagement() {
   const handleToggleActive = async (banner) => {
     try {
       await dispatch(toggleActiveBanner(banner.id)).unwrap();
-      addToast({ 
-        type: "success", 
-        message: banner.is_active 
-          ? "Deactivated banner" 
-          : "Activated banner"
+      addToast({
+        type: "success",
+        message: banner.is_active ? "Deactivated banner" : "Activated banner",
       });
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "An error occurred when changing the banner status"
+        message:
+          error.message || "An error occurred when changing the banner status",
       });
     }
   };
 
   const handleHardDelete = async (banner) => {
-    if (window.confirm("WARNING: This action cannot be undone. Are you sure you want to permanently delete this banner?")) {
+    if (
+      window.confirm(
+        "WARNING: This action cannot be undone. Are you sure you want to permanently delete this banner?"
+      )
+    ) {
       try {
         await dispatch(hardDeleteBanner(banner.id)).unwrap();
-        addToast({ 
-          type: "success", 
-          message: "Permanently deleted banner successfully"
+        addToast({
+          type: "success",
+          message: "Permanently deleted banner successfully",
         });
       } catch (error) {
         addToast({
           type: "error",
-          message: error.message || "An error occurred when permanently deleting the banner"
+          message:
+            error.message ||
+            "An error occurred when permanently deleting the banner",
         });
       }
     }
@@ -177,7 +201,7 @@ function BannersManagement() {
       link: "",
       description: "",
       image: null,
-      imagePreview: null
+      imagePreview: null,
     });
   };
 
@@ -190,16 +214,15 @@ function BannersManagement() {
   }
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-4 md:p-6 mt-12 md:mt-0">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Banner Management</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4 mb-6">
         <button
           onClick={() => {
             resetForm();
             setIsModalOpen(true);
           }}
-          className="flex items-center gap-2 px-4 py-2 bg-[#40B8D3] text-white rounded-lg hover:bg-[#3aa5bd]"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#40B8D3] text-white rounded-lg hover:bg-[#3aa5bd] w-full sm:w-auto"
         >
           <Plus size={20} />
           Add Banner
@@ -209,10 +232,10 @@ function BannersManagement() {
       {/* Banner Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {banners?.map((banner) => (
-          <div 
-            key={banner.id} 
+          <div
+            key={banner.id}
             className={`bg-white rounded-lg shadow-sm overflow-hidden ${
-              banner.is_deleted ? 'opacity-60' : ''
+              banner.is_deleted ? "opacity-60" : ""
             }`}
           >
             <div className="relative">
@@ -232,19 +255,22 @@ function BannersManagement() {
               )}
             </div>
             <div className="p-4">
-              <h3 className="font-semibold text-gray-800 mb-2">{banner.title}</h3>
+              <h3 className="font-semibold text-gray-800 mb-2">
+                {banner.title}
+              </h3>
               <p className="text-sm text-gray-500 mb-2">{banner.subtitle}</p>
               <p className="text-gray-600 text-sm mb-2">{banner.description}</p>
               <div className="text-xs text-gray-400 mb-4">
-                Created by: {banner.created_by_name} - {new Date(banner.created_at).toLocaleDateString()}
+                Created by: {banner.created_by_name} -{" "}
+                {new Date(banner.created_at).toLocaleDateString()}
               </div>
               <div className="flex justify-between items-center">
                 <button
                   onClick={() => handleToggleActive(banner)}
                   className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${
-                    banner.is_active 
-                      ? 'bg-green-100 text-green-600 hover:bg-green-200' 
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    banner.is_active
+                      ? "bg-green-100 text-green-600 hover:bg-green-200"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
                   {banner.is_active ? (
@@ -273,8 +299,8 @@ function BannersManagement() {
                     onClick={() => handleToggleDelete(banner)}
                     className={`p-2 rounded-lg ${
                       banner.is_deleted
-                        ? 'text-green-600 hover:bg-green-50'
-                        : 'text-red-600 hover:bg-red-50'
+                        ? "text-green-600 hover:bg-green-50"
+                        : "text-red-600 hover:bg-red-50"
                     }`}
                     title={banner.is_deleted ? "Restore" : "Delete temporarily"}
                   >
@@ -321,7 +347,9 @@ function BannersManagement() {
                     <input
                       type="text"
                       value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#40B8D3]"
                       required
                     />
@@ -334,7 +362,9 @@ function BannersManagement() {
                     <input
                       type="text"
                       value={formData.subtitle}
-                      onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, subtitle: e.target.value })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#40B8D3]"
                       required
                     />
@@ -347,7 +377,9 @@ function BannersManagement() {
                     <input
                       type="text"
                       value={formData.link}
-                      onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, link: e.target.value })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#40B8D3]"
                     />
                   </div>
@@ -358,18 +390,28 @@ function BannersManagement() {
                     </label>
                     <textarea
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#40B8D3]"
                       required
                       minLength={10}
                     />
-                    <p className="text-xs text-gray-500 mt-1">Minimum 10 characters</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Minimum 10 characters
+                    </p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Image {!selectedBanner && <span className="text-red-500">*</span>}
+                      Image{" "}
+                      {!selectedBanner && (
+                        <span className="text-red-500">*</span>
+                      )}
                     </label>
                     <div className="mt-1 flex justify-center px-4 py-4 border-2 border-gray-300 border-dashed rounded-lg">
                       <div className="space-y-1 text-center">
@@ -427,8 +469,10 @@ function BannersManagement() {
                           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         </div>
                       </>
+                    ) : selectedBanner ? (
+                      "Update"
                     ) : (
-                      selectedBanner ? "Update" : "Add new"
+                      "Add new"
                     )}
                   </button>
                 </div>
@@ -453,4 +497,4 @@ function BannersManagement() {
   );
 }
 
-export default BannersManagement; 
+export default BannersManagement;

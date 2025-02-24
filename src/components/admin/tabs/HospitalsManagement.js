@@ -1,6 +1,19 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Search, Eye, Edit, Check, X, Star, Trash2, ToggleLeft, ToggleRight, Plus, RefreshCw, AlertTriangle } from "lucide-react";
+import {
+  Search,
+  Eye,
+  Edit,
+  Check,
+  X,
+  Star,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
+  Plus,
+  RefreshCw,
+  AlertTriangle,
+} from "lucide-react";
 import {
   approveHospital,
   rejectHospital,
@@ -18,7 +31,13 @@ import { useToast } from "../../../context/ToastContext";
 function HospitalsManagement() {
   const dispatch = useDispatch();
   const { addToast } = useToast();
-  const { hospitals, deletedHospitals, loading, pagination, deletedPagination } = useSelector((state) => state.admin);
+  const {
+    hospitals,
+    deletedHospitals,
+    loading,
+    pagination,
+    deletedPagination,
+  } = useSelector((state) => state.admin);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [modalMode, setModalMode] = useState("view");
@@ -29,18 +48,18 @@ function HospitalsManagement() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [newHospital, setNewHospital] = useState({
-    name: '',
-    address: '',
-    phone: '',
-    email: '',
-    description: '',
-    link_website: '',
-    map_location: '',
-    department: '',
-    operating_hours: '',
-    specialties: '',
-    staff_description: '',
-    staff_credentials: ''
+    name: "",
+    address: "",
+    phone: "",
+    email: "",
+    description: "",
+    link_website: "",
+    map_location: "",
+    department: "",
+    operating_hours: "",
+    specialties: "",
+    staff_description: "",
+    staff_credentials: "",
   });
   const [newImages, setNewImages] = useState([]);
   const [hospitalToDelete, setHospitalToDelete] = useState(null);
@@ -90,52 +109,55 @@ function HospitalsManagement() {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const formData = new FormData();
-      
+
       // Add basic information fields
-      formData.append('name', selectedHospital.name);
-      formData.append('address', selectedHospital.address);
-      formData.append('phone', selectedHospital.phone);
-      formData.append('email', selectedHospital.email);
-      formData.append('link_website', selectedHospital.link_website);
-      formData.append('map_location', selectedHospital.map_location);
-      formData.append('description', selectedHospital.description);
-      formData.append('department', selectedHospital.department);
-      formData.append('operating_hours', selectedHospital.operating_hours);
-      formData.append('specialties', selectedHospital.specialties);
-      formData.append('staff_description', selectedHospital.staff_description);
-      formData.append('staff_credentials', selectedHospital.staff_credentials);
+      formData.append("name", selectedHospital.name);
+      formData.append("address", selectedHospital.address);
+      formData.append("phone", selectedHospital.phone);
+      formData.append("email", selectedHospital.email);
+      formData.append("link_website", selectedHospital.link_website);
+      formData.append("map_location", selectedHospital.map_location);
+      formData.append("description", selectedHospital.description);
+      formData.append("department", selectedHospital.department);
+      formData.append("operating_hours", selectedHospital.operating_hours);
+      formData.append("specialties", selectedHospital.specialties);
+      formData.append("staff_description", selectedHospital.staff_description);
+      formData.append("staff_credentials", selectedHospital.staff_credentials);
 
       // Add new images
       selectedImages.forEach((file) => {
-        formData.append('images', file);
+        formData.append("images", file);
       });
 
       // Add list of image IDs to delete with new name
       if (imageIdsToDelete.length > 0) {
-        formData.append('imageIdsToDelete', JSON.stringify(imageIdsToDelete));
+        formData.append("imageIdsToDelete", JSON.stringify(imageIdsToDelete));
       }
 
-      await dispatch(updateHospital({
-        hospitalId: selectedHospital.id,
-        formData
-      })).unwrap();
+      await dispatch(
+        updateHospital({
+          hospitalId: selectedHospital.id,
+          formData,
+        })
+      ).unwrap();
 
       addToast({
-        type: 'success',
-        message: 'Update hospital information successfully!'
+        type: "success",
+        message: "Update hospital information successfully!",
       });
 
-      setModalMode('view');
+      setModalMode("view");
       setSelectedImages([]);
       setImageIdsToDelete([]);
-      
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while updating hospital information'
+        type: "error",
+        message:
+          error.message ||
+          "An error occurred while updating hospital information",
       });
     } finally {
       setIsSubmitting(false);
@@ -144,41 +166,48 @@ function HospitalsManagement() {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length + selectedHospital.images.length - imageIdsToDelete.length > 5) {
+    if (
+      files.length + selectedHospital.images.length - imageIdsToDelete.length >
+      5
+    ) {
       addToast({
-        type: 'error',
-        message: 'Maximum 5 images allowed to upload'
+        type: "error",
+        message: "Maximum 5 images allowed to upload",
       });
       return;
     }
-    setSelectedImages(prev => [...prev, ...files]);
+    setSelectedImages((prev) => [...prev, ...files]);
   };
 
   const handleDeleteImage = (imageId) => {
-    setImageIdsToDelete(prev => [...prev, imageId]);
+    setImageIdsToDelete((prev) => [...prev, imageId]);
   };
 
   const handleRemoveSelectedImage = (index) => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleToggleActive = async (hospitalId, currentActiveState) => {
     try {
-      const message = currentActiveState 
-        ? "Are you sure you want to disable this hospital?" 
+      const message = currentActiveState
+        ? "Are you sure you want to disable this hospital?"
         : "Are you sure you want to activate this hospital?";
-      
+
       if (window.confirm(message)) {
         await dispatch(toggleActiveHospital(hospitalId)).unwrap();
         addToast({
           type: "success",
-          message: `${currentActiveState ? 'Disable' : 'Activate'} hospital successfully!`
+          message: `${
+            currentActiveState ? "Disable" : "Activate"
+          } hospital successfully!`,
         });
       }
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "An error occurred while updating the hospital status"
+        message:
+          error.message ||
+          "An error occurred while updating the hospital status",
       });
     }
   };
@@ -190,13 +219,13 @@ function HospitalsManagement() {
         await dispatch(toggleDeleteHospital(hospitalId)).unwrap();
         addToast({
           type: "success",
-          message: "Action performed successfully!"
+          message: "Action performed successfully!",
         });
       }
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "An error occurred"
+        message: error.message || "An error occurred",
       });
     }
   };
@@ -213,57 +242,65 @@ function HospitalsManagement() {
 
     try {
       const formData = new FormData();
-      
+
       // Add required fields
-      formData.append('name', newHospital.name);
-      formData.append('address', newHospital.address);
-      formData.append('phone', newHospital.phone);
-      formData.append('email', newHospital.email);
+      formData.append("name", newHospital.name);
+      formData.append("address", newHospital.address);
+      formData.append("phone", newHospital.phone);
+      formData.append("email", newHospital.email);
 
       // Add optional fields
-      if (newHospital.description) formData.append('description', newHospital.description);
-      if (newHospital.link_website) formData.append('link_website', newHospital.link_website);
-      if (newHospital.map_location) formData.append('map_location', newHospital.map_location);
-      if (newHospital.department) formData.append('department', newHospital.department);
-      if (newHospital.operating_hours) formData.append('operating_hours', newHospital.operating_hours);
-      if (newHospital.specialties) formData.append('specialties', newHospital.specialties);
-      if (newHospital.staff_description) formData.append('staff_description', newHospital.staff_description);
-      if (newHospital.staff_credentials) formData.append('staff_credentials', newHospital.staff_credentials);
+      if (newHospital.description)
+        formData.append("description", newHospital.description);
+      if (newHospital.link_website)
+        formData.append("link_website", newHospital.link_website);
+      if (newHospital.map_location)
+        formData.append("map_location", newHospital.map_location);
+      if (newHospital.department)
+        formData.append("department", newHospital.department);
+      if (newHospital.operating_hours)
+        formData.append("operating_hours", newHospital.operating_hours);
+      if (newHospital.specialties)
+        formData.append("specialties", newHospital.specialties);
+      if (newHospital.staff_description)
+        formData.append("staff_description", newHospital.staff_description);
+      if (newHospital.staff_credentials)
+        formData.append("staff_credentials", newHospital.staff_credentials);
 
       // Add images
       newImages.forEach((file) => {
-        formData.append('images', file);
+        formData.append("images", file);
       });
 
       await dispatch(createHospital(formData)).unwrap();
 
       addToast({
-        type: 'success',
-        message: 'Add new hospital successfully!'
+        type: "success",
+        message: "Add new hospital successfully!",
       });
 
       // Reset form
       setNewHospital({
-        name: '',
-        address: '',
-        phone: '',
-        email: '',
-        description: '',
-        link_website: '',
-        map_location: '',
-        department: '',
-        operating_hours: '',
-        specialties: '',
-        staff_description: '',
-        staff_credentials: ''
+        name: "",
+        address: "",
+        phone: "",
+        email: "",
+        description: "",
+        link_website: "",
+        map_location: "",
+        department: "",
+        operating_hours: "",
+        specialties: "",
+        staff_description: "",
+        staff_credentials: "",
       });
       setNewImages([]);
-      setModalMode('');
-      
+      setModalMode("");
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while adding a new hospital'
+        type: "error",
+        message:
+          error.message || "An error occurred while adding a new hospital",
       });
     } finally {
       setIsCreating(false);
@@ -274,35 +311,36 @@ function HospitalsManagement() {
     const files = Array.from(e.target.files);
     if (files.length + newImages.length > 5) {
       addToast({
-        type: 'error',
-        message: 'Maximum 5 images allowed to upload'
+        type: "error",
+        message: "Maximum 5 images allowed to upload",
       });
       return;
     }
-    setNewImages(prev => [...prev, ...files]);
+    setNewImages((prev) => [...prev, ...files]);
   };
 
   const handleRemoveNewImage = (index) => {
-    setNewImages(prev => prev.filter((_, i) => i !== index));
+    setNewImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleDeletePermanently = async () => {
     if (!hospitalToDelete) return;
-    
+
     setIsDeleting(true);
     try {
       await dispatch(deleteHospitalPermanently(hospitalToDelete.id)).unwrap();
-      
+
       addToast({
-        type: 'success',
-        message: 'Delete hospital successfully!'
+        type: "success",
+        message: "Delete hospital successfully!",
       });
-      
+
       setHospitalToDelete(null);
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while deleting the hospital'
+        type: "error",
+        message:
+          error.message || "An error occurred while deleting the hospital",
       });
     } finally {
       setIsDeleting(false);
@@ -310,18 +348,20 @@ function HospitalsManagement() {
   };
 
   const getFilteredHospitals = () => {
-    const currentHospitals = activeTab === "list" ? hospitals : deletedHospitals;
+    const currentHospitals =
+      activeTab === "list" ? hospitals : deletedHospitals;
     if (!currentHospitals) return [];
-    
-    return currentHospitals.filter(hospital => 
-      hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      hospital.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      hospital.email.toLowerCase().includes(searchTerm.toLowerCase())
+
+    return currentHospitals.filter(
+      (hospital) =>
+        hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        hospital.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        hospital.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
   const handleCloseForm = () => {
-    setModalMode('view');
+    setModalMode("view");
     setSelectedHospital(null);
     setSelectedImages([]);
     setImageIdsToDelete([]);
@@ -332,100 +372,103 @@ function HospitalsManagement() {
 
     // Validate name
     if (!data.name?.trim()) {
-      errors.name = 'Hospital name is required';
+      errors.name = "Hospital name is required";
     } else if (data.name.length > 255) {
-      errors.name = 'Hospital name cannot exceed 255 characters';
+      errors.name = "Hospital name cannot exceed 255 characters";
     }
 
     // Validate address
     if (!data.address?.trim()) {
-      errors.address = 'Address is required';
+      errors.address = "Address is required";
     } else if (data.address.length > 500) {
-      errors.address = 'Address cannot exceed 500 characters';
+      errors.address = "Address cannot exceed 500 characters";
     }
 
     // Validate phone
     if (!data.phone?.trim()) {
-      errors.phone = 'Phone number is required';
+      errors.phone = "Phone number is required";
     } else if (!/^[0-9]{10,11}$/.test(data.phone)) {
-      errors.phone = 'Phone number must be 10-11 digits';
+      errors.phone = "Phone number must be 10-11 digits";
     }
 
     // Validate email
     if (!data.email?.trim()) {
-      errors.email = 'Email is required';
+      errors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      errors.email = 'Invalid email format';
+      errors.email = "Invalid email format";
     }
 
     // Validate website (optional)
     if (data.link_website && !/^https?:\/\//.test(data.link_website)) {
-      errors.link_website = 'Link website must start with http:// or https://';
+      errors.link_website = "Link website must start with http:// or https://";
     }
 
     // Validate map location (optional)
     if (data.map_location && data.map_location.length > 500) {
-      errors.map_location = 'Map location cannot exceed 500 characters';
+      errors.map_location = "Map location cannot exceed 500 characters";
     }
 
     // Validate description
     if (!data.description?.trim()) {
-      errors.description = 'Description is required';
+      errors.description = "Description is required";
     } else if (data.description.length > 2000) {
-      errors.description = 'Description cannot exceed 2000 characters';
+      errors.description = "Description cannot exceed 2000 characters";
     }
 
     // Validate department
     if (!data.department?.trim()) {
-      errors.department = 'Department is required';
+      errors.department = "Department is required";
     } else if (data.department.length > 1000) {
-      errors.department = 'Department cannot exceed 1000 characters';
+      errors.department = "Department cannot exceed 1000 characters";
     }
 
     // Validate operating hours
     if (!data.operating_hours?.trim()) {
-      errors.operating_hours = 'Working hours are required';
+      errors.operating_hours = "Working hours are required";
     } else if (data.operating_hours.length > 255) {
-      errors.operating_hours = 'Operating hours cannot exceed 255 characters';
+      errors.operating_hours = "Operating hours cannot exceed 255 characters";
     }
 
     // Validate specialties
     if (!data.specialties?.trim()) {
-      errors.specialties = 'Specialties are required';
+      errors.specialties = "Specialties are required";
     } else if (data.specialties.length > 1000) {
-      errors.specialties = 'Specialties cannot exceed 1000 characters';
+      errors.specialties = "Specialties cannot exceed 1000 characters";
     }
 
     // Validate staff description (optional)
     if (data.staff_description && data.staff_description.length > 1000) {
-      errors.staff_description = 'Staff description cannot exceed 1000 characters';
+      errors.staff_description =
+        "Staff description cannot exceed 1000 characters";
     }
 
     // Validate staff credentials (optional)
     if (data.staff_credentials && data.staff_credentials.length > 1000) {
-      errors.staff_credentials = 'Staff credentials cannot exceed 1000 characters';
+      errors.staff_credentials =
+        "Staff credentials cannot exceed 1000 characters";
     }
 
     // Validate images
-    if (modalMode === 'create' && (!newImages || newImages.length === 0)) {
-      errors.images = 'Need to upload at least 1 image';
+    if (modalMode === "create" && (!newImages || newImages.length === 0)) {
+      errors.images = "Need to upload at least 1 image";
     }
 
     if (newImages && newImages.length > 5) {
-      errors.images = 'Cannot upload more than 5 images';
+      errors.images = "Cannot upload more than 5 images";
     }
 
     // Validate file size and type
-    const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
     const maxSize = 5 * 1024 * 1024; // 5MB
 
     if (newImages) {
       newImages.forEach((file, index) => {
         if (!validImageTypes.includes(file.type)) {
-          errors[`image_${index}`] = 'Only accept image files in JPG, JPEG, or PNG format';
+          errors[`image_${index}`] =
+            "Only accept image files in JPG, JPEG, or PNG format";
         }
         if (file.size > maxSize) {
-          errors[`image_${index}`] = 'Image size cannot exceed 5MB';
+          errors[`image_${index}`] = "Image size cannot exceed 5MB";
         }
       });
     }
@@ -436,22 +479,22 @@ function HospitalsManagement() {
   return (
     <div className="p-4 md:p-6">
       {/* Header Tabs */}
-      <div className="flex gap-2 mb-4">
-        <button 
+      <div className="flex gap-2 mb-4 mt-12 md:mt-0">
+        <button
           onClick={() => setActiveTab("list")}
-          className={`px-4 py-2 text-sm font-medium rounded-md ${
-            activeTab === "list" 
-              ? "text-white bg-blue-600" 
+          className={`px-4 py-2 text-sm font-medium rounded-lg ${
+            activeTab === "list"
+              ? "text-white bg-blue-600"
               : "text-gray-700 bg-gray-100 hover:bg-gray-200"
           }`}
         >
           List of hospitals
         </button>
-        <button 
+        <button
           onClick={() => setActiveTab("trash")}
-          className={`px-4 py-2 text-sm font-medium rounded-md ${
-            activeTab === "trash" 
-              ? "text-white bg-blue-600" 
+          className={`px-4 py-2 text-sm font-medium rounded-lg ${
+            activeTab === "trash"
+              ? "text-white bg-blue-600"
               : "text-gray-700 bg-gray-100 hover:bg-gray-200"
           }`}
         >
@@ -469,10 +512,13 @@ function HospitalsManagement() {
             placeholder="Search by name, email, phone number, address..."
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
           />
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            size={20}
+          />
         </div>
-        <button 
-          onClick={() => setModalMode('create')}
+        <button
+          onClick={() => setModalMode("create")}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
         >
           <Plus size={20} />
@@ -520,23 +566,33 @@ function HospitalsManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        hospital.is_active 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {hospital.is_active ? 'Active' : 'Inactive'}
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          hospital.is_active
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {hospital.is_active ? "Active" : "Inactive"}
                       </span>
                       <button
-                        onClick={() => handleToggleActive(hospital.id, hospital.is_active)}
+                        onClick={() =>
+                          handleToggleActive(hospital.id, hospital.is_active)
+                        }
                         className={`p-1 rounded hover:bg-gray-100 ${
-                          hospital.is_active 
-                            ? 'text-green-600' 
-                            : 'text-red-600'
+                          hospital.is_active ? "text-green-600" : "text-red-600"
                         }`}
-                        title={hospital.is_active ? 'Deactivate hospital' : 'Activate hospital'}
+                        title={
+                          hospital.is_active
+                            ? "Deactivate hospital"
+                            : "Activate hospital"
+                        }
                       >
-                        {hospital.is_active ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+                        {hospital.is_active ? (
+                          <ToggleRight size={18} />
+                        ) : (
+                          <ToggleLeft size={18} />
+                        )}
                       </button>
                     </div>
                   </td>
@@ -544,18 +600,18 @@ function HospitalsManagement() {
                     {hospital?.creator && (
                       <div className="flex items-center gap-2">
                         {hospital.creator.avatar && (
-                          <img 
-                            src={hospital.creator.avatar} 
+                          <img
+                            src={hospital.creator.avatar}
                             alt={hospital.creator.full_name}
                             className="w-8 h-8 rounded-full"
                           />
                         )}
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {hospital.creator.full_name || 'N/A'}
+                            {hospital.creator.full_name || "N/A"}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {hospital.creator.email || 'N/A'}
+                            {hospital.creator.email || "N/A"}
                           </div>
                         </div>
                       </div>
@@ -623,23 +679,33 @@ function HospitalsManagement() {
                 <p className="text-sm text-gray-500">{hospital.phone}</p>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  hospital.is_active 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
-                }`}>
-                  {hospital.is_active ? 'Active' : 'Inactive'}
+                <span
+                  className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    hospital.is_active
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {hospital.is_active ? "Active" : "Inactive"}
                 </span>
                 <button
-                  onClick={() => handleToggleActive(hospital.id, hospital.is_active)}
+                  onClick={() =>
+                    handleToggleActive(hospital.id, hospital.is_active)
+                  }
                   className={`p-1 rounded hover:bg-gray-100 ${
-                    hospital.is_active 
-                      ? 'text-green-600' 
-                      : 'text-red-600'
+                    hospital.is_active ? "text-green-600" : "text-red-600"
                   }`}
-                  title={hospital.is_active ? 'Deactivate hospital' : 'Activate hospital'}
+                  title={
+                    hospital.is_active
+                      ? "Deactivate hospital"
+                      : "Activate hospital"
+                  }
                 >
-                  {hospital.is_active ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+                  {hospital.is_active ? (
+                    <ToggleRight size={18} />
+                  ) : (
+                    <ToggleLeft size={18} />
+                  )}
                 </button>
               </div>
             </div>
@@ -655,18 +721,18 @@ function HospitalsManagement() {
             {hospital?.creator && (
               <div className="mt-4 flex items-center gap-2">
                 {hospital.creator.avatar && (
-                  <img 
-                    src={hospital.creator.avatar} 
+                  <img
+                    src={hospital.creator.avatar}
                     alt={hospital.creator.full_name}
                     className="w-8 h-8 rounded-full"
                   />
                 )}
                 <div>
                   <div className="text-sm font-medium text-gray-900">
-                    {hospital.creator.full_name || 'N/A'}
+                    {hospital.creator.full_name || "N/A"}
                   </div>
                   <div className="text-xs text-gray-500">
-                    {hospital.creator.email || 'N/A'}
+                    {hospital.creator.email || "N/A"}
                   </div>
                 </div>
               </div>
@@ -728,12 +794,11 @@ function HospitalsManagement() {
       {/* Empty State */}
       {!loading && getFilteredHospitals()?.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          {searchTerm 
+          {searchTerm
             ? "No matching results"
-            : activeTab === "list" 
-              ? "No hospital found" 
-              : "Trash is empty"
-          }
+            : activeTab === "list"
+            ? "No hospital found"
+            : "Trash is empty"}
         </div>
       )}
 
@@ -741,14 +806,14 @@ function HospitalsManagement() {
       {selectedHospital && (
         <>
           {/* Overlay */}
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
             onClick={handleCloseForm}
           />
 
           {/* Modal Content */}
           <div className="fixed inset-0 flex items-center justify-center z-[110] p-4">
-            <div 
+            <div
               className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()} // Ngăn việc click vào modal sẽ đóng nó
             >
@@ -765,126 +830,212 @@ function HospitalsManagement() {
               </div>
 
               {/* Form content */}
-              {modalMode === 'edit' && (
+              {modalMode === "edit" && (
                 <form onSubmit={handleUpdateHospital} className="space-y-6 p-6">
                   {/* Basic information */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Hospital name</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Hospital name
+                      </label>
                       <input
                         type="text"
                         value={selectedHospital.name}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, name: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.name ? 'border-red-500' : 'border-gray-300'
+                          formErrors.name ? "border-red-500" : "border-gray-300"
                         }`}
                         required
                       />
                       {formErrors.name && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.name}
+                        </p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Email</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Email
+                      </label>
                       <input
                         type="email"
                         value={selectedHospital.email}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, email: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            email: e.target.value,
+                          }))
+                        }
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.email ? 'border-red-500' : 'border-gray-300'
+                          formErrors.email
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                         required
                       />
                       {formErrors.email && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.email}
+                        </p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Phone number</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Phone number
+                      </label>
                       <input
                         type="text"
                         value={selectedHospital.phone}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, phone: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            phone: e.target.value,
+                          }))
+                        }
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.phone ? 'border-red-500' : 'border-gray-300'
+                          formErrors.phone
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                         required
                       />
                       {formErrors.phone && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.phone}
+                        </p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Website</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Website
+                      </label>
                       <input
                         type="text"
                         value={selectedHospital.link_website}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, link_website: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            link_website: e.target.value,
+                          }))
+                        }
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.link_website ? 'border-red-500' : 'border-gray-300'
+                          formErrors.link_website
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                       />
                       {formErrors.link_website && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.link_website}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.link_website}
+                        </p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Address</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Address
+                      </label>
                       <input
                         type="text"
                         value={selectedHospital.address}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, address: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            address: e.target.value,
+                          }))
+                        }
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.address ? 'border-red-500' : 'border-gray-300'
+                          formErrors.address
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                         required
                       />
                       {formErrors.address && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.address}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.address}
+                        </p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Map location</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Map location
+                      </label>
                       <input
                         type="text"
                         value={selectedHospital.map_location}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, map_location: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            map_location: e.target.value,
+                          }))
+                        }
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.map_location ? 'border-red-500' : 'border-gray-300'
+                          formErrors.map_location
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                       />
                       {formErrors.map_location && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.map_location}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.map_location}
+                        </p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Working hours</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Working hours
+                      </label>
                       <input
                         type="text"
                         value={selectedHospital.operating_hours}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, operating_hours: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            operating_hours: e.target.value,
+                          }))
+                        }
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.operating_hours ? 'border-red-500' : 'border-gray-300'
+                          formErrors.operating_hours
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                         required
                       />
                       {formErrors.operating_hours && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.operating_hours}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.operating_hours}
+                        </p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Department</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Department
+                      </label>
                       <input
                         type="text"
                         value={selectedHospital.department}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, department: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            department: e.target.value,
+                          }))
+                        }
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.department ? 'border-red-500' : 'border-gray-300'
+                          formErrors.department
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                         required
                       />
                       {formErrors.department && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.department}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.department}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -892,73 +1043,119 @@ function HospitalsManagement() {
                   {/* Textarea fields */}
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Specialties</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Specialties
+                      </label>
                       <textarea
                         value={selectedHospital.specialties}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, specialties: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            specialties: e.target.value,
+                          }))
+                        }
                         rows={3}
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.specialties ? 'border-red-500' : 'border-gray-300'
+                          formErrors.specialties
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                         required
                       />
                       {formErrors.specialties && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.specialties}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.specialties}
+                        </p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Description</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Description
+                      </label>
                       <textarea
                         value={selectedHospital.description}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, description: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            description: e.target.value,
+                          }))
+                        }
                         rows={4}
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.description ? 'border-red-500' : 'border-gray-300'
+                          formErrors.description
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                         required
                       />
                       {formErrors.description && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.description}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.description}
+                        </p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Staff description</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Staff description
+                      </label>
                       <textarea
                         value={selectedHospital.staff_description}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, staff_description: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            staff_description: e.target.value,
+                          }))
+                        }
                         rows={3}
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.staff_description ? 'border-red-500' : 'border-gray-300'
+                          formErrors.staff_description
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                         required
                       />
                       {formErrors.staff_description && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.staff_description}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.staff_description}
+                        </p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Staff credentials</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Staff credentials
+                      </label>
                       <textarea
                         value={selectedHospital.staff_credentials}
-                        onChange={(e) => setSelectedHospital(prev => ({...prev, staff_credentials: e.target.value}))}
+                        onChange={(e) =>
+                          setSelectedHospital((prev) => ({
+                            ...prev,
+                            staff_credentials: e.target.value,
+                          }))
+                        }
                         rows={3}
                         className={`w-full p-2 border rounded-lg ${
-                          formErrors.staff_credentials ? 'border-red-500' : 'border-gray-300'
+                          formErrors.staff_credentials
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                         required
                       />
                       {formErrors.staff_credentials && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.staff_credentials}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.staff_credentials}
+                        </p>
                       )}
                     </div>
                   </div>
 
                   {/* Image upload section */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Images</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Images
+                    </label>
                     <div className="mt-2 grid grid-cols-3 gap-4">
                       {selectedHospital.images
-                        .filter(img => !imageIdsToDelete.includes(img.id))
+                        .filter((img) => !imageIdsToDelete.includes(img.id))
                         .map((image) => (
                           <div key={image.id} className="relative">
                             <img
@@ -975,7 +1172,7 @@ function HospitalsManagement() {
                             </button>
                           </div>
                         ))}
-                      
+
                       {selectedImages.map((file, index) => (
                         <div key={index} className="relative">
                           <img
@@ -993,7 +1190,10 @@ function HospitalsManagement() {
                         </div>
                       ))}
 
-                      {selectedHospital.images.length - imageIdsToDelete.length + selectedImages.length < 5 && (
+                      {selectedHospital.images.length -
+                        imageIdsToDelete.length +
+                        selectedImages.length <
+                        5 && (
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
@@ -1034,7 +1234,7 @@ function HospitalsManagement() {
                           <span>Saving...</span>
                         </>
                       ) : (
-                        'Save changes'
+                        "Save changes"
                       )}
                     </button>
                   </div>
@@ -1042,27 +1242,41 @@ function HospitalsManagement() {
               )}
 
               {/* View mode content */}
-              {modalMode === 'view' && (
+              {modalMode === "view" && (
                 <div className="p-6 space-y-6">
                   {/* Basic information */}
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Hospital name</h3>
-                      <p className="mt-1 text-sm text-gray-900">{selectedHospital.name}</p>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Hospital name
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {selectedHospital.name}
+                      </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Email</h3>
-                      <p className="mt-1 text-sm text-gray-900">{selectedHospital.email}</p>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Email
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {selectedHospital.email}
+                      </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Phone number</h3>
-                      <p className="mt-1 text-sm text-gray-900">{selectedHospital.phone}</p>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Phone number
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {selectedHospital.phone}
+                      </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Website</h3>
-                      <a 
-                        href={selectedHospital.link_website} 
-                        target="_blank" 
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Website
+                      </h3>
+                      <a
+                        href={selectedHospital.link_website}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="mt-1 text-sm text-blue-600 hover:underline"
                       >
@@ -1070,42 +1284,72 @@ function HospitalsManagement() {
                       </a>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Address</h3>
-                      <p className="mt-1 text-sm text-gray-900">{selectedHospital.address}</p>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Address
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {selectedHospital.address}
+                      </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Working hours</h3>
-                      <p className="mt-1 text-sm text-gray-900">{selectedHospital.operating_hours}</p>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Working hours
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {selectedHospital.operating_hours}
+                      </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Department</h3>
-                      <p className="mt-1 text-sm text-gray-900">{selectedHospital.department}</p>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Department
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {selectedHospital.department}
+                      </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Specialties</h3>
-                      <p className="mt-1 text-sm text-gray-900">{selectedHospital.specialties}</p>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Specialties
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {selectedHospital.specialties}
+                      </p>
                     </div>
                   </div>
 
                   {/* Additional information */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Description</h3>
-                    <p className="mt-1 text-sm text-gray-900">{selectedHospital.description}</p>
+                    <h3 className="text-sm font-medium text-gray-500">
+                      Description
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-900">
+                      {selectedHospital.description}
+                    </p>
                   </div>
 
                   {/* Staff information */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Staff information</h3>
-                    <p className="mt-1 text-sm text-gray-900">{selectedHospital.staff_description}</p>
+                    <h3 className="text-sm font-medium text-gray-500">
+                      Staff information
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-900">
+                      {selectedHospital.staff_description}
+                    </p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Staff credentials</h3>
-                    <p className="mt-1 text-sm text-gray-900">{selectedHospital.staff_credentials}</p>
+                    <h3 className="text-sm font-medium text-gray-500">
+                      Staff credentials
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-900">
+                      {selectedHospital.staff_credentials}
+                    </p>
                   </div>
 
                   {/* Images */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-2">Images</h3>
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">
+                      Images
+                    </h3>
                     <div className="grid grid-cols-3 gap-4">
                       {selectedHospital.images?.map((image) => (
                         <div key={image.id} className="relative">
@@ -1121,13 +1365,17 @@ function HospitalsManagement() {
 
                   {/* Trạng thái */}
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-500">Status:</span>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      selectedHospital.is_active 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {selectedHospital.is_active ? 'Active' : 'Inactive'}
+                    <span className="text-sm font-medium text-gray-500">
+                      Status:
+                    </span>
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        selectedHospital.is_active
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {selectedHospital.is_active ? "Active" : "Inactive"}
                     </span>
                   </div>
 
@@ -1140,7 +1388,7 @@ function HospitalsManagement() {
                       Close
                     </button>
                     <button
-                      onClick={() => setModalMode('edit')}
+                      onClick={() => setModalMode("edit")}
                       className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                     >
                       Edit
@@ -1154,21 +1402,21 @@ function HospitalsManagement() {
       )}
 
       {/* Create Modal */}
-      {modalMode === 'create' && (
+      {modalMode === "create" && (
         <>
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
-            onClick={() => setModalMode('')}
+            onClick={() => setModalMode("")}
           />
           <div className="fixed inset-0 flex items-center justify-center z-[110] p-4">
-            <div 
+            <div
               className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                 <h2 className="text-xl font-semibold">Add new hospital</h2>
                 <button
-                  onClick={() => setModalMode('')}
+                  onClick={() => setModalMode("")}
                   className="text-gray-400 hover:text-gray-500"
                 >
                   <X size={20} />
@@ -1185,14 +1433,21 @@ function HospitalsManagement() {
                     <input
                       type="text"
                       value={newHospital.name}
-                      onChange={(e) => setNewHospital(prev => ({...prev, name: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.name ? 'border-red-500' : 'border-gray-300'
+                        formErrors.name ? "border-red-500" : "border-gray-300"
                       }`}
                       required
                     />
                     {formErrors.name && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.name}
+                      </p>
                     )}
                   </div>
                   <div>
@@ -1202,14 +1457,21 @@ function HospitalsManagement() {
                     <input
                       type="email"
                       value={newHospital.email}
-                      onChange={(e) => setNewHospital(prev => ({...prev, email: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.email ? 'border-red-500' : 'border-gray-300'
+                        formErrors.email ? "border-red-500" : "border-gray-300"
                       }`}
                       required
                     />
                     {formErrors.email && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.email}
+                      </p>
                     )}
                   </div>
                   <div>
@@ -1219,14 +1481,21 @@ function HospitalsManagement() {
                     <input
                       type="text"
                       value={newHospital.phone}
-                      onChange={(e) => setNewHospital(prev => ({...prev, phone: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          phone: e.target.value,
+                        }))
+                      }
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.phone ? 'border-red-500' : 'border-gray-300'
+                        formErrors.phone ? "border-red-500" : "border-gray-300"
                       }`}
                       required
                     />
                     {formErrors.phone && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.phone}
+                      </p>
                     )}
                   </div>
                   <div>
@@ -1236,14 +1505,23 @@ function HospitalsManagement() {
                     <input
                       type="text"
                       value={newHospital.address}
-                      onChange={(e) => setNewHospital(prev => ({...prev, address: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          address: e.target.value,
+                        }))
+                      }
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.address ? 'border-red-500' : 'border-gray-300'
+                        formErrors.address
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                       required
                     />
                     {formErrors.address && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.address}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.address}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -1251,59 +1529,103 @@ function HospitalsManagement() {
                 {/* Optional Fields */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Website</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Website
+                    </label>
                     <input
                       type="text"
                       value={newHospital.link_website}
-                      onChange={(e) => setNewHospital(prev => ({...prev, link_website: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          link_website: e.target.value,
+                        }))
+                      }
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.link_website ? 'border-red-500' : 'border-gray-300'
+                        formErrors.link_website
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                     />
                     {formErrors.link_website && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.link_website}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.link_website}
+                      </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Map location</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Map location
+                    </label>
                     <input
                       type="text"
                       value={newHospital.map_location}
-                      onChange={(e) => setNewHospital(prev => ({...prev, map_location: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          map_location: e.target.value,
+                        }))
+                      }
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.map_location ? 'border-red-500' : 'border-gray-300'
+                        formErrors.map_location
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                     />
                     {formErrors.map_location && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.map_location}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.map_location}
+                      </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Working hours</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Working hours
+                    </label>
                     <input
                       type="text"
                       value={newHospital.operating_hours}
-                      onChange={(e) => setNewHospital(prev => ({...prev, operating_hours: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          operating_hours: e.target.value,
+                        }))
+                      }
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.operating_hours ? 'border-red-500' : 'border-gray-300'
+                        formErrors.operating_hours
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                     />
                     {formErrors.operating_hours && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.operating_hours}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.operating_hours}
+                      </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Department</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Department
+                    </label>
                     <input
                       type="text"
                       value={newHospital.department}
-                      onChange={(e) => setNewHospital(prev => ({...prev, department: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          department: e.target.value,
+                        }))
+                      }
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.department ? 'border-red-500' : 'border-gray-300'
+                        formErrors.department
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                     />
                     {formErrors.department && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.department}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.department}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -1311,66 +1633,112 @@ function HospitalsManagement() {
                 {/* Textarea Fields */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Specialties</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Specialties
+                    </label>
                     <textarea
                       value={newHospital.specialties}
-                      onChange={(e) => setNewHospital(prev => ({...prev, specialties: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          specialties: e.target.value,
+                        }))
+                      }
                       rows={3}
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.specialties ? 'border-red-500' : 'border-gray-300'
+                        formErrors.specialties
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                     />
                     {formErrors.specialties && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.specialties}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.specialties}
+                      </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Description
+                    </label>
                     <textarea
                       value={newHospital.description}
-                      onChange={(e) => setNewHospital(prev => ({...prev, description: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
                       rows={4}
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.description ? 'border-red-500' : 'border-gray-300'
+                        formErrors.description
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                     />
                     {formErrors.description && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.description}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.description}
+                      </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Staff description</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Staff description
+                    </label>
                     <textarea
                       value={newHospital.staff_description}
-                      onChange={(e) => setNewHospital(prev => ({...prev, staff_description: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          staff_description: e.target.value,
+                        }))
+                      }
                       rows={3}
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.staff_description ? 'border-red-500' : 'border-gray-300'
+                        formErrors.staff_description
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                     />
                     {formErrors.staff_description && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.staff_description}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.staff_description}
+                      </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Staff credentials</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Staff credentials
+                    </label>
                     <textarea
                       value={newHospital.staff_credentials}
-                      onChange={(e) => setNewHospital(prev => ({...prev, staff_credentials: e.target.value}))}
+                      onChange={(e) =>
+                        setNewHospital((prev) => ({
+                          ...prev,
+                          staff_credentials: e.target.value,
+                        }))
+                      }
                       rows={3}
                       className={`w-full p-2 border rounded-lg ${
-                        formErrors.staff_credentials ? 'border-red-500' : 'border-gray-300'
+                        formErrors.staff_credentials
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                     />
                     {formErrors.staff_credentials && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.staff_credentials}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {formErrors.staff_credentials}
+                      </p>
                     )}
                   </div>
                 </div>
 
                 {/* Image Upload */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Images</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Images
+                  </label>
                   <div className="grid grid-cols-3 gap-4">
                     {newImages.map((file, index) => (
                       <div key={index} className="relative">
@@ -1388,7 +1756,7 @@ function HospitalsManagement() {
                         </button>
                       </div>
                     ))}
-                    
+
                     {newImages.length < 5 && (
                       <label className="h-24 w-full border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-gray-400 cursor-pointer">
                         <Plus size={24} className="text-gray-400" />
@@ -1409,7 +1777,7 @@ function HospitalsManagement() {
                   <button
                     type="button"
                     disabled={isCreating}
-                    onClick={() => setModalMode('')}
+                    onClick={() => setModalMode("")}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
                   >
                     Cancel
@@ -1425,7 +1793,7 @@ function HospitalsManagement() {
                         <span>Creating...</span>
                       </>
                     ) : (
-                      'Create'
+                      "Create"
                     )}
                   </button>
                 </div>
@@ -1439,20 +1807,29 @@ function HospitalsManagement() {
       {getFilteredHospitals()?.length > 0 && (
         <div className="flex items-center justify-between py-3">
           <div className="text-sm text-gray-500">
-            Showing {activeTab === "list" ? pagination.page : deletedPagination.page} of{" "}
-            {activeTab === "list" ? pagination.totalPages : deletedPagination.totalPages} pages
+            Showing{" "}
+            {activeTab === "list" ? pagination.page : deletedPagination.page} of{" "}
+            {activeTab === "list"
+              ? pagination.totalPages
+              : deletedPagination.totalPages}{" "}
+            pages
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => {
-                const action = activeTab === "list" ? fetchHospitals : fetchDeletedHospitals;
-                const currentPage = activeTab === "list" ? pagination.page : deletedPagination.page;
+                const action =
+                  activeTab === "list" ? fetchHospitals : fetchDeletedHospitals;
+                const currentPage =
+                  activeTab === "list"
+                    ? pagination.page
+                    : deletedPagination.page;
                 dispatch(action({ page: currentPage - 1, limit: 10 }));
               }}
               disabled={
-                activeTab === "list" 
+                activeTab === "list"
                   ? pagination.page === 1 || hospitals.length === 0
-                  : deletedPagination.page === 1 || deletedHospitals.length === 0
+                  : deletedPagination.page === 1 ||
+                    deletedHospitals.length === 0
               }
               className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
@@ -1460,15 +1837,24 @@ function HospitalsManagement() {
             </button>
             <button
               onClick={() => {
-                const action = activeTab === "list" ? fetchHospitals : fetchDeletedHospitals;
-                const currentPage = activeTab === "list" ? pagination.page : deletedPagination.page;
-                const totalPages = activeTab === "list" ? pagination.totalPages : deletedPagination.totalPages;
+                const action =
+                  activeTab === "list" ? fetchHospitals : fetchDeletedHospitals;
+                const currentPage =
+                  activeTab === "list"
+                    ? pagination.page
+                    : deletedPagination.page;
+                const totalPages =
+                  activeTab === "list"
+                    ? pagination.totalPages
+                    : deletedPagination.totalPages;
                 dispatch(action({ page: currentPage + 1, limit: 10 }));
               }}
               disabled={
                 activeTab === "list"
-                  ? pagination.page === pagination.totalPages || hospitals.length === 0
-                  : deletedPagination.page === deletedPagination.totalPages || deletedHospitals.length === 0
+                  ? pagination.page === pagination.totalPages ||
+                    hospitals.length === 0
+                  : deletedPagination.page === deletedPagination.totalPages ||
+                    deletedHospitals.length === 0
               }
               className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
@@ -1481,12 +1867,12 @@ function HospitalsManagement() {
       {/* Delete Confirmation Modal */}
       {hospitalToDelete && (
         <>
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
             onClick={() => setHospitalToDelete(null)}
           />
           <div className="fixed inset-0 flex items-center justify-center z-[110] p-4">
-            <div 
+            <div
               className="bg-white rounded-lg w-full max-w-md"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1498,8 +1884,8 @@ function HospitalsManagement() {
                   Delete hospital permanently
                 </h3>
                 <p className="text-sm text-center text-gray-500">
-                  Are you sure you want to delete the hospital "{hospitalToDelete.name}"? 
-                  This action cannot be undone.
+                  Are you sure you want to delete the hospital "
+                  {hospitalToDelete.name}"? This action cannot be undone.
                 </p>
                 <div className="flex justify-center gap-3 mt-6">
                   <button
@@ -1522,7 +1908,7 @@ function HospitalsManagement() {
                         <span>Deleting...</span>
                       </>
                     ) : (
-                      'Delete permanently'
+                      "Delete permanently"
                     )}
                   </button>
                 </div>

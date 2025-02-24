@@ -1,12 +1,26 @@
 import { useState, useEffect, useMemo } from "react";
-import { Plus, Edit, Trash2, ChevronDown, X, AlertTriangle, Search } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  ChevronDown,
+  X,
+  AlertTriangle,
+  Search,
+} from "lucide-react";
 import { useToast } from "../../../context/ToastContext";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchFaqs, createFaq, updateFaq, deleteFaq } from "../../../redux/slices/adminSlice";
+import {
+  fetchFaqs,
+  createFaq,
+  updateFaq,
+  deleteFaq,
+} from "../../../redux/slices/adminSlice";
 
 function FAQManagement() {
   const dispatch = useDispatch();
-  const { faqs, isLoadingFaqs, faqsError, isSubmittingFaq, isDeletingFaq } = useSelector((state) => state.admin);
+  const { faqs, isLoadingFaqs, faqsError, isSubmittingFaq, isDeletingFaq } =
+    useSelector((state) => state.admin);
   const [isEditing, setIsEditing] = useState(false);
   const [editingFaq, setEditingFaq] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
@@ -17,8 +31,8 @@ function FAQManagement() {
 
   // Form state
   const [formData, setFormData] = useState({
-    question: '',
-    answer: ''
+    question: "",
+    answer: "",
   });
 
   // Add filter function for FAQs
@@ -27,7 +41,7 @@ function FAQManagement() {
 
     const searchTermLower = searchTerm.toLowerCase().trim();
     return faqs.filter(
-      faq =>
+      (faq) =>
         faq.question.toLowerCase().includes(searchTermLower) ||
         faq.answer.toLowerCase().includes(searchTermLower)
     );
@@ -39,21 +53,21 @@ function FAQManagement() {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.question.trim()) {
-      newErrors.question = 'Please enter a question';
+      newErrors.question = "Please enter a question";
     } else if (formData.question.length < 10) {
-      newErrors.question = 'Question must be at least 10 characters';
+      newErrors.question = "Question must be at least 10 characters";
     } else if (formData.question.length > 200) {
-      newErrors.question = 'Question cannot exceed 200 characters';
+      newErrors.question = "Question cannot exceed 200 characters";
     }
 
     if (!formData.answer.trim()) {
-      newErrors.answer = 'Please enter an answer';
+      newErrors.answer = "Please enter an answer";
     } else if (formData.answer.length < 10) {
-      newErrors.answer = 'Answer must be at least 10 characters';
+      newErrors.answer = "Answer must be at least 10 characters";
     } else if (formData.answer.length > 1000) {
-      newErrors.answer = 'Answer cannot exceed 1000 characters';
+      newErrors.answer = "Answer cannot exceed 1000 characters";
     }
 
     setErrors(newErrors);
@@ -62,41 +76,41 @@ function FAQManagement() {
 
   const handleCreateFaq = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     try {
       await dispatch(createFaq(formData)).unwrap();
-      
+
       addToast({
-        type: 'success',
-        message: 'Create FAQ successfully!'
+        type: "success",
+        message: "Create FAQ successfully!",
       });
 
       // Reset form
-      setFormData({ question: '', answer: '' });
+      setFormData({ question: "", answer: "" });
       setIsEditing(false);
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while creating FAQ'
+        type: "error",
+        message: error.message || "An error occurred while creating FAQ",
       });
     }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
@@ -110,7 +124,7 @@ function FAQManagement() {
     setEditingFaq(faq);
     setFormData({
       question: faq.question,
-      answer: faq.answer
+      answer: faq.answer,
     });
     setIsEditing(true);
   };
@@ -133,42 +147,44 @@ function FAQManagement() {
 
   const handleUpdateFaq = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     // Check if there is any change
     if (
-      formData.question === editingFaq.question && 
+      formData.question === editingFaq.question &&
       formData.answer === editingFaq.answer
     ) {
       addToast({
-        type: 'info',
-        message: 'No changes to update'
+        type: "info",
+        message: "No changes to update",
       });
       return;
     }
 
     try {
-      await dispatch(updateFaq({
-        id: editingFaq.id,
-        data: formData
-      })).unwrap();
-      
+      await dispatch(
+        updateFaq({
+          id: editingFaq.id,
+          data: formData,
+        })
+      ).unwrap();
+
       addToast({
-        type: 'success',
-        message: 'Update FAQ successfully!'
+        type: "success",
+        message: "Update FAQ successfully!",
       });
 
       // Reset form
-      setFormData({ question: '', answer: '' });
+      setFormData({ question: "", answer: "" });
       setIsEditing(false);
       setEditingFaq(null);
     } catch (error) {
       addToast({
-        type: 'error',
-        message: error.message || 'An error occurred while updating FAQ'
+        type: "error",
+        message: error.message || "An error occurred while updating FAQ",
       });
     }
   };
@@ -199,21 +215,10 @@ function FAQManagement() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">FAQ Management</h2>
-        <button
-          onClick={() => setIsEditing(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5]"
-        >
-          <Plus size={20} />
-          Add FAQ
-        </button>
-      </div>
-
-      {/* Add search bar */}
-      <div className="mb-6">
-        <div className="relative">
+    <div className="p-6 mt-12 md:mt-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        {/* Search bar */}
+        <div className="relative flex-1 max-w-lg">
           <input
             type="text"
             value={searchTerm}
@@ -221,8 +226,8 @@ function FAQManagement() {
             placeholder="Search FAQ..."
             className="w-full px-4 py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
           />
-          <Search 
-            size={20} 
+          <Search
+            size={20}
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
           />
           {searchTerm && (
@@ -234,6 +239,14 @@ function FAQManagement() {
             </button>
           )}
         </div>
+
+        <button
+          onClick={() => setIsEditing(true)}
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] w-full sm:w-auto"
+        >
+          <Plus size={20} />
+          Add FAQ
+        </button>
       </div>
 
       <div className="space-y-4">
@@ -243,7 +256,7 @@ function FAQManagement() {
           </div>
         ) : filteredFaqs.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            {searchTerm 
+            {searchTerm
               ? "No FAQ found matching the search term."
               : "No FAQ found. Add a new FAQ!"}
           </div>
@@ -253,16 +266,16 @@ function FAQManagement() {
               <div className="flex justify-between items-start">
                 <div className="flex-1 pr-4">
                   <button
-                    onClick={() => setExpandedId(expandedId === faq.id ? null : faq.id)}
+                    onClick={() =>
+                      setExpandedId(expandedId === faq.id ? null : faq.id)
+                    }
                     className="w-full flex justify-between items-center"
                   >
                     {/* Highlight search term in question */}
                     <h3 className="font-medium text-left">
-                      {searchTerm ? (
-                        highlightText(faq.question, searchTerm)
-                      ) : (
-                        faq.question
-                      )}
+                      {searchTerm
+                        ? highlightText(faq.question, searchTerm)
+                        : faq.question}
                     </h3>
                     <ChevronDown
                       className={`w-5 h-5 transition-transform ${
@@ -273,11 +286,9 @@ function FAQManagement() {
                   {expandedId === faq.id && (
                     <p className="text-gray-600 mt-2">
                       {/* Highlight search term in answer */}
-                      {searchTerm ? (
-                        highlightText(faq.answer, searchTerm)
-                      ) : (
-                        faq.answer
-                      )}
+                      {searchTerm
+                        ? highlightText(faq.answer, searchTerm)
+                        : faq.answer}
                     </p>
                   )}
                 </div>
@@ -304,18 +315,18 @@ function FAQManagement() {
       {/* Create/Edit Modal */}
       {isEditing && (
         <>
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
             onClick={() => setIsEditing(false)}
           />
           <div className="fixed inset-0 flex items-center justify-center z-[110] p-4">
-            <div 
+            <div
               className="bg-white rounded-lg w-full max-w-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center px-6 py-4 border-b">
                 <h2 className="text-xl font-semibold">
-                  {editingFaq ? 'Edit FAQ' : 'Add new FAQ'}
+                  {editingFaq ? "Edit FAQ" : "Add new FAQ"}
                 </h2>
                 <button
                   onClick={() => setIsEditing(false)}
@@ -337,14 +348,16 @@ function FAQManagement() {
                       value={formData.question}
                       onChange={handleInputChange}
                       className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                        errors.question 
-                          ? 'border-red-500 focus:ring-red-200'
-                          : 'border-gray-300 focus:ring-blue-200'
+                        errors.question
+                          ? "border-red-500 focus:ring-red-200"
+                          : "border-gray-300 focus:ring-blue-200"
                       }`}
                       placeholder="Enter question..."
                     />
                     {errors.question && (
-                      <p className="mt-1 text-sm text-red-500">{errors.question}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.question}
+                      </p>
                     )}
                   </div>
 
@@ -358,14 +371,16 @@ function FAQManagement() {
                       onChange={handleInputChange}
                       rows={4}
                       className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                        errors.answer 
-                          ? 'border-red-500 focus:ring-red-200'
-                          : 'border-gray-300 focus:ring-blue-200'
+                        errors.answer
+                          ? "border-red-500 focus:ring-red-200"
+                          : "border-gray-300 focus:ring-blue-200"
                       }`}
                       placeholder="Enter answer..."
                     />
                     {errors.answer && (
-                      <p className="mt-1 text-sm text-red-500">{errors.answer}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.answer}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -376,7 +391,7 @@ function FAQManagement() {
                     onClick={() => {
                       setIsEditing(false);
                       setEditingFaq(null);
-                      setFormData({ question: '', answer: '' });
+                      setFormData({ question: "", answer: "" });
                       setErrors({});
                     }}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
@@ -395,7 +410,7 @@ function FAQManagement() {
                         <span>Saving...</span>
                       </>
                     ) : (
-                      'Save'
+                      "Save"
                     )}
                   </button>
                 </div>
@@ -408,12 +423,12 @@ function FAQManagement() {
       {/* Delete Confirmation Modal */}
       {faqToDelete && (
         <>
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
             onClick={() => setFaqToDelete(null)}
           />
           <div className="fixed inset-0 flex items-center justify-center z-[110] p-4">
-            <div 
+            <div
               className="bg-white rounded-lg w-full max-w-md"
               onClick={(e) => e.stopPropagation()}
             >
@@ -425,8 +440,8 @@ function FAQManagement() {
                   Delete FAQ
                 </h3>
                 <p className="text-sm text-center text-gray-500">
-                  Are you sure you want to delete this FAQ? 
-                  This action cannot be undone.
+                  Are you sure you want to delete this FAQ? This action cannot
+                  be undone.
                 </p>
                 <div className="flex justify-center gap-3 mt-6">
                   <button
@@ -449,7 +464,7 @@ function FAQManagement() {
                         <span>Deleting...</span>
                       </>
                     ) : (
-                      'Delete'
+                      "Delete"
                     )}
                   </button>
                 </div>
@@ -466,10 +481,10 @@ function FAQManagement() {
 function highlightText(text, searchTerm) {
   if (!searchTerm) return text;
 
-  const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
+  const parts = text.split(new RegExp(`(${searchTerm})`, "gi"));
   return (
     <span>
-      {parts.map((part, index) => 
+      {parts.map((part, index) =>
         part.toLowerCase() === searchTerm.toLowerCase() ? (
           <span key={index} className="bg-yellow-200">
             {part}

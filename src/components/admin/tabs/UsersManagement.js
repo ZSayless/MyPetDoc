@@ -563,7 +563,7 @@ function UsersManagement() {
   return (
     <div className="p-4 md:p-6">
       {/* Tabs */}
-      <div className="flex space-x-4 mb-4">
+      <div className="flex space-x-4 mb-4 mt-12 md:mt-0">
         <button
           onClick={() => setActiveTab("active")}
           className={`px-4 py-2 rounded-lg ${
@@ -587,13 +587,13 @@ function UsersManagement() {
       </div>
 
       {/* Search and Add User Row */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6">
         {/* Search Bar */}
-        <div className="w-full md:w-96">
+        <div className="w-full sm:w-96">
           <div className="relative">
             <input
               type="text"
-              placeholder="Search by name, email, phone number..."
+              placeholder="Search..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
@@ -608,45 +608,54 @@ function UsersManagement() {
         {/* Add User Button */}
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 whitespace-nowrap"
+          className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 whitespace-nowrap"
         >
           <Plus size={18} className="mr-2" />
           Add User
         </button>
       </div>
 
-      {/* Empty State khi không có kết quả tìm kiếm */}
-      {filteredUsers.length === 0 && searchTerm && (
-        <div className="text-center py-8">
-          <p className="text-gray-500">No users found</p>
-        </div>
-      )}
-
-      {/* Table */}
-      {filteredUsers.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white rounded-lg">
-            <thead className="bg-gray-50 border-b">
+      {/* Table/Card Container */}
+      <div className="bg-white rounded-lg">
+        {/* Desktop Table View */}
+        <div className="hidden md:block">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Join Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
                   Lock Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"
+                >
                   Actions
                 </th>
               </tr>
@@ -655,14 +664,39 @@ function UsersManagement() {
               {filteredUsers.map((user) => (
                 <tr key={user.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {user.full_name}
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 flex-shrink-0">
+                        {user.avatar ? (
+                          <img
+                            className="h-10 w-10 rounded-full object-cover"
+                            src={user.avatar}
+                            alt={`${user.full_name}'s avatar`}
+                          />
+                        ) : (
+                          <div className="h-10 w-10 rounded-full bg-purple-600 flex items-center justify-center">
+                            <span className="text-white font-medium">
+                              {user.full_name?.charAt(0)?.toUpperCase() || "?"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {user.full_name}
+                        </div>
+                      </div>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {user.email}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`px-2 py-1 text-xs rounded-full ${
-                        user.role === "Admin"
+                        user.role === "ADMIN"
                           ? "bg-purple-100 text-purple-800"
+                          : user.role === "HOSPITAL_ADMIN"
+                          ? "bg-blue-100 text-blue-800"
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
@@ -672,7 +706,7 @@ function UsersManagement() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        className={`px-2 py-1 text-xs rounded-full ${
                           user.is_active
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
@@ -684,12 +718,9 @@ function UsersManagement() {
                         onClick={() =>
                           handleToggleActive(user.id, user.is_active)
                         }
-                        className={`p-1 rounded hover:bg-gray-100 ${
+                        className={`p-1 rounded-full hover:bg-gray-100 ${
                           user.is_active ? "text-green-600" : "text-red-600"
                         }`}
-                        title={
-                          user.is_active ? "Deactivate user" : "Activate user"
-                        }
                       >
                         {user.is_active ? (
                           <ToggleRight size={18} />
@@ -700,12 +731,9 @@ function UsersManagement() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {new Date(user.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        className={`px-2 py-1 text-xs rounded-full ${
                           user.is_locked
                             ? "bg-red-100 text-red-800"
                             : "bg-green-100 text-green-800"
@@ -717,10 +745,9 @@ function UsersManagement() {
                         onClick={() =>
                           handleToggleLock(user.id, user.is_locked)
                         }
-                        className={`p-1 rounded hover:bg-gray-100 ${
+                        className={`p-1 rounded-full hover:bg-gray-100 ${
                           user.is_locked ? "text-green-600" : "text-red-600"
                         }`}
-                        title={user.is_locked ? "Unlock user" : "Lock user"}
                       >
                         {user.is_locked ? (
                           <Unlock size={18} />
@@ -730,8 +757,8 @@ function UsersManagement() {
                       </button>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center justify-end space-x-2">
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <div className="flex items-center justify-end gap-3">
                       <button
                         onClick={() => handleView(user)}
                         className="text-blue-600 hover:text-blue-900"
@@ -748,10 +775,11 @@ function UsersManagement() {
                         onClick={() =>
                           handleToggleDelete(user.id, user.is_deleted)
                         }
-                        className={`text-red-600 hover:text-red-900 ${
-                          user.is_deleted ? "text-green-600" : ""
-                        }`}
-                        title={user.is_deleted ? "Restore" : "Delete"}
+                        className={
+                          user.is_deleted
+                            ? "text-green-600 hover:text-green-900"
+                            : "text-red-600 hover:text-red-900"
+                        }
                       >
                         {user.is_deleted ? (
                           <RefreshCw size={18} />
@@ -759,15 +787,6 @@ function UsersManagement() {
                           <Trash2 size={18} />
                         )}
                       </button>
-                      {activeTab === "trash" && (
-                        <button
-                          onClick={() => handlePermanentDelete(user.id)}
-                          className="p-1 rounded hover:bg-gray-100 text-red-600"
-                          title="Permanent Delete"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      )}
                     </div>
                   </td>
                 </tr>
@@ -775,12 +794,165 @@ function UsersManagement() {
             </tbody>
           </table>
         </div>
-      )}
 
-      {/* Pagination */}
+        {/* Mobile Card View */}
+        <div className="md:hidden">
+          <div className="flex justify-between items-center p-3 border-b">
+            <div className="text-sm font-medium text-gray-500">NAME</div>
+            <div className="text-sm font-medium text-gray-500">STATUS</div>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {filteredUsers.map((user) => (
+              <div key={user.id} className="p-3">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-10 w-10 flex-shrink-0">
+                    {user.avatar ? (
+                      <img
+                        className="h-full w-full rounded-full object-cover"
+                        src={user.avatar}
+                        alt={`${user.full_name}'s avatar`}
+                      />
+                    ) : (
+                      <div className="h-full w-full rounded-full bg-purple-600 flex items-center justify-center">
+                        <span className="text-white font-medium">
+                          {user.full_name?.charAt(0)?.toUpperCase() || "?"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-medium text-gray-900 truncate">
+                      {user.full_name}
+                    </div>
+                    <div className="text-sm text-gray-500 truncate">
+                      {user.email}
+                    </div>
+                    <div className="mt-1">
+                      <span
+                        className={`inline-block px-2 py-0.5 text-xs rounded-full ${
+                          user.role === "ADMIN"
+                            ? "bg-purple-100 text-purple-800"
+                            : user.role === "HOSPITAL_ADMIN"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {user.role === "HOSPITAL_ADMIN"
+                          ? "HOSPITAL_ADMIN"
+                          : user.role}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-gray-500">Status:</div>
+                    <div className="flex items-center gap-1">
+                      <span
+                        className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                          user.is_active
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {user.is_active ? "Active" : "Inactive"}
+                      </span>
+                      <button
+                        onClick={() =>
+                          handleToggleActive(user.id, user.is_active)
+                        }
+                        className={`p-1 rounded-full hover:bg-gray-100 ${
+                          user.is_active ? "text-green-600" : "text-red-600"
+                        }`}
+                      >
+                        {user.is_active ? (
+                          <ToggleRight size={18} />
+                        ) : (
+                          <ToggleLeft size={18} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-gray-500">Lock Status:</div>
+                    <div className="flex items-center gap-1">
+                      <span
+                        className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                          user.is_locked
+                            ? "bg-red-100 text-red-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {user.is_locked ? "Locked" : "Unlocked"}
+                      </span>
+                      <button
+                        onClick={() =>
+                          handleToggleLock(user.id, user.is_locked)
+                        }
+                        className={`p-1 rounded-full hover:bg-gray-100 ${
+                          user.is_locked ? "text-green-600" : "text-red-600"
+                        }`}
+                      >
+                        {user.is_locked ? (
+                          <Unlock size={18} />
+                        ) : (
+                          <Lock size={18} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    <button
+                      onClick={() => handleView(user)}
+                      className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                    >
+                      <Eye size={16} />
+                      <span className="text-sm">View</span>
+                    </button>
+                    <button
+                      onClick={() => handleEdit(user)}
+                      className="flex items-center gap-1 text-green-600 hover:text-green-800"
+                    >
+                      <Edit size={16} />
+                      <span className="text-sm">Edit</span>
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleToggleDelete(user.id, user.is_deleted)
+                      }
+                      className={`flex items-center gap-1 ${
+                        user.is_deleted
+                          ? "text-green-600 hover:text-green-800"
+                          : "text-red-600 hover:text-red-800"
+                      }`}
+                    >
+                      {user.is_deleted ? (
+                        <>
+                          <RefreshCw size={16} />
+                          <span className="text-sm">Restore</span>
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 size={16} />
+                          <span className="text-sm">Delete</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Pagination - Responsive */}
       {(activeTab === "active" ? users : deletedUsers)?.length > 0 && (
-        <div className="flex items-center justify-between py-3">
-          <div className="text-sm text-gray-500">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-3">
+          <div className="text-sm text-gray-500 order-2 sm:order-1">
             Showing{" "}
             {activeTab === "active" ? pagination.page : deletedPagination.page}{" "}
             of{" "}
@@ -789,7 +961,7 @@ function UsersManagement() {
               : deletedPagination.totalPages}{" "}
             pages
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 order-1 sm:order-2">
             <button
               onClick={() => {
                 const action =
@@ -805,7 +977,7 @@ function UsersManagement() {
                   ? pagination.page === 1 || users.length === 0
                   : deletedPagination.page === 1 || deletedUsers.length === 0
               }
-              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed min-w-[80px]"
             >
               Previous
             </button>
@@ -830,7 +1002,7 @@ function UsersManagement() {
                   : deletedPagination.page === deletedPagination.totalPages ||
                     deletedUsers.length === 0
               }
-              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed min-w-[80px]"
             >
               Next
             </button>

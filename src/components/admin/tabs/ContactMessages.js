@@ -6,43 +6,45 @@ import {
   markMessageAsRead,
   fetchContactMessages,
   respondToMessage,
-  deleteContactMessagePermanently
+  deleteContactMessagePermanently,
 } from "../../../redux/slices/adminSlice";
 import { formatDate } from "../../../utils/formatDate";
 import { useToast } from "../../../context/ToastContext";
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'completed':
-      return 'bg-green-100 text-green-800';
-    case 'processing':
-      return 'bg-blue-100 text-blue-800';
-    case 'cancelled':
-      return 'bg-red-100 text-red-800';
-    case 'pending':
+    case "completed":
+      return "bg-green-100 text-green-800";
+    case "processing":
+      return "bg-blue-100 text-blue-800";
+    case "cancelled":
+      return "bg-red-100 text-red-800";
+    case "pending":
     default:
-      return 'bg-yellow-100 text-yellow-800';
+      return "bg-yellow-100 text-yellow-800";
   }
 };
 
 const getStatusText = (status) => {
   switch (status) {
-    case 'completed':
-      return 'Completed';
-    case 'processing':
-      return 'Processing';
-    case 'cancelled':
-      return 'Cancelled';
-    case 'pending':
+    case "completed":
+      return "Completed";
+    case "processing":
+      return "Processing";
+    case "cancelled":
+      return "Cancelled";
+    case "pending":
     default:
-      return 'Pending';
+      return "Pending";
   }
 };
 
 function ContactMessages() {
   const dispatch = useDispatch();
   const { addToast } = useToast();
-  const { contactMessages, loading, pagination } = useSelector((state) => state.admin);
+  const { contactMessages, loading, pagination } = useSelector(
+    (state) => state.admin
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,16 +79,16 @@ function ContactMessages() {
 
     // Validate response
     if (!response.trim()) {
-      errors.response = 'Reply content is required';
+      errors.response = "Reply content is required";
     } else if (response.length > 1000) {
-      errors.response = 'Reply content cannot exceed 1000 characters';
+      errors.response = "Reply content cannot exceed 1000 characters";
     }
 
     // Validate status
     if (!status) {
-      errors.status = 'Status is required';
-    } else if (!['completed', 'processing', 'cancelled'].includes(status)) {
-      errors.status = 'Invalid status';
+      errors.status = "Status is required";
+    } else if (!["completed", "processing", "cancelled"].includes(status)) {
+      errors.status = "Invalid status";
     }
 
     return errors;
@@ -104,25 +106,28 @@ function ContactMessages() {
 
     setIsSubmitting(true);
     try {
-      await dispatch(respondToMessage({
-        messageId: selectedMessage.id,
-        data: {
-          response,
-          status
-        }
-      })).unwrap();
+      await dispatch(
+        respondToMessage({
+          messageId: selectedMessage.id,
+          data: {
+            response,
+            status,
+          },
+        })
+      ).unwrap();
 
       setResponse("");
       setStatus("completed");
       setFormErrors({});
       addToast({
         type: "success",
-        message: "Reply to message successfully!"
+        message: "Reply to message successfully!",
       });
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "An error occurred while replying to the message"
+        message:
+          error.message || "An error occurred while replying to the message",
       });
     } finally {
       setIsSubmitting(false);
@@ -134,10 +139,12 @@ function ContactMessages() {
 
     setIsDeletingMessage(true);
     try {
-      await dispatch(deleteContactMessagePermanently(messageToDelete.id)).unwrap();
+      await dispatch(
+        deleteContactMessagePermanently(messageToDelete.id)
+      ).unwrap();
       addToast({
         type: "success",
-        message: "Delete message successfully!"
+        message: "Delete message successfully!",
       });
       setMessageToDelete(null);
       if (selectedMessage?.id === messageToDelete.id) {
@@ -146,7 +153,8 @@ function ContactMessages() {
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "An error occurred while deleting the message"
+        message:
+          error.message || "An error occurred while deleting the message",
       });
     } finally {
       setIsDeletingMessage(false);
@@ -161,11 +169,14 @@ function ContactMessages() {
   );
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-4 md:p-6 mt-12 md:mt-0">
       {/* Search */}
       <div className="mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            size={20}
+          />
           <input
             type="text"
             placeholder="Search messages..."
@@ -205,7 +216,11 @@ function ContactMessages() {
                       <p className="text-sm text-gray-600 truncate max-w-[70%]">
                         {message.message}
                       </p>
-                      <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(message.status)}`}>
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${getStatusColor(
+                          message.status
+                        )}`}
+                      >
                         {getStatusText(message.status)}
                       </span>
                     </div>
@@ -231,7 +246,8 @@ function ContactMessages() {
                       </h2>
                       <p className="text-sm text-gray-500">
                         Email: {selectedMessage.email}
-                        {selectedMessage.phone && ` | SĐT: ${selectedMessage.phone}`}
+                        {selectedMessage.phone &&
+                          ` | SĐT: ${selectedMessage.phone}`}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -249,7 +265,9 @@ function ContactMessages() {
                   </div>
 
                   <div className="mt-6 border-t pt-6">
-                    <h3 className="text-lg font-medium mb-4">Reply to message</h3>
+                    <h3 className="text-lg font-medium mb-4">
+                      Reply to message
+                    </h3>
                     <form onSubmit={handleRespond}>
                       <div className="space-y-4">
                         <div>
@@ -261,20 +279,22 @@ function ContactMessages() {
                             onChange={(e) => setResponse(e.target.value)}
                             rows={4}
                             className={`w-full rounded-lg ${
-                              formErrors?.response 
-                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                                : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                              formErrors?.response
+                                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                                : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                             }`}
                             placeholder="Enter reply content..."
                           />
                           {formErrors?.response && (
-                            <p className="mt-1 text-sm text-red-500">{formErrors.response}</p>
+                            <p className="mt-1 text-sm text-red-500">
+                              {formErrors.response}
+                            </p>
                           )}
                           <p className="mt-1 text-sm text-gray-500">
                             {response.length}/1000 ký tự
                           </p>
                         </div>
-                        
+
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             Status
@@ -284,8 +304,8 @@ function ContactMessages() {
                             onChange={(e) => setStatus(e.target.value)}
                             className={`w-full rounded-lg ${
                               formErrors?.status
-                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                                : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                                : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                             }`}
                           >
                             <option value="completed">Completed</option>
@@ -293,7 +313,9 @@ function ContactMessages() {
                             <option value="cancelled">Cancelled</option>
                           </select>
                           {formErrors?.status && (
-                            <p className="mt-1 text-sm text-red-500">{formErrors.status}</p>
+                            <p className="mt-1 text-sm text-red-500">
+                              {formErrors.status}
+                            </p>
                           )}
                         </div>
 
@@ -322,9 +344,13 @@ function ContactMessages() {
 
                   {selectedMessage.response && (
                     <div className="mt-6 border-t pt-6">
-                      <h3 className="text-lg font-medium mb-2">Previous reply</h3>
+                      <h3 className="text-lg font-medium mb-2">
+                        Previous reply
+                      </h3>
                       <div className="bg-gray-50 rounded-lg p-4">
-                        <p className="whitespace-pre-line">{selectedMessage.response}</p>
+                        <p className="whitespace-pre-line">
+                          {selectedMessage.response}
+                        </p>
                         <div className="mt-2 text-sm text-gray-500">
                           <span>Status: {selectedMessage.status}</span>
                           {selectedMessage.responded_at && (
@@ -345,6 +371,183 @@ function ContactMessages() {
             </div>
           </div>
 
+          {/* Mobile View */}
+          <div className="md:hidden space-y-4">
+            {filteredMessages.map((message) => (
+              <div
+                key={message.id}
+                onClick={() => handleView(message)}
+                className="bg-white rounded-lg shadow-sm p-4"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 className="font-medium">{message.name}</h3>
+                    <p className="text-sm text-gray-500">{message.email}</p>
+                    {message.phone && (
+                      <p className="text-sm text-gray-500">
+                        SĐT: {message.phone}
+                      </p>
+                    )}
+                  </div>
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${getStatusColor(
+                      message.status
+                    )}`}
+                  >
+                    {getStatusText(message.status)}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mb-2">{message.message}</p>
+                <div className="flex justify-between items-center text-sm text-gray-500">
+                  <span>{formatDate(message.created_at)}</span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(message);
+                      }}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-full"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* No Messages State for Mobile */}
+            {filteredMessages.length === 0 && (
+              <div className="text-center py-8">
+                <Mail className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-500">No messages found</p>
+              </div>
+            )}
+          </div>
+
+          {/* Message Detail Modal for Mobile */}
+          {selectedMessage && (
+            <div className="md:hidden fixed inset-0 bg-white z-50">
+              <div className="p-4">
+                <button
+                  onClick={() => setSelectedMessage(null)}
+                  className="mb-4 text-gray-500 hover:text-gray-700"
+                >
+                  <X size={24} />
+                </button>
+
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold mb-1">
+                    Tin nhắn từ {selectedMessage.name}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Email: {selectedMessage.email}
+                    {selectedMessage.phone &&
+                      ` | SĐT: ${selectedMessage.phone}`}
+                  </p>
+                </div>
+
+                <div className="prose max-w-none mb-6">
+                  <p>{selectedMessage.message}</p>
+                </div>
+
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-medium mb-4">Reply to message</h3>
+                  <form onSubmit={handleRespond}>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Nội dung trả lời
+                        </label>
+                        <textarea
+                          value={response}
+                          onChange={(e) => setResponse(e.target.value)}
+                          rows={4}
+                          className={`w-full rounded-lg ${
+                            formErrors?.response
+                              ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                              : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          }`}
+                          placeholder="Enter reply content..."
+                        />
+                        {formErrors?.response && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {formErrors.response}
+                          </p>
+                        )}
+                        <p className="mt-1 text-sm text-gray-500">
+                          {response.length}/1000 ký tự
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Status
+                        </label>
+                        <select
+                          value={status}
+                          onChange={(e) => setStatus(e.target.value)}
+                          className={`w-full rounded-lg ${
+                            formErrors?.status
+                              ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                              : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          }`}
+                        >
+                          <option value="completed">Completed</option>
+                          <option value="processing">Processing</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                        {formErrors?.status && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {formErrors.status}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex justify-end">
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              <span>Sending...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Send size={16} />
+                              <span>Send reply</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                {selectedMessage.response && (
+                  <div className="mt-6 border-t pt-6">
+                    <h3 className="text-lg font-medium mb-2">Previous reply</h3>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="whitespace-pre-line">
+                        {selectedMessage.response}
+                      </p>
+                      <div className="mt-2 text-sm text-gray-500">
+                        <span>Status: {selectedMessage.status}</span>
+                        {selectedMessage.responded_at && (
+                          <span className="ml-4">
+                            Time: {formatDate(selectedMessage.responded_at)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Pagination */}
           {pagination && pagination.totalPages > 0 && (
             <div className="flex items-center justify-between py-3">
@@ -353,14 +556,20 @@ function ContactMessages() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
                   disabled={currentPage === 1}
                   className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
                 <button
-                  onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(pagination.totalPages, prev + 1)
+                    )
+                  }
                   disabled={currentPage === pagination.totalPages}
                   className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
@@ -373,12 +582,12 @@ function ContactMessages() {
           {/* Delete Confirmation Modal */}
           {messageToDelete && (
             <>
-              <div 
+              <div
                 className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
                 onClick={() => setMessageToDelete(null)}
               />
               <div className="fixed inset-0 flex items-center justify-center z-[110] p-4">
-                <div 
+                <div
                   className="bg-white rounded-lg w-full max-w-md"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -390,8 +599,8 @@ function ContactMessages() {
                       Delete message permanently
                     </h3>
                     <p className="text-sm text-center text-gray-500">
-                      Are you sure you want to delete the message from "{messageToDelete.name}"? 
-                      This action cannot be undone.
+                      Are you sure you want to delete the message from "
+                      {messageToDelete.name}"? This action cannot be undone.
                     </p>
                     <div className="flex justify-center gap-3 mt-6">
                       <button
@@ -414,7 +623,7 @@ function ContactMessages() {
                             <span>Deleting...</span>
                           </>
                         ) : (
-                          'Delete'
+                          "Delete"
                         )}
                       </button>
                     </div>
