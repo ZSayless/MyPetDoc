@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../../styles/Modal.css";
+import "../../assets/css/style.css";
 
 function EditUserModal({ isOpen, onClose, user, onSave }) {
   const [formData, setFormData] = useState(user);
