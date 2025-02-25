@@ -236,6 +236,24 @@ const deleteReviewReply = async (reviewId) => {
   }
 };
 
+const getHospitalsByCreator = async (userId) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(
+      `${BASE_URL}/hospitals/creator/${userId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching creator's hospitals:", error);
+    throw error;
+  }
+};
+
 export { 
   getHospitals, 
   getHospitalDetail,
@@ -250,5 +268,6 @@ export {
   checkFavorite,
   toggleFavorite,
   replyToReview,
-  deleteReviewReply
+  deleteReviewReply,
+  getHospitalsByCreator
 };

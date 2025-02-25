@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Star,
   Mail,
@@ -8,6 +8,7 @@ import {
   Twitter,
   Instagram,
   Youtube,
+  Building,
 } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useTranslation } from "react-i18next";
@@ -32,6 +33,7 @@ function Profile() {
   const [favorites, setFavorites] = useState([]);
   const [reviewError, setReviewError] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const navigate = useNavigate();
 
   const fetchSomeReviews = async () => {
     try {
@@ -136,7 +138,7 @@ function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 py-8">
       {/* Profile Header with Banner - Giảm chiều cao trên mobile */}
       <div className="bg-gradient-to-r from-[#98E9E9] to-[#7CD5D5] h-40 md:h-60"></div>
 
@@ -197,10 +199,10 @@ function Profile() {
                 {(userInfo.role === "HOSPITAL_ADMIN" ||
                   userInfo.role === "ADMIN") && (
                   <Link
-                    to="/add-hospital"
+                    to="/manage-hospital"
                     className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors text-center"
                   >
-                    {t("profile.registerHospital")}
+                    {t("profile.manageHospital")}
                   </Link>
                 )}
               </div>
@@ -306,6 +308,19 @@ function Profile() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Actions Section */}
+      <div className="mt-6 flex flex-wrap gap-4">
+        <button
+          onClick={() => navigate("/manage-hospital")}
+          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <Building className="w-5 h-5 mr-2" />
+          {t("profile.manageHospital")}
+        </button>
+        
+        {/* ... other buttons ... */}
       </div>
     </div>
   );

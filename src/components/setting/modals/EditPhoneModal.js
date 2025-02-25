@@ -1,15 +1,19 @@
 import { LoaderIcon, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { updateInfo } from "../../../services/authService";
-import { useAuth } from "../../../context/AuthContext";
 
-function EditPhoneModal({ isOpen, onClose, }) {
+function EditPhoneModal({ isOpen, onClose, userDetails, onSuccess }) {
   const { t } = useTranslation();
   const [error, setError] = useState("");
-  const { user, updateUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false)
-  const [phone, setPhone] = useState(user.phone_number);
+  const [phone, setPhone] = useState("");
+
+  useEffect(() => {
+    if (userDetails?.phone_number) {
+      setPhone(userDetails.phone_number);
+    }
+  }, [userDetails]);
 
   if (!isOpen) return null;
 
@@ -30,11 +34,11 @@ function EditPhoneModal({ isOpen, onClose, }) {
       return;
     }
     const data = { phone_number: phone }
-    updateUser(data)
     // submit
     try {
       setIsLoading(true)
       await updateInfo(data);
+      onSuccess();
     } catch (error) {
       console.error("Error converting image:", error);
     } finally {

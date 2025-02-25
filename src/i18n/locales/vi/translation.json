@@ -163,6 +163,7 @@
     "adminDashboard": "Quản trị",
     "editProfile": "Chỉnh Sửa Hồ Sơ",
     "registerHospital": "Đăng Ký Bệnh Viện",
+    "manageHospital": "Quản Lý Bệnh Viện",
     "reviews": "Đánh Giá",
     "favorites": "Yêu Thích",
     "blogs": "Bài Viết",
@@ -180,6 +181,11 @@
     "allFavorites": {
       "title": "Bệnh viện Yêu thích"
     }
+  },
+  "manageHospital": {
+    "noHospital": "Bạn chưa đăng ký bệnh viện nào",
+    "oneHospitalLimit": "Bạn chỉ có thể đăng ký một bệnh viện",
+    "edit": "Chỉnh sửa"
   },
   "home": {
     "hospitalList": {
@@ -522,7 +528,21 @@
     "weekdays": "Ngày Thường",
     "weekends": "Cuối Tuần",
     "to": "đến",
+    "name": "Tên Bệnh Viện",
+    "phone": "Số Điện Thoại",
+    "namePlaceholder": "Nhập tên bệnh viện",
+    "phonePlaceholder": "Nhập số điện thoại",
+    "addressPlaceholder": "Nhập địa chỉ",
     "services": "Dịch Vụ",
+    "note": "Lưu ý",
+    "noteDescription": "Sau khi đăng ký, bệnh viện của bạn sẽ cần được quản trị viên phê duyệt trước khi hiển thị công khai.",
+    "departmentPlaceholder": "Nhập chuyên khoa",
+    "staffDescription": "Mô Tả Nhân Viên",
+    "staffDescriptionPlaceholder": "Mô tả về đội ngũ nhân viên của bệnh viện",
+    "staffCredentials": "Chứng Chỉ Nhân Viên",
+    "staffCredentialsPlaceholder": "Thông tin về chứng chỉ, bằng cấp của nhân viên",
+    "processing": "Đang xử lý...",
+    "submit": "Đăng Ký",
     "servicesList": {
       "generalCheckup": "Khám tổng quát",
       "vaccination": "Tiêm phòng",
@@ -574,6 +594,18 @@
         "facebook": "Facebook",
         "x": "X (Twitter)",
         "instagram": "Instagram"
+      },
+      "pet": {
+        "title": "Thông Tin Thú Cưng",
+        "description": "Quản lý thông tin thú cưng của bạn",
+        "type": "Loại Thú Cưng",
+        "age": "Tuổi Thú Cưng",
+        "photo": "Hình Ảnh Thú Cưng",
+        "notes": "Ghi Chú Thú Cưng",
+        "noPetType": "Không có loại thú cưng",
+        "noPetAge": "Không có tuổi thú cưng",
+        "noPetPhoto": "Không có hình ảnh thú cưng",
+        "noPetNotes": "Không có ghi chú thú cưng"
       }
     },
     "security": {
@@ -600,6 +632,38 @@
         "save": "Lưu Thay Đổi",
         "cancel": "Hủy",
         "description": "URL hồ sơ của bạn sẽ thay đổi và bạn sẽ không thể sử dụng tên người dùng cũ để đăng nhập nữa."
+      },
+      "editPet": {
+        "title": "Sửa Thông Tin Thú Cưng",
+        "description": "Quản lý thông tin thú cưng của bạn",
+        "typePlaceholder": "Chọn loại thú cưng của bạn",
+        "agePlaceholder": "Nhập tuổi thú cưng của bạn",
+        "uploadPhoto": "Tải Ảnh Lên",
+        "notesPlaceholder": "Nhập ghi chú thú cưng của bạn",
+        "cancel": "Hủy",
+        "save": "Lưu Thay Đổi",
+        "fileSizeError": "Kích thước file phải nhỏ hơn 5MB",
+        "fileTypeError": "Chỉ chấp nhận file PNG, JPG",
+        "updateError": "Không thể cập nhật thông tin thú cưng. Vui lòng thử lại",
+        "selectPetType": "Chọn loại thú cưng của bạn",
+        "petTypes": {
+          "dog": "Chó",
+          "cat": "Mèo",
+          "bird": "Chim",
+          "rabbit": "Thỏ",
+          "fish": "Cá",
+          "hamster": "Chuột",
+          "reptile": "Bò sát",
+          "other": "Khác"
+        },
+        "errors": {
+          "ageInvalid": "Vui lòng nhập tuổi hợp lệ",
+          "ageRange": "Vui lòng nhập tuổi từ 0 đến 100",
+          "notesTooLong": "Ghi chú phải ít hơn 500 ký tự",
+          "fileSizeError": "Kích thước file phải nhỏ hơn 5MB",
+          "fileTypeError": "Chỉ chấp nhận file PNG, JPG",
+          "updateError": "Không thể cập nhật thông tin thú cưng. Vui lòng thử lại"
+        }
       },
       "editAvatar": {
         "title": "Đổi Ảnh Đại Diện",

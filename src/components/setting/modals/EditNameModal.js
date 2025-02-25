@@ -4,7 +4,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useState } from "react";
 import { updateInfo } from "../../../services/authService";
 
-function EditNameModal({ isOpen, onClose }) {
+function EditNameModal({ isOpen, onClose, onSuccess }) {
   const { t } = useTranslation();
   const { user, updateUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false)
@@ -21,6 +21,7 @@ function EditNameModal({ isOpen, onClose }) {
       try {
         setIsLoading(true)
         await updateInfo(data);
+        onSuccess();
       } catch (error) {
         console.error("Error converting image:", error);
       } finally {

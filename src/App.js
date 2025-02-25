@@ -34,6 +34,7 @@ import AuthError from "./components/auth/AuthError";
 import SelectRole from "./components/auth/SelectRole";
 import VerifyEmail from "./components/register/VerifyEmail";
 import Lucete from "./components/lucete/lucete";
+import ManageHospital from "./components/hospital/ManageHospital";
 
 // Cấu hình AOS
 AOS.init({
@@ -137,6 +138,14 @@ function App() {
               element={
                 <MainLayout>
                   <HospitalDetail />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/manage-hospital"
+              element={
+                <MainLayout>
+                  <ManageHospital />
                 </MainLayout>
               }
             />

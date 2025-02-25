@@ -164,6 +164,7 @@
     "adminDashboard": "Admin Dashboard",
     "editProfile": "Edit Profile",
     "registerHospital": "Register Hospital",
+    "manageHospital": "Manage Hospital",
     "reviews": "Reviews",
     "favorites": "Favorites",
     "blogs": "Blogs",
@@ -179,6 +180,11 @@
     "allFavorites": {
       "title": "Favorite Hospitals"
     }
+  },
+  "manageHospital": {
+    "noHospital": "You have not registered any hospital yet",
+    "oneHospitalLimit": "You can only register one hospital",
+    "edit": "Edit"
   },
   "home": {
     "banner": {
@@ -538,7 +544,21 @@
     "weekdays": "Weekdays",
     "weekends": "Weekends",
     "to": "to",
+    "name": "Hospital Name",
+    "phone": "Phone Number",
+    "namePlaceholder": "Enter hospital name",
+    "phonePlaceholder": "Enter phone number",
+    "addressPlaceholder": "Enter address",
     "services": "Services",
+    "note": "Note",
+    "noteDescription": "After registering, your hospital will need to be approved by the administrator before it can be displayed publicly.",
+    "departmentPlaceholder": "Enter department",
+    "staffDescription": "Staff Description",
+    "staffDescriptionPlaceholder": "Describe the staff of your hospital",
+    "staffCredentials": "Staff Credentials",
+    "staffCredentialsPlaceholder": "Enter staff credentials",
+    "processing": "Processing...",
+    "submit": "Submit",
     "servicesList": {
       "generalCheckup": "General Checkup",
       "vaccination": "Vaccination",
@@ -590,6 +610,18 @@
         "facebook": "Facebook",
         "x": "X (Twitter)",
         "instagram": "Instagram"
+      },
+      "pet":{
+        "title": "Pet Information",
+        "description": "Manage your pet information",
+        "type": "Pet Type",
+        "age": "Pet Age",
+        "photo": "Pet Photo",
+        "notes": "Pet Notes",
+        "noPetType": "No pet type",
+        "noPetAge": "No pet age",
+        "noPetPhoto": "No pet photo",
+        "noPetNotes": "No pet notes"
       }
     },
     "security": {
@@ -639,6 +671,38 @@
           "facebook": "Enter your Facebook profile URL (e.g. https://facebook.com/username)",
           "x": "Enter your X profile URL (e.g. https://x.com/username)",
           "instagram": "Enter your Instagram profile URL (e.g. https://instagram.com/username)"
+        }
+      },
+      "editPet": {
+        "title": "Edit Pet Information",
+        "description": "Manage your pet information",
+        "typePlaceholder": "Select your pet type",
+        "agePlaceholder": "Enter your pet age",
+        "uploadPhoto": "Upload Photo",
+        "notesPlaceholder": "Enter your pet notes",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "fileSizeError": "File size should be less than 5MB",
+        "fileTypeError": "Only PNG, JPG images are allowed",
+        "updateError": "Failed to update pet information. Please try again",
+        "selectType": "Select your pet type",
+        "petTypes": {
+          "dog": "Dog",
+          "cat": "Cat",
+          "bird": "Bird",
+          "rabbit": "Rabbit",
+          "fish": "Fish",
+          "hamster": "Hamster",
+          "reptile": "Reptile",
+          "other": "Other"
+        },
+        "errors": {
+          "ageInvalid": "Please enter a valid age",
+          "ageRange": "Please enter an age between 0 and 100",
+          "notesTooLong": "Notes should be less than 500 characters",
+          "fileSizeError": "File size should be less than 5MB",
+          "fileTypeError": "Only PNG, JPG images are allowed",
+          "updateError": "Failed to update pet information. Please try again"
         }
       },
       "changePassword": {

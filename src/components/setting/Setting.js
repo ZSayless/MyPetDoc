@@ -6,21 +6,63 @@ import EditNameModal from "./modals/EditNameModal";
 import EditAvatarModal from "./modals/EditAvatarModal";
 import ChangePasswordModal from "./modals/ChangePasswordModal";
 import EditPhoneModal from "./modals/EditPhoneModal";
-import { useAuth } from "../../context/AuthContext";
+import EditPetModal from "./modals/EditPetModal";
+import { getUserInfoByEmail } from "../../services/userService";
 
 function Setting() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("personal");
   const [showEditName, setShowEditName] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showEditAvatar, setShowEditAvatar] = useState(false);
   const [showEditPhone, setShowEditPhone] = useState(false);
+  const [showEditPet, setShowEditPet] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
 
   const handleClose = () => {
     navigate(-1); // Quay lại trang trước đó
   };
+
+  const fetchUserDetails = async () => {
+    try {
+      const savedUser = JSON.parse(localStorage.getItem("user"));
+      if (savedUser?.email) {
+        const response = await getUserInfoByEmail(savedUser.email);
+        if (response.status === "success") {
+          const { 
+            full_name, 
+            email, 
+            phone_number, 
+            avatar,
+            role,
+            pet_type,
+            pet_age,
+            pet_photo,
+            pet_notes
+          } = response.data;
+          
+          setUserDetails({ 
+            full_name, 
+            email, 
+            phone_number, 
+            avatar,
+            role,
+            pet_type,
+            pet_age,
+            pet_photo,
+            pet_notes
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
 
   const renderPersonalInfo = () => (
     <div>
@@ -29,7 +71,7 @@ function Setting() {
         {t("setting.personal.description")}
       </p>
 
-      <div className="bg-[#F8F9FF] rounded-xl">
+      <div className="bg-[#F8F9FF] rounded-xl mb-6">
         <div className="p-3 md:p-4">
           <h3 className="text-sm md:text-base font-medium mb-1">
             {t("setting.personal.basic.title")}
@@ -49,7 +91,7 @@ function Setting() {
                 {t("setting.personal.basic.fullName")}
               </div>
               <div className="text-gray-600 text-xs md:text-sm mt-0.5">
-                {user?.full_name || "Admin User"}
+                {userDetails?.full_name || "Admin User"}
               </div>
             </div>
             <span className="text-gray-400 text-lg">›</span>
@@ -65,15 +107,15 @@ function Setting() {
                   {t("setting.personal.basic.avatar")}
                 </div>
                 <div className="mt-2 w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden">
-                  {user?.avatar?.startsWith("https://") ? (
+                  {userDetails?.avatar?.startsWith("https://") ? (
                     <img
-                      src={user.avatar}
+                      src={userDetails.avatar}
                       alt="User avatar"
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="w-full h-full bg-green-600 flex items-center justify-center text-white text-base md:text-xl">
-                      {user?.full_name?.charAt(0) || "A"}
+                      {userDetails?.full_name?.charAt(0) || "A"}
                     </div>
                   )}
                 </div>
@@ -92,10 +134,86 @@ function Setting() {
                   {t("setting.personal.basic.phone")}
                 </div>
                 <div className="text-gray-600 text-xs md:text-sm mt-0.5">
-                  {user?.phone_number || t("setting.personal.basic.addPhone")}
+                  {userDetails?.phone_number || t("setting.personal.basic.addPhone")}
                 </div>
               </div>
               <span className="text-gray-400 text-lg">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-[#F8F9FF] rounded-xl">
+        <div className="p-3 md:p-4">
+          <h3 className="text-sm md:text-base font-medium mb-1">
+            {t("setting.personal.pet.title")}
+          </h3>
+          <p className="text-gray-600 text-xs md:text-sm">
+            {t("setting.personal.pet.description")}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-xl">
+          <div 
+            className="flex items-center justify-between p-3 md:p-4 hover:bg-gray-50 cursor-pointer"
+            onClick={() => setShowEditPet(true)}
+          >
+            <div>
+              <div className="text-sm md:text-base font-medium">
+                {t("setting.personal.pet.type")}
+              </div>
+              <div className="text-gray-600 text-xs md:text-sm mt-0.5">
+                {userDetails?.pet_type || t("setting.personal.pet.noPetType")}
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t">
+            <div className="flex items-center justify-between p-3 md:p-4">
+              <div>
+                <div className="text-sm md:text-base font-medium">
+                  {t("setting.personal.pet.age")}
+                </div>
+                <div className="text-gray-600 text-xs md:text-sm mt-0.5">
+                  {userDetails?.pet_age || t("setting.personal.pet.noPetAge")}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t">
+            <div className="flex items-center justify-between p-3 md:p-4">
+              <div>
+                <div className="text-sm md:text-base font-medium">
+                  {t("setting.personal.pet.photo")}
+                </div>
+                <div className="mt-2">
+                  {userDetails?.pet_photo ? (
+                    <img
+                      src={userDetails.pet_photo}
+                      alt="Pet"
+                      className="w-20 h-20 object-cover rounded-lg"
+                    />
+                  ) : (
+                    <div className="text-gray-600 text-xs md:text-sm">
+                      {t("setting.personal.pet.noPetPhoto")}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t">
+            <div className="flex items-center justify-between p-3 md:p-4">
+              <div>
+                <div className="text-sm md:text-base font-medium">
+                  {t("setting.personal.pet.notes")}
+                </div>
+                <div className="text-gray-600 text-xs md:text-sm mt-0.5">
+                  {userDetails?.pet_notes || t("setting.personal.pet.noPetNotes")}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -249,21 +367,34 @@ function Setting() {
         <EditNameModal
           isOpen={showEditName}
           onClose={() => setShowEditName(false)}
+          userDetails={userDetails}
+          onSuccess={fetchUserDetails}
         />
         <EditAvatarModal
           isOpen={showEditAvatar}
           onClose={() => setShowEditAvatar(false)}
-          currentAvatar={user?.avatar || user?.name?.charAt(0) || "A"}
+          currentAvatar={userDetails?.avatar || userDetails?.full_name?.charAt(0) || "A"}
+          onSuccess={fetchUserDetails}
         />
         {showChangePassword && (
           <ChangePasswordModal
             isOpen={showChangePassword}
             onClose={() => setShowChangePassword(false)}
+            userDetails={userDetails}
+            onSuccess={fetchUserDetails}
           />
         )}
         <EditPhoneModal
           isOpen={showEditPhone}
           onClose={() => setShowEditPhone(false)}
+          userDetails={userDetails}
+          onSuccess={fetchUserDetails}
+        />
+        <EditPetModal
+          isOpen={showEditPet}
+          onClose={() => setShowEditPet(false)}
+          userDetails={userDetails}
+          onSuccess={fetchUserDetails}
         />
       </div>
     </div>
