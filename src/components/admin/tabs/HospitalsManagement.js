@@ -69,12 +69,12 @@ function HospitalsManagement() {
   const [operatingHours, setOperatingHours] = useState({
     weekdays: {
       start: "08:00",
-      end: "17:00"
+      end: "17:00",
     },
     weekends: {
       start: "08:00",
-      end: "12:00"
-    }
+      end: "12:00",
+    },
   });
 
   useEffect(() => {
@@ -88,22 +88,32 @@ function HospitalsManagement() {
   useEffect(() => {
     if (selectedHospital?.operating_hours) {
       try {
-        const times = selectedHospital.operating_hours.split(',').map(t => t.trim());
-        const weekdayTimes = times[0].replace('Weekdays:', '').trim().split('-').map(t => t.trim());
-        const weekendTimes = times[1].replace('Weekends:', '').trim().split('-').map(t => t.trim());
-        
+        const times = selectedHospital.operating_hours
+          .split(",")
+          .map((t) => t.trim());
+        const weekdayTimes = times[0]
+          .replace("Weekdays:", "")
+          .trim()
+          .split("-")
+          .map((t) => t.trim());
+        const weekendTimes = times[1]
+          .replace("Weekends:", "")
+          .trim()
+          .split("-")
+          .map((t) => t.trim());
+
         setOperatingHours({
           weekdays: {
             start: weekdayTimes[0],
-            end: weekdayTimes[1]
+            end: weekdayTimes[1],
           },
           weekends: {
             start: weekendTimes[0],
-            end: weekendTimes[1]
-          }
+            end: weekendTimes[1],
+          },
         });
       } catch (error) {
-        console.error('Error parsing operating hours:', error);
+        console.error("Error parsing operating hours:", error);
       }
     }
   }, [selectedHospital?.operating_hours]);
@@ -512,30 +522,34 @@ function HospitalsManagement() {
 
   const handleServiceSelection = (service, isCreating = false) => {
     if (isCreating) {
-      let newSpecialties = newHospital.specialties ? newHospital.specialties.split(',').map(s => s.trim()) : [];
-      
+      let newSpecialties = newHospital.specialties
+        ? newHospital.specialties.split(",").map((s) => s.trim())
+        : [];
+
       if (newSpecialties.includes(service)) {
-        newSpecialties = newSpecialties.filter(s => s !== service);
+        newSpecialties = newSpecialties.filter((s) => s !== service);
       } else {
         newSpecialties.push(service);
       }
 
-      setNewHospital(prev => ({
+      setNewHospital((prev) => ({
         ...prev,
-        specialties: newSpecialties.join(', ')
+        specialties: newSpecialties.join(", "),
       }));
     } else {
-      let newSpecialties = selectedHospital.specialties ? selectedHospital.specialties.split(',').map(s => s.trim()) : [];
-      
+      let newSpecialties = selectedHospital.specialties
+        ? selectedHospital.specialties.split(",").map((s) => s.trim())
+        : [];
+
       if (newSpecialties.includes(service)) {
-        newSpecialties = newSpecialties.filter(s => s !== service);
+        newSpecialties = newSpecialties.filter((s) => s !== service);
       } else {
         newSpecialties.push(service);
       }
 
-      setSelectedHospital(prev => ({
+      setSelectedHospital((prev) => ({
         ...prev,
-        specialties: newSpecialties.join(', ')
+        specialties: newSpecialties.join(", "),
       }));
     }
   };
@@ -545,23 +559,23 @@ function HospitalsManagement() {
       ...operatingHours,
       [period]: {
         ...operatingHours[period],
-        [type]: time
-      }
+        [type]: time,
+      },
     };
     setOperatingHours(newTime);
 
     // Cập nhật giá trị cho form
     const timeString = `Weekdays: ${newTime.weekdays.start} - ${newTime.weekdays.end}, Weekends: ${newTime.weekends.start} - ${newTime.weekends.end}`;
-    
+
     if (isCreating) {
-      setNewHospital(prev => ({
+      setNewHospital((prev) => ({
         ...prev,
-        operating_hours: timeString
+        operating_hours: timeString,
       }));
     } else {
-      setSelectedHospital(prev => ({
+      setSelectedHospital((prev) => ({
         ...prev,
-        operating_hours: timeString
+        operating_hours: timeString,
       }));
     }
   };
@@ -1080,41 +1094,90 @@ function HospitalsManagement() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Working hours <span className="text-red-500">*</span>
                       </label>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-sm text-gray-600 mb-2">Weekdays</p>
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="time"
-                              value={operatingHours.weekdays.start}
-                              onChange={(e) => handleTimeChange('weekdays', 'start', e.target.value)}
-                              className="p-2 border rounded-lg"
-                            />
-                            <span className="text-gray-500">to</span>
-                            <input
-                              type="time"
-                              value={operatingHours.weekdays.end}
-                              onChange={(e) => handleTimeChange('weekdays', 'end', e.target.value)}
-                              className="p-2 border rounded-lg"
-                            />
+                      <div className="flex flex-col gap-4">
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                          <h3 className="text-sm font-medium mb-3">Weekdays</h3>
+                          <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                            <div className="flex-1">
+                              <label className="block text-sm text-gray-600 mb-1">
+                                Opening time
+                              </label>
+                              <input
+                                type="time"
+                                value={operatingHours.weekdays.start}
+                                onChange={(e) =>
+                                  handleTimeChange(
+                                    "weekdays",
+                                    "start",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+                              />
+                            </div>
+                            <div className="text-center text-gray-400 hidden sm:block">
+                              to
+                            </div>
+                            <div className="flex-1">
+                              <label className="block text-sm text-gray-600 mb-1">
+                                Closing time
+                              </label>
+                              <input
+                                type="time"
+                                value={operatingHours.weekdays.end}
+                                onChange={(e) =>
+                                  handleTimeChange(
+                                    "weekdays",
+                                    "end",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+                              />
+                            </div>
                           </div>
                         </div>
-                        <div>
-                          <p className="text-sm text-gray-600 mb-2">Weekends</p>
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="time"
-                              value={operatingHours.weekends.start}
-                              onChange={(e) => handleTimeChange('weekends', 'start', e.target.value)}
-                              className="p-2 border rounded-lg"
-                            />
-                            <span className="text-gray-500">to</span>
-                            <input
-                              type="time"
-                              value={operatingHours.weekends.end}
-                              onChange={(e) => handleTimeChange('weekends', 'end', e.target.value)}
-                              className="p-2 border rounded-lg"
-                            />
+
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                          <h3 className="text-sm font-medium mb-3">Weekends</h3>
+                          <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                            <div className="flex-1">
+                              <label className="block text-sm text-gray-600 mb-1">
+                                Opening time
+                              </label>
+                              <input
+                                type="time"
+                                value={operatingHours.weekends.start}
+                                onChange={(e) =>
+                                  handleTimeChange(
+                                    "weekends",
+                                    "start",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+                              />
+                            </div>
+                            <div className="text-center text-gray-400 hidden sm:block">
+                              to
+                            </div>
+                            <div className="flex-1">
+                              <label className="block text-sm text-gray-600 mb-1">
+                                Closing time
+                              </label>
+                              <input
+                                type="time"
+                                value={operatingHours.weekends.end}
+                                onChange={(e) =>
+                                  handleTimeChange(
+                                    "weekends",
+                                    "end",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1159,7 +1222,9 @@ function HospitalsManagement() {
                         Specialties <span className="text-red-500">*</span>
                       </label>
                       <div className="flex flex-wrap gap-2">
-                        {HOSPITAL_SERVICES.filter(service => service !== "All Hospitals").map((service) => (
+                        {HOSPITAL_SERVICES.filter(
+                          (service) => service !== "All Hospitals"
+                        ).map((service) => (
                           <button
                             key={service}
                             type="button"
@@ -1535,403 +1600,516 @@ function HospitalsManagement() {
                 </button>
               </div>
 
-              <form onSubmit={handleCreateHospital} className="space-y-6 p-6">
-                {/* Required Fields */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Hospital name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={newHospital.name}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          name: e.target.value,
-                        }))
-                      }
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.name ? "border-red-500" : "border-gray-300"
-                      }`}
-                      required
-                    />
-                    {formErrors.name && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.name}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Email <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      value={newHospital.email}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          email: e.target.value,
-                        }))
-                      }
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.email ? "border-red-500" : "border-gray-300"
-                      }`}
-                      required
-                    />
-                    {formErrors.email && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.email}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Phone number <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={newHospital.phone}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          phone: e.target.value,
-                        }))
-                      }
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.phone ? "border-red-500" : "border-gray-300"
-                      }`}
-                      required
-                    />
-                    {formErrors.phone && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.phone}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Address <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={newHospital.address}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          address: e.target.value,
-                        }))
-                      }
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.address
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                      required
-                    />
-                    {formErrors.address && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.address}
-                      </p>
-                    )}
+              <form onSubmit={handleCreateHospital} className="space-y-8 p-6">
+                {/* Basic Information Section */}
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Basic Information
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Hospital name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={newHospital.name}
+                          onChange={(e) =>
+                            setNewHospital((prev) => ({
+                              ...prev,
+                              name: e.target.value,
+                            }))
+                          }
+                          className={`w-full p-2.5 border rounded-lg ${
+                            formErrors.name
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                          placeholder="Enter hospital name"
+                          required
+                        />
+                        {formErrors.name && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {formErrors.name}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Email <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          value={newHospital.email}
+                          onChange={(e) =>
+                            setNewHospital((prev) => ({
+                              ...prev,
+                              email: e.target.value,
+                            }))
+                          }
+                          className={`w-full p-2.5 border rounded-lg ${
+                            formErrors.email
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                          placeholder="Enter email address"
+                          required
+                        />
+                        {formErrors.email && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {formErrors.email}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Phone number <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={newHospital.phone}
+                          onChange={(e) =>
+                            setNewHospital((prev) => ({
+                              ...prev,
+                              phone: e.target.value,
+                            }))
+                          }
+                          className={`w-full p-2.5 border rounded-lg ${
+                            formErrors.phone
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                          placeholder="Enter phone number"
+                          required
+                        />
+                        {formErrors.phone && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {formErrors.phone}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Address <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={newHospital.address}
+                          onChange={(e) =>
+                            setNewHospital((prev) => ({
+                              ...prev,
+                              address: e.target.value,
+                            }))
+                          }
+                          className={`w-full p-2.5 border rounded-lg ${
+                            formErrors.address
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                          placeholder="Enter full address"
+                          required
+                        />
+                        {formErrors.address && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {formErrors.address}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Optional Fields */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Website
-                    </label>
-                    <input
-                      type="text"
-                      value={newHospital.link_website}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          link_website: e.target.value,
-                        }))
-                      }
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.link_website
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {formErrors.link_website && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.link_website}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Map location
-                    </label>
-                    <input
-                      type="text"
-                      value={newHospital.map_location}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          map_location: e.target.value,
-                        }))
-                      }
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.map_location
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {formErrors.map_location && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.map_location}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Working hours <span className="text-red-500">*</span>
-                    </label>
-                    <div className="space-y-4">
+                {/* Contact & Location Section */}
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Contact & Location
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-600 mb-2">Weekdays</p>
-                        <div className="flex items-center gap-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Website
+                        </label>
+                        <input
+                          type="text"
+                          value={newHospital.link_website}
+                          onChange={(e) =>
+                            setNewHospital((prev) => ({
+                              ...prev,
+                              link_website: e.target.value,
+                            }))
+                          }
+                          className={`w-full p-2.5 border rounded-lg ${
+                            formErrors.link_website
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                          placeholder="https://example.com"
+                        />
+                        {formErrors.link_website && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {formErrors.link_website}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Map location
+                        </label>
+                        <input
+                          type="text"
+                          value={newHospital.map_location}
+                          onChange={(e) =>
+                            setNewHospital((prev) => ({
+                              ...prev,
+                              map_location: e.target.value,
+                            }))
+                          }
+                          className={`w-full p-2.5 border rounded-lg ${
+                            formErrors.map_location
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                          placeholder="Enter map coordinates or link"
+                        />
+                        {formErrors.map_location && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {formErrors.map_location}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Working Hours Section */}
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Working Hours
+                  </h3>
+                  <div className="flex flex-col gap-4">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium mb-3">Weekdays</h3>
+                      <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                        <div className="flex-1">
+                          <label className="block text-sm text-gray-600 mb-1">
+                            Opening time
+                          </label>
                           <input
                             type="time"
                             value={operatingHours.weekdays.start}
-                            onChange={(e) => handleTimeChange('weekdays', 'start', e.target.value, true)}
-                            className="p-2 border rounded-lg"
+                            onChange={(e) =>
+                              handleTimeChange(
+                                "weekdays",
+                                "start",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                           />
-                          <span className="text-gray-500">to</span>
+                        </div>
+                        <div className="text-center text-gray-400 hidden sm:block">
+                          to
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-sm text-gray-600 mb-1">
+                            Closing time
+                          </label>
                           <input
                             type="time"
                             value={operatingHours.weekdays.end}
-                            onChange={(e) => handleTimeChange('weekdays', 'end', e.target.value, true)}
-                            className="p-2 border rounded-lg"
+                            onChange={(e) =>
+                              handleTimeChange(
+                                "weekdays",
+                                "end",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                           />
                         </div>
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-600 mb-2">Weekends</p>
-                        <div className="flex items-center gap-2">
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium mb-3">Weekends</h3>
+                      <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                        <div className="flex-1">
+                          <label className="block text-sm text-gray-600 mb-1">
+                            Opening time
+                          </label>
                           <input
                             type="time"
                             value={operatingHours.weekends.start}
-                            onChange={(e) => handleTimeChange('weekends', 'start', e.target.value, true)}
-                            className="p-2 border rounded-lg"
+                            onChange={(e) =>
+                              handleTimeChange(
+                                "weekends",
+                                "start",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                           />
-                          <span className="text-gray-500">to</span>
+                        </div>
+                        <div className="text-center text-gray-400 hidden sm:block">
+                          to
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-sm text-gray-600 mb-1">
+                            Closing time
+                          </label>
                           <input
                             type="time"
                             value={operatingHours.weekends.end}
-                            onChange={(e) => handleTimeChange('weekends', 'end', e.target.value, true)}
-                            className="p-2 border rounded-lg"
+                            onChange={(e) =>
+                              handleTimeChange(
+                                "weekends",
+                                "end",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                           />
                         </div>
                       </div>
                     </div>
-                    {formErrors.operating_hours && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.operating_hours}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Department
-                    </label>
-                    <input
-                      type="text"
-                      value={newHospital.department}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          department: e.target.value,
-                        }))
-                      }
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.department
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {formErrors.department && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.department}
-                      </p>
-                    )}
                   </div>
                 </div>
 
-                {/* Textarea Fields */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Specialties <span className="text-red-500">*</span>
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {HOSPITAL_SERVICES.filter(service => service !== "All Hospitals").map((service) => (
-                        <button
-                          key={service}
-                          type="button"
-                          onClick={() => handleServiceSelection(service, true)}
-                          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                            newHospital.specialties?.includes(service)
-                              ? "bg-blue-100 text-blue-700 border-2 border-blue-200"
-                              : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent"
-                          }`}
-                        >
-                          {service}
-                        </button>
-                      ))}
-                    </div>
-                    {formErrors.specialties && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.specialties}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Description
-                    </label>
-                    <textarea
-                      value={newHospital.description}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          description: e.target.value,
-                        }))
-                      }
-                      rows={4}
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.description
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {formErrors.description && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.description}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Staff description
-                    </label>
-                    <textarea
-                      value={newHospital.staff_description}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          staff_description: e.target.value,
-                        }))
-                      }
-                      rows={3}
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.staff_description
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {formErrors.staff_description && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.staff_description}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Staff credentials
-                    </label>
-                    <textarea
-                      value={newHospital.staff_credentials}
-                      onChange={(e) =>
-                        setNewHospital((prev) => ({
-                          ...prev,
-                          staff_credentials: e.target.value,
-                        }))
-                      }
-                      rows={3}
-                      className={`w-full p-2 border rounded-lg ${
-                        formErrors.staff_credentials
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {formErrors.staff_credentials && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {formErrors.staff_credentials}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Image Upload */}
+                {/* Services & Specialties Section */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Images
-                  </label>
-                  <div className="grid grid-cols-3 gap-4">
-                    {newImages.map((file, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt="Preview"
-                          className="h-24 w-full object-cover rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveNewImage(index)}
-                          className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                        >
-                          <X size={14} />
-                        </button>
-                      </div>
-                    ))}
-
-                    {newImages.length < 5 && (
-                      <label className="h-24 w-full border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-gray-400 cursor-pointer">
-                        <Plus size={24} className="text-gray-400" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Services & Specialties
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Department <span className="text-red-500">*</span>
+                        </label>
                         <input
-                          type="file"
-                          onChange={handleNewImageChange}
-                          multiple
-                          accept="image/*"
-                          className="hidden"
+                          type="text"
+                          value={newHospital.department}
+                          onChange={(e) =>
+                            setNewHospital((prev) => ({
+                              ...prev,
+                              department: e.target.value,
+                            }))
+                          }
+                          className={`w-full p-2.5 border rounded-lg ${
+                            formErrors.department
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                          placeholder="Enter department information"
+                          required
                         />
-                      </label>
-                    )}
+                        {formErrors.department && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {formErrors.department}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Specialties <span className="text-red-500">*</span>
+                        </label>
+                        <div className="flex flex-wrap gap-2 p-4 bg-white rounded-lg border">
+                          {HOSPITAL_SERVICES.filter(
+                            (service) => service !== "All Hospitals"
+                          ).map((service) => (
+                            <button
+                              key={service}
+                              type="button"
+                              onClick={() =>
+                                handleServiceSelection(service, true)
+                              }
+                              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                                newHospital.specialties?.includes(service)
+                                  ? "bg-blue-100 text-blue-700 border-2 border-blue-200"
+                                  : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent"
+                              }`}
+                            >
+                              {service}
+                            </button>
+                          ))}
+                        </div>
+                        {formErrors.specialties && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {formErrors.specialties}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Buttons */}
-                <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    disabled={isCreating}
-                    onClick={() => setModalMode("")}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isCreating}
-                    className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 min-w-[100px]"
-                  >
-                    {isCreating ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Creating...</span>
-                      </>
-                    ) : (
-                      "Create"
-                    )}
-                  </button>
+                {/* Description Section */}
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Description
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Hospital Description{" "}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        value={newHospital.description}
+                        onChange={(e) =>
+                          setNewHospital((prev) => ({
+                            ...prev,
+                            description: e.target.value,
+                          }))
+                        }
+                        rows={4}
+                        className={`w-full p-2.5 border rounded-lg ${
+                          formErrors.description
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                        placeholder="Enter detailed description about the hospital"
+                        required
+                      />
+                      {formErrors.description && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.description}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Staff Description
+                      </label>
+                      <textarea
+                        value={newHospital.staff_description}
+                        onChange={(e) =>
+                          setNewHospital((prev) => ({
+                            ...prev,
+                            staff_description: e.target.value,
+                          }))
+                        }
+                        rows={3}
+                        className={`w-full p-2.5 border rounded-lg ${
+                          formErrors.staff_description
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                        placeholder="Enter information about the staff"
+                      />
+                      {formErrors.staff_description && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.staff_description}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Staff Credentials
+                      </label>
+                      <textarea
+                        value={newHospital.staff_credentials}
+                        onChange={(e) =>
+                          setNewHospital((prev) => ({
+                            ...prev,
+                            staff_credentials: e.target.value,
+                          }))
+                        }
+                        rows={3}
+                        className={`w-full p-2.5 border rounded-lg ${
+                          formErrors.staff_credentials
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                        placeholder="Enter staff credentials and qualifications"
+                      />
+                      {formErrors.staff_credentials && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.staff_credentials}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Images Section */}
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Hospital Images
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {newImages.map((file, index) => (
+                        <div key={index} className="relative aspect-video">
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt="Preview"
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveNewImage(index)}
+                            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-sm"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+
+                      {newImages.length < 5 && (
+                        <label className="aspect-video flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 cursor-pointer bg-white transition-colors">
+                          <Plus size={24} className="text-gray-400 mb-2" />
+                          <span className="text-sm text-gray-500">
+                            Add image
+                          </span>
+                          <input
+                            type="file"
+                            onChange={handleNewImageChange}
+                            multiple
+                            accept="image/*"
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Upload up to 5 images. Supported formats: JPG, PNG. Max
+                      size: 5MB each.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="sticky bottom-0 bg-white border-t pt-4">
+                  <div className="flex justify-end gap-3">
+                    <button
+                      type="button"
+                      disabled={isCreating}
+                      onClick={() => setModalMode("")}
+                      className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isCreating}
+                      className="flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 min-w-[120px]"
+                    >
+                      {isCreating ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Creating...</span>
+                        </>
+                      ) : (
+                        "Create Hospital"
+                      )}
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
