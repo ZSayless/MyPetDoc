@@ -41,13 +41,13 @@ const Lucete = () => {
             <div className="container mx-auto h-full">
               <div className="flex h-full items-center px-4 sm:px-8 md:px-16 lg:px-32">
                 <div className="max-w-xl">
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-serif mb-2 sm:mb-4 text-white">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-serif mb-2 sm:mb-4 text-white whitespace-nowrap ml-24 sm:ml-36 md:ml-48">
                     LUCETE: Memorial Diamonds
                   </h1>
-                  <p className="text-sm sm:text-base md:text-xl text-white/90 mb-4 sm:mb-6 md:mb-8">
+                  <p className="text-sm sm:text-base md:text-xl text-white/90 mb-4 sm:mb-6 md:mb-8 ml-24 sm:ml-36 md:ml-48 whitespace-nowrap">
                     Transforming ashes into a lasting tribute.
                   </p>
-                  <button className="bg-blue-600 text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 text-sm sm:text-base rounded-md hover:bg-blue-700 transition duration-300">
+                  <button className="bg-blue-600 text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 text-sm sm:text-base rounded-md hover:bg-blue-700 transition duration-300 ml-24 sm:ml-36 md:ml-48">
                     Learn More
                   </button>
                 </div>

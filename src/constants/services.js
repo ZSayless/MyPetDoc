@@ -1,5 +1,5 @@
 export const HOSPITAL_SERVICES = [
-  "All Hospitals",
+  
   "General Checkup",
   "Vaccination",
   "Surgery",
@@ -9,6 +9,7 @@ export const HOSPITAL_SERVICES = [
   "Laboratory",
   "Pet Boarding",
   "Pharmacy",
+  "Pharmacy2"
 ];
 
 // Dùng cho trang Find Hospital
