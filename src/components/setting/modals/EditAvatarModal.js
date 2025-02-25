@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { updateInfo } from "../../../services/authService";
 import { useAuth } from "../../../context/AuthContext";
 
-function EditAvatarModal({ isOpen, onClose, currentAvatar }) {
+function EditAvatarModal({ isOpen, onClose, currentAvatar, onSuccess }) {
   const { t } = useTranslation();
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -37,7 +37,7 @@ function EditAvatarModal({ isOpen, onClose, currentAvatar }) {
         formData.append('avatar', selectedFile);
         formData.append('id', user.id)
         const data = await updateInfo(formData);
-
+        onSuccess();
         updateUser(data.data)
 
         onClose();

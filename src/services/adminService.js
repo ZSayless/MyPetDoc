@@ -166,6 +166,8 @@ export const adminService = {
   },
   toggleActiveHospital: async (hospitalId) => {
     try {
+      if (!hospitalId) throw new Error('Hospital ID is required');
+      
       const response = await axios.patch(
         `${BASE_URL}/hospitals/${hospitalId}/toggle-active`,
         {},

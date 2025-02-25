@@ -24,3 +24,15 @@ export const SERVICES_ROW_1 = [
 ];
 
 export const SERVICES_ROW_2 = ["General Checkup", "Pet Boarding", "Pharmacy"];
+
+export const SERVICES_ROW_3 = [
+  "Emergency Care",
+  "Surgery",
+  "Vaccination",
+  "Dental Care",
+  "Pet Grooming",
+  "Laboratory",
+  "General Checkup",
+  "Pet Boarding",
+  "Pharmacy",
+];
