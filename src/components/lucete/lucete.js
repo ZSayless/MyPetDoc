@@ -1,5 +1,19 @@
 import React, { useState } from "react";
 import rusedde from "../../assets/img/rusedde-ddoci-02.jpg";
+import ruseddeMoyang01 from "../../assets/img/rusedde-moyang-01.jpg";
+import ruseddeHaru01 from "../../assets/img/rusedde-haru-01.jpg";
+import temperature from "../../assets/img/temperature.png";
+import digitaltech from "../../assets/img/digitaltech.jpg";
+import badge from "../../assets/img/badge.jpg";
+import gallery1 from "../../assets/img/1.jpg";
+import gallery2 from "../../assets/img/2.jpg";
+import gallery3 from "../../assets/img/3.jpg";
+import gallery4 from "../../assets/img/4.jpg";
+import gallery5 from "../../assets/img/5.jpg";
+import gallery6 from "../../assets/img/6.jpg";
+import ruseddeRina01 from "../../assets/img/rusedde-rina-01.jpg";
+import ruseddeBboggu01 from "../../assets/img/rusedde-bboggu-01.jpg";
+import ruseddeCici06 from "../../assets/img/rusedde-cici-06.jpg";
 
 const Lucete = () => {
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -17,23 +31,23 @@ const Lucete = () => {
       </style>
       <div className="w-full lucete-container">
         {/* Hero Section */}
-        <div className="relative h-[500px] w-full overflow-hidden">
+        <div className="relative h-[300px] sm:h-[400px] md:h-[500px] w-full overflow-hidden">
           <img
-            src="src/assets/img/rusedde-ddoci-02.jpg"
+            src={rusedde}
             alt="LUCETE hero background"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-blue-900/50 to-transparent">
             <div className="container mx-auto h-full">
-              <div className="flex h-full items-center pl-32 md:pl-64">
-                <div className="max-w-2xl">
-                  <h1 className="text-4xl md:text-6xl font-serif mb-4 text-white whitespace-nowrap">
+              <div className="flex h-full items-center px-4 sm:px-8 md:px-16 lg:px-32">
+                <div className="max-w-xl">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-serif mb-2 sm:mb-4 text-white">
                     LUCETE: Memorial Diamonds
                   </h1>
-                  <p className="text-xl text-white/90 mb-8">
+                  <p className="text-sm sm:text-base md:text-xl text-white/90 mb-4 sm:mb-6 md:mb-8">
                     Transforming ashes into a lasting tribute.
                   </p>
-                  <button className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition duration-300">
+                  <button className="bg-blue-600 text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 text-sm sm:text-base rounded-md hover:bg-blue-700 transition duration-300">
                     Learn More
                   </button>
                 </div>
@@ -43,19 +57,19 @@ const Lucete = () => {
         </div>
 
         {/* Main Content */}
-        <div className="py-24 bg-white">
+        <div className="py-8 sm:py-12 md:py-16 lg:py-24 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               {/* First Section */}
-              <h2 className="text-xl md:text-2xl mb-6 whitespace-nowrap">
+              <h2 className="text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6">
                 <span className="font-bold">LUCETE:</span> A Memorial Gem
                 Created from{" "}
                 <span className="font-bold">Your Pet's Cremated Remains</span>
               </h2>
 
-              <div className="flex flex-col md:flex-row gap-6 items-start mb-12">
+              <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-start mb-8 sm:mb-12">
                 <div className="md:w-1/2 pt-1">
-                  <p className="text-gray-700 text-lg">
+                  <p className="text-gray-700 text-base sm:text-lg">
                     <span className="font-bold">LUCETE</span> is a{" "}
                     <span className="font-bold">
                       one-of-a-kind memorial diamond service that transforms
@@ -71,7 +85,7 @@ const Lucete = () => {
                 </div>
                 <div className="md:w-1/2">
                   <img
-                    src="/images/green-diamonds.jpg"
+                    src={ruseddeMoyang01}
                     alt="Green memorial diamonds"
                     className="w-full rounded-lg aspect-video"
                   />
@@ -79,16 +93,16 @@ const Lucete = () => {
               </div>
 
               {/* Why Choose LUCETE Section */}
-              <div className="flex flex-col md:flex-row gap-6 items-start">
+              <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-start">
                 <div className="md:w-1/2">
                   <img
-                    src="/images/heart-diamonds.jpg"
+                    src={ruseddeHaru01}
                     alt="Heart shaped memorial diamond"
                     className="w-full rounded-lg"
                   />
                 </div>
                 <div className="md:w-1/2">
-                  <h2 className="text-2xl md:text-3xl mb-6">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl mb-4 sm:mb-6">
                     Why Choose LUCETE?
                   </h2>
                   <div className="space-y-4">
@@ -284,17 +298,23 @@ const Lucete = () => {
         </div>
 
         {/* The Power of Technology Section */}
-        <div className="py-16 bg-white">
+        <div className="py-8 sm:py-12 md:py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-4xl mb-16">The Power of Technology</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl mb-8 sm:mb-12 md:mb-16 text-center">
+                The Power of Technology
+              </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 md:gap-12">
                 {/* Low-Temperature Melting */}
                 <div className="text-center">
                   <div className="flex justify-center mb-6">
                     <div className="w-16 h-16 bg-gray-100 rounded-lg">
-                      {/* Image will be added here */}
+                      <img
+                        src={temperature}
+                        alt="Temperature icon"
+                        className="w-full h-full object-contain p-3"
+                      />
                     </div>
                   </div>
                   <h3 className="text-2xl mb-4">Low-Temperature Melting</h3>
@@ -309,7 +329,11 @@ const Lucete = () => {
                 <div className="text-center">
                   <div className="flex justify-center mb-6">
                     <div className="w-16 h-16 bg-gray-100 rounded-lg">
-                      {/* Image will be added here */}
+                      <img
+                        src={digitaltech}
+                        alt="Digital technology icon"
+                        className="w-full h-full object-contain p-3"
+                      />
                     </div>
                   </div>
                   <h3 className="text-2xl mb-4">Advanced Technology</h3>
@@ -323,7 +347,11 @@ const Lucete = () => {
                 <div className="text-center">
                   <div className="flex justify-center mb-6">
                     <div className="w-16 h-16 bg-gray-100 rounded-lg">
-                      {/* Image will be added here */}
+                      <img
+                        src={badge}
+                        alt="Badge icon"
+                        className="w-full h-full object-contain p-3"
+                      />
                     </div>
                   </div>
                   <h3 className="text-2xl mb-4">Unwavering Quality</h3>
@@ -338,83 +366,125 @@ const Lucete = () => {
         </div>
 
         {/* Gallery Section */}
-        <div className="py-16 bg-white">
+        <div className="py-8 sm:py-12 md:py-16 bg-white">
           <div className="container mx-auto px-4">
-            <div className="max-w-5xl mx-auto text-center mb-16">
-              <h2 className="text-2xl mb-2">LUSETE</h2>
+            <div className="max-w-5xl mx-auto text-center mb-8 sm:mb-12 md:mb-16">
+              <h2 className="text-xl sm:text-2xl mb-2 font-bold">LUCETE</h2>
               <p className="text-gray-600">Value beyond luxury</p>
             </div>
 
-            <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4">
-              {/* Image placeholders - will be replaced with actual images later */}
+            <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <div className="aspect-[3/2] bg-gray-100 rounded overflow-hidden">
-                {/* Image 1 will be added here */}
+                <img
+                  src={gallery1}
+                  alt="Gallery image 1"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="aspect-[3/2] bg-gray-100 rounded overflow-hidden">
-                {/* Image 2 will be added here */}
+                <img
+                  src={gallery2}
+                  alt="Gallery image 2"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="aspect-[3/2] bg-gray-100 rounded overflow-hidden">
-                {/* Image 3 will be added here */}
+                <img
+                  src={gallery3}
+                  alt="Gallery image 3"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="aspect-[3/2] bg-gray-100 rounded overflow-hidden">
-                {/* Image 4 will be added here */}
+                <img
+                  src={gallery4}
+                  alt="Gallery image 4"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="aspect-[3/2] bg-gray-100 rounded overflow-hidden">
-                {/* Image 5 will be added here */}
+                <img
+                  src={gallery5}
+                  alt="Gallery image 5"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="aspect-[3/2] bg-gray-100 rounded overflow-hidden">
-                {/* Image 6 will be added here */}
+                <img
+                  src={gallery6}
+                  alt="Gallery image 6"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
         </div>
 
         {/* Order Process Section */}
-        <div className="py-24 bg-[#7B91F7]">
+        <div className="py-12 sm:py-16 md:py-24 bg-[#7B91F7]">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
-              <h2 className="text-6xl text-white mb-20">Order Process</h2>
+              <h2 className="text-3xl sm:text-4xl md:text-6xl text-white mb-8 sm:mb-12 md:mb-20">
+                Order Process
+              </h2>
 
-              <div className="space-y-2">
-                {/* Step 1 */}
-                <div className="flex">
-                  <div className="w-[150px] h-[120px] bg-gray-100 rounded-lg flex items-center justify-center">
-                    <span className="text-4xl text-gray-700">1</span>
-                  </div>
-                  <div className="ml-8 pt-4">
-                    <h3 className="text-3xl text-white mb-2">Consultation</h3>
-                    <p className="text-white text-xl">
-                      Initiate a consultation to discuss your vision for a
-                      LUCETE memorial diamond.
-                    </p>
-                  </div>
-                </div>
+              <div className="relative">
+                {/* Vertical Progress Line */}
+                <div className="absolute left-[30px] sm:left-[60px] md:left-[75px] top-0 w-0.5 h-full bg-white/20"></div>
 
-                {/* Step 2 */}
-                <div className="flex">
-                  <div className="w-[300px] h-[120px] bg-gray-200 rounded-lg flex items-center justify-center">
-                    <span className="text-4xl text-gray-700">2</span>
+                <div className="space-y-6 sm:space-y-8">
+                  {/* Step 1 */}
+                  <div className="flex items-start gap-4 sm:gap-6">
+                    <div className="w-[60px] sm:w-[120px] md:w-[120px] h-[45px] sm:h-[90px] bg-white rounded-lg flex items-center justify-center shrink-0">
+                      <span className="text-2xl sm:text-4xl text-[#7B91F7] font-medium">
+                        1
+                      </span>
+                    </div>
+                    <div className="pt-1 sm:pt-4">
+                      <h3 className="text-xl sm:text-2xl text-white mb-1 sm:mb-2">
+                        Consultation
+                      </h3>
+                      <p className="text-white/90 text-base sm:text-lg">
+                        Initiate a consultation to discuss your vision for a
+                        LUCETE memorial diamond.
+                      </p>
+                    </div>
                   </div>
-                  <div className="ml-8 pt-4">
-                    <h3 className="text-3xl text-white mb-2">Order Form</h3>
-                    <p className="text-white text-xl">
-                      Complete an order form outlining your preferences and
-                      payment information.
-                    </p>
-                  </div>
-                </div>
 
-                {/* Step 3 */}
-                <div className="flex">
-                  <div className="w-[700px] h-[120px] bg-gray-200 rounded-lg flex items-center justify-center">
-                    <span className="text-4xl text-gray-700">3</span>
+                  {/* Step 2 */}
+                  <div className="flex items-start gap-4 sm:gap-6">
+                    <div className="w-[120px] sm:w-[240px] md:w-[240px] h-[45px] sm:h-[90px] bg-white rounded-lg flex items-center justify-center shrink-0">
+                      <span className="text-2xl sm:text-4xl text-[#7B91F7] font-medium">
+                        2
+                      </span>
+                    </div>
+                    <div className="pt-1 sm:pt-4">
+                      <h3 className="text-xl sm:text-2xl text-white mb-1 sm:mb-2">
+                        Order Form
+                      </h3>
+                      <p className="text-white/90 text-base sm:text-lg">
+                        Complete an order form outlining your preferences and
+                        payment information.
+                      </p>
+                    </div>
                   </div>
-                  <div className="ml-8 pt-4">
-                    <h3 className="text-3xl text-white mb-2">Delivery</h3>
-                    <p className="text-white text-xl">
-                      Deliver the cremated remains, ensuring accurate
-                      measurement and accompanying documentation.
-                    </p>
+
+                  {/* Step 3 */}
+                  <div className="flex items-start gap-4 sm:gap-6">
+                    <div className="w-[180px] sm:w-[360px] md:w-[360px] h-[45px] sm:h-[90px] bg-white rounded-lg flex items-center justify-center shrink-0">
+                      <span className="text-2xl sm:text-4xl text-[#7B91F7] font-medium">
+                        3
+                      </span>
+                    </div>
+                    <div className="pt-1 sm:pt-4">
+                      <h3 className="text-xl sm:text-2xl text-white mb-1 sm:mb-2">
+                        Delivery
+                      </h3>
+                      <p className="text-white/90 text-base sm:text-lg">
+                        Deliver the cremated remains, ensuring accurate
+                        measurement and accompanying documentation.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -463,7 +533,7 @@ const Lucete = () => {
                   <div className="flex flex-col md:flex-row gap-8 items-center">
                     <div className="md:w-1/2">
                       <img
-                        src="/images/necklace-1.jpg"
+                        src={ruseddeRina01}
                         alt="LUCETE necklace"
                         className="w-full h-[300px] object-cover rounded-lg"
                       />
@@ -481,7 +551,7 @@ const Lucete = () => {
                   <div className="flex flex-col md:flex-row-reverse gap-8 items-center bg-gray-100 -mx-8 md:-mx-12 p-8 md:p-12">
                     <div className="md:w-1/2">
                       <img
-                        src="/images/necklace-2.jpg"
+                        src={ruseddeBboggu01}
                         alt="LUCETE jewelry on blue background"
                         className="w-full h-[300px] object-cover rounded-lg"
                       />
@@ -499,7 +569,7 @@ const Lucete = () => {
                   <div className="flex flex-col md:flex-row gap-8 items-center">
                     <div className="md:w-1/2">
                       <img
-                        src="/images/ring.jpg"
+                        src={ruseddeCici06}
                         alt="LUCETE ring and diamonds"
                         className="w-full h-[300px] object-cover rounded-lg"
                       />
@@ -537,26 +607,28 @@ const Lucete = () => {
         </div>
 
         {/* Contact Us Section */}
-        <div className="py-12 bg-white">
+        <div className="py-8 sm:py-12 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
               <div
-                className="bg-gray-100 rounded-lg p-6 cursor-pointer"
+                className="bg-gray-100 rounded-lg p-4 sm:p-6 cursor-pointer"
                 onClick={() => setIsContactOpen(!isContactOpen)}
               >
-                <h2 className="text-4xl mb-2">Contact us</h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl mb-2">
+                  Contact us
+                </h2>
                 <p className="text-gray-500">Contact us 자세히 알아보기</p>
                 {isContactOpen && (
-                  <div className="mt-8 flex gap-4">
+                  <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-4">
                     <a
                       href="/contact-us"
-                      className="bg-[#7B91F7] text-white px-8 py-3 rounded-lg hover:bg-[#6A7FE5] transition duration-300"
+                      className="w-full sm:w-auto text-center bg-[#7B91F7] text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-[#6A7FE5] transition duration-300"
                     >
                       Contact us
                     </a>
                     <a
                       href="/contact-us"
-                      className="border border-[#7B91F7] text-[#7B91F7] px-8 py-3 rounded-lg hover:bg-gray-50 transition duration-300"
+                      className="w-full sm:w-auto text-center border border-[#7B91F7] text-[#7B91F7] px-6 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-gray-50 transition duration-300"
                     >
                       자세히 알아보기
                     </a>
