@@ -1,28 +1,12 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  Star,
-  Mail,
-  Linkedin,
-  Facebook,
-  Twitter,
-  Instagram,
-  Youtube,
-} from "lucide-react";
+import { Star, Mail, Settings, PlusCircle, Building2 } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import { getAllReviewsByAuth } from "../../services/reviewService";
 import { getHospitalFavorites } from "../../services/favoriteService";
-
-const socialIcons = {
-  facebook: Facebook,
-  x: Twitter,
-  instagram: Instagram,
-  linkedin: Linkedin,
-  youtube: Youtube,
-};
 
 function Profile() {
   const { user, updateUser } = useAuth();
@@ -84,35 +68,11 @@ function Profile() {
     () => ({
       name: user?.full_name || "User",
       email: user?.email || "",
-      phone: user?.phone || "",
-      address: user?.location || "",
       avatar: user?.avatar || user?.full_name?.charAt(0) || "U",
       role: user?.role || "GENERAL_USER",
-      socialMedia: user?.socialMedia || {},
     }),
     [user]
   );
-
-  // Handle social media update
-  const handleSocialUpdate = async (platform, url) => {
-    try {
-      await updateUser({
-        social: {
-          ...user?.social,
-          [platform]: url,
-        },
-      });
-      showToast({
-        type: "success",
-        message: t("profile.socialUpdateSuccess"),
-      });
-    } catch (error) {
-      showToast({
-        type: "error",
-        message: t("profile.socialUpdateError"),
-      });
-    }
-  };
 
   const handleRemoveFavorite = (hospitalId) => {
     setFavorites(favorites.filter((hospital) => hospital.id !== hospitalId));
@@ -153,36 +113,26 @@ function Profile() {
 
               {/* User Info - Stack vertically trên mobile */}
               <div className="flex-1 text-center md:text-left">
-                <h1 className="text-xl md:text-2xl font-semibold mb-2">
-                  {userInfo.name}
-                </h1>
-                <p className="text-gray-600 mt-2 max-w-2xl">{user?.bio}</p>
-                <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4 text-gray-600">
-                  <div className="flex items-center">
-                    <Mail size={18} className="mr-2" />
-                    {userInfo.email}
-                  </div>
+                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                    {userInfo.name}
+                  </h1>
+                  <span className="w-fit mx-auto md:mx-0 bg-blue-50 text-blue-700 text-xs px-1.5 py-0.5 rounded">
+                    {userInfo.role === "HOSPITAL_ADMIN"
+                      ? "Veterinarian"
+                      : userInfo.role === "ADMIN"
+                      ? "Admin"
+                      : "Pet Owner"}
+                  </span>
                 </div>
-                {/* Social Media Links - Căn giữa trên mobile */}
-                <div className="flex gap-4 mt-4 justify-center md:justify-start">
-                  {userInfo.socialMedia &&
-                    Object.entries(userInfo.socialMedia)
-                      .filter(([platform, link]) => link && link.trim() !== "")
-                      .map(([platform, link]) => {
-                        const Icon = socialIcons[platform];
-                        if (!Icon) return null;
-                        return (
-                          <a
-                            key={platform}
-                            href={link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-gray-600 hover:text-gray-900 transition-colors"
-                          >
-                            <Icon className="w-5 h-5" />
-                          </a>
-                        );
-                      })}
+
+                <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4">
+                  <div className="flex items-center px-3 py-1.5 bg-gray-50 rounded-lg">
+                    <Mail size={16} className="text-gray-500 mr-2" />
+                    <span className="text-sm text-gray-700">
+                      {userInfo.email}
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -196,12 +146,20 @@ function Profile() {
                 </Link>
                 {(userInfo.role === "HOSPITAL_ADMIN" ||
                   userInfo.role === "ADMIN") && (
-                  <Link
-                    to="/add-hospital"
-                    className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors text-center"
-                  >
-                    {t("profile.registerHospital")}
-                  </Link>
+                  <>
+                    <Link
+                      to="/add-hospital"
+                      className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors text-center"
+                    >
+                      {t("profile.registerHospital")}
+                    </Link>
+                    <Link
+                      to="/my-hospitals"
+                      className="px-6 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors text-center"
+                    >
+                      My Hospitals
+                    </Link>
+                  </>
                 )}
               </div>
             </div>
