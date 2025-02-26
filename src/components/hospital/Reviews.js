@@ -132,6 +132,7 @@ const Reviews = ({ reviews, stats, onViewAll, onWriteReview, setReviews, hospita
         type: "success",
         message: t("hospitalDetail.reviews.deleteSuccess")
       });
+      window.location.reload();
     } catch (error) {
       console.error("Error deleting review:", error);
       addToast({

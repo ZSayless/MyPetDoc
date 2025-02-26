@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { X, Star } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -14,9 +14,11 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
   const [imageDescription, setImageDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [existingReview, setExistingReview] = useState(null);
+  const [errors, setErrors] = useState({});
+  const formRef = useRef(null);
 
   const canSubmitReview = useCallback(() => {
-    return isAuthenticated && user && ["ADMIN", "REGULAR_USER","HOSPITAL_ADMIN"].includes(user.role);
+    return isAuthenticated && user && ["ADMIN", "GENERAL_USER","HOSPITAL_ADMIN"].includes(user.role);
   }, [isAuthenticated, user]);
 
   useEffect(() => {
@@ -47,20 +49,74 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
     }
   }, [isOpen, isAuthenticated, hospitalId]);
 
+  const validateForm = () => {
+    let newErrors = {};
+    let isValid = true;
+
+    // Validate rating
+    if (!rating || rating < 1 || rating > 5) {
+      newErrors.rating = t("hospitalDetail.modal.writeReview.errors.ratingRequired");
+      isValid = false;
+    }
+
+    // Validate review content
+    if (!review.trim()) {
+      newErrors.review = t("hospitalDetail.modal.writeReview.errors.reviewRequired");
+      isValid = false;
+    } else {
+      // Kiểm tra độ dài
+      if (review.length < 10) {
+        newErrors.review = t("hospitalDetail.modal.writeReview.errors.reviewTooShort");
+        isValid = false;
+      }
+      if (review.length > 1000) {
+        newErrors.review = t("hospitalDetail.modal.writeReview.errors.reviewTooLong");
+        isValid = false;
+      }
+      
+      // Kiểm tra nội dung không phù hợp
+      const inappropriateWords = ['xxx', 'yyy', 'zzz']; // Thêm từ khóa cần kiểm tra
+      if (inappropriateWords.some(word => review.toLowerCase().includes(word))) {
+        newErrors.review = t("hospitalDetail.modal.writeReview.errors.inappropriateContent");
+        isValid = false;
+      }
+    }
+
+    // Validate image
+    if (image) {
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      
+      if (image.size > maxSize) {
+        newErrors.image = t("hospitalDetail.modal.writeReview.errors.imageSizeLimit");
+        isValid = false;
+      }
+      
+      if (!validTypes.includes(image.type)) {
+        newErrors.image = t("hospitalDetail.modal.writeReview.errors.imageTypeInvalid");
+        isValid = false;
+      }
+    }
+
+    // Validate image description
+    if (image && !imageDescription.trim()) {
+      newErrors.imageDescription = t("hospitalDetail.modal.writeReview.errors.imageDescriptionRequired");
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (!canSubmitReview()) {
       alert(t("hospitalDetail.modal.writeReview.errors.loginRequired"));
       return;
     }
 
-    if (rating <= 0 || rating > 5) {
-      alert(t("hospitalDetail.modal.writeReview.errors.ratingRequired"));
-      return;
-    }
-
-    if (!review) {
-      alert(t("hospitalDetail.modal.writeReview.errors.reviewRequired"));
+    if (!validateForm()) {
       return;
     }
 
@@ -104,6 +160,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
       setImageDescription("");
       setExistingReview(null);
       onClose();
+      window.location.reload();
     } catch (error) {
       console.error("Error submitting review:", error);
       alert(t("hospitalDetail.modal.writeReview.errors.submitError"));
@@ -138,8 +195,8 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg w-full max-w-2xl">
-        <div className="flex items-center justify-between p-4 border-b">
+      <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b shrink-0">
           <h2 className="text-xl font-semibold">
             {existingReview 
               ? t("hospitalDetail.modal.writeReview.titleUpdate")
@@ -153,10 +210,11 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form ref={formRef} onSubmit={handleSubmit} className="p-6 overflow-y-auto">
           <div className="mb-6 text-center">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t("hospitalDetail.modal.writeReview.rating")}
+              <span className="text-red-500">*</span>
             </label>
             <div className="flex gap-1 justify-center">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -178,22 +236,34 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
                 </button>
               ))}
             </div>
+            {errors.rating && (
+              <p className="mt-1 text-sm text-red-500">{errors.rating}</p>
+            )}
           </div>
 
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t("hospitalDetail.modal.writeReview.review")}
+              <span className="text-red-500">*</span>
             </label>
             <textarea
               value={review}
               onChange={(e) => setReview(e.target.value)}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={t(
-                "hospitalDetail.modal.writeReview.reviewPlaceholder"
-              )}
-              required
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 
+                ${errors.review ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-500'}`}
+              placeholder={t("hospitalDetail.modal.writeReview.reviewPlaceholder")}
             />
+            {errors.review && (
+              <p className="mt-1 text-sm text-red-500">{errors.review}</p>
+            )}
+            <p className="mt-1 text-sm text-gray-500">
+              {t("hospitalDetail.modal.writeReview.reviewLength", {
+                current: review.length,
+                min: 10,
+                max: 1000
+              })}
+            </p>
           </div>
 
           <div className="mb-6">
@@ -236,23 +306,33 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
                 </label>
               </div>
             )}
+            {errors.image && (
+              <p className="mt-1 text-sm text-red-500">{errors.image}</p>
+            )}
           </div>
 
           {image && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t("hospitalDetail.modal.writeReview.imageDescription")}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={imageDescription}
                 onChange={(e) => setImageDescription(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2
+                  ${errors.imageDescription ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-500'}`}
                 placeholder={t("hospitalDetail.modal.writeReview.imageDescriptionPlaceholder")}
               />
+              {errors.imageDescription && (
+                <p className="mt-1 text-sm text-red-500">{errors.imageDescription}</p>
+              )}
             </div>
           )}
+        </form>
 
+        <div className="p-4 border-t shrink-0">
           <div className="flex justify-end gap-3">
             <button
               type="button"
@@ -263,7 +343,8 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
               {t("hospitalDetail.modal.writeReview.cancel")}
             </button>
             <button
-              type="submit"
+              type="button"
+              onClick={() => formRef.current?.requestSubmit()}
               className="px-4 py-2 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] disabled:opacity-50"
               disabled={loading || rating <= 0 || !review}
             >
@@ -274,7 +355,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
                 : t("hospitalDetail.modal.writeReview.submit")}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
