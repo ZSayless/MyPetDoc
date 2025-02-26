@@ -45,8 +45,7 @@ function Profile() {
 
   const fetchSomeFavorites = async () => {
     try {
-      const data = await getHospitalFavorites();
-      console.log(data.data.favorites);
+      const data = await getHospitalFavorites(user.id);
       const favoritesRes = Array.isArray(data.data.favorites)
         ? data.data.favorites
         : [];
