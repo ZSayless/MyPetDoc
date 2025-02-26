@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const getHospitalFavorites = async (page = 1, limit = 10) => {
+const getHospitalFavorites = async (userId, page = 1, limit = 10) => {
     try {
         const response = await axios.get(
-            `${process.env.REACT_APP_API_URL}/favorites/user/hospitals`,
+            `${process.env.REACT_APP_API_URL}/favorites/user/${userId}/hospitals`,
             {
                 params: {
                     page: page,
@@ -16,7 +16,7 @@ const getHospitalFavorites = async (page = 1, limit = 10) => {
         );
         return response.data;
     } catch (error) {
-        console.error("Error fetching about info:", error);
+        console.error("Error fetching favorites:", error);
         throw error;
     }
 };
