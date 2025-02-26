@@ -1,9 +1,10 @@
+import { Helmet } from "react-helmet";
 import Header from "./components/layout/Header";
 import "./assets/css/style.css";
 import Footer from "./components/layout/Footer";
 import "aos/dist/aos.css";
 import AOS from "aos";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import ScrollToTop from "./components/common/ScrollToTop";
 import { AuthProvider } from "./context/AuthContext";
@@ -49,8 +50,16 @@ AOS.init({
 });
 
 function MainLayout({ children }) {
+  const location = useLocation();
+  const canonicalUrl = `https://mypetdoc.vn${location.pathname}`;
+
   return (
     <div className="pt-[72px]">
+      <Helmet>
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta name="twitter:url" content={canonicalUrl} />
+      </Helmet>
       <Header />
       {children}
       <Footer />
@@ -63,6 +72,13 @@ function App() {
     <Provider store={store}>
       <AuthProvider>
         <ToastProvider>
+          <Helmet>
+            <title>MyPetDoc - Nền tảng tìm kiếm phòng khám thú y</title>
+            <meta name="description" content="Tìm kiếm phòng khám thú y uy tín, đặt lịch khám và tư vấn trực tuyến cho thú cưng của bạn." />
+            <meta property="og:type" content="website" />
+            <meta property="og:site_name" content="MyPetDoc" />
+            <link rel="canonical" href="https://mypetdoc.vn" />
+          </Helmet>
           <ScrollToTop />
           <Routes>
             {/* Admin Route */}
