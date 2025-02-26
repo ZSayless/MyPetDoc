@@ -265,8 +265,8 @@ function Header() {
                   </li>
                   <li>
                     <a
-                      href="#contact"
-                      onClick={handleContactClick}
+                      href="/contact-us"
+                      // onClick={handleContactClick}
                       className="text-gray-700 hover:text-blue-600"
                     >
                       {t("header.menu.contactUs")}

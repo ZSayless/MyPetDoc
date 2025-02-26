@@ -845,6 +845,7 @@
         "titleUpdate": "Update Review",
         "rating": "Your Rating",
         "review": "Your Review",
+        "reviewLength": "Review must be at least 10 characters long",
         "reviewPlaceholder": "Share your experience...",
         "addPhoto": "Add Photo",
         "uploadPhoto": "Click to upload",
@@ -861,7 +862,11 @@
           "reviewRequired": "Please write your review",
           "imageSizeLimit": "Image size should be less than 5MB",
           "imageTypeInvalid": "Only JPG and PNG images are allowed",
-          "submitError": "Failed to submit review. Please try again"
+          "submitError": "Failed to submit review. Please try again",
+          "reviewTooShort": "Review must be at least 10 characters long",
+          "reviewTooLong": "Review must be less than 1000 characters",
+          "inappropriateContent": "Review contains inappropriate content",
+          "imageDescriptionRequired": "Please enter a description for the image"
         }
       }
     }
