@@ -92,8 +92,8 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
 
     // Validate image
     if (image) {
-      if (image.size > 5 * 1024 * 1024) {
-        errors.image = 'Kích thước ảnh không được vượt quá 5MB';
+      if (image.size > 10 * 1024 * 1024) {
+        errors.image = 'Kích thước ảnh không được vượt quá 10MB';
       }
       const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
       if (!validTypes.includes(image.type)) {

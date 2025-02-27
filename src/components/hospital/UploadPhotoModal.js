@@ -9,8 +9,8 @@ const UploadPhotoModal = ({ isOpen, onClose, onSubmit }) => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.size > 2 * 1024 * 1024) {
-      alert("File size should be less than 2MB.");
+    if (file && file.size > 10 * 1024 * 1024) {
+      alert("File size should be less than 10MB.");
       return;
     }
     setSelectedFile(file);

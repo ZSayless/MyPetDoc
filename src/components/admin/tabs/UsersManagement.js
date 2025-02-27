@@ -12,6 +12,7 @@ import {
   ToggleRight,
   X,
   RefreshCw,
+  Trash,
 } from "lucide-react";
 import {
   deleteUser,
@@ -72,6 +73,8 @@ function UsersManagement() {
     pet_photo: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
     // Fetch users based on the active tab
@@ -231,24 +234,26 @@ function UsersManagement() {
     }
   };
 
-  const handlePermanentDelete = async (userId) => {
+  const handleShowDeleteConfirm = (user) => {
+    setUserToDelete(user);
+    setShowDeleteConfirmModal(true);
+  };
+
+  const handlePermanentDelete = async () => {
     try {
-      const confirmed = window.confirm(
-        "Are you sure you want to permanently delete this user? This action cannot be undone and will delete all related data."
-      );
-
-      if (!confirmed) return;
-
-      const result = await dispatch(deleteUserPermanently(userId)).unwrap();
-
+      await dispatch(deleteUserPermanently(userToDelete.id)).unwrap();
+      
       addToast({
         type: "success",
-        message: result.message || "Delete user successfully!",
+        message: "Delete user successfully!"
       });
+      
+      setShowDeleteConfirmModal(false);
+      setUserToDelete(null);
     } catch (error) {
       addToast({
         type: "error",
-        message: error.message || "An error occurred while deleting the user",
+        message: error.message || "An error occurred while deleting the user"
       });
     }
   };
@@ -390,11 +395,11 @@ function UsersManagement() {
   const handleFileChange = (e, field) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        // 5MB
+      if (file.size > 10 * 1024 * 1024) {
+        // 10MB
         addToast({
           type: "error",
-          message: "File size must not exceed 5MB",
+          message: "File size must not exceed 10MB",
         });
         return;
       }
@@ -460,8 +465,8 @@ function UsersManagement() {
 
     // Validate file ảnh
     if (formData.avatar instanceof File) {
-      if (formData.avatar.size > 5 * 1024 * 1024) {
-        errors.avatar = "Image size must not exceed 5MB";
+      if (formData.avatar.size > 10 * 1024 * 1024) {
+        errors.avatar = "Image size must not exceed 10MB";
       }
       const validTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validTypes.includes(formData.avatar.type)) {
@@ -486,8 +491,8 @@ function UsersManagement() {
     }
 
     if (formData.pet_photo instanceof File) {
-      if (formData.pet_photo.size > 5 * 1024 * 1024) {
-        errors.pet_photo = "Image size must not exceed 5MB";
+      if (formData.pet_photo.size > 10 * 1024 * 1024) {
+        errors.pet_photo = "Image size must not exceed 10MB";
       }
       const validTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validTypes.includes(formData.pet_photo.type)) {
@@ -772,9 +777,7 @@ function UsersManagement() {
                         <Edit size={18} />
                       </button>
                       <button
-                        onClick={() =>
-                          handleToggleDelete(user.id, user.is_deleted)
-                        }
+                        onClick={() => handleToggleDelete(user.id, user.is_deleted)}
                         className={
                           user.is_deleted
                             ? "text-green-600 hover:text-green-900"
@@ -787,6 +790,14 @@ function UsersManagement() {
                           <Trash2 size={18} />
                         )}
                       </button>
+                      {user.is_deleted && (
+                        <button
+                          onClick={() => handleShowDeleteConfirm(user)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <Trash size={18} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -1771,6 +1782,37 @@ function UsersManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Thêm Delete Confirmation Modal */}
+      {showDeleteConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-medium mb-4">Confirm Delete</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to permanently delete user{" "}
+              <span className="font-medium">{userToDelete?.full_name}</span>? This
+              action cannot be undone and will delete all related data.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteConfirmModal(false);
+                  setUserToDelete(null);
+                }}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePermanentDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Delete Permanently
+              </button>
+            </div>
           </div>
         </div>
       )}

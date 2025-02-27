@@ -84,7 +84,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
 
     // Validate image
     if (image) {
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const maxSize = 10 * 1024 * 1024; // 10MB
       const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
       
       if (image.size > maxSize) {
@@ -173,7 +173,7 @@ function WriteReviewModal({ isOpen, onClose, onSubmit, hospitalId }) {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
       alert(t("hospitalDetail.modal.writeReview.errors.imageSizeLimit"));
       return;
     }
