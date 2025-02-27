@@ -117,74 +117,74 @@ function AddHospital() {
     
     // Tên bệnh viện
     if (!data.name || data.name.trim() === '') 
-      errors.name = "Tên bệnh viện không được để trống";
+      errors.name = t("addHospital.errors.nameRequired");
     else if (data.name.length < 3)
-      errors.name = "Tên bệnh viện phải có ít nhất 3 ký tự";
+      errors.name = t("addHospital.errors.nameMinLength");
     else if (data.name.length > 100)
-      errors.name = "Tên bệnh viện không được vượt quá 100 ký tự";
+      errors.name = t("addHospital.errors.nameMaxLength");
     
     // Địa chỉ
     if (!data.address || data.address.trim() === '') 
-      errors.address = "Địa chỉ không được để trống";
+      errors.address = t("addHospital.errors.addressRequired");
     else if (data.address.length < 5)
-      errors.address = "Địa chỉ phải có ít nhất 5 ký tự";
+      errors.address = t("addHospital.errors.addressMinLength");
     else if (data.address.length > 200)
-      errors.address = "Địa chỉ không được vượt quá 200 ký tự";
+      errors.address = t("addHospital.errors.addressMaxLength");
     
     // Số điện thoại
     if (!data.phone || data.phone.trim() === '') 
-      errors.phone = "Số điện thoại không được để trống";
+      errors.phone = t("addHospital.errors.phoneRequired");
     else if (!/^[0-9]{10,11}$/.test(data.phone.replace(/\s/g, '')))
-      errors.phone = "Số điện thoại không hợp lệ (cần 10-11 số)";
+      errors.phone = t("addHospital.errors.phoneInvalid");
     
     // Email
     if (!data.email || data.email.trim() === '') 
-      errors.email = "Email không được để trống";
+      errors.email = t("addHospital.errors.emailRequired");
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
-      errors.email = "Email không đúng định dạng";
+      errors.email = t("addHospital.errors.emailInvalid");
     
     // Website
     if (!data.link_website || data.link_website.trim() === '') 
-      errors.link_website = "Website không được để trống";
+      errors.link_website = t("addHospital.errors.linkWebsiteRequired");
     else if (data.link_website.length < 4)
-      errors.link_website = "Website phải có ít nhất 4 ký tự";
+      errors.link_website = t("addHospital.errors.linkWebsiteMinLength");
     
     // Map location
     if (!data.map_location || data.map_location.trim() === '')
-      errors.map_location = "Vị trí bản đồ không được để trống";
+      errors.map_location = t("addHospital.errors.mapLocationRequired");
     
     // Mô tả
     if (!data.description || data.description.trim() === '')
-      errors.description = "Mô tả không được để trống";
+      errors.description = t("addHospital.errors.descriptionRequired");
     else if (data.description.length < 20)
-      errors.description = "Mô tả phải có ít nhất 20 ký tự";
+      errors.description = t("addHospital.errors.descriptionMinLength");
     else if (data.description.length > 2000)
-      errors.description = "Mô tả không được vượt quá 2000 ký tự";
+      errors.description = t("addHospital.errors.descriptionMaxLength");
     
     // Chuyên khoa
     if (!data.department || data.department.trim() === '')
-      errors.department = "Chuyên khoa không được để trống";
+      errors.department = t("addHospital.errors.departmentRequired");
     
     // Dịch vụ
     if (selectedServices.length === 0)
-      errors.specialties = "Vui lòng chọn ít nhất một dịch vụ";
+      errors.specialties = t("addHospital.errors.specialtiesRequired");
     
     // Giờ làm việc
     if (!operatingHours.weekdays.start || !operatingHours.weekdays.end || 
         !operatingHours.weekends.start || !operatingHours.weekends.end)
-      errors.operating_hours = "Giờ làm việc không được để trống";
+      errors.operating_hours = t("addHospital.errors.operatingHoursRequired");
     
     // Staff Description (optional)
     if (data.staff_description && data.staff_description.length > 1000)
-      errors.staff_description = "Mô tả nhân viên không được vượt quá 1000 ký tự";
+      errors.staff_description = t("addHospital.errors.staffDescriptionMaxLength");
     
     // Staff Credentials (optional)
     if (data.staff_credentials && data.staff_credentials.length > 1000)
-      errors.staff_credentials = "Chứng chỉ nhân viên không được vượt quá 1000 ký tự";
+      errors.staff_credentials = t("addHospital.errors.staffCredentialsMaxLength");
     
     // Kiểm tra ảnh
     if (images.length === 0)
-      errors.images = "Vui lòng tải lên ít nhất 1 ảnh";
+      errors.images = t("addHospital.errors.imagesRequired");
     
     return errors;
   };
@@ -198,7 +198,7 @@ function AddHospital() {
       
       addToast({
         type: 'error',
-        message: 'Vui lòng kiểm tra lại thông tin đã nhập'
+        message: t("addHospital.errors.validationFailed")
       });
       
       return;
@@ -234,14 +234,14 @@ function AddHospital() {
       
       addToast({
         type: 'success',
-        message: 'Đăng ký bệnh viện thành công! Thông tin sẽ được hiển thị sau khi được quản trị viên phê duyệt.'
+        message: t("addHospital.success.registerSuccess")
       });
       
       navigate("/profile");
     } catch (error) {
       addToast({
         type: 'error',
-        message: `Lỗi: ${error.message || "Không thể đăng ký bệnh viện"}`
+        message: `Lỗi: ${error.message || t("addHospital.errors.registerFailed")}`
       });
     } finally {
       setLoading(false);
@@ -275,8 +275,8 @@ function AddHospital() {
               <div className="p-4 bg-blue-50 text-blue-700 rounded-lg flex items-start gap-3 mb-6">
                 <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-medium">Lưu ý về quy trình duyệt</p>
-                  <p className="text-sm">Sau khi đăng ký, bệnh viện của bạn sẽ cần được quản trị viên phê duyệt trước khi hiển thị công khai.</p>
+                  <p className="font-medium">{t("addHospital.notice.title")}</p>
+                  <p className="text-sm">{t("addHospital.notice.description")}</p>
                 </div>
               </div>
 

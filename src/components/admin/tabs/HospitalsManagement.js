@@ -493,7 +493,7 @@ function HospitalsManagement() {
 
     // Validate file size and type
     const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 10 * 1024 * 1024; // 10MB
 
     if (newImages) {
       newImages.forEach((file, index) => {
@@ -502,7 +502,7 @@ function HospitalsManagement() {
             "Only accept image files in JPG, JPEG, or PNG format";
         }
         if (file.size > maxSize) {
-          errors[`image_${index}`] = "Image size cannot exceed 5MB";
+          errors[`image_${index}`] = "Image size cannot exceed 10MB";
         }
       });
     }

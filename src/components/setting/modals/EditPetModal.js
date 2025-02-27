@@ -75,7 +75,7 @@ function EditPetModal({ isOpen, onClose, userDetails, onSuccess }) {
 
     // Validate file
     if (selectedFile) {
-      if (selectedFile.size > 2 * 1024 * 1024) {
+      if (selectedFile.size > 10 * 1024 * 1024) {
         newErrors.pet_photo = t("setting.modal.editPet.errors.fileSizeError");
       }
       if (!selectedFile.type.startsWith("image/")) {

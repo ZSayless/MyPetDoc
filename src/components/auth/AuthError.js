@@ -49,7 +49,7 @@ function AuthError() {
         return {
           primary: {
             text: "Thử đăng nhập lại",
-            action: () => navigate("/auth/login"),
+            action: () => navigate("/"),
           },
         };
     }

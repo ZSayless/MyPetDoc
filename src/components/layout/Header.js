@@ -404,12 +404,12 @@ function Header() {
                             </Link>
                           )}
 
-                          <Link
+                          {/* <Link
                             to="/setting"
                             className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
                           >
                             {t("header.auth.settings")}
-                          </Link>
+                          </Link> */}
 
                           <button
                             onClick={handleLogout}

@@ -11,8 +11,7 @@ function SelectRole() {
   const [showPhoneInput, setShowPhoneInput] = useState(false);
   const [phone, setPhone] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
-
-  console.log("Profile data in SelectRole:", profile);
+  const [phoneError, setPhoneError] = useState("");
 
   useEffect(() => {
     if (!profile) {
@@ -27,14 +26,38 @@ function SelectRole() {
     setShowPhoneInput(true);
   };
 
+  const validatePhone = (phoneNumber) => {
+    const cleanPhone = phoneNumber.replace(/[\s-]/g, '');
+    
+    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+    
+    if (!cleanPhone) {
+      setPhoneError("Số điện thoại không được để trống");
+      return false;
+    }
+    
+    if (!phoneRegex.test(cleanPhone)) {
+      setPhoneError("Số điện thoại không đúng định dạng");
+      return false;
+    }
+    
+    setPhoneError("");
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validatePhone(phone)) {
+      return;
+    }
+
     try {
       const userData = {
         email: profile.email,
         full_name: profile.full_name,
         google_id: profile.google_id,
-        phone_number: phone,
+        phone_number: phone.replace(/[\s-]/g, ''),
         avatar: profile.avatar,
         role: selectedRole,
       };
@@ -80,24 +103,38 @@ function SelectRole() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Nhập số điện thoại"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#98E9E9] focus:border-[#98E9E9]"
-              required
-            />
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <div>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  if (phoneError) validatePhone(e.target.value);
+                }}
+                onBlur={(e) => validatePhone(e.target.value)}
+                placeholder="Nhập số điện thoại"
+                className={`w-full p-3 border rounded-lg focus:ring-[#98E9E9] focus:border-[#98E9E9] 
+                  ${phoneError ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {phoneError && (
+                <p className="mt-1 text-sm text-red-500">{phoneError}</p>
+              )}
+            </div>
             <button
               type="submit"
-              className="w-full p-3 bg-[#98E9E9] text-white rounded-lg hover:bg-opacity-90"
+              className="w-full p-3 bg-[#98E9E9] text-white rounded-lg hover:bg-opacity-90 disabled:opacity-50"
+              disabled={!!phoneError || !phone}
             >
               Hoàn tất đăng ký
             </button>
             <button
               type="button"
-              onClick={() => setShowPhoneInput(false)}
+              onClick={() => {
+                setShowPhoneInput(false);
+                setPhone("");
+                setPhoneError("");
+              }}
               className="w-full p-3 text-gray-600 hover:text-gray-800"
             >
               Quay lại
