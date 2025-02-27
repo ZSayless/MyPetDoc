@@ -87,7 +87,8 @@
         "passwordInvalid": "Mật khẩu không hợp lệ",
         "passwordMismatch": "Mật khẩu xác nhận không khớp",
         "nameRequired": "Vui lòng nhập họ và tên",
-        "registrationFailed": "Đăng ký thất bại"
+        "registrationFailed": "Đăng ký thất bại",
+        "emailInvalid": "Email không hợp lệ"
       },
       "passwordRequirements": {
         "title": "Yêu Cầu Mật Khẩu",
@@ -553,6 +554,39 @@
       "laboratory": "Xét nghiệm",
       "petBoarding": "Trông giữ thú cưng",
       "pharmacy": "Nhà thuốc"
+    },
+    "errors": {
+      "nameRequired": "Tên bệnh viện là bắt buộc",
+      "phoneRequired": "Số điện thoại là bắt buộc",
+      "addressRequired": "Địa chỉ là bắt buộc",
+      "descriptionRequired": "Mô tả là bắt buộc",
+      "nameMinLength": "Tên bệnh viện phải có ít nhất 3 ký tự",
+      "nameMaxLength": "Tên bệnh viện phải có ít hơn 100 ký tự",
+      "phoneInvalid": "Số điện thoại không hợp lệ",
+      "emailRequired": "Email là bắt buộc",
+      "emailInvalid": "Email không hợp lệ",
+      "addressMinLength": "Địa chỉ phải có ít nhất 5 ký tự",
+      "addressMaxLength": "Địa chỉ phải có ít hơn 200 ký tự",
+      "descriptionMinLength": "Mô tả phải có ít nhất 10 ký tự",
+      "descriptionMaxLength": "Mô tả phải có ít hơn 2000 ký tự",
+      "linkWebsiteRequired": "Website link là bắt buộc",
+      "linkWebsiteMinLength": "Website link phải có ít nhất 4 ký tự",
+      "mapLocationRequired": "Vị trí trên bản đồ là bắt buộc",
+      "departmentRequired": "Chuyên khoa là bắt buộc",
+      "specialtiesRequired": "Vui lòng chọn ít nhất một dịch vụ",
+      "operatingHoursRequired": "Giờ làm việc là bắt buộc",
+      "staffDescriptionMaxLength": "Mô tả nhân viên phải có ít hơn 1000 ký tự",
+      "staffCredentialsMaxLength": "Chứng chỉ nhân viên phải có ít hơn 1000 ký tự",
+      "imagesRequired": "Vui lòng tải lên ít nhất 1 hình ảnh",
+      "validationFailed": "Vui lòng kiểm tra thông tin bạn đã nhập",
+      "registerFailed": "Đăng ký thất bại. Vui lòng thử lại"
+    },
+    "success": {
+      "registerSuccess": "Đăng ký thành công! Thông tin sẽ được hiển thị sau khi được phê duyệt bởi quản trị viên."
+    },
+    "notice": {
+      "title": "Thông báo về quá trình phê duyệt",
+      "description": "Sau khi đăng ký, bệnh viện của bạn sẽ cần được phê duyệt bởi quản trị viên trước khi có thể được hiển thị công khai."
     },
     "mapLocation": "Vị Trí Trên Bản Đồ",
     "mapEmbed": {

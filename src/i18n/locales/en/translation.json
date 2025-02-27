@@ -118,7 +118,8 @@
         "passwordInvalid": "Password is not valid",
         "passwordMismatch": "Passwords do not match",
         "nameRequired": "First name and last name are required",
-        "registrationFailed": "Registration failed. Please try again"
+        "registrationFailed": "Registration failed. Please try again",
+        "emailInvalid": "Email is not valid"
       },
       "passwordRequirements": {
         "title": "Password Requirements",
@@ -569,6 +570,39 @@
       "laboratory": "Laboratory",
       "petBoarding": "Pet Boarding",
       "pharmacy": "Pharmacy"
+    },
+    "errors": {
+      "nameRequired": "Hospital name is required",
+      "phoneRequired": "Phone number is required",
+      "addressRequired": "Address is required",
+      "descriptionRequired": "Description is required",
+      "nameMinLength": "Hospital name must be at least 3 characters",
+      "nameMaxLength": "Hospital name must be less than 100 characters",
+      "phoneInvalid": "Phone number is not valid",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is not valid",
+      "addressMinLength": "Address must be at least 5 characters",
+      "addressMaxLength": "Address must be less than 200 characters",
+      "descriptionMinLength": "Description must be at least 10 characters",
+      "descriptionMaxLength": "Description must be less than 2000 characters",
+      "linkWebsiteRequired": "Website link is required",
+      "linkWebsiteMinLength": "Website link must be at least 4 characters",
+      "mapLocationRequired": "Map location is required",
+      "departmentRequired": "Department is required",
+      "specialtiesRequired": "Please select at least one service",
+      "operatingHoursRequired": "Working hours are required",
+      "staffDescriptionMaxLength": "Staff description must be less than 1000 characters",
+      "staffCredentialsMaxLength": "Staff credentials must be less than 1000 characters",
+      "imagesRequired": "Please upload at least 1 image",
+      "validationFailed": "Please check the information you have entered",
+      "registerFailed": "Registration failed. Please try again"
+    },
+    "success": {
+      "registerSuccess": "Registration successful! The information will be displayed after approval by the administrator."
+    },
+    "notice": {
+      "title": "Notice about the approval process",
+      "description": "After registering, your hospital will need to be approved by the administrator before it can be displayed publicly."
     },
     "mapLocation": "Map Location",
     "mapEmbed": {

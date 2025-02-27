@@ -99,7 +99,7 @@ function Register({ onClose, onLoginClick }) {
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError("Email không hợp lệ");
+      setError(t("auth.register.errors.emailInvalid"));
       return false;
     }
 
