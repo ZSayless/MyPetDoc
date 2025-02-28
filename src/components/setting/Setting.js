@@ -30,28 +30,28 @@ function Setting() {
       if (savedUser?.email) {
         const response = await getUserInfoByEmail(savedUser.email);
         if (response.status === "success") {
-          const { 
-            full_name, 
-            email, 
-            phone_number, 
+          const {
+            full_name,
+            email,
+            phone_number,
             avatar,
             role,
             pet_type,
             pet_age,
             pet_photo,
-            pet_notes
+            pet_notes,
           } = response.data;
-          
-          setUserDetails({ 
-            full_name, 
-            email, 
-            phone_number, 
+
+          setUserDetails({
+            full_name,
+            email,
+            phone_number,
             avatar,
             role,
             pet_type,
             pet_age,
             pet_photo,
-            pet_notes
+            pet_notes,
           });
         }
       }
@@ -66,169 +66,173 @@ function Setting() {
 
   const renderPersonalInfo = () => (
     <div>
-      <h2 className="text-lg md:text-xl mb-2">{t("setting.personal.title")}</h2>
-      <p className="text-gray-600 text-sm mb-4 md:mb-6">
+      <h2 className="text-2xl font-semibold mb-3">
+        {t("setting.personal.title")}
+      </h2>
+      <p className="text-gray-600 text-sm mb-6">
         {t("setting.personal.description")}
       </p>
 
-      <div className="bg-[#F8F9FF] rounded-xl mb-6 border border-blue-500">
-        <div className="p-3 md:p-4 border-b border-blue-500">
-          <h3 className="text-sm md:text-base font-medium mb-1">
-            {t("setting.personal.basic.title")}
-          </h3>
-          <p className="text-gray-600 text-xs md:text-sm">
-            {t("setting.personal.basic.description")}
-          </p>
-        </div>
+      {/* Basic Information */}
+      <div className="mb-8">
+        <h3 className="text-lg font-medium text-gray-900 mb-2">
+          {t("setting.personal.basic.title")}
+        </h3>
 
-        <div className="bg-white rounded-xl">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-200">
+          {/* Full Name */}
           <div
-            className="flex items-center justify-between p-3 md:p-4 hover:bg-gray-50 cursor-pointer"
+            className="p-4 hover:bg-gray-50 cursor-pointer group transition-colors"
             onClick={() => setShowEditName(true)}
           >
-            <div>
-              <div className="text-sm md:text-base font-medium">
-                {t("setting.personal.basic.fullName")}
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+                  {t("setting.personal.basic.fullName")}
+                </div>
+                <div className="text-sm text-gray-500 mt-1">
+                  {userDetails?.full_name || "Admin User"}
+                </div>
               </div>
-              <div className="text-gray-600 text-xs md:text-sm mt-0.5">
-                {userDetails?.full_name || "Admin User"}
+              <div className="text-gray-400 group-hover:text-blue-600 transition-colors">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
               </div>
             </div>
-            <span className="text-gray-400 text-lg">›</span>
           </div>
 
-          <div className="border-t">
-            <div
-              className="flex items-center justify-between p-3 md:p-4 hover:bg-gray-50 cursor-pointer"
-              onClick={() => setShowEditAvatar(true)}
-            >
+          {/* Avatar */}
+          <div
+            className="p-4 hover:bg-gray-50 cursor-pointer group transition-colors"
+            onClick={() => setShowEditAvatar(true)}
+          >
+            <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm md:text-base font-medium">
+                <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
                   {t("setting.personal.basic.avatar")}
                 </div>
-                <div className="mt-2 w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden">
+                <div className="mt-2">
                   {userDetails?.avatar?.startsWith("https://") ? (
                     <img
                       src={userDetails.avatar}
                       alt="User avatar"
-                      className="w-full h-full object-cover"
+                      className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-green-600 flex items-center justify-center text-white text-base md:text-xl">
+                    <div className="w-12 h-12 rounded-full bg-green-600 flex items-center justify-center text-white text-xl">
                       {userDetails?.full_name?.charAt(0) || "A"}
                     </div>
                   )}
                 </div>
               </div>
-              <span className="text-gray-400 text-lg">›</span>
+              <div className="text-gray-400 group-hover:text-blue-600 transition-colors">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
 
-          <div className="border-t">
-            <div
-              className="flex items-center justify-between p-3 md:p-4 hover:bg-gray-50 cursor-pointer"
-              onClick={() => setShowEditPhone(true)}
-            >
+          {/* Phone Number */}
+          <div
+            className="p-4 hover:bg-gray-50 cursor-pointer group transition-colors"
+            onClick={() => setShowEditPhone(true)}
+          >
+            <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm md:text-base font-medium">
+                <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
                   {t("setting.personal.basic.phone")}
                 </div>
-                <div className="text-gray-600 text-xs md:text-sm mt-0.5">
-                  {userDetails?.phone_number || t("setting.personal.basic.addPhone")}
+                <div className="text-sm text-gray-500 mt-1">
+                  {userDetails?.phone_number ||
+                    t("setting.personal.basic.addPhone")}
                 </div>
               </div>
-              <span className="text-gray-400 text-lg">›</span>
+              <div className="text-gray-400 group-hover:text-blue-600 transition-colors">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Pet Information section - chỉ hiển thị khi không phải HOSPITAL_ADMIN */}
+      {/* Pet Information */}
       {userDetails?.role !== "HOSPITAL_ADMIN" && (
-        <div className="bg-[#F8F9FF] rounded-xl border border-[#E5EDFF]">
-          <div className="p-3 md:p-4 border-b border-[#E5EDFF]">
-            <h3 className="text-sm md:text-base font-medium mb-1">
-              {t("setting.personal.pet.title")}
-            </h3>
-            <p className="text-gray-600 text-xs md:text-sm">
-              {t("setting.personal.pet.description")}
-            </p>
-          </div>
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {t("setting.personal.pet.title")}
+          </h3>
+          <p className="text-gray-600 text-sm mb-4">
+            {t("setting.personal.pet.description")}
+          </p>
 
-          <div className="bg-white rounded-xl">
-            <div 
-              className="flex items-center justify-between p-3 md:p-4 hover:bg-gray-50 cursor-pointer"
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+            <div
+              className="p-4 hover:bg-gray-50 cursor-pointer group transition-colors"
               onClick={() => setShowEditPet(true)}
             >
-              <div>
-                <div className="text-sm md:text-base font-medium">
-                  {t("setting.personal.pet.type")}
-                </div>
-                <div className="text-gray-600 text-xs md:text-sm mt-0.5">
-                  {userDetails?.pet_type || t("setting.personal.pet.noPetType")}
-                </div>
-              </div>
-              <span className="text-gray-400 text-lg">›</span>
-            </div>
-
-            <div className="border-t">
-              <div 
-                className="flex items-center justify-between p-3 md:p-4 hover:bg-gray-50 cursor-pointer"
-                onClick={() => setShowEditPet(true)}
-              >
+              <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm md:text-base font-medium">
-                    {t("setting.personal.pet.age")}
+                  <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {t("setting.personal.pet.type")}
                   </div>
-                  <div className="text-gray-600 text-xs md:text-sm mt-0.5">
-                    {userDetails?.pet_age || t("setting.personal.pet.noPetAge")}
-                  </div>
-                </div>
-                <span className="text-gray-400 text-lg">›</span>
-              </div>
-            </div>
-
-            <div className="border-t">
-              <div 
-                className="flex items-center justify-between p-3 md:p-4 hover:bg-gray-50 cursor-pointer"
-                onClick={() => setShowEditPet(true)}
-              >
-                <div>
-                  <div className="text-sm md:text-base font-medium">
-                    {t("setting.personal.pet.photo")}
-                  </div>
-                  <div className="mt-2">
-                    {userDetails?.pet_photo ? (
-                      <img
-                        src={userDetails.pet_photo}
-                        alt="Pet"
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
-                    ) : (
-                      <div className="text-gray-600 text-xs md:text-sm">
-                        {t("setting.personal.pet.noPetPhoto")}
-                      </div>
-                    )}
+                  <div className="text-sm text-gray-500 mt-1">
+                    {userDetails?.pet_type ||
+                      t("setting.personal.pet.noPetType")}
                   </div>
                 </div>
-                <span className="text-gray-400 text-lg">›</span>
-              </div>
-            </div>
-
-            <div className="border-t">
-              <div 
-                className="flex items-center justify-between p-3 md:p-4 hover:bg-gray-50 cursor-pointer"
-                onClick={() => setShowEditPet(true)}
-              >
-                <div>
-                  <div className="text-sm md:text-base font-medium">
-                    {t("setting.personal.pet.notes")}
-                  </div>
-                  <div className="text-gray-600 text-xs md:text-sm mt-0.5">
-                    {userDetails?.pet_notes || t("setting.personal.pet.noPetNotes")}
-                  </div>
+                <div className="text-gray-400 group-hover:text-blue-600 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
                 </div>
-                <span className="text-gray-400 text-lg">›</span>
               </div>
             </div>
           </div>
@@ -238,38 +242,46 @@ function Setting() {
   );
 
   const renderSecurityInfo = () => (
-    <div className="border border-blue-500 rounded-xl">
-      <div className="p-3 md:p-4 border-b border-blue-500">
-        <h2 className="text-lg md:text-xl mb-2">{t("setting.security.title")}</h2>
-      <p className="text-gray-600 text-sm mb-4 md:mb-6">
+    <div>
+      <h2 className="text-2xl font-semibold mb-3">
+        {t("setting.security.title")}
+      </h2>
+      <p className="text-gray-600 text-sm mb-6">
         {t("setting.security.description")}
       </p>
-    </div>
 
-      <div className="bg-white rounded-xl">
-        {/* <div className="p-3 md:p-4">
-          <h3 className="text-sm md:text-base font-medium mb-1">
-            {t("setting.security.login.title")}
-          </h3>
-          <p className="text-gray-600 text-xs md:text-sm">
-            {t("setting.security.login.description")}
-          </p>
-        </div> */}
-
-        <div className="bg-white rounded-xl">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div className="p-6">
           <div
-            className="flex items-center justify-between p-3 md:p-4 hover:bg-gray-50 cursor-pointer"
+            className="flex items-center justify-between cursor-pointer group"
             onClick={() => setShowChangePassword(true)}
           >
-            <div>
-              <div className="text-sm md:text-base font-medium">
-                {t("setting.security.login.changePassword")}
+            <div className="flex-1">
+              <div className="flex items-center space-x-3 mb-1">
+                <div className="text-lg font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+                  {t("setting.security.login.changePassword")}
+                </div>
               </div>
-              <div className="text-gray-600 text-xs md:text-sm mt-0.5">
+              <div className="text-gray-500 text-sm">
                 {t("setting.security.login.notChanged")}
               </div>
             </div>
-            <span className="text-gray-400 text-lg">›</span>
+            <div className="text-gray-400 group-hover:text-blue-600 transition-colors">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
@@ -391,7 +403,9 @@ function Setting() {
         <EditAvatarModal
           isOpen={showEditAvatar}
           onClose={() => setShowEditAvatar(false)}
-          currentAvatar={userDetails?.avatar || userDetails?.full_name?.charAt(0) || "A"}
+          currentAvatar={
+            userDetails?.avatar || userDetails?.full_name?.charAt(0) || "A"
+          }
           onSuccess={fetchUserDetails}
         />
         {showChangePassword && (

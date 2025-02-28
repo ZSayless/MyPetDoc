@@ -265,8 +265,7 @@ function Header() {
                   </li>
                   <li>
                     <a
-                      href="/contact-us"
-                      // onClick={handleContactClick}
+                      href="/aboutus"
                       className="text-gray-700 hover:text-blue-600"
                     >
                       {t("header.menu.contactUs")}
@@ -503,11 +502,8 @@ function Header() {
                       Lucete
                     </Link>
                     <a
-                      href="#contact"
-                      onClick={(e) => {
-                        handleContactClick(e);
-                        toggleMenu();
-                      }}
+                      href="/aboutus"
+                      onClick={toggleMenu}
                       className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
                     >
                       <Mail className="w-5 h-5" />

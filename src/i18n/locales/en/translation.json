@@ -180,6 +180,43 @@
     },
     "allFavorites": {
       "title": "Favorite Hospitals"
+    },
+    "role": {
+      "veterinarian": "Veterinarian",
+      "admin": "Administrator",
+      "petOwner": "Pet Owner"
+    },
+    "actions": {
+      "editProfile": "Edit Profile",
+      "manageHospital": "Manage Hospital"
+    },
+    "petInfo": {
+      "title": "Pet Information",
+      "edit": "Edit",
+      "type": {
+        "label": "Pet Type",
+        "noData": "No pet type specified"
+      },
+      "age": {
+        "label": "Pet Age",
+        "noData": "No age specified"
+      },
+      "notes": {
+        "label": "Pet Notes",
+        "noData": "No notes available"
+      },
+      "photo": {
+        "label": "Pet Photo",
+        "noData": "No photo available"
+      }
+    },
+    "reviews": {
+      "title": "Recent Reviews",
+      "viewAll": "View All"
+    },
+    "favorites": {
+      "title": "Favorite Hospitals",
+      "viewAll": "View All"
     }
   },
   "manageHospital": {
@@ -630,7 +667,6 @@
       "description": "Manage your personal information.",
       "basic": {
         "title": "Basic Information",
-        "description": "Manage your display name, username and avatar",
         "fullName": "Full Name",
         "username": "Username",
         "avatar": "Avatar",
@@ -645,7 +681,7 @@
         "x": "X (Twitter)",
         "instagram": "Instagram"
       },
-      "pet":{
+      "pet": {
         "title": "Pet Information",
         "description": "Manage your pet information",
         "type": "Pet Type",

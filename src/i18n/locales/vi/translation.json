@@ -181,6 +181,45 @@
     },
     "allFavorites": {
       "title": "Bệnh viện Yêu thích"
+    },
+    "role": {
+      "veterinarian": "Bác sĩ thú y",
+      "admin": "Quản trị viên",
+      "petOwner": "Chủ thú cưng"
+    },
+    "actions": {
+      "editProfile": "Chỉnh sửa hồ sơ",
+      "manageHospital": "Quản lý bệnh viện"
+    },
+    "petInfo": {
+      "title": "Thông tin thú cưng",
+      "edit": "Chỉnh sửa",
+      "type": {
+        "label": "Loại thú cưng",
+        "noData": "Chưa có thông tin"
+      },
+      "age": {
+        "label": "Tuổi",
+        "noData": "Chưa có thông tin"
+      },
+      "photo": {
+        "label": "Hình ảnh",
+        "noData": "Chưa có hình ảnh"
+      },
+      "notes": {
+        "label": "Ghi chú",
+        "noData": "Chưa có ghi chú"
+      }
+    },
+    "reviews": {
+      "title": "Đánh giá gần đây",
+      "viewAll": "Xem tất cả",
+      "rating": "Đánh giá"
+    },
+    "favorites": {
+      "title": "Bệnh viện yêu thích",
+      "viewAll": "Xem tất cả",
+      "reviews": "đánh giá"
     }
   },
   "manageHospital": {
@@ -614,7 +653,6 @@
       "description": "Quản lý thông tin cá nhân của bạn.",
       "basic": {
         "title": "Thông Tin Cơ Bản",
-        "description": "Quản lý tên hiển thị, tên người dùng và ảnh đại diện",
         "fullName": "Họ Tên",
         "username": "Tên người dùng",
         "avatar": "Ảnh đại diện",
