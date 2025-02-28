@@ -145,8 +145,8 @@ function Setting() {
 
       {/* Pet Information section - chỉ hiển thị khi không phải HOSPITAL_ADMIN */}
       {userDetails?.role !== "HOSPITAL_ADMIN" && (
-        <div className="bg-[#F8F9FF] rounded-xl border border-[#E5EDFF]">
-          <div className="p-3 md:p-4 border-b border-[#E5EDFF]">
+        <div className="bg-[#F8F9FF] rounded-xl border border-blue-500">
+          <div className="p-3 md:p-4 border-b border-blue-500">
             <h3 className="text-sm md:text-base font-medium mb-1">
               {t("setting.personal.pet.title")}
             </h3>
