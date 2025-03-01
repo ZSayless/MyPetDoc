@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import aboutus2 from "../../assets/img/aboutus2.png";
 import aboutus1 from "../../assets/img/aboutus1.jpg";
+import about4 from "../../assets/img/about4.jpg";
 import { motion } from "framer-motion";
 import "./AboutUs.css";
 import logocustom from "../../assets/img/logocustom.png";
@@ -13,24 +14,47 @@ function AboutUs() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section - Full width image with text overlay */}
-      <div className="relative h-[500px]">
-        <div className="absolute inset-0">
+      <div>
+        {/* Mobile Version - Sử dụng about4.jpg */}
+        <div className="relative block sm:hidden">
           <img
-            src={aboutus1}
+            src={about4}
             alt="Happy pets"
-            className="w-full h-full object-cover"
+            className="w-full h-[60vh] object-cover"
           />
-          <div className="absolute inset-0 bg-black/40"></div>{" "}
-          {/* Overlay để text dễ đọc */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+            <div className="h-full flex items-center justify-center">
+              <div className="text-center text-white px-4 max-w-xl">
+                <h1 className="text-4xl font-bold mb-3">
+                  {t("aboutUs.hero.title")}
+                </h1>
+                <p className="text-xl font-medium">
+                  {t("aboutUs.hero.subtitle")}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="relative h-full flex items-center justify-center">
-          <div className="text-center text-white">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">
-              {t("aboutUs.hero.title")}
-            </h1>
-            <p className="text-xl md:text-2xl font-medium">
-              {t("aboutUs.hero.subtitle")}
-            </p>
+
+        {/* Desktop Version - Giữ nguyên aboutus1.jpg */}
+        <div className="relative hidden sm:block h-[500px]">
+          <div className="absolute inset-0">
+            <img
+              src={aboutus1}
+              alt="Happy pets"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40"></div>
+          </div>
+          <div className="relative h-full flex items-center justify-center">
+            <div className="text-center text-white">
+              <h1 className="text-4xl md:text-6xl font-bold mb-4">
+                {t("aboutUs.hero.title")}
+              </h1>
+              <p className="text-xl md:text-2xl font-medium">
+                {t("aboutUs.hero.subtitle")}
+              </p>
+            </div>
           </div>
         </div>
       </div>
