@@ -128,6 +128,11 @@ function Register({ onClose, onLoginClick }) {
       return false;
     }
 
+
+    if (formData.petNotes.trim().length < 10) {
+          setError("Vui lòng nhập mô tả về thú cưng (ít nhất 10 ký tự)");
+          return false;
+        }
     // Validate pet information if pet type is selected
     // if (userType === "general" && formData.petType) {
     //   if (!formData.petAge) {
