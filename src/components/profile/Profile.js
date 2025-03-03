@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import { getAllReviewsByAuth } from "../../services/reviewService";
 import { getHospitalFavorites } from "../../services/favoriteService";
+import { getUserInfoByEmail } from "../../services/userService";
 
 function Profile() {
   const { user, updateUser } = useAuth();
@@ -16,6 +17,7 @@ function Profile() {
   const [favorites, setFavorites] = useState([]);
   const [reviewError, setReviewError] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const [userDetails, setUserDetails] = useState({});
   const navigate = useNavigate();
 
   const fetchSomeReviews = async () => {
@@ -31,6 +33,39 @@ function Profile() {
     } catch (error) {
       console.error("Error fetching banners:", error);
       setReviewError(true);
+    }
+  };
+
+  const fetchUserDetails = async () => {
+    try {
+      const response = await getUserInfoByEmail(user.email);
+      if (response.status === "success") {
+        const {
+          full_name,
+          email,
+          phone_number,
+          avatar,
+          role,
+          pet_type,
+          pet_age,
+          pet_photo,
+          pet_notes,
+        } = response.data;
+
+        setUserDetails({
+          full_name,
+          email,
+          phone_number,
+          avatar,
+          role,
+          pet_type,
+          pet_age,
+          pet_photo,
+          pet_notes,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
     }
   };
 
@@ -52,6 +87,7 @@ function Profile() {
   useEffect(() => {
     fetchSomeReviews();
     fetchSomeFavorites();
+    fetchUserDetails();
   }, []);
 
   // Memoize user info để tránh re-render không cần thiết
@@ -132,19 +168,18 @@ function Profile() {
                     <div className="flex justify-center">
                       <span
                         className={`inline-block px-2 py-0.5 text-sm font-medium rounded-lg w-fit
-                        ${
-                          userInfo.role === "HOSPITAL_ADMIN"
+                        ${userInfo.role === "HOSPITAL_ADMIN"
                             ? "bg-blue-50 text-blue-700"
                             : userInfo.role === "ADMIN"
-                            ? "bg-purple-50 text-purple-700"
-                            : "bg-green-50 text-green-700"
-                        }`}
+                              ? "bg-purple-50 text-purple-700"
+                              : "bg-green-50 text-green-700"
+                          }`}
                       >
                         {userInfo.role === "HOSPITAL_ADMIN"
                           ? t("profile.role.veterinarian")
                           : userInfo.role === "ADMIN"
-                          ? t("profile.role.admin")
-                          : t("profile.role.petOwner")}
+                            ? t("profile.role.admin")
+                            : t("profile.role.petOwner")}
                       </span>
                     </div>
                   </div>
@@ -187,14 +222,14 @@ function Profile() {
                     </Link>
                     {(userInfo.role === "HOSPITAL_ADMIN" ||
                       userInfo.role === "ADMIN") && (
-                      <Link
-                        to="/manage-hospital"
-                        className="inline-flex items-center px-4 py-2 bg-[#98E9E9] rounded-lg text-sm font-medium text-gray-700 hover:bg-[#7CD5D5] transition-colors"
-                      >
-                        <Building className="h-5 w-5 mr-2" />
-                        {t("profile.actions.manageHospital")}
-                      </Link>
-                    )}
+                        <Link
+                          to="/manage-hospital"
+                          className="inline-flex items-center px-4 py-2 bg-[#98E9E9] rounded-lg text-sm font-medium text-gray-700 hover:bg-[#7CD5D5] transition-colors"
+                        >
+                          <Building className="h-5 w-5 mr-2" />
+                          {t("profile.actions.manageHospital")}
+                        </Link>
+                      )}
                   </div>
                 </div>
               </div>
@@ -260,7 +295,7 @@ function Profile() {
                               {t("profile.petInfo.type.label")}
                             </h3>
                             <p className="mt-1 text-lg font-semibold text-gray-900">
-                              {user?.pet_type ||
+                              {userDetails?.pet_type ||
                                 t("profile.petInfo.type.noData")}
                             </p>
                           </div>
@@ -291,7 +326,7 @@ function Profile() {
                               {t("profile.petInfo.age.label")}
                             </h3>
                             <p className="mt-1 text-lg font-semibold text-gray-900">
-                              {user?.pet_age || t("profile.petInfo.age.noData")}
+                              {userDetails?.pet_age || t("profile.petInfo.age.noData")}
                             </p>
                           </div>
                         </div>
@@ -323,7 +358,7 @@ function Profile() {
                           </div>
                         </div>
                         <p className="text-gray-700 bg-white rounded-lg p-4">
-                          {user?.pet_notes || t("profile.petInfo.notes.noData")}
+                          {userDetails?.pet_notes || t("profile.petInfo.notes.noData")}
                         </p>
                       </div>
                     </div>
@@ -354,9 +389,9 @@ function Profile() {
                             </h3>
                           </div>
                         </div>
-                        {user?.pet_photo ? (
+                        {userDetails?.pet_photo ? (
                           <img
-                            src={user.pet_photo}
+                            src={userDetails.pet_photo}
                             alt="Pet"
                             className="w-full h-48 rounded-lg object-cover"
                           />
