@@ -943,7 +943,15 @@
       "success": "Tin nhắn đã được gửi thành công!"
     },
     "errors": {
-      "sendFailed": "Không thể gửi tin nhắn. Vui lòng thử lại sau."
+      "sendFailed": "Không thể gửi tin nhắn. Vui lòng thử lại sau.",
+      "nameRequired": "Vui lòng nhập họ tên",
+      "nameMin": "Họ tên phải có ít nhất 2 ký tự",
+      "emailRequired": "Vui lòng nhập email",
+      "emailInvalid": "Email không hợp lệ",
+      "phoneRequired": "Vui lòng nhập số điện thoại",
+      "phoneInvalid": "Số điện thoại không hợp lệ",
+      "messageRequired": "Vui lòng nhập nội dung tin nhắn",
+      "messageMin": "Nội dung tin nhắn phải có ít nhất 10 ký tự"
     }
   },
   "faq": {

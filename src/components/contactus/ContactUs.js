@@ -17,6 +17,12 @@ const ContactUs = () => {
     phone: "",
     message: "",
   });
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: ""
+  });
 
   // Kiểm tra đăng nhập và điền thông tin một lần khi component mount
   useEffect(() => {
@@ -45,8 +51,35 @@ const ContactUs = () => {
     }));
   };
 
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      name: "",
+      email: "",
+      phone: "",
+      message: ""
+    };
+
+    // Validate message
+    if (!formData.message.trim()) {
+      newErrors.message = t("contact.errors.messageRequired");
+      isValid = false;
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = t("contact.errors.messageMin");
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
     try {
       const payload = {
@@ -155,12 +188,16 @@ const ContactUs = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      required
-                      disabled={isLoggedIn && formData.name !== ""}
-                      className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 ${
+                      className={`w-full px-4 py-2 rounded-lg border ${
+                        errors.name ? 'border-red-500' : 'border-gray-200'
+                      } focus:border-blue-500 focus:ring-blue-500 ${
                         isLoggedIn && formData.name !== "" ? "bg-gray-50" : "bg-white"
                       }`}
+                      disabled={isLoggedIn && formData.name !== ""}
                     />
+                    {errors.name && (
+                      <p className="mt-1 text-sm text-red-500">{errors.name}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -171,12 +208,16 @@ const ContactUs = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      required
-                      disabled={isLoggedIn && formData.phone !== ""}
-                      className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 ${
+                      className={`w-full px-4 py-2 rounded-lg border ${
+                        errors.phone ? 'border-red-500' : 'border-gray-200'
+                      } focus:border-blue-500 focus:ring-blue-500 ${
                         isLoggedIn && formData.phone !== "" ? "bg-gray-50" : "bg-white"
                       }`}
+                      disabled={isLoggedIn && formData.phone !== ""}
                     />
+                    {errors.phone && (
+                      <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
+                    )}
                   </div>
                 </div>
                 <div className="mb-4">
@@ -188,12 +229,16 @@ const ContactUs = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    required
-                    disabled={isLoggedIn && formData.email !== ""}
-                    className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500 ${
+                    className={`w-full px-4 py-2 rounded-lg border ${
+                      errors.email ? 'border-red-500' : 'border-gray-200'
+                    } focus:border-blue-500 focus:ring-blue-500 ${
                       isLoggedIn && formData.email !== "" ? "bg-gray-50" : "bg-white"
                     }`}
+                    disabled={isLoggedIn && formData.email !== ""}
                   />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                  )}
                 </div>
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -204,9 +249,13 @@ const ContactUs = () => {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    className={`w-full px-4 py-2 rounded-lg border ${
+                      errors.message ? 'border-red-500' : 'border-gray-200'
+                    } focus:border-blue-500 focus:ring-blue-500`}
                   ></textarea>
+                  {errors.message && (
+                    <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+                  )}
                 </div>
                 {isLoggedIn ? (
                   <button
