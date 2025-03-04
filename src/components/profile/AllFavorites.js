@@ -77,7 +77,7 @@ function AllFavorites() {
               <h3 className="text-lg font-medium mb-2">Chưa có bệnh viện yêu thích</h3>
               <p className="text-gray-500 mb-4">Bạn chưa thêm bệnh viện nào vào danh sách yêu thích</p>
               <button
-                onClick={() => navigate('/hospitals')}
+                onClick={() => navigate('/find-hospital')}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Khám phá bệnh viện
