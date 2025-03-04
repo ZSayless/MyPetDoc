@@ -5,6 +5,7 @@ import { ArrowLeft, Building, Phone, MapPin, Plus, Globe, Clock, Star, X, Mail, 
 import { getHospitalsByCreator } from '../../services/hospitalService';
 import { adminService } from '../../services/adminService';
 import { useToast } from '../../context/ToastContext';
+import { SERVICES_ROW_3 } from "../../constants/services";
 
 function ManageHospital() {
     const { t } = useTranslation();
@@ -29,6 +30,7 @@ function ManageHospital() {
             end: "12:00"
         }
     });
+    const [selectedServices, setSelectedServices] = useState([]);
 
     useEffect(() => {
         fetchHospital();
@@ -56,6 +58,12 @@ function ManageHospital() {
             }
         }
     }, [hospital?.operating_hours]);
+
+    useEffect(() => {
+        if (hospital?.specialties) {
+            setSelectedServices(hospital.specialties.split(',').map(s => s.trim()));
+        }
+    }, [hospital]);
 
     const fetchHospital = async () => {
         try {
@@ -98,7 +106,7 @@ function ManageHospital() {
             formData.append("description", hospital.description);
             formData.append("department", hospital.department);
             formData.append("operating_hours", operatingHoursString);
-            formData.append("specialties", hospital.specialties);
+            formData.append("specialties", selectedServices.join(', '));
             formData.append("staff_description", hospital.staff_description);
             formData.append("staff_credentials", hospital.staff_credentials);
             formData.append("is_active", "false");
@@ -121,17 +129,17 @@ function ManageHospital() {
             
             addToast({
                 type: 'success',
-                message: 'Cập nhật thông tin bệnh viện thành công. Thông tin sẽ được hiển thị sau khi được quản trị viên phê duyệt.'
+                message: t("manageHospital.notification.updateSuccess")
             });
             
         } catch (error) {
             setFormErrors({
-                submit: error.message || "Đã xảy ra lỗi khi cập nhật thông tin bệnh viện"
+                submit: error.message || t("manageHospital.notification.updateError")
             });
             
             addToast({
                 type: 'error',
-                message: `Lỗi: ${error.message || "Không thể cập nhật thông tin bệnh viện"}`
+                message: `Lỗi: ${error.message || t("manageHospital.notification.updateError")}`
             });
         } finally {
             setIsSubmitting(false);
@@ -140,6 +148,31 @@ function ManageHospital() {
 
     const handleImageSelect = (e) => {
         const files = Array.from(e.target.files);
+        const existingImagesCount = hospital.images.filter(img => !imageIdsToDelete.includes(img.id)).length;
+        
+        if (files.length + existingImagesCount > 5) {
+            addToast({
+                type: 'error',
+                message: t("manageHospital.notification.imageLimit")
+            });
+            return;
+        }
+
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        
+        const invalidFiles = files.filter(file => 
+            file.size > maxSize || !allowedTypes.includes(file.type)
+        );
+
+        if (invalidFiles.length > 0) {
+            addToast({
+                type: 'error',
+                message: t("manageHospital.notification.imageInvalid")
+            });
+            return;
+        }
+
         setSelectedImages(prev => [...prev, ...files]);
     };
 
@@ -156,71 +189,100 @@ function ManageHospital() {
         
         // Tên bệnh viện
         if (!data.name || data.name.trim() === '') 
-            errors.name = "Tên bệnh viện không được để trống";
+            errors.name = t("manageHospital.notification.nameRequired");
         else if (data.name.length < 3)
-            errors.name = "Tên bệnh viện phải có ít nhất 3 ký tự";
+            errors.name = t("manageHospital.notification.nameMinLength");
         else if (data.name.length > 100)
-            errors.name = "Tên bệnh viện không được vượt quá 100 ký tự";
+            errors.name = t("manageHospital.notification.nameMaxLength");
         
         // Địa chỉ
         if (!data.address || data.address.trim() === '') 
-            errors.address = "Địa chỉ không được để trống";
+            errors.address = t("manageHospital.notification.addressRequired");
         else if (data.address.length < 5)
-            errors.address = "Địa chỉ phải có ít nhất 5 ký tự";
+            errors.address = t("manageHospital.notification.addressMinLength");
         else if (data.address.length > 200)
-            errors.address = "Địa chỉ không được vượt quá 200 ký tự";
+            errors.address = t("manageHospital.notification.addressMaxLength");
         
         // Số điện thoại
         if (!data.phone || data.phone.trim() === '') 
-            errors.phone = "Số điện thoại không được để trống";
+            errors.phone = t("manageHospital.notification.phoneRequired");
         else if (!/^[0-9]{10,11}$/.test(data.phone.replace(/\s/g, '')))
-            errors.phone = "Số điện thoại không hợp lệ (cần 10-11 số)";
+            errors.phone = t("manageHospital.notification.phoneInvalid");
         
         // Email
         if (!data.email || data.email.trim() === '') 
-            errors.email = "Email không được để trống";
+            errors.email = t("manageHospital.notification.emailRequired");
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
-            errors.email = "Email không đúng định dạng";
+            errors.email = t("manageHospital.notification.emailInvalid");
         
         // Website
-        if (!data.link_website || data.link_website.trim() === '') 
-            errors.link_website = "Website không được để trống";
-        else if (data.link_website.length < 4)
-            errors.link_website = "Website phải có ít nhất 4 ký tự";
+        if (data.link_website) {
+            const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+            if (!urlPattern.test(data.link_website)) {
+                errors.link_website = t("manageHospital.notification.websiteInvalid");
+            }
+        }
         
         // Map location
         if (!data.map_location || data.map_location.trim() === '')
-            errors.map_location = "Vị trí bản đồ không được để trống";
+            errors.map_location = t("manageHospital.notification.mapLocationRequired");
         
         // Mô tả
         if (!data.description || data.description.trim() === '')
-            errors.description = "Mô tả không được để trống";
+            errors.description = t("manageHospital.notification.descriptionRequired");
         else if (data.description.length < 20)
-            errors.description = "Mô tả phải có ít nhất 20 ký tự";
+            errors.description = t("manageHospital.notification.descriptionMinLength");
         else if (data.description.length > 2000)
-            errors.description = "Mô tả không được vượt quá 2000 ký tự";
+            errors.description = t("manageHospital.notification.descriptionMaxLength");
         
         // Chuyên khoa
-        if (!data.department || data.department.trim() === '')
-            errors.department = "Chuyên khoa không được để trống";
+        // if (!data.department || data.department.trim() === '')
+        //     errors.department = "Chuyên khoa không được để trống";
         
         // Specialties
-        if (!data.specialties || data.specialties.trim() === '')
-            errors.specialties = "Dịch vụ không được để trống";
+        if (!selectedServices || selectedServices.length === 0) {
+            errors.specialties = t("manageHospital.notification.servicesRequired");
+        }
         
         // Giờ làm việc
         if (!operatingHours.weekdays.start || !operatingHours.weekdays.end || 
             !operatingHours.weekends.start || !operatingHours.weekends.end)
-            errors.operating_hours = "Giờ làm việc không được để trống";
+            errors.operating_hours = t("manageHospital.notification.operatingHoursRequired");
         
         // Staff Description (optional)
         if (data.staff_description && data.staff_description.length > 1000)
-            errors.staff_description = "Mô tả nhân viên không được vượt quá 1000 ký tự";
+            errors.staff_description = t("manageHospital.notification.staffDescriptionMaxLength");
         
         // Staff Credentials (optional)
         if (data.staff_credentials && data.staff_credentials.length > 1000)
-            errors.staff_credentials = "Chứng chỉ nhân viên không được vượt quá 1000 ký tự";
+            errors.staff_credentials = t("manageHospital.notification.staffCredentialsMaxLength");
         
+        // Validate số lượng ảnh
+        const existingImagesCount = hospital.images.filter(img => !imageIdsToDelete.includes(img.id)).length;
+        const newImagesCount = selectedImages.length;
+        const totalImages = existingImagesCount + newImagesCount;
+
+        if (totalImages === 0) {
+            errors.images = t("manageHospital.notification.imageRequired");
+        } else if (totalImages > 5) {
+            errors.images = t("manageHospital.notification.imageLimit");
+        }
+
+        // Validate kích thước và định dạng ảnh mới
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        
+        for (let file of selectedImages) {
+            if (file.size > maxSize) {
+                errors.images = t("manageHospital.notification.imageSizeLimit");
+                break;
+            }
+            if (!allowedTypes.includes(file.type)) {
+                errors.images = t("manageHospital.notification.imageTypeInvalid");
+                break;
+            }
+        }
+
         return errors;
     };
 
@@ -234,17 +296,25 @@ function ManageHospital() {
             addToast({
                 type: 'success',
                 message: hospital.is_active 
-                    ? 'Bệnh viện đã được tạm ngưng hoạt động' 
-                    : 'Bệnh viện đã được kích hoạt'
+                    ? t("manageHospital.notification.stopActive")
+                    : t("manageHospital.notification.startActive")
             });
         } catch (error) {
             addToast({
                 type: 'error',
-                message: `Không thể thay đổi trạng thái: ${error.message}`
+                message: t("manageHospital.notification.toggleActiveError")
             });
         } finally {
             setIsTogglingActive(false);
         }
+    };
+
+    const handleServiceToggle = (service) => {
+        setSelectedServices(prev => 
+            prev.includes(service)
+                ? prev.filter(s => s !== service)
+                : [...prev, service]
+        );
     };
 
     return (
@@ -305,8 +375,8 @@ function ManageHospital() {
                                 <div className="p-4 bg-blue-50 text-blue-700 rounded-lg flex items-start gap-3">
                                     <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
                                     <div>
-                                        <p className="font-medium">Lưu ý về quy trình duyệt</p>
-                                        <p className="text-sm">Sau khi cập nhật thông tin, bệnh viện của bạn sẽ cần được quản trị viên phê duyệt lại trước khi hiển thị công khai.</p>
+                                        <p className="font-medium">{t("manageHospital.noteTitle")}</p>
+                                        <p className="text-sm">{t("manageHospital.noteDescription")}</p>
                                     </div>
                                 </div>
 
@@ -314,7 +384,7 @@ function ManageHospital() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Tên bệnh viện <span className="text-red-500">*</span>
+                                            {t("manageHospital.name")} <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -330,7 +400,7 @@ function ManageHospital() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Email <span className="text-red-500">*</span>
+                                            {t("manageHospital.email")} <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="email"
@@ -344,7 +414,7 @@ function ManageHospital() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Số điện thoại <span className="text-red-500">*</span>
+                                            {t("manageHospital.phone")} <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -358,21 +428,24 @@ function ManageHospital() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Website <span className="text-red-500">*</span>
+                                            {t("manageHospital.website")}
                                         </label>
                                         <input
                                             type="text"
                                             value={hospital.link_website}
                                             onChange={(e) => setHospital(prev => ({ ...prev, link_website: e.target.value }))}
-                                            className={`w-full p-2 border rounded-lg ${formErrors.link_website ? "border-red-500" : "border-gray-300"}`}
-                                            required
+                                            className={`w-full p-2 border rounded-lg ${
+                                                formErrors.link_website ? "border-red-500" : "border-gray-300"
+                                            }`}
                                         />
-                                        {formErrors.link_website && <p className="mt-1 text-sm text-red-500">{formErrors.link_website}</p>}
+                                        {formErrors.link_website && (
+                                            <p className="mt-1 text-sm text-red-500">{formErrors.link_website}</p>
+                                        )}
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Địa chỉ <span className="text-red-500">*</span>
+                                            {t("manageHospital.address")} <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -386,19 +459,19 @@ function ManageHospital() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Vị trí trên bản đồ <span className="text-red-500">*</span>
+                                            {t("manageHospital.mapLocation")} <span className="text-red-500">*</span>
                                         </label>
                                         <textarea
                                             value={hospital.map_location}
                                             onChange={(e) => setHospital(prev => ({ ...prev, map_location: e.target.value }))}
                                             rows={3}
-                                            placeholder="Nhập mã nhúng Google Maps (iframe)"
+                                            placeholder={t("manageHospital.mapLocationPlaceholder")}
                                             className={`w-full p-2 border rounded-lg ${formErrors.map_location ? "border-red-500" : "border-gray-300"}`}
                                             required
                                         />
                                         {formErrors.map_location && <p className="mt-1 text-sm text-red-500">{formErrors.map_location}</p>}
                                         <p className="mt-1 text-sm text-gray-500">
-                                            Hướng dẫn: Truy cập Google Maps, tìm địa điểm của bạn, nhấn "Chia sẻ", chọn "Nhúng bản đồ" và sao chép mã iframe.
+                                            {t("manageHospital.mapLocationGuide")}
                                         </p>
                                     </div>
                                 </div>
@@ -406,11 +479,11 @@ function ManageHospital() {
                                 {/* Operating Hours */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Giờ làm việc <span className="text-red-500">*</span>
+                                        {t("manageHospital.operatingHours")} <span className="text-red-500">*</span>
                                     </label>
                                     <div className={`grid grid-cols-2 gap-4 p-3 border rounded-lg ${formErrors.operating_hours ? "border-red-500" : "border-gray-300"}`}>
                                         <div>
-                                            <p className="text-sm font-medium mb-2">Ngày thường</p>
+                                            <p className="text-sm font-medium mb-2">{t("manageHospital.weekdays")}</p>
                                             <div className="flex items-center gap-2">
                                                 <input
                                                     type="time"
@@ -436,7 +509,7 @@ function ManageHospital() {
                                             </div>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium mb-2">Cuối tuần</p>
+                                            <p className="text-sm font-medium mb-2">{t("manageHospital.weekends")}</p>
                                             <div className="flex items-center gap-2">
                                                 <input
                                                     type="time"
@@ -466,42 +539,35 @@ function ManageHospital() {
                                 </div>
 
                                 {/* Department and Specialties */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Chuyên khoa <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={hospital.department}
-                                            onChange={(e) => setHospital(prev => ({ ...prev, department: e.target.value }))}
-                                            className={`w-full p-2 border rounded-lg ${formErrors.department ? "border-red-500" : "border-gray-300"}`}
-                                            placeholder="Ví dụ: Khoa Nội, Khoa Ngoại"
-                                            required
-                                        />
-                                        {formErrors.department && <p className="mt-1 text-sm text-red-500">{formErrors.department}</p>}
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        {t("manageHospital.services")} <span className="text-red-500">*</span>
+                                    </label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {SERVICES_ROW_3.map((service) => (
+                                            <button
+                                                key={service}
+                                                type="button"
+                                                onClick={() => handleServiceToggle(service)}
+                                                className={`px-4 py-2 rounded-full text-sm ${
+                                                    selectedServices.includes(service)
+                                                        ? 'bg-blue-100 text-blue-800'
+                                                        : 'bg-gray-100 text-gray-700'
+                                                } hover:bg-blue-50 transition-colors duration-200`}
+                                            >
+                                                {service}
+                                            </button>
+                                        ))}
                                     </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Dịch vụ <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={hospital.specialties}
-                                            onChange={(e) => setHospital(prev => ({ ...prev, specialties: e.target.value }))}
-                                            className={`w-full p-2 border rounded-lg ${formErrors.specialties ? "border-red-500" : "border-gray-300"}`}
-                                            placeholder="Ví dụ: Khám tổng quát, Siêu âm"
-                                            required
-                                        />
-                                        {formErrors.specialties && <p className="mt-1 text-sm text-red-500">{formErrors.specialties}</p>}
-                                    </div>
+                                    {formErrors.specialties && (
+                                        <p className="mt-1 text-sm text-red-500">{formErrors.specialties}</p>
+                                    )}
                                 </div>
 
                                 {/* Description */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Mô tả <span className="text-red-500">*</span>
+                                        {t("manageHospital.description")} <span className="text-red-500">*</span>
                                     </label>
                                     <textarea
                                         value={hospital.description}
@@ -517,7 +583,7 @@ function ManageHospital() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Mô tả nhân viên
+                                            {t("manageHospital.staffDescription")}
                                         </label>
                                         <textarea
                                             value={hospital.staff_description}
@@ -530,7 +596,7 @@ function ManageHospital() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Chứng chỉ nhân viên
+                                            {t("manageHospital.staffCredentials")}
                                         </label>
                                         <textarea
                                             value={hospital.staff_credentials}
@@ -544,7 +610,16 @@ function ManageHospital() {
 
                                 {/* Images */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Images</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        {t("manageHospital.images")} <span className="text-red-500">*</span>
+                                    </label>
+                                    
+                                    {/* Hiển thị thông tin về giới hạn */}
+                                    <p className="text-sm text-gray-500 mb-2">
+                                        {t("manageHospital.imageLimit")}
+                                    </p>
+
+                                    {/* Hiển thị ảnh hiện tại và mới */}
                                     <div className="grid grid-cols-3 gap-4 mb-4">
                                         {hospital.images
                                             .filter(img => !imageIdsToDelete.includes(img.id))
@@ -564,12 +639,30 @@ function ManageHospital() {
                                                     </button>
                                                 </div>
                                             ))}
+                                        
+                                        {selectedImages.map((file, index) => (
+                                            <div key={index} className="relative">
+                                                <img
+                                                    src={URL.createObjectURL(file)}
+                                                    alt="Preview"
+                                                    className="h-24 w-full object-cover rounded-lg"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveSelectedImage(index)}
+                                                    className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            </div>
+                                        ))}
                                     </div>
 
+                                    {/* Input file và error message */}
                                     <input
                                         type="file"
                                         multiple
-                                        accept="image/*"
+                                        accept="image/jpeg,image/png,image/jpg"
                                         onChange={handleImageSelect}
                                         className="hidden"
                                         id="hospital-images"
@@ -578,28 +671,11 @@ function ManageHospital() {
                                         htmlFor="hospital-images"
                                         className="inline-block px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50"
                                     >
-                                        Add Images
+                                        {t("manageHospital.addImage")}
                                     </label>
 
-                                    {selectedImages.length > 0 && (
-                                        <div className="grid grid-cols-3 gap-4 mt-4">
-                                            {selectedImages.map((file, index) => (
-                                                <div key={index} className="relative">
-                                                    <img
-                                                        src={URL.createObjectURL(file)}
-                                                        alt="Preview"
-                                                        className="h-24 w-full object-cover rounded-lg"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleRemoveSelectedImage(index)}
-                                                        className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                                                    >
-                                                        <X size={14} />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
+                                    {formErrors.images && (
+                                        <p className="mt-1 text-sm text-red-500">{formErrors.images}</p>
                                     )}
                                 </div>
 
@@ -638,14 +714,14 @@ function ManageHospital() {
                                         }}
                                         className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                                     >
-                                        Hủy
+                                        {t("manageHospital.cancel")}
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
                                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                                     >
-                                        {isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}
+                                        {isSubmitting ? t("manageHospital.saving") : t("manageHospital.saveChanges")}
                                     </button>
                                 </div>
                             </form>
@@ -661,12 +737,12 @@ function ManageHospital() {
                                         <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
                                         <div>
                                             <p className="font-medium">
-                                                Trạng thái: {hospital.is_active ? 'Đã được phê duyệt' : 'Đang chờ phê duyệt'}
+                                                {t("hospitalDetail.status")} {hospital.is_active ? t("hospitalDetail.approved") : t("hospitalDetail.pending")}
                                             </p>
                                             <p className="text-sm">
                                                 {hospital.is_active 
-                                                    ? 'Bệnh viện của bạn đã được phê duyệt và hiển thị công khai.' 
-                                                    : 'Bệnh viện của bạn đang chờ quản trị viên phê duyệt. Bạn sẽ nhận được thông báo khi quá trình phê duyệt hoàn tất.'}
+                                                    ? t("hospitalDetail.approvedNote") 
+                                                    : t("hospitalDetail.pendingNote")}
                                             </p>
                                         </div>
                                     </div>
@@ -680,21 +756,21 @@ function ManageHospital() {
                                             <div className="flex items-start gap-2">
                                                 <MapPin className="w-5 h-5 text-gray-500 mt-0.5" />
                                                 <div>
-                                                    <p className="font-medium">Địa chỉ</p>
+                                                    <p className="font-medium">{t("hospitalDetail.information.address")}</p>
                                                     <p className="text-gray-600">{hospital.address}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-start gap-2">
                                                 <Phone className="w-5 h-5 text-gray-500 mt-0.5" />
                                                 <div>
-                                                    <p className="font-medium">Điện thoại</p>
+                                                    <p className="font-medium">{t("hospitalDetail.information.phone")}</p>
                                                     <p className="text-gray-600">{hospital.phone}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-start gap-2">
                                                 <Globe className="w-5 h-5 text-gray-500 mt-0.5" />
                                                 <div>
-                                                    <p className="font-medium">Website</p>
+                                                    <p className="font-medium">{t("hospitalDetail.information.website")}</p>
                                                     <a href={hospital.link_website} target="_blank" rel="noopener noreferrer"
                                                         className="text-blue-600 hover:underline">
                                                         {hospital.link_website}
@@ -706,17 +782,17 @@ function ManageHospital() {
                                             <div className="flex items-start gap-2">
                                                 <Clock className="w-5 h-5 text-gray-500 mt-0.5" />
                                                 <div>
-                                                    <p className="font-medium">Giờ làm việc</p>
+                                                    <p className="font-medium">{t("hospitalDetail.information.workingHours")}</p>
                                                     <p className="text-gray-600">{hospital.operating_hours}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-start gap-2">
                                                 <Star className="w-5 h-5 text-gray-500 mt-0.5" />
                                                 <div>
-                                                    <p className="font-medium">Đánh giá</p>
+                                                    <p className="font-medium">{t("hospitalDetail.information.rating")}</p>
                                                     <div className="flex items-center gap-2">
                                                         <span className="text-yellow-400">{hospital.average_rating}/5</span>
-                                                        <span className="text-gray-500">({hospital.review_count} đánh giá)</span>
+                                                        <span className="text-gray-500">({hospital.review_count} {t("hospitalDetail.information.reviews")})</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -735,9 +811,9 @@ function ManageHospital() {
 
                                 {/* Chuyên khoa và Dịch vụ */}
                                 <div>
-                                    <h3 className="font-semibold mb-3">Chuyên khoa & Dịch vụ</h3>
+                                    <h3 className="font-semibold mb-3">{t("hospitalDetail.services.title")}</h3>
                                     <div className="flex flex-wrap gap-2">
-                                        {hospital.department.split(',').map((dept, index) => (
+                                        {hospital.specialties.split(',').map((dept, index) => (
                                             <span key={index} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
                                                 {dept.trim()}
                                             </span>
@@ -747,18 +823,18 @@ function ManageHospital() {
 
                                 {/* Mô tả */}
                                 <div>
-                                    <h3 className="font-semibold mb-3">Giới thiệu</h3>
+                                    <h3 className="font-semibold mb-3">{t("hospitalDetail.description.title")}</h3>
                                     <p className="text-gray-600 whitespace-pre-line">{hospital.description}</p>
                                 </div>
 
                                 {/* Thông tin nhân viên */}
                                 <div className="grid grid-cols-2 gap-6">
                                     <div>
-                                        <h3 className="font-semibold mb-3">Đội ngũ nhân viên</h3>
+                                        <h3 className="font-semibold mb-3">{t("hospitalDetail.staff.title")}</h3>
                                         <p className="text-gray-600 whitespace-pre-line">{hospital.staff_description}</p>
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold mb-3">Chứng chỉ & Giấy phép</h3>
+                                        <h3 className="font-semibold mb-3">{t("hospitalDetail.staff.credentials")}</h3>
                                         <p className="text-gray-600 whitespace-pre-line">{hospital.staff_credentials}</p>
                                     </div>
                                 </div>
@@ -766,7 +842,7 @@ function ManageHospital() {
                                 {/* Vị trí trên bản đồ */}
                                 {hospital.map_location && (
                                     <div>
-                                        <h3 className="font-semibold mb-3">Vị trí trên bản đồ</h3>
+                                        <h3 className="font-semibold mb-3">{t("hospitalDetail.mapLocation.title")}</h3>
                                         <div className="w-full h-[400px] rounded-lg overflow-hidden">
                                             <iframe
                                                 src={hospital.map_location}
@@ -784,7 +860,7 @@ function ManageHospital() {
 
                                 {/* Thư viện ảnh */}
                                 <div>
-                                    <h3 className="font-semibold mb-3">Hình ảnh</h3>
+                                    <h3 className="font-semibold mb-3">{t("hospitalDetail.images.title")}</h3>
                                     <div className="grid grid-cols-3 gap-4">
                                         {hospital.images.map((image) => (
                                             <div key={image.id} className="relative aspect-video rounded-lg overflow-hidden group">
@@ -794,7 +870,7 @@ function ManageHospital() {
                                                     className="w-full h-full object-cover"
                                                 />
                                                 <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
-                                                    {image.likesCount} likes
+                                                    {image.likesCount} {t("hospitalDetail.gallery.reviewCount")}
                                                 </div>
                                             </div>
                                         ))}

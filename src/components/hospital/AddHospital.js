@@ -143,11 +143,13 @@ function AddHospital() {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
       errors.email = t("addHospital.errors.emailInvalid");
     
-    // Website
-    if (!data.link_website || data.link_website.trim() === '') 
-      errors.link_website = t("addHospital.errors.linkWebsiteRequired");
-    else if (data.link_website.length < 4)
-      errors.link_website = t("addHospital.errors.linkWebsiteMinLength");
+    // Website - không bắt buộc
+    if (data.link_website) {  // Chỉ validate khi có nhập
+      const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+      if (!urlPattern.test(data.link_website)) {
+        errors.link_website = t("addHospital.errors.linkWebsiteInvalid");
+      }
+    }
     
     // Map location
     if (!data.map_location || data.map_location.trim() === '')
@@ -162,8 +164,8 @@ function AddHospital() {
       errors.description = t("addHospital.errors.descriptionMaxLength");
     
     // Chuyên khoa
-    if (!data.department || data.department.trim() === '')
-      errors.department = t("addHospital.errors.departmentRequired");
+    // if (!data.department || data.department.trim() === '')
+    //   errors.department = t("addHospital.errors.departmentRequired");
     
     // Dịch vụ
     if (selectedServices.length === 0)
@@ -357,7 +359,7 @@ function AddHospital() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Website <span className="text-red-500">*</span>
+                        Website
                       </label>
                       <input
                         type="text"
@@ -365,14 +367,17 @@ function AddHospital() {
                         value={formData.link_website}
                         onChange={handleChange}
                         placeholder="https://www.example.com"
-                        required
                         className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
                           formErrors.link_website ? "border-red-500" : "border-gray-300"
                         }`}
                       />
-                      {formErrors.link_website && <p className="mt-1 text-sm text-red-500">{formErrors.link_website}</p>}
+                      {formErrors.link_website && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {formErrors.link_website}
+                        </p>
+                      )}
                     </div>
-                    <div>
+                    {/* <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Chuyên khoa <span className="text-red-500">*</span>
                       </label>
@@ -388,7 +393,7 @@ function AddHospital() {
                         }`}
                       />
                       {formErrors.department && <p className="mt-1 text-sm text-red-500">{formErrors.department}</p>}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
 

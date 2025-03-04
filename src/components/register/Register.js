@@ -555,7 +555,7 @@ function Register({ onClose, onLoginClick }) {
                 <div className="flex items-center">
                   <div className="flex-1 text-left">
                     <h3 className="font-semibold text-lg mb-1 group-hover:text-[#98E9E9]">
-                      Veterinarian
+                    Veterinary Hospital Manager
                     </h3>
                     <p className="text-gray-600 text-sm">
                       {t("auth.register.roles.veterinarianDesc")}

@@ -225,7 +225,66 @@
   "manageHospital": {
     "noHospital": "Bạn chưa đăng ký bệnh viện nào",
     "oneHospitalLimit": "Bạn chỉ có thể đăng ký một bệnh viện",
-    "edit": "Chỉnh sửa"
+    "edit": "Chỉnh sửa",
+    "noteTitle": "Lưu ý",
+    "noteDescription": "Bệnh viện sẽ được quản trị viên phê duyệt trước khi được công khai",
+    "name": "Tên bệnh viện",
+    "email": "Email",
+    "mapLocation": "Vị trí trên bản đồ",
+    "mapLocationPlaceholder": "Nhập vị trí trên bản đồ",
+    "phone": "Số điện thoại",
+    "phonePlaceholder": "Nhập số điện thoại (0912345678)",
+    "website": "Website",
+    "address": "Địa chỉ",
+    "addressPlaceholder": "Nhập địa chỉ",
+    "mapLocationGuide": "Vui lòng nhập vị trí trên bản đồ theo định dạng mã iframe nhúng bản đồ Google Maps",
+    "operatingHours": "Giờ làm việc",
+    "weekdays": "Ngày thường",
+    "weekends": "Cuối tuần",
+    "services": "Dịch vụ",
+    "description": "Mô tả",
+    "staffDescription": "Mô tả nhân viên",
+    "staffCredentials": "Chứng chỉ nhân viên",
+    "images": "Hình ảnh",
+    "imageLimit": "Tối đa 5 ảnh, mỗi ảnh không quá 10MB. Chấp nhận định dạng JPG, JPEG, PNG",
+    "addImage": "Thêm ảnh",
+    "cancel": "Hủy",
+    "saveChanges": "Lưu thay đổi",
+    "saving": "Đang lưu...",
+    "notification": {
+      "updateSuccess": "Bệnh viện đã được cập nhật thành công",
+      "updateError": "Lỗi khi cập nhật bệnh viện. Vui lòng thử lại",
+      "deleteSuccess": "Bệnh viện đã được xóa thành công",
+      "deleteError": "Lỗi khi xóa bệnh viện. Vui lòng thử lại",
+      "imageLimit": "Tối đa 5 ảnh, mỗi ảnh không quá 10MB. Chấp nhận định dạng JPG, JPEG, PNG",
+      "imageInvalid": "Một số ảnh không hợp lệ. Vui lòng tải lên ảnh JPG/PNG không quá 10MB",
+      "nameRequired": "Tên bệnh viện là bắt buộc",
+      "nameMinLength": "Tên bệnh viện phải có ít nhất 3 ký tự",
+      "nameMaxLength": "Tên bệnh viện không được vượt quá 100 ký tự",
+      "addressRequired": "Địa chỉ là bắt buộc",
+      "addressMinLength": "Địa chỉ phải có ít nhất 5 ký tự",
+      "addressMaxLength": "Địa chỉ không được vượt quá 200 ký tự",
+      "phoneRequired": "Số điện thoại là bắt buộc (10 số)",
+      "phoneInvalid": "Số điện thoại không hợp lệ (10 số)",
+      "emailRequired": "Email là bắt buộc",
+      "emailInvalid": "Email không hợp lệ",
+      "websiteInvalid": "Website không hợp lệ",
+      "mapLocationRequired": "Vị trí trên bản đồ là bắt buộc",
+      "descriptionRequired": "Mô tả là bắt buộc",
+      "descriptionMinLength": "Mô tả phải có ít nhất 20 ký tự",
+      "descriptionMaxLength": "Mô tả không được vượt quá 2000 ký tự",
+      "servicesRequired": "Dịch vụ là bắt buộc",
+      "operatingHoursRequired": "Giờ làm việc là bắt buộc",
+      "staffDescriptionMaxLength": "Mô tả nhân viên không được vượt quá 1000 ký tự",
+      "staffCredentialsMaxLength": "Chứng chỉ nhân viên không được vượt quá 1000 ký tự",
+      "imageRequired": "Vui lòng tải lên ít nhất 1 ảnh",
+      "imageSizeLimit": "Mỗi ảnh phải nhỏ hơn 10MB",
+      "imageTypeInvalid": "Chỉ chấp nhận ảnh JPG/PNG không quá 10MB",
+      "toggleActiveError": "Lỗi khi cập nhật trạng thái bệnh viện. Vui lòng thử lại",
+      "toggleActiveSuccess": "Trạng thái bệnh viện đã được cập nhật thành công",
+      "stopActive": "Bệnh viện đã được tạm dừng",
+      "startActive": "Bệnh viện đã được kích hoạt"
+    }
   },
   "home": {
     "hospitalList": {
@@ -825,22 +884,42 @@
     },
     "legal": {
       "copyright": "© 2024 MyPetDoc. Đã đăng ký bản quyền.",
-      "privacy": "Chính Sách Bảo Mật",
-      "terms": "Điều Khoản Dịch Vụ"
+      "privacy": "Chính Sách Bảo Mật và điều khoản dịch vụ",
+      "terms": "Điều Khoản Dịch Vụ và Chính Sách Bảo Mật"
     }
   },
   "hospitalDetail": {
+    "status": "Trạng thái",
+    "approved": "Đã được phê duyệt",
+    "pending": "Đang chờ phê duyệt",
+    "approvedNote": "Bệnh viện của bạn đã được phê duyệt và hiển thị công khai.",
+    "pendingNote": "Bệnh viện của bạn đang chờ quản trị viên phê duyệt. Bạn sẽ nhận được thông báo khi quá trình phê duyệt hoàn tất.",
+    "description": {
+      "title": "Mô Tả Bệnh Viện"
+    },
+    "staff": {
+      "title": "Đội Ngũ Nhân Viên",
+      "credentials": "Chứng Chỉ & Giấy Phép"
+    },
+    "mapLocation": {
+      "title": "Vị Trí Trên Bản Đồ"
+    },
+    "images": {
+      "title": "Hình Ảnh Bệnh Viện"
+    },
     "information": {
       "title": "Thông Tin Bệnh Viện",
       "address": "Địa Chỉ",
       "phone": "Điện Thoại",
       "workingHours": "Giờ Làm Việc",
-      "website": "Trang Web"
+      "website": "Trang Web",
+      "rating": "Đánh Giá",
+      "reviews": "đánh giá"
     },
     "gallery": {
-      "title": "Thư Viện Ảnh"
+      "title": "Thư Viện Ảnh",
+      "reviewCount": "đánh giá"
     },
-    "reviewCount": "đánh giá",
     "reviews": {
       "title": "Đánh Giá Từ Khách Hàng",
       "writeReview": "Viết Đánh Giá",
