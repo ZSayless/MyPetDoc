@@ -128,6 +128,11 @@ function Register({ onClose, onLoginClick }) {
       return false;
     }
 
+
+    if (formData.petNotes.trim().length < 10) {
+      setError(t("auth.register.errors.petNotesRequired"));
+      return false;
+    }
     // Validate pet information if pet type is selected
     // if (userType === "general" && formData.petType) {
     //   if (!formData.petAge) {
