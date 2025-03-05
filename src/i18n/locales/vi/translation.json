@@ -179,6 +179,21 @@
     "allReviews": {
       "title": "Tất cả Đánh giá"
     },
+    "posts": {
+      "title": "Bài viết của tôi",
+      "viewAll": "Xem tất cả bài viết →",
+      "noPosts": "Bạn chưa đăng bài viết nào",
+      "error": "Lỗi khi lấy bài viết. Vui lòng thử lại.",
+      "likes": "Thích",
+      "comments": "Bình luận",
+      "views": "Lượt xem",
+      "deleteConfirm": "Xóa bài viết",
+      "deleteSuccess": "Bài viết đã được xóa thành công",
+      "deleteError": "Lỗi khi xóa bài viết. Vui lòng thử lại",
+      "deleteCancel": "Hủy",
+      "deleteTitle": "Xóa Bài Viết",
+      "deleteMessage": "Bạn có chắc chắn muốn xóa bài viết này không?"
+    },
     "allFavorites": {
       "title": "Bệnh viện Yêu thích"
     },

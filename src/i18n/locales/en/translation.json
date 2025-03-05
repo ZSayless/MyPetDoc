@@ -166,8 +166,6 @@
     "editProfile": "Edit Profile",
     "registerHospital": "Register Hospital",
     "manageHospital": "Manage Hospital",
-    "reviews": "Reviews",
-    "favorites": "Favorites",
     "blogs": "Blogs",
     "recentReviews": "Recent Reviews",
     "favoriteHospitals": "Favorite Hospitals",
@@ -177,6 +175,21 @@
     "backToProfile": "Back to Profile",
     "allReviews": {
       "title": "All Reviews"
+    },
+    "posts": {
+      "title": "My Posts",
+      "viewAll": "View All Posts →",
+      "noPosts": "You have not posted any blogs yet",
+      "error": "Failed to fetch posts. Please try again.",
+      "likes": "Like",
+      "comments": "Comment",
+      "views": "Views",
+      "deleteConfirm": "Delete Post",
+      "deleteSuccess": "Post deleted successfully",
+      "deleteError": "Failed to delete post. Please try again",
+      "deleteCancel": "Cancel",
+      "deleteTitle": "Delete Post",
+      "deleteMessage": "Are you sure you want to delete this post?"
     },
     "allFavorites": {
       "title": "Favorite Hospitals"

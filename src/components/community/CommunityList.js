@@ -141,10 +141,6 @@ function CommunityList() {
         setPosts(prevPosts => [response.data, ...prevPosts]);
         setIsCreateModalOpen(false);
         fetchPosts();
-        addToast({
-          type: "success",
-          message: t("community.post.createSuccess")
-        });
         return true;
       } else {
         addToast({
