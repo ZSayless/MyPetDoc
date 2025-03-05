@@ -18,7 +18,6 @@ function AdminSidebar({ activeTab, setActiveTab }) {
     { id: "blogs", name: "Blogs Management", icon: FileText },
     { id: "reports", name: "Reports Management", icon: Flag },
     { id: "messages", name: "Contact Messages", icon: MessageSquare },
-    { id: "pending", name: "Pending Approvals", icon: ClipboardList },
     { id: "faq", name: "FAQ Management", icon: HelpCircle },
     { id: "banner", name: "Banner Management", icon: Circle },
     { id: "community", name: "Community Management", icon: Users },

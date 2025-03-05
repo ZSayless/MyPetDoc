@@ -508,14 +508,14 @@ const HospitalDetail = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              {t("Thông tin bệnh viện")}
+              {t("hospitalDetail.description.title")}
             </h2>
             <div className="prose prose-lg text-gray-600">
               <p>{hospital?.description}</p>
             </div>
 
             {/* Additional Information */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
               {hospital?.department && (
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
@@ -533,7 +533,7 @@ const HospitalDetail = () => {
                   <p className="text-gray-600">{hospital.specialties}</p>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
@@ -620,7 +620,7 @@ const HospitalDetail = () => {
                   >
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                     <span className="text-sm md:text-base text-gray-700">
-                      {t(`hospitalDetail.services.${service}`)}
+                      {service}
                     </span>
                   </div>
                 ))}

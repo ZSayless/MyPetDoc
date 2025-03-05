@@ -2,34 +2,27 @@ import { useState, useEffect } from "react";
 import { X, Image as ImageIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { communityService } from "../../services/communityService";
+import { useToast } from "../../context/ToastContext";
 
 function CreatePostModal({ isOpen, onClose, onPost }) {
   const { t } = useTranslation();
-  const [content, setContent] = useState("");
+  const { addToast } = useToast();
+  const [caption, setCaption] = useState("");
   const [description, setDescription] = useState("");
-  const [petType, setPetType] = useState("");
-  const [tags, setTags] = useState("");
+  const [selectedPetType, setSelectedPetType] = useState("");
+  const [selectedTags, setSelectedTags] = useState([]);
   const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // const convertToBase64 = (file) => {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.readAsDataURL(file);
-  //     reader.onload = () => resolve(reader.result);
-  //     reader.onerror = (error) => reject(error);
-  //   });
-  // };
-
   const resetForm = () => {
-    setContent("");
+    setCaption("");
     setDescription("");
-    setPetType("");
-    setTags("");
+    setSelectedPetType("");
+    setSelectedTags([]);
     setImage(null);
-    setPreview("");
+    setPreviewUrl("");
     setErrors({});
   };
 
@@ -42,62 +35,85 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 3 * 1024 * 1024) {
-        alert("File size should be less than 3MB");
+      if (file.size > 10 * 1024 * 1024) {
+        addToast({
+          type: "error",
+          message: t("community.post.imageSizeError")
+        });
         return;
       }
       setImage(file);
-      setPreview(URL.createObjectURL(file));
+      setPreviewUrl(URL.createObjectURL(file));
     }
+  };
+
+  const handlePetTypeSelect = (type) => {
+    setSelectedPetType(type);
+  };
+
+  const handleTagToggle = (tag) => {
+    setSelectedTags(prev => {
+      if (prev.includes(tag)) {
+        return prev.filter(t => t !== tag);
+      } else {
+        if (prev.length >= 10) {
+          addToast({
+            type: "warning",
+            message: t("community.post.maxTagsReached")
+          });
+          return prev;
+        }
+        return [...prev, tag];
+      }
+    });
   };
 
   const validateForm = () => {
     const errors = {};
     
     // Validate caption
-    if (!content.trim()) {
-      errors.content = 'Tiêu đề bài viết là bắt buộc';
-    } else if (content.length < 5) {
-      errors.content = 'Tiêu đề phải có ít nhất 5 ký tự';
-    } else if (content.length > 200) {
-      errors.content = 'Tiêu đề không được vượt quá 200 ký tự';
+    if (!caption.trim()) {
+      errors.caption = t("community.post.captionRequired");
+    } else if (caption.trim().length < 10) {
+      errors.caption = t("community.post.captionMinLength", { min: 10 });
+    } else if (caption.trim().length > 100) {
+      errors.caption = t("community.post.captionMaxLength", { max: 100 });
     }
 
     // Validate description
-    if (description.length > 1000) {
-      errors.description = 'Mô tả không được vượt quá 1000 ký tự';
+    if (!description.trim()) {
+      errors.description = t("community.post.descriptionRequired");
+    } else if (description.trim().length < 10) {
+      errors.description = t("community.post.descriptionMinLength", { min: 10 });
+    } else if (description.trim().length > 1000) {
+      errors.description = t("community.post.descriptionMaxLength", { max: 1000 });
     }
 
     // Validate pet type
-    if (!petType) {
-      errors.petType = 'Vui lòng chọn loại thú cưng';
+    if (!selectedPetType) {
+      errors.petType = t("community.post.petTypeRequired");
     }
-    // validate image
-    if (!image) {
-      errors.image = 'Ảnh là bắt buộc';
-    }
-    
+
     // Validate tags
-    if (!tags.trim()) {
-      errors.tags = 'Tags là bắt buộc';
-    } else {
-      const tagArray = tags.split(',').map(tag => tag.trim());
-      if (tagArray.length > 5) {
-        errors.tags = 'Không được thêm quá 5 tags';
-      }
-      if (tagArray.some(tag => tag.length > 20)) {
-        errors.tags = 'Mỗi tag không được vượt quá 20 ký tự';
-      }
+    if (selectedTags.length === 0) {
+      errors.tags = t("community.post.tagsRequired");
+    } else if (selectedTags.length > 10) {
+      errors.tags = t("community.post.maxTagsExceeded", { max: 10 });
     }
 
     // Validate image
-    if (image) {
+    if (!image) {
+      errors.image = t("community.post.imageRequired");
+    } else {
+      // Check image size (max 10MB)
       if (image.size > 10 * 1024 * 1024) {
-        errors.image = 'Kích thước ảnh không được vượt quá 10MB';
+        errors.image = t("community.post.imageSizeError", { max: "10MB" });
       }
+
+      // Check image type
       const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
       if (!validTypes.includes(image.type)) {
-        errors.image = 'Chỉ chấp nhận file ảnh định dạng JPG, PNG hoặc GIF';
+        errors.image = t("community.post.imageTypeError");
       }
     }
 
@@ -106,39 +122,92 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
     
-    if (Object.keys(validationErrors).length > 0) {
-      // Hiển thị lỗi đầu tiên
-      const firstError = Object.values(validationErrors)[0];
-      alert(firstError);
+    // Validate form
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      // Hiển thị toast cho lỗi đầu tiên
+      const firstError = Object.values(formErrors)[0];
+      addToast({
+        type: "error",
+        message: firstError
+      });
       return;
     }
 
     try {
       setLoading(true);
       const formData = new FormData();
-      formData.append('caption', content.trim());
-      formData.append('description', description.trim());
-      formData.append('pet_type', petType);
-      formData.append('tags', tags.trim());
+      formData.append("caption", caption.trim());
+      formData.append("description", description.trim());
+      formData.append("pet_type", selectedPetType);
+      formData.append("tags", selectedTags.join(','));
       if (image) {
-        formData.append('image', image);
+        formData.append("image", image);
       }
 
       const success = await onPost(formData);
-      
       if (success) {
+        addToast({
+          type: "success",
+          message: t("community.post.createSuccess")
+        });
         resetForm();
         onClose();
       }
     } catch (error) {
       console.error("Error creating post:", error);
-      alert(error.response?.data?.message || t("createPost.submitError"));
+      addToast({
+        type: "error",
+        message: error.response?.data?.message || t("community.post.createError")
+      });
     } finally {
       setLoading(false);
     }
   };
+
+  // Cập nhật nút Submit để kiểm tra tất cả điều kiện
+  const isFormValid = 
+    caption.trim().length >= 10 &&
+    caption.trim().length <= 200 &&
+    description.trim().length >= 30 &&
+    description.trim().length <= 1000 &&
+    selectedPetType &&
+    selectedTags.length > 0 &&
+    selectedTags.length <= 10 &&
+    image &&
+    !loading;
+
+  const PET_TYPES = [
+    {value: "DOG", label: t("community.petTypes.dog")},
+    {value: "CAT", label: t("community.petTypes.cat")},
+    {value: "BIRD", label: t("community.petTypes.bird")},
+    {value: "FISH", label: t("community.petTypes.fish")},
+    {value: "REPTILE", label: t("community.petTypes.reptile")},
+    {value: "RABBIT", label: t("community.petTypes.rabbit")},
+    {value: "HAMSTER", label: t("community.petTypes.hamster")},
+    {value: "OTHER", label: t("community.petTypes.other")},
+  ];
+
+  const AVAILABLE_TAGS = [
+    { value: "healthTips", label: t("community.tags.healthTips") },
+    { value: "petCare", label: t("community.tags.petCare") },
+    { value: "nutrition", label: t("community.tags.nutrition") },
+    { value: "behavior", label: t("community.tags.behavior") },
+    { value: "training", label: t("community.tags.training") },
+    { value: "grooming", label: t("community.tags.grooming") },
+    { value: "vaccination", label: t("community.tags.vaccination") },
+    { value: "diseasePrevention", label: t("community.tags.diseasePrevention") },
+    { value: "firstAid", label: t("community.tags.firstAid") },
+    { value: "mentalHealth", label: t("community.tags.mentalHealth") },
+    { value: "exercise", label: t("community.tags.exercise") },
+    { value: "breeding", label: t("community.tags.breeding") },
+    { value: "seniorPetCare", label: t("community.tags.seniorPetCare") },
+    { value: "puppyCare", label: t("community.tags.puppyCare") },
+    { value: "emergencyCare", label: t("community.tags.emergencyCare") },
+    { value: "cute", label: t("community.tags.cute") }
+  ];
 
   return (
     <div
@@ -147,7 +216,6 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
       }`}
     >
       <div className="bg-white rounded-xl w-full max-w-xl mx-4 flex flex-col max-h-[90vh]">
-        {/* Header */}
         <div className="p-4 border-b flex items-center justify-between">
           <h2 className="text-xl font-semibold">
             {t("community.createPost.title")}
@@ -160,49 +228,45 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
           </button>
         </div>
 
-        {/* Notice about moderation */}
         <div className="px-4 py-3 bg-blue-50 text-blue-800 text-sm">
           <p className="flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
-            Bài viết của bạn sẽ được hiển thị sau khi được quản trị viên phê duyệt
+            {t("community.createPost.approvalNotice")}
           </p>
         </div>
 
-        {/* Content */}
         <div className="flex-1 overflow-y-auto">
           <form onSubmit={handleSubmit} className="p-4 space-y-4">
-            {/* Caption */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Tiêu đề *
+                {t("community.createPost.subtitle")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Nhập tiêu đề bài viết..."
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder={t("community.createPost.subtitlePlaceholder")}
                 className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#98E9E9] ${
-                  errors?.content ? 'border-red-500' : 'border-gray-300'
+                  errors?.caption ? 'border-red-500' : 'border-gray-300'
                 }`}
                 disabled={loading}
                 required
               />
-              {errors?.content && (
-                <p className="mt-1 text-sm text-red-500">{errors.content}</p>
+              {errors?.caption && (
+                <p className="mt-1 text-sm text-red-500">{errors.caption}</p>
               )}
             </div>
 
-            {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Mô tả chi tiết
+                {t("community.createPost.description")} <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Thêm mô tả chi tiết..."
+                placeholder={t("community.createPost.descriptionPlaceholder")}
                 className={`w-full h-32 p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[#98E9E9] ${
                   errors?.description ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -212,64 +276,61 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
                 <p className="mt-1 text-sm text-red-500">{errors.description}</p>
               )}
               <p className="text-sm text-gray-500 mt-1">
-                {description.length}/1000 ký tự
+                {description.length}/{t("community.createPost.descriptionMaxLength")} {t("community.createPost.characters")}
               </p>
             </div>
 
-            {/* Pet Type */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Loại thú cưng *
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("community.createPost.petType")} <span className="text-red-500">*</span>
               </label>
-              <select
-                value={petType}
-                onChange={(e) => setPetType(e.target.value)}
-                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#98E9E9] ${
-                  errors?.petType ? 'border-red-500' : 'border-gray-300'
-                }`}
-                disabled={loading}
-                required
-              >
-                <option value="">Chọn loại thú cưng</option>
-                <option value="DOG">Chó</option>
-                <option value="CAT">Mèo</option>
-                <option value="BIRD">Chim</option>
-                <option value="OTHER">Khác</option>
-              </select>
-              {errors?.petType && (
-                <p className="mt-1 text-sm text-red-500">{errors.petType}</p>
-              )}
+              <div className="flex flex-wrap gap-2">
+                {PET_TYPES.map((type) => (
+                  <button
+                    key={type.value}
+                    type="button"
+                    onClick={() => setSelectedPetType(type.value)}
+                    className={`px-4 py-2 rounded-full text-sm transition-colors ${
+                      selectedPetType === type.value
+                        ? "bg-[#98E9E9] text-[#1A3C8E] font-medium"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {type.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Tags */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Tags *
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tags <span className="text-red-500">*</span> ({selectedTags.length}/10)
               </label>
-              <input
-                type="text"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                placeholder="Thêm tags (phân cách bằng dấu phẩy)"
-                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#98E9E9] ${
-                  errors?.tags ? 'border-red-500' : 'border-gray-300'
-                }`}
-                disabled={loading}
-                required
-              />
+              <div className="flex flex-wrap gap-2">
+                {AVAILABLE_TAGS.map((tag) => (
+                  <button
+                    key={tag.value}
+                    type="button"
+                    onClick={() => handleTagToggle(tag.value)}
+                    className={`px-4 py-2 rounded-full text-sm transition-colors ${
+                      selectedTags.includes(tag.value)
+                        ? "bg-[#98E9E9] text-[#1A3C8E] font-medium"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {tag.label}
+                  </button>
+                ))}
+              </div>
               {errors?.tags && (
                 <p className="mt-1 text-sm text-red-500">{errors.tags}</p>
               )}
-              <p className="text-sm text-gray-500 mt-1">
-                Ví dụ: cute, pet, cat (Tối đa 5 tags)
-              </p>
             </div>
 
-            {/* Image Preview */}
-            {preview && (
+            {previewUrl && (
               <div className="relative mt-4">
                 <img
-                  src={preview}
+                  src={previewUrl}
                   alt="Preview"
                   className="w-full rounded-lg"
                 />
@@ -277,7 +338,7 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
                   type="button"
                   onClick={() => {
                     setImage(null);
-                    setPreview("");
+                    setPreviewUrl("");
                   }}
                   className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md hover:bg-gray-100"
                 >
@@ -291,7 +352,6 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
           </form>
         </div>
 
-        {/* Footer */}
         <div className="p-4 border-t flex items-center justify-between bg-white">
           <label className="cursor-pointer text-gray-600 hover:text-[#1A3C8E]">
             <input
@@ -303,6 +363,10 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
             />
             <ImageIcon className="w-6 h-6" />
           </label>
+          <span className="text-red-500">*</span>
+          <p className="text-sm text-gray-500 mt-1">
+            {t("community.createPost.imageAccept")}
+          </p>
 
           <button
             type="button"
@@ -310,7 +374,7 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
             className={`px-6 py-2 bg-[#1A3C8E] text-white rounded-full hover:bg-[#98E9E9] hover:text-[#1A3C8E] transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
               loading ? 'cursor-wait' : ''
             }`}
-            disabled={loading || !content.trim() || !petType || !tags.trim()}
+            disabled={!isFormValid}
           >
             {loading ? (
               <div className="flex items-center">
@@ -318,10 +382,10 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Đang đăng...
+                {t("community.post.posting")}
               </div>
             ) : (
-              'Đăng bài'
+              t("community.post.submit")
             )}
           </button>
         </div>

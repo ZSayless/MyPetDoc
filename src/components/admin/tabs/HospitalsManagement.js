@@ -433,8 +433,10 @@ function HospitalsManagement() {
     }
 
     // Validate website (optional)
-    if (data.link_website && !/^https?:\/\//.test(data.link_website)) {
-      errors.link_website = "Link website must start with http:// or https://";
+    if (data.link_website) {
+      if (!/^https?:\/\//.test(data.link_website)) {
+        errors.link_website = "Link website must start with http:// or https://";
+      }
     }
 
     // Validate map location (optional)
@@ -449,13 +451,6 @@ function HospitalsManagement() {
       errors.description = "Description cannot exceed 2000 characters";
     }
 
-    // Validate department
-    if (!data.department?.trim()) {
-      errors.department = "Department is required";
-    } else if (data.department.length > 1000) {
-      errors.department = "Department cannot exceed 1000 characters";
-    }
-
     // Validate operating hours
     if (!data.operating_hours?.trim()) {
       errors.operating_hours = "Working hours are required";
@@ -465,9 +460,9 @@ function HospitalsManagement() {
 
     // Validate specialties
     if (!data.specialties?.trim()) {
-      errors.specialties = "Specialties are required";
+      errors.specialties = "Services are required";
     } else if (data.specialties.length > 1000) {
-      errors.specialties = "Specialties cannot exceed 1000 characters";
+      errors.specialties = "Services cannot exceed 1000 characters";
     }
 
     // Validate staff description (optional)
@@ -926,7 +921,7 @@ function HospitalsManagement() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Hospital name
+                        Hospital name <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -950,7 +945,7 @@ function HospitalsManagement() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Email
+                        Email <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="email"
@@ -976,7 +971,7 @@ function HospitalsManagement() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Phone number
+                        Phone number <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -1002,11 +997,11 @@ function HospitalsManagement() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Website <span className="text-red-500">*</span>
+                        Website
                       </label>
                       <input
                         type="text"
-                        value={selectedHospital.link_website}
+                        value={selectedHospital.link_website || ''}
                         onChange={(e) =>
                           setSelectedHospital((prev) => ({
                             ...prev,
@@ -1018,7 +1013,7 @@ function HospitalsManagement() {
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
-                        required
+                        placeholder="https://example.com"
                       />
                       {formErrors.link_website && (
                         <p className="mt-1 text-sm text-red-500">
@@ -1028,7 +1023,7 @@ function HospitalsManagement() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Address
+                        Address <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -1126,7 +1121,7 @@ function HospitalsManagement() {
                         </p>
                       )}
                     </div>
-                    <div>
+                    {/* <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Department <span className="text-red-500">*</span>
                       </label>
@@ -1151,14 +1146,14 @@ function HospitalsManagement() {
                           {formErrors.department}
                         </p>
                       )}
-                    </div>
+                    </div> */}
                   </div>
 
                   {/* Textarea fields */}
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Specialties <span className="text-red-500">*</span>
+                        Services <span className="text-red-500">*</span>
                       </label>
                       <div className="flex flex-wrap gap-2">
                         {HOSPITAL_SERVICES.filter(service => service !== "All Hospitals").map((service) => (
@@ -1263,7 +1258,7 @@ function HospitalsManagement() {
                   {/* Image upload section */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Images
+                      Images <span className="text-red-500">*</span>
                     </label>
                     <div className="mt-2 grid grid-cols-3 gap-4">
                       {selectedHospital.images
@@ -1411,17 +1406,17 @@ function HospitalsManagement() {
                         {selectedHospital.operating_hours}
                       </p>
                     </div>
-                    <div>
+                    {/* <div>
                       <h3 className="text-sm font-medium text-gray-500">
                         Department
                       </h3>
                       <p className="mt-1 text-sm text-gray-900">
                         {selectedHospital.department}
                       </p>
-                    </div>
+                    </div> */}
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">
-                        Specialties
+                        Services
                       </h3>
                       <p className="mt-1 text-sm text-gray-900">
                         {selectedHospital.specialties}
@@ -1642,11 +1637,11 @@ function HospitalsManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Website <span className="text-red-500">*</span>
+                      Website
                     </label>
                     <input
                       type="text"
-                      value={newHospital.link_website}
+                      value={newHospital.link_website || ''}
                       onChange={(e) =>
                         setNewHospital((prev) => ({
                           ...prev,
@@ -1658,7 +1653,7 @@ function HospitalsManagement() {
                           ? "border-red-500"
                           : "border-gray-300"
                       }`}
-                      required
+                      placeholder="https://example.com"
                     />
                     {formErrors.link_website && (
                       <p className="mt-1 text-sm text-red-500">
@@ -1740,7 +1735,7 @@ function HospitalsManagement() {
                       </p>
                     )}
                   </div>
-                  <div>
+                  {/* <div>
                     <label className="block text-sm font-medium text-gray-700">
                       Department <span className="text-red-500">*</span>
                     </label>
@@ -1765,14 +1760,14 @@ function HospitalsManagement() {
                         {formErrors.department}
                       </p>
                     )}
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Textarea Fields */}
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Specialties <span className="text-red-500">*</span>
+                      Services <span className="text-red-500">*</span>
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {HOSPITAL_SERVICES.filter(service => service !== "All Hospitals").map((service) => (
@@ -1877,7 +1872,7 @@ function HospitalsManagement() {
                 {/* Image Upload */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Images
+                    Images <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-3 gap-4">
                     {newImages.map((file, index) => (

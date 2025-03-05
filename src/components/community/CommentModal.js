@@ -50,7 +50,7 @@ const ReportModal = React.memo(({ onClose, onReport, loading }) => {
   );
 });
 
-function CommentModal({ isOpen, onClose, post }) {
+function CommentModal({ isOpen, onClose, post, onCommentUpdate }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [comment, setComment] = useState("");
@@ -74,10 +74,8 @@ function CommentModal({ isOpen, onClose, post }) {
     try {
       const response = await communityService.getComments(post.id);
       if (response.success) {
-        // Không cần chuyển đổi Buffer nữa vì đã được xử lý ở service
         setComments(response.data.comments);
         setPagination(response.data.pagination);
-        console.log("Comments loaded:", response.data.comments); // Debug
       }
     } catch (error) {
       console.error("Error fetching comments:", error);
@@ -97,9 +95,7 @@ function CommentModal({ isOpen, onClose, post }) {
       );
 
       if (response.success) {
-        // Nếu là reply, thêm vào replies của comment gốc
         if (replyTo) {
-          console.log("Replying to comment:", replyTo.id); // Debug
           setComments(prevComments =>
             prevComments.map(c => {
               if (c.id === replyTo.id) {
@@ -118,9 +114,10 @@ function CommentModal({ isOpen, onClose, post }) {
         
         setComment("");
         setReplyTo(null);
+        onCommentUpdate();
       }
     } catch (error) {
-      console.error("Error adding comment:", error);
+      console.error(t('community.errors.commentFailed'), error);
     } finally {
       setLoading(false);
     }
@@ -128,7 +125,6 @@ function CommentModal({ isOpen, onClose, post }) {
 
   const handleReply = (comment) => {
     setReplyTo(comment);
-    // Focus vào input
     document.getElementById('comment-input').focus();
   };
 
@@ -137,7 +133,6 @@ function CommentModal({ isOpen, onClose, post }) {
     setComment("");
   };
 
-  // Thêm hàm load more nếu cần
   const loadMoreComments = async () => {
     if (!pagination || pagination.page >= pagination.totalPages) return;
     
@@ -150,7 +145,7 @@ function CommentModal({ isOpen, onClose, post }) {
         setPagination(response.data.pagination);
       }
     } catch (error) {
-      console.error("Error loading more comments:", error);
+      console.error(t('community.errors.commentError'), error);
     }
   };
 
@@ -162,7 +157,6 @@ function CommentModal({ isOpen, onClose, post }) {
     try {
       const response = await communityService.deleteComment(commentId);
       if (response.success) {
-        // Cập nhật UI sau khi xóa comment
         setComments(prevComments => 
           prevComments.map(comment => {
             if (comment.id === commentId) {
@@ -172,7 +166,6 @@ function CommentModal({ isOpen, onClose, post }) {
                 content: "[Comment deleted]"
               };
             }
-            // Nếu là reply của comment bị xóa
             if (comment.replies) {
               return {
                 ...comment,
@@ -188,9 +181,12 @@ function CommentModal({ isOpen, onClose, post }) {
             return comment;
           })
         );
+        
+        // Gọi callback để cập nhật post detail
+        onCommentUpdate();
       }
     } catch (error) {
-      console.error("Error deleting comment:", error);
+      console.error(t('community.errors.deleteCommentFailed'), error);
     }
   };
 
@@ -233,7 +229,7 @@ function CommentModal({ isOpen, onClose, post }) {
         alert(t("Reported successfully"));
       }
     } catch (error) {
-      console.error("Error reporting comment:", error);
+      console.error(t('community.errors.reportError'), error);
       alert(t("Report error"));
     }
   }, [selectedCommentId, t]);
@@ -374,13 +370,13 @@ function CommentModal({ isOpen, onClose, post }) {
                     onClick={loadMoreComments}
                     className="w-full py-2 text-blue-600 hover:text-blue-700 text-sm"
                   >
-                    Load more comments
+                    {t("community.loadMore")}
                   </button>
                 )}
               </>
             ) : (
               <div className="text-center text-gray-500 py-8">
-                {t("Chưa có bình luận nào")}
+                {t("community.noCommentsYet")}
               </div>
             )}
           </div>
@@ -391,7 +387,7 @@ function CommentModal({ isOpen, onClose, post }) {
               {replyTo && (
                 <div className="mb-2 flex items-center justify-between bg-gray-100 p-2 rounded">
                   <span className="text-sm">
-                    Replying to <span className="font-semibold">{replyTo.user_name}</span>
+                    {t("community.replyingTo")} <span className="font-semibold">{replyTo.user_name}</span>
                   </span>
                   <button
                     type="button"

@@ -5,13 +5,13 @@ import HospitalsManagement from "./tabs/HospitalsManagement";
 import BlogsManagement from "./tabs/BlogsManagement";
 import ReportsManagement from "./tabs/ReportsManagement";
 import ContactMessages from "./tabs/ContactMessages";
-import PendingApprovals from "./tabs/PendingApprovals";
 import FAQManagement from "./tabs/FAQManagement";
 import BannerManagement from "./tabs/BannersManagement";
 import CommunityManagement from "./tabs/CommunityManagement";
 import AboutUsManagement from "./tabs/AboutUsManagement";
 import TermsManagement from "./tabs/TermsManagement";
 import ContactInfoManagement from "./tabs/ContactInfoManagement";
+import withAdminAuth from "./HOC/withAdminAuth";
 import { Menu, X, Users, Building2, FileText, AlertCircle } from "lucide-react";
 
 function AdminDashboard() {
@@ -36,8 +36,6 @@ function AdminDashboard() {
         return <ReportsManagement />;
       case "messages":
         return <ContactMessages />;
-      case "pending":
-        return <PendingApprovals />;
       case "faq":
         return <FAQManagement />;
       case "community":
@@ -107,4 +105,4 @@ function AdminDashboard() {
   );
 }
 
-export default AdminDashboard;
+export default withAdminAuth(AdminDashboard);
