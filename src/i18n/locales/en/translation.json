@@ -9,7 +9,7 @@
       "title": "Services",
       "findHospitalDesc": "Search for nearby veterinary hospitals",
       "blogDesc": "Read latest news and articles",
-      "communityDesc": "Join our pet lovers community",
+      "communityDesc": "Join our Pet Care Blog",
       "termsTitle": "Terms & Conditions",
       "termsDesc": "Read our terms of service"
     },
@@ -512,11 +512,57 @@
     }
   },
   "community": {
+    "loadMore": "Load more comments",
+    "noCommentsYet": "No comments yet",
+    "replyingTo": "Replying to",
+    "loading": "Loading...",
+    "addComment": "Add a comment...",
+    "backToCommunity": "Back to Blog",
+    "postNotFound": "Post not found",
+    "fetchError": "An error occurred when loading comments. Please try again later.",
     "hero": {
-      "title": "Pet Lovers Community",
+      "title": "Pet Care Blog",
       "subtitle": "Share your stories and connect with other pet lovers",
       "shareButton": "Share Your Story",
       "loginRequired": "Please login to share your story"
+    },
+    "deletePost": {
+      "confirmation": "Are you sure you want to delete this post?"
+    },
+    "search": {
+      "placeholder": "Search posts...",
+      "button": "Search",
+      "apply": "Apply"
+    },
+    "petTypes": {
+      "dog": "Dog",
+      "cat": "Cat",
+      "bird": "Bird",
+      "fish": "Fish",
+      "reptile": "Reptile",
+      "rabbit": "Rabbit",
+      "hamster": "Hamster",
+      "other": "Other",
+      "filter": "Pet Types"
+    },
+    "tags": {
+      "healthTips": "Health Tips",
+      "petCare": "Pet Care",
+      "nutrition": "Nutrition",
+      "behavior": "Behavior",
+      "training": "Training",
+      "grooming": "Grooming",
+      "vaccination": "Vaccination",
+      "diseasePrevention": "Disease Prevention",
+      "firstAid": "First Aid",
+      "mentalHealth": "Mental Health",
+      "exercise": "Exercise",
+      "breeding": "Breeding",
+      "seniorPetCare": "Senior Pet Care",
+      "puppyCare": "Puppy Care",
+      "emergencyCare": "Emergency Care",
+      "cute": "Cute",
+      "filter": "Tags"
     },
     "post": {
       "likes": "likes",
@@ -524,8 +570,39 @@
       "deleteConfirm": "Are you sure you want to delete this post?",
       "justNow": "Just now",
       "minutesAgo": "minutes ago",
+      "submit": "Submit",
+      "posting": "Posting...",
       "hoursAgo": "hours ago",
-      "daysAgo": "days ago"
+      "daysAgo": "days ago",
+      "createSuccess": "Post created successfully",
+      "createFailed": "Failed to create post",
+      "updateSuccess": "Post updated successfully",
+      "updateFailed": "Failed to update post",
+      "deleteSuccess": "Post deleted successfully",
+      "deleteFailed": "Failed to delete post",
+      "imageSizeError": "Image size should be less than 10MB",
+      "maxTagsReached": "You have reached the maximum number of tags (10 tags)",
+      "imageTypeError": "Only JPG, PNG, and GIF images are allowed",
+      "captionRequired": "Caption is required",
+      "captionMinLength": "Caption must be at least 5 characters",
+      "captionMaxLength": "Caption cannot exceed 200 characters",
+      "tagsRequired": "Tags are required",
+      "tagsMaxLength": "Tags cannot exceed 10 tags",
+      "descriptionMaxLength": "Description cannot exceed 2000 characters",
+      "servicesRequired": "Services are required",
+      "operatingHoursRequired": "Operating hours are required",
+      "staffDescriptionMaxLength": "Staff description cannot exceed 1000 characters",
+      "staffCredentialsMaxLength": "Staff credentials cannot exceed 1000 characters",
+      "imageRequired": "Please upload at least 1 image",
+      "imageSizeLimit": "Each image must be less than 10MB",
+      "imageTypeInvalid": "Only JPG/PNG images under 10MB are accepted",
+      "petTypeRequired": "Pet type is required"
+    },
+    "report": {
+      "title": "Report Comment",
+      "description": "Are you sure you want to report this comment?",
+      "success": "Report comment successfully",
+      "error": "An error occurred when reporting the comment. Please try again."
     },
     "createPost": {
       "title": "Create Post",
@@ -533,6 +610,16 @@
       "addImage": "Add Image",
       "posting": "Posting...",
       "post": "Post",
+      "subtitle": "Title",
+      "subtitlePlaceholder": "Enter post title...",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter post description...",
+      "descriptionMaxLength": "1000",
+      "characters": "characters",
+      "petType": "Pet Type",
+      "petTypePlaceholder": "Select pet type",
+      "imageAccept": "Only JPG, PNG, and GIF images are allowed",
+      "approvalNotice": "Your post will be displayed after approval by the administrator",
       "validation": {
         "content": "Please write something",
         "image": "Please add an image"
@@ -563,7 +650,9 @@
       "unauthorized": "You are not authorized to perform this action",
       "commentFailed": "Failed to add comment. Please try again",
       "loginRequired": "Please login to use this feature",
-      "likeError": "An error occurred. Please try again later."
+      "likeError": "An error occurred. Please try again later.",
+      "deleteCommentFailed": "Failed to delete comment",
+      "reportError": "An error occurred when reporting the comment. Please try again."
     }
   },
   "findHospital": {
@@ -1041,7 +1130,7 @@
       "blog": "Blog",
       "blogDesc": "Read latest news and articles",
       "community": "Community",
-      "communityDesc": "Join our pet lovers community",
+      "communityDesc": "Join our Pet Care Blog",
       "terms": "Terms & Conditions",
       "termsDesc": "Read our terms of service"
     },

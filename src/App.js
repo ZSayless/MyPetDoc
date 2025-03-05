@@ -17,8 +17,8 @@ import FAQBubble from "./components/faq/FAQBubble";
 import Home from "./components/home/Home";
 import ContactUs from "./components/contactus/ContactUs";
 import AboutUs from "./components/aboutus/AboutUs";
-import BlogList from "./components/blog/BlogList";
-import BlogDetail from "./components/blog/BlogDetail";
+// import BlogList from "./components/blog/BlogList";
+// import BlogDetail from "./components/blog/BlogDetail";
 import Terms from "./components/terms/Terms";
 import Setting from "./components/setting/Setting";
 import HospitalDetail from "./components/hospital/HospitalDetail";
@@ -26,7 +26,7 @@ import FindHospital from "./components/hospital/FindHospital";
 import Profile from "./components/profile/Profile";
 import AllReviews from "./components/profile/AllReviews";
 import AllFavorites from "./components/profile/AllFavorites";
-// import CommunityList from "./components/community/CommunityList";
+import CommunityList from "./components/community/CommunityList";
 import PostDetail from "./components/community/PostDetail";
 import AddHospital from "./components/hospital/AddHospital";
 import ResetPassword from "./components/resetpassword/ResetPassword";
@@ -113,7 +113,7 @@ function App() {
               path="/bloglist"
               element={
                 <MainLayout>
-                  <BlogList />
+                 <CommunityList />
                 </MainLayout>
               }
             />
@@ -121,7 +121,7 @@ function App() {
               path="/blog/:slug"
               element={
                 <MainLayout>
-                  <BlogDetail />
+                  <PostDetail />
                 </MainLayout>
               }
             />
@@ -201,7 +201,7 @@ function App() {
               path="/bloglist"
               element={
                 <MainLayout>
-                  <BlogList />
+                  <CommunityList />
                 </MainLayout>
               }
             />
@@ -209,7 +209,7 @@ function App() {
               path="/bloglist/:id"
               element={
                 <MainLayout>
-                  <BlogDetail />
+                  <PostDetail />
                 </MainLayout>
               }
             />

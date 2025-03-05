@@ -498,11 +498,57 @@
     }
   },
   "community": {
+    "loadMore": "Tải thêm bình luận",
+    "noCommentsYet": "Chưa có bình luận nào",
+    "replyingTo": "Trả lời cho",
+    "loading": "Đang tải...",
+    "addComment": "Thêm bình luận...",
+    "backToCommunity": "Quay lại blog",
+    "postNotFound": "Bài viết không tồn tại",
+    "fetchError": "Có lỗi xảy ra khi tải bình luận. Vui lòng thử lại sau.",
     "hero": {
       "title": "Cộng Đồng Yêu Thú Cưng",
       "subtitle": "Chia sẻ câu chuyện và kết nối với những người yêu thú cưng khác",
       "shareButton": "Chia Sẻ Câu Chuyện",
       "loginRequired": "Vui lòng đăng nhập để chia sẻ câu chuyện"
+    },
+    "deletePost": {
+      "confirmation": "Bạn có chắc chắn muốn xóa bài viết này?"
+    },
+    "search": {
+      "placeholder": "Tìm kiếm bài viết...",
+      "button": "Tìm Kiếm",
+      "apply": "Áp Dụng"
+    },
+    "petTypes": {
+      "dog": "Chó",
+      "cat": "Mèo",
+      "bird": "Chim",
+      "fish": "Cá",
+      "reptile": "Bò sát",
+      "rabbit": "Thỏ",
+      "hamster": "Chuột",
+      "other": "Khác",
+      "filter": "Loại Thú Cưng"
+    },
+    "tags": {
+      "healthTips": "Mẹo Sức Khỏe",
+      "petCare": "Chăm Sóc Thú Cưng",
+      "nutrition": "Dinh Dưỡng",
+      "behavior": "Hành Vi",
+      "training": "Huấn Luyện",
+      "grooming": "Làm Đẹp",
+      "vaccination": "Tiêm Phòng",
+      "diseasePrevention": "Phòng Bệnh",
+      "firstAid": "Cấp Cứu",
+      "mentalHealth": "Tâm Lý",
+      "exercise": "Tập Thể Dục",
+      "breeding": "Sinh Sản",
+      "seniorPetCare": "Chăm Sóc Thú Cưng Già",
+      "puppyCare": "Chăm Sóc Thú Cưng Trẻ",
+      "emergencyCare": "Chăm Sóc Khẩn Cấp",
+      "cute": "Cute",
+      "filter": "Tags"
     },
     "post": {
       "likes": "lượt thích",
@@ -510,8 +556,39 @@
       "deleteConfirm": "Bạn có chắc chắn muốn xóa bài viết này?",
       "justNow": "Vừa xong",
       "minutesAgo": "phút trước",
+      "submit": "Đăng",
+      "posting": "Đang đăng...",
       "hoursAgo": "giờ trước",
-      "daysAgo": "ngày trước"
+      "daysAgo": "ngày trước",
+      "createSuccess": "Bài viết được tạo thành công",
+      "createFailed": "Không thể tạo bài viết",
+      "updateSuccess": "Bài viết được cập nhật thành công",
+      "updateFailed": "Không thể cập nhật bài viết",
+      "deleteSuccess": "Bài viết được xóa thành công",
+      "deleteFailed": "Không thể xóa bài viết",
+      "imageSizeError": "Kích thước ảnh phải nhỏ hơn 10MB",
+      "maxTagsReached": "Bạn đã đạt đến số lượng tags tối đa (10 tags)",
+      "imageTypeError": "Chỉ chấp nhận file ảnh định dạng JPG, PNG hoặc GIF",
+      "captionRequired": "Tiêu đề là bắt buộc",
+      "captionMinLength": "Tiêu đề phải có ít nhất 5 ký tự",
+      "captionMaxLength": "Tiêu đề không được vượt quá 200 ký tự",
+      "tagsRequired": "Tags là bắt buộc",
+      "tagsMaxLength": "Tags không được vượt quá 10 tags",
+      "descriptionMaxLength": "Mô tả không được vượt quá 2000 ký tự",
+      "servicesRequired": "Dịch vụ là bắt buộc",
+      "operatingHoursRequired": "Giờ làm việc là bắt buộc",
+      "staffDescriptionMaxLength": "Mô tả nhân viên không được vượt quá 1000 ký tự",
+      "staffCredentialsMaxLength": "Chứng chỉ nhân viên không được vượt quá 1000 ký tự",
+      "imageRequired": "Vui lòng tải lên ít nhất 1 ảnh",
+      "imageSizeLimit": "Mỗi ảnh phải nhỏ hơn 10MB",
+      "imageTypeInvalid": "Chỉ chấp nhận ảnh JPG/PNG nhỏ hơn 10MB",
+      "petTypeRequired": "Loại thú cưng là bắt buộc"
+    },
+    "report": {
+      "title": "Báo Cáo Bình Luận",
+      "description": "Bạn có chắc chắn muốn báo cáo bình luận này?",
+      "success": "Báo cáo bình luận thành công",
+      "error": "Có lỗi xảy ra khi báo cáo bình luận. Vui lòng thử lại sau."
     },
     "createPost": {
       "title": "Tạo Bài Viết",
@@ -519,6 +596,15 @@
       "addImage": "Thêm Ảnh",
       "posting": "Đang đăng...",
       "post": "Đăng",
+      "subtitle": "Tiêu đề",
+      "subtitlePlaceholder": "Nhập tiêu đề bài viết...",
+      "description": "Mô tả chi tiết",
+      "descriptionPlaceholder": "Nhập mô tả chi tiết bài viết...",
+      "descriptionMaxLength": "1000",
+      "characters": "ký tự",
+      "petType": "Loại Thú Cưng",
+      "imageAccept": "Chỉ chấp nhận file ảnh định dạng JPG, PNG hoặc GIF",
+      "approvalNotice": "Bài viết của bạn sẽ được hiển thị sau khi được quản trị viên phê duyệt",
       "validation": {
         "content": "Vui lòng nhập nội dung",
         "image": "Vui lòng thêm ảnh"
@@ -549,7 +635,10 @@
       "unauthorized": "Bạn không có quyền thực hiện hành động này",
       "commentFailed": "Không thể gửi bình luận. Vui lòng thử lại",
       "loginRequired": "Vui lòng đăng nhập để thực hiện tính năng này",
-      "likeError": "Có lỗi xảy ra khi thực hiện. Vui lòng thử lại sau."
+      "deleteCommentFailed": "Không thể xóa bình luận",
+      "reportError": "Có lỗi xảy ra khi báo cáo bình luận. Vui lòng thử lại sau.",
+      "likeError": "Có lỗi xảy ra khi thực hiện. Vui lòng thử lại sau.",
+      "commentError": "Có lỗi xảy ra khi thực hiện tải bình luận. Vui lòng thử lại sau."
     }
   },
   "findHospital": {

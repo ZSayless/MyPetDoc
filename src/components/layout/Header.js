@@ -255,6 +255,14 @@ function Header() {
                       {t("header.menu.blog")}
                     </Link>
                   </li>
+                  {/* <li>
+                    <Link
+                      to="/community"
+                      className="text-gray-700 hover:text-blue-600"
+                    >
+                      {t("header.menu.community")}
+                    </Link>
+                  </li> */}
                   <li>
                     <Link
                       to="/lucete"
@@ -500,6 +508,14 @@ function Header() {
                     >
                       <Building2 className="w-5 h-5" />
                       Lucete
+                    </Link>
+                    <Link
+                      to="/community"
+                      className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
+                      onClick={toggleMenu}
+                    >
+                      <Building2 className="w-5 h-5" />
+                      {t("header.menu.community")}
                     </Link>
                     <a
                       href="/aboutus"

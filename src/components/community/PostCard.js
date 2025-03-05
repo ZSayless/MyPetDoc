@@ -4,8 +4,10 @@ import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { communityService } from "../../services/communityService";
 import classNames from "classnames";
+import { useTranslation } from "react-i18next";
 
 function PostCard({ post, onLike, onComment, onDelete}) {
+  const { t } = useTranslation();
   const { user, isAuthenticated } = useAuth();
   const [showOptions, setShowOptions] = useState(false);
   const isAuthor = user?.id === post.user_id;
@@ -28,6 +30,46 @@ function PostCard({ post, onLike, onComment, onDelete}) {
     onDelete(post.id);
     setShowOptions(false);
   }, [onDelete, post.id]);
+
+  // Thêm hàm để lấy label của pet type
+  const getPetTypeLabel = (value) => {
+    const petTypes = [
+      {value: "DOG", label: t("community.petTypes.dog")},
+      {value: "CAT", label: t("community.petTypes.cat")},
+      {value: "BIRD", label: t("community.petTypes.bird")},
+      {value: "FISH", label: t("community.petTypes.fish")},
+      {value: "REPTILE", label: t("community.petTypes.reptile")},
+      {value: "RABBIT", label: t("community.petTypes.rabbit")},
+      {value: "HAMSTER", label: t("community.petTypes.hamster")},
+      {value: "OTHER", label: t("community.petTypes.other")},
+    ];
+    return petTypes.find(type => type.value === value)?.label || value;
+  };
+
+  const AVAILABLE_TAGS = [
+    { value: "healthTips", label: t("community.tags.healthTips") },
+    { value: "petCare", label: t("community.tags.petCare") },
+    { value: "nutrition", label: t("community.tags.nutrition") },
+    { value: "behavior", label: t("community.tags.behavior") },
+    { value: "training", label: t("community.tags.training") },
+    { value: "grooming", label: t("community.tags.grooming") },
+    { value: "vaccination", label: t("community.tags.vaccination") },
+    { value: "diseasePrevention", label: t("community.tags.diseasePrevention") },
+    { value: "firstAid", label: t("community.tags.firstAid") },
+    { value: "mentalHealth", label: t("community.tags.mentalHealth") },
+    { value: "exercise", label: t("community.tags.exercise") },
+    { value: "breeding", label: t("community.tags.breeding") },
+    { value: "seniorPetCare", label: t("community.tags.seniorPetCare") },
+    { value: "puppyCare", label: t("community.tags.puppyCare") },
+    { value: "emergencyCare", label: t("community.tags.emergencyCare") },
+    { value: "cute", label: t("community.tags.cute") }
+  ];
+
+  // Hàm để lấy label của tag
+  const getTagLabel = (tagValue) => {
+    const tag = AVAILABLE_TAGS.find(t => t.value === tagValue);
+    return tag ? tag.label : tagValue;
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
@@ -69,7 +111,7 @@ function PostCard({ post, onLike, onComment, onDelete}) {
       </div>
 
       {/* Post Content */}
-      <Link to={`/community/post/${post.slug}`}>
+      <Link to={`/blog/${post.slug}`}>
         <p className="text-gray-700 mb-4">{post.caption}</p>
         {post.image_url && (
           <img
@@ -79,6 +121,30 @@ function PostCard({ post, onLike, onComment, onDelete}) {
           />
         )}
       </Link>
+
+      {/* Pet Type and Tags */}
+      <div className="mb-4">
+        {/* Pet Type Badge */}
+        <div className="flex flex-wrap gap-2 mb-2">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#98E9E9] text-[#1A3C8E]">
+            {getPetTypeLabel(post.pet_type)}
+          </span>
+        </div>
+
+        {/* Tags - Cập nhật để hiển thị label thay vì value */}
+        {post.tags && (
+          <div className="flex flex-wrap gap-2">
+            {post.tags.split(',').map((tag, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-600"
+              >
+                #{getTagLabel(tag.trim())}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Post Actions */}
       <div className="flex items-center gap-6 pt-4 border-t">
