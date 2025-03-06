@@ -510,9 +510,68 @@ function UsersManagement() {
     }
   };
 
-  // Thêm hàm mới để xử lý cập nhật thông tin pet
+  // Thêm hàm validatePet
+  const validatePet = (petData) => {
+    const errors = {};
+
+    // Validate pet type
+    if (!petData.type) {
+      errors.type = "Pet type is required";
+    }
+
+    if (!petData.age) {
+      errors.age = "Pet age is required";
+    }
+    // Validate pet age
+    if (petData.age) {
+      if (isNaN(petData.age)) {
+        errors.age = "Age must be a number";
+      } else if (parseInt(petData.age) < 0) {
+        errors.age = "Age cannot be negative";
+      } else if (parseInt(petData.age) > 100) {
+        errors.age = "Please enter a valid age";
+      }
+    }
+
+    // Validate pet notes
+    if (petData.notes && petData.notes.length > 300 && petData.notes.length < 10) {
+      errors.notes = "Notes must not exceed 300 characters and must be at least 10 characters";
+    }
+    if (!petData.notes) {
+      errors.notes = "Notes is required";
+    }
+
+    // Validate pet photo if exists
+    if (petData.newPhoto) {
+      if (petData.newPhoto.size > 10 * 1024 * 1024) { // 10MB
+        errors.photo = "Photo size must not exceed 10MB";
+      }
+      
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(petData.newPhoto.type)) {
+        errors.photo = "Only JPG, PNG, and GIF images are allowed";
+      }
+    }
+
+    return errors;
+  };
+
+  // Cập nhật lại hàm handleUpdatePet
   const handleUpdatePet = async (petData) => {
     try {
+      // Validate pet data
+      const validationErrors = validatePet(petData);
+      if (Object.keys(validationErrors).length > 0) {
+        // Hiển thị lỗi đầu tiên
+        const firstError = Object.values(validationErrors)[0];
+        addToast({
+          type: "error",
+          message: firstError,
+        });
+        return;
+      }
+
+      setIsSubmitting(true);
       const formData = new FormData();
       
       formData.append('user_id', editForm.id);
@@ -542,11 +601,12 @@ function UsersManagement() {
         type: "error",
         message: error.message || "An error occurred while updating pet information",
       });
-      throw error;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // Thêm hàm xử lý thay đổi thông tin pet
+  // Cập nhật lại hàm handlePetChange để thêm validation khi thay đổi giá trị
   const handlePetChange = (petId, field, value) => {
     setEditForm(prev => ({
       ...prev,
@@ -555,7 +615,7 @@ function UsersManagement() {
           return {
             ...pet,
             [field]: value,
-            isModified: true // Đánh dấu pet đã được chỉnh sửa
+            isModified: true
           };
         }
         return pet;
@@ -563,13 +623,15 @@ function UsersManagement() {
     }));
   };
 
-  // Thêm hàm xử lý thay đổi ảnh pet
+  // Cập nhật lại hàm handlePetPhotoChange để thêm validation
   const handlePetPhotoChange = (petId, file) => {
     if (file) {
-      if (file.size > 10 * 1024 * 1024) {
+      // Validate file
+      const validationErrors = validatePet({ newPhoto: file });
+      if (validationErrors.photo) {
         addToast({
           type: "error",
-          message: "Pet photo must not exceed 10MB",
+          message: validationErrors.photo,
         });
         return;
       }
