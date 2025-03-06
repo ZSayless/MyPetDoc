@@ -103,26 +103,31 @@ export const adminService = {
   },
   updateUser: async (userId, userData) => {
     try {
-      const formData = new FormData();
+      let formData;
       
-      // Xử lý dữ liệu trước khi append vào formData
-      Object.keys(userData).forEach(key => {
-        if (key === 'avatar' || key === 'pet_photo') {
-          if (userData[key] instanceof File) {
-            formData.append(key, userData[key]);
-          }
-        } else {
-          // Chỉ append các giá trị không phải null/undefined
-          // Với các trường string, gửi '' thay vì null/undefined
-          if (userData[key] !== null && userData[key] !== undefined) {
-            if (typeof userData[key] === 'string') {
-              formData.append(key, userData[key] || '');
-            } else {
+      // Kiểm tra nếu userData đã là FormData
+      if (userData instanceof FormData) {
+        formData = userData;
+      } else {
+        // Nếu không, tạo FormData mới và xử lý như cũ
+        formData = new FormData();
+        
+        Object.keys(userData).forEach(key => {
+          if (key === 'avatar' || key === 'pet_photo') {
+            if (userData[key] instanceof File) {
               formData.append(key, userData[key]);
             }
+          } else {
+            if (userData[key] !== null && userData[key] !== undefined) {
+              if (typeof userData[key] === 'string') {
+                formData.append(key, userData[key] || '');
+              } else {
+                formData.append(key, userData[key]);
+              }
+            }
           }
-        }
-      });
+        });
+      }
 
       const response = await axios.put(`${BASE_URL}/users/${userId}`, formData, {
         headers: {

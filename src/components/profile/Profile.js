@@ -8,16 +8,21 @@ import { useToast } from "../../context/ToastContext";
 import { getAllReviewsByAuth } from "../../services/reviewService";
 import { getHospitalFavorites } from "../../services/favoriteService";
 import { getUserInfoByEmail } from "../../services/userService";
+import { communityService } from "../../services/communityService";
 
 function Profile() {
   const { user, updateUser } = useAuth();
   const { t } = useTranslation();
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const [favoriteError, setFavoriteError] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [reviewError, setReviewError] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [userDetails, setUserDetails] = useState({});
+  const [posts, setPosts] = useState([]);
+  const [postsError, setPostsError] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
   const navigate = useNavigate();
 
   const fetchSomeReviews = async () => {
@@ -38,31 +43,28 @@ function Profile() {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await getUserInfoByEmail(user.email);
-      if (response.status === "success") {
-        const {
-          full_name,
-          email,
-          phone_number,
-          avatar,
-          role,
-          pet_type,
-          pet_age,
-          pet_photo,
-          pet_notes,
-        } = response.data;
+      const savedUser = JSON.parse(localStorage.getItem("user"));
+      if (savedUser?.email) {
+        const response = await getUserInfoByEmail(savedUser.email);
+        if (response.status === "success") {
+          const {
+            full_name,
+            email,
+            phone_number,
+            avatar,
+            role,
+            pets,
+          } = response.data;
 
-        setUserDetails({
-          full_name,
-          email,
-          phone_number,
-          avatar,
-          role,
-          pet_type,
-          pet_age,
-          pet_photo,
-          pet_notes,
-        });
+          setUserDetails({
+            full_name,
+            email,
+            phone_number,
+            avatar,
+            role,
+            pets: pets || [],
+          });
+        }
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
@@ -84,10 +86,24 @@ function Profile() {
     }
   };
 
+  const fetchMyPosts = async () => {
+    try {
+      const response = await communityService.getMyPosts();
+      const postsData = Array.isArray(response.data.posts) 
+        ? response.data.posts.filter((_, index) => index < 3)
+        : [];
+      setPosts(postsData);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      setPostsError(true);
+    }
+  };
+
   useEffect(() => {
     fetchSomeReviews();
     fetchSomeFavorites();
     fetchUserDetails();
+    fetchMyPosts();
   }, []);
 
   // Memoize user info để tránh re-render không cần thiết
@@ -103,6 +119,31 @@ function Profile() {
 
   const handleRemoveFavorite = (hospitalId) => {
     setFavorites(favorites.filter((hospital) => hospital.id !== hospitalId));
+  };
+
+  const handleDeleteClick = (post) => {
+    setPostToDelete(post);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!postToDelete) return;
+
+    try {
+      await communityService.deletePost(postToDelete.id);
+      addToast("success", t("profile.posts.deleteSuccess"));
+      setPosts(posts.filter(post => post.id !== postToDelete.id));
+      setDeleteModalOpen(false);
+      setPostToDelete(null);
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      addToast("error", t("profile.posts.deleteError"));
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setPostToDelete(null);
   };
 
   const renderAvatar = () => {
@@ -241,7 +282,7 @@ function Profile() {
             {/* Left Column */}
             <div className="lg:col-span-2 space-y-8">
               {/* Pet Information Section */}
-              {userInfo.role !== "HOSPITAL_ADMIN" && (
+              {userDetails?.role !== "HOSPITAL_ADMIN" && (
                 <div className="bg-white rounded-xl shadow-sm p-6">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
@@ -256,155 +297,78 @@ function Profile() {
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077l1.41-.513m14.095-5.13l1.41-.513M5.106 17.785l1.15-.964m11.49-9.642l1.149-.964M7.501 19.795l.75-1.3m7.5-12.99l.75-1.3m-6.063 16.658l.26-1.477m2.605-14.772l.26-1.477m0 17.726l-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205L12 12m6.894 5.785l-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864l-1.41-.513M4.954 9.435l-1.41-.514"
+                          d="M4.5 12.5l6-6.5 6 6.5M12 18V9"
                         />
                       </svg>
-                      {t("profile.petInfo.title")}
+                      {t("profile.pet.title")}
                     </h2>
                     <Link
                       to="/setting"
                       className="text-sm text-[#7CD5D5] hover:text-[#98E9E9] font-medium"
                     >
-                      {t("profile.petInfo.edit")}
+                      {t("profile.pet.viewAll")}
                     </Link>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-6">
-                      {/* Pet Type */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-6 w-6 text-[#7CD5D5]"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  {userDetails?.pets && userDetails.pets.length > 0 ? (
+                    <div className="grid gap-6 md:grid-cols-2">
+                      {userDetails.pets.map((pet) => (
+                        <div 
+                          key={pet.id}
+                          className="bg-gray-50 rounded-xl p-4 border border-gray-100"
+                        >
+                          <div className="flex items-center gap-4 mb-4">
+                            {pet.photo ? (
+                              <img
+                                src={pet.photo}
+                                alt={`${pet.type}`}
+                                className="w-16 h-16 rounded-full object-cover border-2 border-[#7CD5D5]"
                               />
-                            </svg>
+                            ) : (
+                              <div className="w-16 h-16 rounded-full bg-[#7CD5D5] flex items-center justify-center">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-8 w-8 text-white"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                            <div>
+                              <h3 className="font-medium text-gray-900">
+                                {t(`profile.pet.types.${pet.type.toLowerCase()}`)}
+                              </h3>
+                              {pet.age && (
+                                <p className="text-sm text-gray-500">
+                                  {pet.age} {t("profile.pet.years")}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500">
-                              {t("profile.petInfo.type.label")}
-                            </h3>
-                            <p className="mt-1 text-lg font-semibold text-gray-900">
-                              {userDetails?.pet_type ||
-                                t("profile.petInfo.type.noData")}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
 
-                      {/* Pet Age */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-6 w-6 text-[#7CD5D5]"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500">
-                              {t("profile.petInfo.age.label")}
-                            </h3>
-                            <p className="mt-1 text-lg font-semibold text-gray-900">
-                              {userDetails?.pet_age || t("profile.petInfo.age.noData")}
-                            </p>
-                          </div>
+                          {pet.notes && (
+                            <div className="mt-3">
+                              <p className="text-sm text-gray-600 bg-white p-3 rounded-lg">
+                                {pet.notes}
+                              </p>
+                            </div>
+                          )}
                         </div>
-                      </div>
-
-                      {/* Pet Notes */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-6 w-6 text-[#7CD5D5]"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500">
-                              {t("profile.petInfo.notes.label")}
-                            </h3>
-                          </div>
-                        </div>
-                        <p className="text-gray-700 bg-white rounded-lg p-4">
-                          {userDetails?.pet_notes || t("profile.petInfo.notes.noData")}
-                        </p>
-                      </div>
+                      ))}
                     </div>
-
-                    <div className="space-y-6">
-                      {/* Pet Photo */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-6 w-6 text-[#7CD5D5]"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500">
-                              {t("profile.petInfo.photo.label")}
-                            </h3>
-                          </div>
-                        </div>
-                        {userDetails?.pet_photo ? (
-                          <img
-                            src={userDetails.pet_photo}
-                            alt="Pet"
-                            className="w-full h-48 rounded-lg object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-48 rounded-lg bg-white border-2 border-dashed border-gray-200 flex items-center justify-center">
-                            <span className="text-sm text-gray-500">
-                              {t("profile.petInfo.photo.noData")}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                  ) : (
+                    <div className="text-center py-8 bg-gray-50 rounded-xl">
+                      <p className="text-gray-500">{t("profile.pet.noPets")}</p>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
 
@@ -452,6 +416,191 @@ function Profile() {
                       <p className="mt-3 text-gray-600">{review.comment}</p>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* My Posts Section */}
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-[#7CD5D5]"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+                      />
+                    </svg>
+                    {t("profile.posts.title")}
+                  </h2>
+                  <Link
+                    to="/bloglist"
+                    className="text-sm text-[#7CD5D5] hover:text-[#98E9E9] font-medium"
+                  >
+                    {t("profile.posts.viewAll")}
+                  </Link>
+                </div>
+
+                <div className="grid gap-4">
+                  {posts.map((post) => (
+                    <div
+                      key={post.id}
+                      className="bg-gray-50 rounded-xl overflow-hidden hover:bg-gray-100 transition-colors"
+                    >
+                      <Link to={`/blog/${post.slug}`} className="block">
+                        <div className="flex flex-col md:flex-row">
+                          {/* Phần ảnh */}
+                          <div className="md:w-48 h-48 md:h-auto relative">
+                            {post.image_url ? (
+                              <img
+                                src={post.image_url}
+                                alt={post.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <svg
+                                  className="w-12 h-12 text-gray-400"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                            {post.category && (
+                              <span className="absolute top-2 left-2 bg-[#7CD5D5] text-white px-2 py-1 rounded-md text-xs">
+                                {post.category}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Phần nội dung */}
+                          <div className="p-4 flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex-1 pr-10">
+                                <h3 className="font-medium text-gray-900 text-lg line-clamp-1">
+                                  {post.caption}
+                                </h3>
+                                <span className="text-sm text-gray-500">
+                                  {new Date(post.created_at).toLocaleDateString('vi-VN')}
+                                </span>
+                              </div>
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleDeleteClick(post);
+                                }}
+                                className="shrink-0 p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition-colors"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-5 w-5 text-red-500"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+
+                            <p className="text-gray-600 text-sm line-clamp-2 mb-3">
+                              {post.description}
+                            </p>
+
+                            {/* Thông tin tương tác */}
+                            <div className="flex items-center gap-6 text-sm text-gray-500">
+                              <div className="flex items-center gap-1">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-4 w-4"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                </svg>
+                                <span>{post.likes_count || 0} {t("profile.posts.likes")}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-4 w-4"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                                <span>{post.comments_count || 0} {t("profile.posts.comments")}</span>
+                              </div>
+                              {post.views_count !== undefined && (
+                                <div className="flex items-center gap-1">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-4 w-4"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                  >
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                  <span>{post.views_count} {t("profile.posts.views")}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Tags */}
+                            {post.tags && typeof post.tags === 'string' && (
+                              <div className="mt-3 flex flex-wrap gap-2">
+                                {post.tags.split(',').map((tag, index) => (
+                                  <span
+                                    key={index}
+                                    className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full"
+                                  >
+                                    #{tag.trim()}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
+                  {posts.length === 0 && !postsError && (
+                    <div className="text-center py-6 text-gray-500">
+                      {t("profile.posts.noPosts")}
+                    </div>
+                  )}
+                  {postsError && (
+                    <div className="text-center py-6 text-red-500">
+                      {t("profile.posts.error")}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -511,6 +660,77 @@ function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            {/* Background overlay */}
+            <div 
+              className="fixed inset-0 transition-opacity" 
+              aria-hidden="true"
+              onClick={handleDeleteCancel}
+            >
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+
+            {/* Modal panel */}
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <svg 
+                      className="h-6 w-6 text-red-600" 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth="2" 
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+                      />
+                    </svg>
+                  </div>
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      {t("profile.posts.deleteTitle")}
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        {t("profile.posts.deleteMessage")}
+                      </p>
+                      {postToDelete && (
+                        <p className="mt-2 text-sm font-medium text-gray-900">
+                          "{postToDelete.caption}"
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button
+                  type="button"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={handleDeleteConfirm}
+                >
+                  {t("profile.posts.deleteConfirm")}
+                </button>
+                <button
+                  type="button"
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={handleDeleteCancel}
+                >
+                  {t("profile.posts.deleteCancel")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

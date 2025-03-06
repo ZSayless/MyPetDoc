@@ -7,11 +7,17 @@ import EditAvatarModal from "./modals/EditAvatarModal";
 import ChangePasswordModal from "./modals/ChangePasswordModal";
 import EditPhoneModal from "./modals/EditPhoneModal";
 import EditPetModal from "./modals/EditPetModal";
+import CreatePetModal from "./modals/CreatePetModal";
 import { getUserInfoByEmail } from "../../services/userService";
+import { petService } from "../../services/petService";
+import { useToast } from "../../context/ToastContext";
+import ConfirmDeleteModal from "./modals/ConfirmDeleteModal";
 
 function Setting() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
+  const { addToast } = useToast();
+  const [showCreatePet, setShowCreatePet] = useState(false);
   const [activeTab, setActiveTab] = useState("personal");
   const [showEditName, setShowEditName] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -19,6 +25,10 @@ function Setting() {
   const [showEditPhone, setShowEditPhone] = useState(false);
   const [showEditPet, setShowEditPet] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
+  const [selectedPet, setSelectedPet] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletingPetId, setDeletingPetId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleClose = () => {
     navigate(-1); // Quay lại trang trước đó
@@ -36,10 +46,7 @@ function Setting() {
             phone_number,
             avatar,
             role,
-            pet_type,
-            pet_age,
-            pet_photo,
-            pet_notes,
+            pets,
           } = response.data;
 
           setUserDetails({
@@ -48,10 +55,7 @@ function Setting() {
             phone_number,
             avatar,
             role,
-            pet_type,
-            pet_age,
-            pet_photo,
-            pet_notes,
+            pets: pets || [],
           });
         }
       }
@@ -63,6 +67,39 @@ function Setting() {
   useEffect(() => {
     fetchUserDetails();
   }, []);
+
+  const handleEditPet = (pet) => {
+    setSelectedPet(pet);
+    setShowEditPet(true);
+  };
+
+  const handleDeletePet = async (petId) => {
+    setDeletingPetId(petId);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeletePet = async () => {
+    if (!deletingPetId) return;
+
+    setIsDeleting(true);
+    try {
+      await petService.deletePet(deletingPetId);
+      addToast({
+        type: "success",
+        message: t("setting.personal.pet.deleteSuccess")
+      });
+      fetchUserDetails(); // Refresh danh sách pet
+    } catch (error) {
+      addToast({
+        type: "error",
+        message: error.response?.data?.message || t("setting.personal.pet.deleteError")
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+      setDeletingPetId(null);
+    }
+  };
 
   const renderPersonalInfo = () => (
     <div>
@@ -195,47 +232,160 @@ function Setting() {
       {/* Pet Information */}
       {userDetails?.role !== "HOSPITAL_ADMIN" && (
         <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            {t("setting.personal.pet.title")}
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-medium text-gray-900">
+              {t("setting.personal.pet.title")}
+            </h3>
+            <button
+              onClick={() => setShowCreatePet(true)}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#1A3C8E] hover:bg-[#98E9E9] hover:text-[#1A3C8E] transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {t("setting.personal.pet.addNew")}
+            </button>
+          </div>
+
           <p className="text-gray-600 text-sm mb-4">
             {t("setting.personal.pet.description")}
           </p>
 
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div
-              className="p-4 hover:bg-gray-50 cursor-pointer group transition-colors"
-              onClick={() => setShowEditPet(true)}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
-                    {t("setting.personal.pet.type")}
-                  </div>
-                  <div className="text-sm text-gray-500 mt-1">
-                    {userDetails?.pet_type ||
-                      t("setting.personal.pet.noPetType")}
+          {userDetails?.pets && userDetails.pets.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {userDetails.pets.map((pet) => (
+                <div 
+                  key={pet.id}
+                  className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200"
+                >
+                  <div className="p-4">
+                    {/* Header with Type and Action Buttons */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        {pet.photo ? (
+                          <img
+                            src={pet.photo}
+                            alt={pet.type}
+                            className="w-12 h-12 rounded-full object-cover border-2 border-[#7CD5D5]"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-[#7CD5D5] flex items-center justify-center">
+                            <span className="text-white text-xl">
+                              {pet.type.charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                        <div>
+                          <h4 className="font-medium text-gray-900">
+                            {pet.type}
+                          </h4>
+                          {pet.age && (
+                            <p className="text-sm text-gray-500">
+                              {pet.age} {t("setting.personal.pet.years")}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEditPet(pet)}
+                          className="p-2 text-gray-400 hover:text-[#1A3C8E] rounded-full hover:bg-gray-50 transition-colors"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDeletePet(pet.id)}
+                          className="p-2 text-gray-400 hover:text-red-600 rounded-full hover:bg-gray-50 transition-colors"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Pet Photo */}
+                    {pet.photo && (
+                      <div className="relative h-48 rounded-lg overflow-hidden mb-4">
+                        <img
+                          src={pet.photo}
+                          alt={pet.type}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+
+                    {/* Pet Notes */}
+                    {pet.notes && (
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-sm text-gray-600 line-clamp-3">
+                          {pet.notes}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="text-gray-400 group-hover:text-blue-600 transition-colors">
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 bg-white rounded-xl border border-gray-200">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 24 24"
+                    className="h-8 w-8 text-gray-400"
                     fill="none"
+                    viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M9 5l7 7-7 7"
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                     />
                   </svg>
                 </div>
+                <p className="text-gray-500">{t("setting.personal.pet.noPets")}</p>
               </div>
             </div>
-          </div>
+          )}
+
+          <CreatePetModal
+            isOpen={showCreatePet}
+            onClose={() => setShowCreatePet(false)}
+            onSuccess={() => {
+              fetchUserDetails();
+              setShowCreatePet(false);
+            }}
+          />
         </div>
       )}
     </div>
@@ -424,9 +574,33 @@ function Setting() {
         />
         <EditPetModal
           isOpen={showEditPet}
-          onClose={() => setShowEditPet(false)}
-          userDetails={userDetails}
-          onSuccess={fetchUserDetails}
+          onClose={() => {
+            setShowEditPet(false);
+            setSelectedPet(null);
+          }}
+          pet={selectedPet}
+          onSuccess={() => {
+            fetchUserDetails();
+            setShowEditPet(false);
+            setSelectedPet(null);
+          }}
+        />
+        <CreatePetModal
+          isOpen={showCreatePet}
+          onClose={() => setShowCreatePet(false)}
+          onSuccess={() => {
+            fetchUserDetails();
+            setShowCreatePet(false);
+          }}
+        />
+        <ConfirmDeleteModal
+          isOpen={showDeleteConfirm}
+          onClose={() => {
+            setShowDeleteConfirm(false);
+            setDeletingPetId(null);
+          }}
+          onConfirm={confirmDeletePet}
+          loading={isDeleting}
         />
       </div>
     </div>

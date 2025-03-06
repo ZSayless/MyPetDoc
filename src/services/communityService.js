@@ -254,4 +254,19 @@ export const communityService = {
       throw error;
     }
   },
+
+  // Thêm method mới để lấy bài đăng của user hiện tại
+  getMyPosts: async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/community/my-posts`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
