@@ -510,6 +510,103 @@ function UsersManagement() {
     }
   };
 
+  // Thêm hàm mới để xử lý cập nhật thông tin pet
+  const handleUpdatePet = async (petData) => {
+    try {
+      const formData = new FormData();
+      
+      formData.append('user_id', editForm.id);
+      formData.append('pet_id', petData.id);
+      
+      if (petData.type) formData.append('pet_type', petData.type);
+      if (petData.age) formData.append('pet_age', petData.age);
+      if (petData.notes) formData.append('pet_notes', petData.notes);
+      if (petData.newPhoto) formData.append('pet_photo', petData.newPhoto);
+
+      await dispatch(updateUserInfo({
+        userId: editForm.id,
+        userData: formData
+      })).unwrap();
+      
+      addToast({
+        type: "success",
+        message: "Update pet information successfully!",
+      });
+
+      // Refresh user data after updating pet
+      dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
+
+    } catch (error) {
+      console.error('Error updating pet:', error);
+      addToast({
+        type: "error",
+        message: error.message || "An error occurred while updating pet information",
+      });
+      throw error;
+    }
+  };
+
+  // Thêm hàm xử lý thay đổi thông tin pet
+  const handlePetChange = (petId, field, value) => {
+    setEditForm(prev => ({
+      ...prev,
+      pets: prev.pets.map(pet => {
+        if (pet.id === petId) {
+          return {
+            ...pet,
+            [field]: value,
+            isModified: true // Đánh dấu pet đã được chỉnh sửa
+          };
+        }
+        return pet;
+      })
+    }));
+  };
+
+  // Thêm hàm xử lý thay đổi ảnh pet
+  const handlePetPhotoChange = (petId, file) => {
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        addToast({
+          type: "error",
+          message: "Pet photo must not exceed 10MB",
+        });
+        return;
+      }
+      
+      setEditForm(prev => ({
+        ...prev,
+        pets: prev.pets.map(pet => {
+          if (pet.id === petId) {
+            return {
+              ...pet,
+              newPhoto: file,
+              photoPreview: URL.createObjectURL(file),
+              isModified: true
+            };
+          }
+          return pet;
+        })
+      }));
+    }
+  };
+
+  // Thêm hàm xử lý submit cập nhật pet
+  const handleSubmitPetUpdate = async (pet) => {
+    try {
+      setIsSubmitting(true);
+      await handleUpdatePet(pet);
+      
+      // Refresh user data after updating pet
+      dispatch(fetchUsers({ page: pagination.page, limit: pagination.limit }));
+      
+    } catch (error) {
+      console.error("Error updating pet:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Render data dựa theo tab
   const displayedUsers = activeTab === "active" ? users : deletedUsers;
 
@@ -1201,7 +1298,7 @@ function UsersManagement() {
 
               <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-4">
-                  Pets Information (Read Only)
+                  Pets Information
                 </h4>
                 {modalState.user.pets.map((pet, index) => (
                   <div key={pet.id || index} className="mb-4 p-4 border rounded-lg">
@@ -1624,7 +1721,7 @@ function UsersManagement() {
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Pets Information (Read Only)
+                    Pets Information
                   </label>
                   
                   {editForm.pets.map((pet, index) => (
@@ -1634,12 +1731,16 @@ function UsersManagement() {
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             Pet Type
                           </label>
-                          <input
-                            type="text"
+                          <select
                             value={pet.type || ""}
-                            readOnly
-                            className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
-                          />
+                            onChange={(e) => handlePetChange(pet.id, 'type', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                          >
+                            <option value="">Select type</option>
+                            {['DOG', 'CAT', 'BIRD', 'RABBIT', 'FISH', 'HAMSTER', 'REPTILE', 'OTHER'].map(type => (
+                              <option key={type} value={type}>{type}</option>
+                            ))}
+                          </select>
                         </div>
 
                         <div>
@@ -1649,8 +1750,8 @@ function UsersManagement() {
                           <input
                             type="text"
                             value={pet.age || ""}
-                            readOnly
-                            className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                            onChange={(e) => handlePetChange(pet.id, 'age', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                           />
                         </div>
 
@@ -1660,24 +1761,46 @@ function UsersManagement() {
                           </label>
                           <textarea
                             value={pet.notes || ""}
-                            readOnly
-                            className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                            onChange={(e) => handlePetChange(pet.id, 'notes', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                             rows="2"
                           />
                         </div>
 
-                        {pet.photo && (
-                          <div className="col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Pet Photo
-                            </label>
+                        <div className="col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Pet Photo
+                          </label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handlePetPhotoChange(pet.id, e.target.files[0])}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                          />
+                          {(pet.photoPreview || pet.photo) && (
                             <img
-                              src={pet.photo}
+                              src={pet.photoPreview || pet.photo}
                               alt="Pet"
-                              className="w-20 h-20 object-cover rounded-lg"
+                              className="mt-2 w-20 h-20 object-cover rounded-lg"
                             />
-                          </div>
-                        )}
+                          )}
+                        </div>
+
+                        {/* Thêm nút cập nhật cho từng pet */}
+                        <div className="col-span-2 flex justify-end mt-4">
+                          <button
+                            type="button"
+                            onClick={() => handleSubmitPetUpdate(pet)}
+                            disabled={!pet.isModified || isSubmitting}
+                            className={`px-4 py-2 text-sm font-medium text-white rounded-md 
+                              ${!pet.isModified || isSubmitting 
+                                ? "bg-gray-400 cursor-not-allowed" 
+                                : "bg-blue-600 hover:bg-blue-700"
+                              }`}
+                          >
+                            {isSubmitting ? "Updating..." : "Update Pet"}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
