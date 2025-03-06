@@ -129,7 +129,7 @@ function Register({ onClose, onLoginClick }) {
     }
 
 
-    if (formData.petNotes.trim().length < 10) {
+    if (formData.petNotes.trim().length < 10 || formData.petNotes.trim().length > 300) {
       setError(t("auth.register.errors.petNotesRequired"));
       return false;
     }

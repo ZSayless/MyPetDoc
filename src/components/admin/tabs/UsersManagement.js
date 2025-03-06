@@ -64,13 +64,10 @@ function UsersManagement() {
     password: "",
     role: "",
     phone_number: "",
-    pet_type: "",
-    pet_age: "",
-    pet_notes: "",
+    pets: [],
     is_active: true,
     is_locked: false,
     avatar: null,
-    pet_photo: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
@@ -110,8 +107,8 @@ function UsersManagement() {
     setEditForm({
       ...user,
       password: "",
+      pets: user.pets || [],
     });
-    // Reset errors
     setErrors({});
     setShowEditModal(true);
   };
@@ -441,12 +438,6 @@ function UsersManagement() {
       errors.password = "Password must be at least 6 characters";
     } else if (formData.password && formData.password.length > 50) {
       errors.password = "Password must not exceed 50 characters";
-    } else if (
-      formData.password &&
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)
-    ) {
-      errors.password =
-        "Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number";
     }
 
     // Validate số điện thoại
@@ -471,32 +462,6 @@ function UsersManagement() {
       const validTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validTypes.includes(formData.avatar.type)) {
         errors.avatar = "Only JPG, PNG, and GIF images are supported";
-      }
-    }
-
-    // Validate thông tin thú cưng (nếu có)
-    if (formData.pet_age && isNaN(formData.pet_age)) {
-      errors.pet_age = "Pet age must be a number";
-    }
-
-    if (
-      formData.pet_type &&
-      !["DOG", "CAT", "OTHER"].includes(formData.pet_type)
-    ) {
-      errors.pet_type = "Invalid pet type";
-    }
-
-    if (formData.pet_notes && formData.pet_notes.length > 500) {
-      errors.pet_notes = "Notes must not exceed 500 characters";
-    }
-
-    if (formData.pet_photo instanceof File) {
-      if (formData.pet_photo.size > 10 * 1024 * 1024) {
-        errors.pet_photo = "Image size must not exceed 10MB";
-      }
-      const validTypes = ["image/jpeg", "image/png", "image/gif"];
-      if (!validTypes.includes(formData.pet_photo.type)) {
-        errors.pet_photo = "Only JPG, PNG, and GIF images are supported";
       }
     }
 
@@ -1234,70 +1199,65 @@ function UsersManagement() {
                 </div>
               </div>
 
-              {(modalState.user.pet_type ||
-                modalState.user.pet_age ||
-                modalState.user.pet_photo ||
-                modalState.user.pet_notes) && (
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-4">
-                    Pet Information
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Pet Type
-                      </label>
-                      <input
-                        type="text"
-                        value={modalState.user.pet_type || "Not updated"}
-                        readOnly
-                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Pet Age
-                      </label>
-                      <input
-                        type="text"
-                        value={
-                          modalState.user.pet_age
-                            ? `${modalState.user.pet_age} years old`
-                            : "Not updated"
-                        }
-                        readOnly
-                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
-                      />
-                    </div>
-
-                    <div className="col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Notes
-                      </label>
-                      <input
-                        type="text"
-                        value={modalState.user.pet_notes || "No notes"}
-                        readOnly
-                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
-                      />
-                    </div>
-
-                    {modalState.user.pet_photo && (
-                      <div className="col-span-2">
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">
+                  Pets Information (Read Only)
+                </h4>
+                {modalState.user.pets.map((pet, index) => (
+                  <div key={pet.id || index} className="mb-4 p-4 border rounded-lg">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Pet Image
+                          Pet Type
                         </label>
-                        <img
-                          src={modalState.user.pet_photo}
-                          alt="Pet"
-                          className="w-32 h-32 object-cover rounded-lg"
+                        <input
+                          type="text"
+                          value={pet.type || ""}
+                          readOnly
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
                         />
                       </div>
-                    )}
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Pet Age
+                        </label>
+                        <input
+                          type="text"
+                          value={pet.age || ""}
+                          readOnly
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                        />
+                      </div>
+
+                      <div className="col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Pet Notes
+                        </label>
+                        <textarea
+                          value={pet.notes || ""}
+                          readOnly
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                          rows="2"
+                        />
+                      </div>
+
+                      {pet.photo && (
+                        <div className="col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Pet Photo
+                          </label>
+                          <img
+                            src={pet.photo}
+                            alt="Pet"
+                            className="w-20 h-20 object-cover rounded-lg"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                ))}
+              </div>
 
               <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-4">Time</h4>
@@ -1663,73 +1623,64 @@ function UsersManagement() {
               {/* Right Column */}
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Pet Type
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Pets Information (Read Only)
                   </label>
-                  <select
-                    value={editForm.pet_type || ""}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, pet_type: e.target.value })
-                    }
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.pet_type ? "border-red-500" : "border-gray-300"
-                    }`}
-                  >
-                    <option value="">Select pet type</option>
-                    <option value="DOG">Dog</option>
-                    <option value="CAT">Cat</option>
-                    <option value="BIRD">Bird</option>
-                    <option value="FISH">Fish</option>
-                    <option value="REPTILE">Reptile</option>
-                    <option value="RABBIT">Rabbit</option>
-                    <option value="OTHER">Other</option>
-                  </select>
-                </div>
+                  
+                  {editForm.pets.map((pet, index) => (
+                    <div key={pet.id || index} className="mb-4 p-4 border rounded-lg">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Pet Type
+                          </label>
+                          <input
+                            type="text"
+                            value={pet.type || ""}
+                            readOnly
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                          />
+                        </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Pet Age
-                  </label>
-                  <input
-                    type="number"
-                    value={editForm.pet_age || ""}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, pet_age: e.target.value })
-                    }
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.pet_age ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Pet Age
+                          </label>
+                          <input
+                            type="text"
+                            value={pet.age || ""}
+                            readOnly
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                          />
+                        </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Pet Notes
-                  </label>
-                  <textarea
-                    value={editForm.pet_notes || ""}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, pet_notes: e.target.value })
-                    }
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.pet_notes ? "border-red-500" : "border-gray-300"
-                    }`}
-                    rows="3"
-                  />
-                </div>
+                        <div className="col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Pet Notes
+                          </label>
+                          <textarea
+                            value={pet.notes || ""}
+                            readOnly
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg"
+                            rows="2"
+                          />
+                        </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Pet Photo
-                  </label>
-                  <input
-                    type="file"
-                    onChange={(e) => handleFileChange(e, "pet_photo")}
-                    accept="image/*"
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.pet_photo ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
+                        {pet.photo && (
+                          <div className="col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Pet Photo
+                            </label>
+                            <img
+                              src={pet.photo}
+                              alt="Pet"
+                              className="w-20 h-20 object-cover rounded-lg"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 

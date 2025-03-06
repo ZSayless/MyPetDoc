@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { updateInfo } from "../../../services/authService";
 
-function EditPetModal({ isOpen, onClose, userDetails, onSuccess }) {
+function EditPetModal({ isOpen, onClose, pet, onSuccess }) {
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -27,14 +27,17 @@ function EditPetModal({ isOpen, onClose, userDetails, onSuccess }) {
   ];
 
   useEffect(() => {
-    if (userDetails) {
+    if (pet) {
       setFormData({
-        pet_type: userDetails.pet_type || "",
-        pet_age: userDetails.pet_age || "",
-        pet_notes: userDetails.pet_notes || ""
+        pet_type: pet.type || "",
+        pet_age: pet.age || "",
+        pet_notes: pet.notes || ""
       });
+      if (pet.photo) {
+        setPreview(pet.photo);
+      }
     }
-  }, [userDetails]);
+  }, [pet]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -69,8 +72,12 @@ function EditPetModal({ isOpen, onClose, userDetails, onSuccess }) {
     }
 
     // Validate pet notes
-    if (formData.pet_notes && formData.pet_notes.length > 500) {
+    if (formData.pet_notes && formData.pet_notes.length > 300) {
       newErrors.pet_notes = t("setting.modal.editPet.errors.notesTooLong");
+    }
+
+    if (formData.pet_notes && formData.pet_notes.length < 10) {
+      newErrors.pet_notes = t("setting.modal.editPet.errors.notesTooShort");
     }
 
     // Validate file
@@ -126,6 +133,11 @@ function EditPetModal({ isOpen, onClose, userDetails, onSuccess }) {
 
     const submitData = new FormData();
     
+    // Thêm pet_id vào FormData
+    if (pet?.id) {
+      submitData.append('pet_id', pet.id);
+    }
+    
     // Thêm các trường thông tin
     Object.keys(formData).forEach(key => {
       if (formData[key]) {
@@ -158,10 +170,10 @@ function EditPetModal({ isOpen, onClose, userDetails, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl w-full max-w-md">
-        <div className="p-6">
+      <div className="bg-white rounded-3xl w-full max-w-md max-h-[90vh] flex flex-col">
+        <div className="p-6 overflow-y-auto flex-1">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-2xl font-semibold mb-2">
+            <h3 className="text-2xl font-semibold">
               {t("setting.modal.editPet.title")}
             </h3>
             <button
@@ -175,137 +187,136 @@ function EditPetModal({ isOpen, onClose, userDetails, onSuccess }) {
             {t("setting.modal.editPet.description")}
           </p>
 
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-4">
-              {/* Pet Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("setting.personal.pet.type")} <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="pet_type"
-                  value={formData.pet_type}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border ${
-                    errors.pet_type ? "border-red-500" : "border-gray-200"
-                  } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 bg-white`}
-                >
-                  <option value="">
-                    {t("setting.modal.editPet.selectType")}
+          <form className="space-y-4">
+            {/* Pet Type */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("setting.personal.pet.type")} <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="pet_type"
+                value={formData.pet_type}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 border ${
+                  errors.pet_type ? "border-red-500" : "border-gray-200"
+                } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 bg-white`}
+              >
+                <option value="">
+                  {t("setting.modal.editPet.selectType")}
+                </option>
+                {PET_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {t(`setting.modal.editPet.petTypes.${type.toLowerCase()}`)}
                   </option>
-                  {PET_TYPES.map((type) => (
-                    <option key={type} value={type}>
-                      {t(`setting.modal.editPet.petTypes.${type.toLowerCase()}`)}
-                    </option>
-                  ))}
-                </select>
-                {errors.pet_type && (
-                  <p className="text-red-500 text-sm mt-1">{errors.pet_type}</p>
-                )}
-              </div>
-
-              {/* Pet Age */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("setting.personal.pet.age")}
-                </label>
-                <input
-                  type="text"
-                  name="pet_age"
-                  value={formData.pet_age}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border ${
-                    errors.pet_age ? "border-red-500" : "border-gray-200"
-                  } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400`}
-                  placeholder={t("setting.modal.editPet.agePlaceholder")}
-                />
-                {errors.pet_age && (
-                  <p className="text-red-500 text-sm mt-1">{errors.pet_age}</p>
-                )}
-              </div>
-
-              {/* Pet Photo */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("setting.personal.pet.photo")}
-                </label>
-                <div className={`border-2 border-dashed ${
-                  errors.pet_photo ? "border-red-500" : "border-gray-200"
-                } rounded-xl p-4`}>
-                  {preview || userDetails?.pet_photo ? (
-                    <div className="mb-4">
-                      <img
-                        src={preview || userDetails.pet_photo}
-                        alt="Pet preview"
-                        className="w-32 h-32 object-cover rounded-lg mx-auto"
-                      />
-                    </div>
-                  ) : null}
-                  <input
-                    type="file"
-                    id="pet-photo"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="pet-photo"
-                    className="cursor-pointer text-blue-500 hover:text-blue-600 block text-center"
-                  >
-                    {t("setting.modal.editPet.uploadPhoto")}
-                  </label>
-                </div>
-                {errors.pet_photo && (
-                  <p className="text-red-500 text-sm mt-1">{errors.pet_photo}</p>
-                )}
-              </div>
-
-              {/* Pet Notes */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("setting.personal.pet.notes")}
-                </label>
-                <textarea
-                  name="pet_notes"
-                  value={formData.pet_notes}
-                  onChange={handleChange}
-                  rows={3}
-                  className={`w-full px-4 py-3 border ${
-                    errors.pet_notes ? "border-red-500" : "border-gray-200"
-                  } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400`}
-                  placeholder={t("setting.modal.editPet.notesPlaceholder")}
-                />
-                {errors.pet_notes && (
-                  <p className="text-red-500 text-sm mt-1">{errors.pet_notes}</p>
-                )}
-              </div>
-
-              {errors.submit && (
-                <p className="text-red-500 text-sm mt-2">{errors.submit}</p>
+                ))}
+              </select>
+              {errors.pet_type && (
+                <p className="text-red-500 text-sm mt-1">{errors.pet_type}</p>
               )}
             </div>
 
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-6 py-3 text-gray-700 border border-gray-200 rounded-xl hover:bg-gray-50"
-              >
-                {t("setting.modal.editPet.cancel")}
-              </button>
-              <button
-                disabled={isLoading}
-                type="submit"
-                className="px-6 py-3 bg-[#98E9E9] text-gray-700 rounded-xl hover:bg-[#7CD5D5]"
-              >
-                {isLoading ? (
-                  <LoaderIcon className="animate-spin" />
-                ) : (
-                  t("setting.modal.editPet.save")
-                )}
-              </button>
+            {/* Pet Age */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("setting.personal.pet.age")}
+              </label>
+              <input
+                type="text"
+                name="pet_age"
+                value={formData.pet_age}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 border ${
+                  errors.pet_age ? "border-red-500" : "border-gray-200"
+                } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400`}
+                placeholder={t("setting.modal.editPet.agePlaceholder")}
+              />
+              {errors.pet_age && (
+                <p className="text-red-500 text-sm mt-1">{errors.pet_age}</p>
+              )}
             </div>
+
+            {/* Pet Photo */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("setting.personal.pet.photo")}
+              </label>
+              <div className={`border-2 border-dashed ${
+                errors.pet_photo ? "border-red-500" : "border-gray-200"
+              } rounded-xl p-4`}>
+                {preview || pet?.photo ? (
+                  <div className="mb-4">
+                    <img
+                      src={preview || pet.photo}
+                      alt="Pet preview"
+                      className="w-32 h-32 object-cover rounded-lg mx-auto"
+                    />
+                  </div>
+                ) : null}
+                <input
+                  type="file"
+                  id="pet-photo"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="pet-photo"
+                  className="cursor-pointer text-blue-500 hover:text-blue-600 block text-center"
+                >
+                  {t("setting.modal.editPet.uploadPhoto")}
+                </label>
+              </div>
+              {errors.pet_photo && (
+                <p className="text-red-500 text-sm mt-1">{errors.pet_photo}</p>
+              )}
+            </div>
+
+            {/* Pet Notes */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("setting.personal.pet.notes")}
+              </label>
+              <textarea
+                name="pet_notes"
+                value={formData.pet_notes}
+                onChange={handleChange}
+                rows={3}
+                className={`w-full px-4 py-3 border ${
+                  errors.pet_notes ? "border-red-500" : "border-gray-200"
+                } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400`}
+                placeholder={t("setting.modal.editPet.notesPlaceholder")}
+              />
+              {errors.pet_notes && (
+                <p className="text-red-500 text-sm mt-1">{errors.pet_notes}</p>
+              )}
+            </div>
+
+            {errors.submit && (
+              <p className="text-red-500 text-sm mt-2">{errors.submit}</p>
+            )}
           </form>
+        </div>
+
+        {/* Footer with buttons - fixed at bottom */}
+        <div className="p-4 border-t flex justify-end gap-3 bg-white rounded-b-3xl">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-6 py-3 text-gray-700 border border-gray-200 rounded-xl hover:bg-gray-50"
+          >
+            {t("setting.modal.editPet.cancel")}
+          </button>
+          <button
+            disabled={isLoading}
+            onClick={handleSubmit}
+            className="px-6 py-3 bg-[#98E9E9] text-gray-700 rounded-xl hover:bg-[#7CD5D5]"
+          >
+            {isLoading ? (
+              <LoaderIcon className="animate-spin" />
+            ) : (
+              t("setting.modal.editPet.save")
+            )}
+          </button>
         </div>
       </div>
     </div>

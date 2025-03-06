@@ -41,6 +41,7 @@
       "petAge": "Tuổi Thú Cưng",
       "petNotes": "Ghi Chú Thú Cưng",
       "petPhoto": "Ảnh Thú Cưng",
+      "petNotesRequired": "Ghi chú thú cưng là bắt buộc (10-300 ký tự)",
       "petAgePlaceholder": "Nhập tuổi thú cưng",
       "petNotesPlaceholder": "Nhập ghi chú thú cưng",
       "petPhotoPlaceholder": "Tải ảnh thú cưng",
@@ -165,8 +166,6 @@
     "editProfile": "Chỉnh Sửa Hồ Sơ",
     "registerHospital": "Đăng Ký Bệnh Viện",
     "manageHospital": "Quản Lý Bệnh Viện",
-    "reviews": "Đánh Giá",
-    "favorites": "Yêu Thích",
     "blogs": "Bài Viết",
     "recentReviews": "Đánh Giá Gần Đây",
     "favoriteHospitals": "Bệnh Viện Yêu Thích",
@@ -235,6 +234,27 @@
       "title": "Bệnh viện yêu thích",
       "viewAll": "Xem tất cả",
       "reviews": "đánh giá"
+    },
+    "pet": {
+      "title": "Thông tin thú cưng",
+      "type": "Loại thú cưng",
+      "age": "Tuổi",
+      "years": "tuổi",
+      "photo": "Hình ảnh",
+      "notes": "Ghi chú",
+      "noPet": "Chưa có thông tin thú cưng",
+      "noPets": "Không có thú cưng",
+      "viewAll": "Xem tất cả",
+      "types": {
+        "dog": "Chó",
+        "cat": "Mèo",
+        "rabbit": "Thỏ",
+        "hamster": "Chuột hamster",
+        "bird": "Chim",
+        "fish": "Cá",
+        "reptile": "Rắn",
+        "other": "Khác"
+      }
     }
   },
   "manageHospital": {
@@ -835,13 +855,46 @@
         "description": "Quản lý thông tin thú cưng của bạn",
         "type": "Loại Thú Cưng",
         "age": "Tuổi Thú Cưng",
+        "years": "Tuổi",
+        "addNew": "Thêm Thú Cưng Mới",
+        "success": "Thêm thú cưng thành công",
+        "error": "Thêm thú cưng thất bại",
+        "noPets": "Không có thú cưng",
         "photo": "Hình Ảnh Thú Cưng",
         "notes": "Ghi Chú Thú Cưng",
+        "creating": "Đang tạo...",
+        "invalidAge": "Tuổi không hợp lệ (0-100)",
+        "invalidNotes": "Ghi chú không hợp lệ (10-300 ký tự)",
+        "submit": "Xác Nhận",
+        "cancel": "Hủy",
+        "characters": "ký tự",
+        "uploadPhoto": "Tải Ảnh Lên",
+        "photoTypes": "PNG, JPG (tối đa 10MB)",
         "noPetType": "Không có loại thú cưng",
         "noPetAge": "Không có tuổi thú cưng",
         "noPetPhoto": "Không có hình ảnh thú cưng",
-        "noPetNotes": "Không có ghi chú thú cưng"
+        "noPetNotes": "Không có ghi chú thú cưng",
+        "fileSizeError": "Kích thước file phải nhỏ hơn 10MB",
+        "fileTypeError": "Chỉ chấp nhận file PNG, JPG",
+        "confirmDeleteTitle": "Xác nhận xóa thú cưng",
+        "confirmDeleteMessage": "Bạn có chắc chắn muốn xóa thú cưng này? Hành động này không thể hoàn tác.",
+        "deleteSuccess": "Đã xóa thú cưng thành công",
+        "deleteError": "Có lỗi xảy ra khi xóa thú cưng",
+        "types": {
+          "dog": "Chó",
+          "cat": "Mèo",
+          "bird": "Chim",
+          "fish": "Cá",
+          "reptile": "Bò sát",
+          "rabbit": "Thỏ",
+          "other": "Khác"
+        }
       }
+    },
+    "common": {
+     "delete": "Xóa",
+      "deleting": "Đang xóa...",
+      "cancel": "Hủy"
     },
     "security": {
       "tab": "Mật Khẩu & Bảo Mật",

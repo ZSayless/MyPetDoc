@@ -43,31 +43,28 @@ function Profile() {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await getUserInfoByEmail(user.email);
-      if (response.status === "success") {
-        const {
-          full_name,
-          email,
-          phone_number,
-          avatar,
-          role,
-          pet_type,
-          pet_age,
-          pet_photo,
-          pet_notes,
-        } = response.data;
+      const savedUser = JSON.parse(localStorage.getItem("user"));
+      if (savedUser?.email) {
+        const response = await getUserInfoByEmail(savedUser.email);
+        if (response.status === "success") {
+          const {
+            full_name,
+            email,
+            phone_number,
+            avatar,
+            role,
+            pets,
+          } = response.data;
 
-        setUserDetails({
-          full_name,
-          email,
-          phone_number,
-          avatar,
-          role,
-          pet_type,
-          pet_age,
-          pet_photo,
-          pet_notes,
-        });
+          setUserDetails({
+            full_name,
+            email,
+            phone_number,
+            avatar,
+            role,
+            pets: pets || [],
+          });
+        }
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
@@ -285,7 +282,7 @@ function Profile() {
             {/* Left Column */}
             <div className="lg:col-span-2 space-y-8">
               {/* Pet Information Section */}
-              {userInfo.role !== "HOSPITAL_ADMIN" && (
+              {userDetails?.role !== "HOSPITAL_ADMIN" && (
                 <div className="bg-white rounded-xl shadow-sm p-6">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
@@ -300,155 +297,78 @@ function Profile() {
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077l1.41-.513m14.095-5.13l1.41-.513M5.106 17.785l1.15-.964m11.49-9.642l1.149-.964M7.501 19.795l.75-1.3m7.5-12.99l.75-1.3m-6.063 16.658l.26-1.477m2.605-14.772l.26-1.477m0 17.726l-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205L12 12m6.894 5.785l-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864l-1.41-.513M4.954 9.435l-1.41-.514"
+                          d="M4.5 12.5l6-6.5 6 6.5M12 18V9"
                         />
                       </svg>
-                      {t("profile.petInfo.title")}
+                      {t("profile.pet.title")}
                     </h2>
                     <Link
                       to="/setting"
                       className="text-sm text-[#7CD5D5] hover:text-[#98E9E9] font-medium"
                     >
-                      {t("profile.petInfo.edit")}
+                      {t("profile.pet.viewAll")}
                     </Link>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-6">
-                      {/* Pet Type */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-6 w-6 text-[#7CD5D5]"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  {userDetails?.pets && userDetails.pets.length > 0 ? (
+                    <div className="grid gap-6 md:grid-cols-2">
+                      {userDetails.pets.map((pet) => (
+                        <div 
+                          key={pet.id}
+                          className="bg-gray-50 rounded-xl p-4 border border-gray-100"
+                        >
+                          <div className="flex items-center gap-4 mb-4">
+                            {pet.photo ? (
+                              <img
+                                src={pet.photo}
+                                alt={`${pet.type}`}
+                                className="w-16 h-16 rounded-full object-cover border-2 border-[#7CD5D5]"
                               />
-                            </svg>
+                            ) : (
+                              <div className="w-16 h-16 rounded-full bg-[#7CD5D5] flex items-center justify-center">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-8 w-8 text-white"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                            <div>
+                              <h3 className="font-medium text-gray-900">
+                                {t(`profile.pet.types.${pet.type.toLowerCase()}`)}
+                              </h3>
+                              {pet.age && (
+                                <p className="text-sm text-gray-500">
+                                  {pet.age} {t("profile.pet.years")}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500">
-                              {t("profile.petInfo.type.label")}
-                            </h3>
-                            <p className="mt-1 text-lg font-semibold text-gray-900">
-                              {userDetails?.pet_type ||
-                                t("profile.petInfo.type.noData")}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
 
-                      {/* Pet Age */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-6 w-6 text-[#7CD5D5]"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500">
-                              {t("profile.petInfo.age.label")}
-                            </h3>
-                            <p className="mt-1 text-lg font-semibold text-gray-900">
-                              {userDetails?.pet_age || t("profile.petInfo.age.noData")}
-                            </p>
-                          </div>
+                          {pet.notes && (
+                            <div className="mt-3">
+                              <p className="text-sm text-gray-600 bg-white p-3 rounded-lg">
+                                {pet.notes}
+                              </p>
+                            </div>
+                          )}
                         </div>
-                      </div>
-
-                      {/* Pet Notes */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-6 w-6 text-[#7CD5D5]"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500">
-                              {t("profile.petInfo.notes.label")}
-                            </h3>
-                          </div>
-                        </div>
-                        <p className="text-gray-700 bg-white rounded-lg p-4">
-                          {userDetails?.pet_notes || t("profile.petInfo.notes.noData")}
-                        </p>
-                      </div>
+                      ))}
                     </div>
-
-                    <div className="space-y-6">
-                      {/* Pet Photo */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-6 w-6 text-[#7CD5D5]"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500">
-                              {t("profile.petInfo.photo.label")}
-                            </h3>
-                          </div>
-                        </div>
-                        {userDetails?.pet_photo ? (
-                          <img
-                            src={userDetails.pet_photo}
-                            alt="Pet"
-                            className="w-full h-48 rounded-lg object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-48 rounded-lg bg-white border-2 border-dashed border-gray-200 flex items-center justify-center">
-                            <span className="text-sm text-gray-500">
-                              {t("profile.petInfo.photo.noData")}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                  ) : (
+                    <div className="text-center py-8 bg-gray-50 rounded-xl">
+                      <p className="text-gray-500">{t("profile.pet.noPets")}</p>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
 

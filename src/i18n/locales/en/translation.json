@@ -25,7 +25,6 @@
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot Password?",
     "signIn": "Sign In",
-    "signingIn": "Signing in...",
     "orContinueWith": "Or continue with",
     "googleSignIn": "Sign in with Google",
     "noAccount": "Don't have an account?",
@@ -71,6 +70,7 @@
       "lastName": "Last name",
       "email": "Enter your email (example@gmail.com)",
       "petAge": "Pet Age",
+      "petNotesRequired": "Pet notes are required (10-300 characters)",
       "petNotes": "Pet Notes",
       "petPhoto": "Pet Photo",
       "petAgePlaceholder": "Enter your pet age",
@@ -221,6 +221,27 @@
       "photo": {
         "label": "Pet Photo",
         "noData": "No photo available"
+      }
+    },
+    "pet": {
+      "title": "Pet Information",
+      "type": "Pet Type",
+      "age": "Pet Age",
+      "years": "years",
+      "photo": "Pet Photo",
+      "notes": "Pet Notes",
+      "noPet": "You have not added any pet yet",
+      "noPets": "No pets",
+      "viewAll": "View All",
+      "types": {
+        "dog": "Dog",
+        "cat": "Cat",
+        "rabbit": "Rabbit",
+        "hamster": "Hamster",
+        "bird": "Bird",
+        "fish": "Fish",
+        "reptile": "Reptile",
+        "other": "Other"
       }
     },
     "reviews": {
@@ -847,13 +868,44 @@
         "description": "Manage your pet information",
         "type": "Pet Type",
         "age": "Pet Age",
+        "years": "Years",
         "photo": "Pet Photo",
+        "noPets": "No pets",
+        "addNew": "Add New Pet",
         "notes": "Pet Notes",
         "noPetType": "No pet type",
+        "creating": "Creating...",
+        "submit": "Submit",
+        "cancel": "Cancel",
         "noPetAge": "No pet age",
         "noPetPhoto": "No pet photo",
-        "noPetNotes": "No pet notes"
+        "noPetNotes": "No pet notes",
+        "invalidAge": "Invalid age (0-100)",
+        "invalidNotes": "Invalid notes (10-300 characters)",
+        "characters": "characters",
+        "uploadPhoto": "Upload Photo",
+        "photoTypes": "PNG, JPG (max 10MB)",
+        "fileSizeError": "File size should be less than 10MB",
+        "fileTypeError": "Only PNG, JPG images are allowed",
+        "confirmDeleteTitle": "Confirm Delete Pet",
+        "confirmDeleteMessage": "Are you sure you want to delete this pet? This action cannot be undone.",
+        "deleteSuccess": "Pet deleted successfully",
+        "deleteError": "An error occurred when deleting the pet. Please try again.",
+        "types": {
+          "dog": "Dog",
+          "cat": "Cat",
+          "bird": "Bird",
+          "fish": "Fish",
+          "reptile": "Reptile",
+          "rabbit": "Rabbit",
+          "other": "Other"
+        }
       }
+    },
+    "common": {
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "cancel": "Cancel"
     },
     "security": {
       "tab": "Password & Security",
