@@ -898,6 +898,7 @@
           "fish": "Fish",
           "reptile": "Reptile",
           "rabbit": "Rabbit",
+          "hamster": "Hamster",
           "other": "Other"
         }
       }
