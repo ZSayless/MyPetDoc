@@ -813,6 +813,18 @@ export const deleteBlogComment = createAsyncThunk(
   }
 );
 
+export const toggleHospitalProposal = createAsyncThunk(
+  "admin/toggleHospitalProposal",
+  async (hospitalId, { rejectWithValue }) => {
+    try {
+      const response = await adminService.toggleHospitalProposal(hospitalId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -1603,6 +1615,23 @@ const adminSlice = createSlice({
       .addCase(deleteBlogComment.rejected, (state, action) => {
         state.isDeletingBlogComment = false;
         state.deleteBlogCommentError = action.payload;
+      })
+      .addCase(toggleHospitalProposal.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(toggleHospitalProposal.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.hospitals.findIndex(
+          (hospital) => hospital.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.hospitals[index].proposal = action.payload.proposal;
+        }
+      })
+      .addCase(toggleHospitalProposal.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

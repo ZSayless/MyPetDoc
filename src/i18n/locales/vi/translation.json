@@ -343,6 +343,12 @@
       "title": "Bài Viết Mới Nhất",
       "subtitle": "Cập nhật các mẹo và lời khuyên chăm sóc thú cưng mới nhất",
       "viewAll": "Xem Tất Cả"
+    },
+    "proposal": {
+      "title": "Bệnh Viện Đề Xuất",
+      "subtitle": "Khám phá các bệnh viện thú y đề xuất mới nhất",
+      "viewAll": "Xem Tất Cả",
+      "reviews": "đánh giá"
     }
   },
   "terms": {

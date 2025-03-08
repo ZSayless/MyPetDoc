@@ -25,6 +25,7 @@ import {
   toggleDeleteHospital,
   createHospital,
   deleteHospitalPermanently,
+  toggleHospitalProposal,
 } from "../../../redux/slices/adminSlice";
 import { useToast } from "../../../context/ToastContext";
 import { HOSPITAL_SERVICES } from "../../../constants/services";
@@ -561,6 +562,21 @@ function HospitalsManagement() {
     }
   };
 
+  const handleToggleProposal = async (hospitalId) => {
+    try {
+      await dispatch(toggleHospitalProposal(hospitalId)).unwrap();
+      addToast({
+        type: "success",
+        message: "Toggle hospital proposal status successfully!",
+      });
+    } catch (error) {
+      addToast({
+        type: "error",
+        message: error.message || "Failed to toggle hospital proposal status",
+      });
+    }
+  };
+
   return (
     <div className="p-4 md:p-6">
       {/* Header Tabs */}
@@ -630,6 +646,9 @@ function HospitalsManagement() {
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Proposal
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Creator
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -680,6 +699,17 @@ function HospitalsManagement() {
                         )}
                       </button>
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        hospital.proposal
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {hospital.proposal ? "Proposal" : "Regular"}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     {hospital?.creator && (
@@ -744,6 +774,21 @@ function HospitalsManagement() {
                           </button>
                         </>
                       )}
+                      <button
+                        onClick={() => handleToggleProposal(hospital.id)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          hospital.proposal
+                            ? "bg-yellow-100 text-yellow-600 hover:bg-yellow-200"
+                            : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                        }`}
+                        title={hospital.proposal ? "Remove from proposals" : "Add to proposals"}
+                      >
+                        {hospital.proposal ? (
+                          <Star size={18} fill="currentColor" />
+                        ) : (
+                          <Star size={18} />
+                        )}
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -864,6 +909,21 @@ function HospitalsManagement() {
                   </button>
                 </>
               )}
+              <button
+                onClick={() => handleToggleProposal(hospital.id)}
+                className={`p-2 rounded-lg transition-colors ${
+                  hospital.proposal
+                    ? "bg-yellow-100 text-yellow-600 hover:bg-yellow-200"
+                    : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                }`}
+                title={hospital.proposal ? "Remove from proposals" : "Add to proposals"}
+              >
+                {hospital.proposal ? (
+                  <Star size={18} fill="currentColor" />
+                ) : (
+                  <Star size={18} />
+                )}
+              </button>
             </div>
           </div>
         ))}

@@ -937,4 +937,22 @@ export const adminService = {
       throw error.response?.data || error;
     }
   },
+  toggleHospitalProposal: async (hospitalId) => {
+    try {
+      if (!hospitalId) throw new Error('Hospital ID is required');
+      
+      const response = await axios.patch(
+        `${BASE_URL}/hospitals/${hospitalId}/toggle-proposal`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 }; 

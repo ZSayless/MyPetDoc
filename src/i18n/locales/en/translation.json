@@ -356,6 +356,12 @@
       "title": "Recent Blog Posts",
       "subtitle": "Stay updated with the latest pet care tips and advice",
       "viewAll": "View All"
+    },
+    "proposal": {
+      "title": "Proposal Hospitals",
+      "subtitle": "Discover the latest proposal hospitals",
+      "viewAll": "View All",
+      "reviews": "reviews"
     }
   },
   "terms": {

@@ -8,21 +8,18 @@ const CITIES = [
     id: "hcm",
     name: "Ho Chi Minh City",
     description: "Vietnam's largest healthcare hub",
-    hospitalCount: "50+ Hospitals",
     image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482",
   },
   {
     id: "hanoi",
     name: "Hanoi",
     description: "Leading veterinary facilities",
-    hospitalCount: "40+ Hospitals",
     image: "https://images.unsplash.com/photo-1509030450996-dd1a26dda07a",
   },
   {
     id: "danang",
     name: "Da Nang",
     description: "Modern pet care centers",
-    hospitalCount: "20+ Hospitals",
     image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b",
   },
 ];
@@ -64,12 +61,6 @@ const HomeCity = () => {
                   <h3 className="text-2xl font-bold">{city.name}</h3>
                 </div>
                 <p className="text-sm mb-3 opacity-90">{city.description}</p>
-                <span className="inline-block px-3 py-1 bg-white/20 rounded-full text-sm">
-                  {city.hospitalCount.replace(
-                    "Hospitals",
-                    t("home.cities.hospitals")
-                  )}
-                </span>
               </div>
             </div>
           ))}
