@@ -135,8 +135,9 @@
     "adminDashboard": "Admin Dashboard",
     "signOut": "Sign Out",
     "selectRole": {
-      "title": "Select Your Role",
+      "title": "Choose Your Account Type",
       "subtitle": "Choose how you want to use MyPetDoc",
+      "cancel": "Back",
       "roles": {
         "petOwner": {
           "title": "Pet Owner",
@@ -146,12 +147,45 @@
           "title": "Veterinary Hospital Manager",
           "description": "Provide care and share expertise with pet owners"
         }
+      },
+      "phoneError": {
+        "empty": "Phone number is required",
+        "invalid": "Phone number is not valid (10 digits and starts with 03, 05, 07, 08, 09 ...)"
+      },
+      "error": {
+        "signup": "Registration failed. Please try again"
+      },
+      "phoneInput": {
+        "title": "Enter your phone number",
+        "subtitle": "Please enter your phone number to complete registration",
+        "submit": "Complete registration",
+        "placeholder": "Enter your phone number (0912345678)",
+        "cancel": "Back"
+      },
+      "role": {
+        "generalUser": {
+          "title": "Pet Owner",
+          "description": "Find veterinary care and connect with professionals"
+        },
+        "hospitalAdmin": {
+          "title": "Veterinary Hospital Manager",
+          "description": "Manage your hospital and connect with pet owners"
+        }
       }
     },
     "errors": {
-      "invalidCredentials": "Invalid email or password",
+      "invalidCredentials": "Invalid credentials",
       "nameRequired": "First name and last name are required",
+      "signup": "Registration failed. Please try again",
       "emailRequired": "Email is required",
+      "resendActivationEmail": "Resend activation email",
+      "contactSupport": "Contact support",
+      "backToHome": "Back to home",
+      "authenticationError": "Authentication error",
+      "tryAgain": "Try again",
+      "accountLocked": "Your account has been locked. Please contact admin for support.",
+      "accountDisabled": "Your account has been disabled. Please contact admin for support.",
+      "accountInactive": "Your account has not been activated. Please check your email to activate your account.",
       "passwordRequired": "Password is required",
       "passwordMismatch": "Passwords do not match",
       "registrationFailed": "Registration failed. Please try again"
@@ -542,7 +576,6 @@
       },
       "noBlogsFound": "No blogs found"
     },
-
     "myBlogs": {
       "title": "My Blogs",
       "writeNew": "Write New Blog",
@@ -925,7 +958,6 @@
         "notChanged": "Password not changed"
       }
     },
-
     "modal": {
       "editName": {
         "title": "Edit Full Name",
@@ -1114,7 +1146,6 @@
     "pending": "Pending",
     "approvedNote": "Your hospital has been approved and is now publicly visible.",
     "pendingNote": "Your hospital is pending approval. You will receive a notification when the approval process is complete.",
-
     "description": {
       "title": "Hospital Description"
     },

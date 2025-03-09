@@ -113,7 +113,7 @@ function App() {
               path="/bloglist"
               element={
                 <MainLayout>
-                 <CommunityList />
+                  <CommunityList />
                 </MainLayout>
               }
             />
@@ -238,9 +238,25 @@ function App() {
               }
             />
             <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/auth/error" element={<AuthError />} />
-            <Route path="/auth/select-role" element={<SelectRole />} />
-            <Route path="/auth/verify-email/:token" element={<VerifyEmail />} />
+            <Route path="/auth/error" element={
+              <MainLayout>
+                <AuthError />
+              </MainLayout>
+            }
+            />
+            <Route
+              path="/auth/select-role"
+              element={
+                <MainLayout>
+                  <SelectRole />
+                </MainLayout>
+              }
+            />
+            <Route path="/auth/verify-email/:token" element={
+              <MainLayout>
+                <VerifyEmail />
+              </MainLayout>
+            } />
             <Route
               path="/contact-us"
               element={

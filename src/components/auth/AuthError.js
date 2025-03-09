@@ -1,27 +1,31 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useToast } from "../../context/ToastContext";
 
 function AuthError() {
+  const { t } = useTranslation();
+  const { addToast } = useToast();
   const location = useLocation();
   const navigate = useNavigate();
   const error =
-    location.state?.error || "Đã xảy ra lỗi trong quá trình xác thực";
+    location.state?.error || t("auth.errors.signup");
   const errorCode = location.state?.errorCode;
 
   const getErrorMessage = (error, code) => {
     switch (code) {
       case "ACCOUNT_LOCKED":
-        return "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin để được hỗ trợ.";
+        return t("auth.errors.accountLocked");
       case "ACCOUNT_INACTIVE":
-        return "Tài khoản chưa được kích hoạt. Vui lòng kiểm tra email để kích hoạt tài khoản.";
+        return t("auth.errors.accountInactive");
       case "INVALID_CREDENTIALS":
-        return "Thông tin đăng nhập không hợp lệ.";
+        return t("auth.errors.invalidCredentials");
       case "AUTH_ERROR":
         return error;
       default:
         return (
           error ||
-          "Đã xảy ra lỗi trong quá trình xác thực. Vui lòng thử lại sau."
+          t("auth.errors.signup")
         );
     }
   };
@@ -31,24 +35,26 @@ function AuthError() {
       case "ACCOUNT_INACTIVE":
         return {
           primary: {
-            text: "Gửi lại email kích hoạt",
+            text: t("auth.errors.resendActivationEmail"),
             action: () => {
               // TODO: Implement resend activation email
-              alert("Chức năng đang được phát triển");
+              addToast({
+                title: t("Please check your email to activate your account if you haven't see the activation email please check your spam folder"),
+              });
             },
           },
         };
       case "ACCOUNT_LOCKED":
         return {
           primary: {
-            text: "Liên hệ hỗ trợ",
+            text: t("auth.errors.contactSupport"),
             action: () => (window.location.href = "mailto:support@mypetdoc.vn"),
           },
         };
       default:
         return {
           primary: {
-            text: "Thử đăng nhập lại",
+            text: t("auth.errors.tryAgain"),
             action: () => navigate("/"),
           },
         };
@@ -62,7 +68,7 @@ function AuthError() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Lỗi xác thực
+            {t("auth.errors.authenticationError")}
           </h2>
           <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
             <p className="text-center text-sm text-red-600">
@@ -85,7 +91,7 @@ function AuthError() {
             onClick={() => navigate("/")}
             className="block w-full text-sm text-gray-600 hover:text-gray-900"
           >
-            Quay về trang chủ
+            {t("auth.errors.backToHome")}
           </button>
         </div>
       </div>

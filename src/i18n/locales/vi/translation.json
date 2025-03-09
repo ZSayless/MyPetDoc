@@ -128,14 +128,39 @@
     "selectRole": {
       "title": "Chọn Vai Trò",
       "subtitle": "Chọn cách bạn muốn sử dụng MyPetDoc",
+      "cancel": "Quay lại",
       "roles": {
         "petOwner": {
           "title": "Chủ Thú Cưng"
         },
         "veterinarian": {
-          "title": "Bác Sĩ Thú Y"
+          "title": "Quản lý bệnh viện thú y"
         }
-      }
+      },
+      "phoneError": {
+          "empty": "Số điện thoại không được để trống",
+          "invalid": "Số điện thoại không đúng định dạng (10 số và bắt đầu bằng 03, 05, 07, 08, 09 ...)"
+        },
+        "error": {
+          "signup": "Đăng ký thất bại"
+        },
+        "phoneInput": {
+          "title": "Nhập số điện thoại",
+          "subtitle": "Vui lòng nhập số điện thoại của bạn để hoàn tất đăng ký",
+          "submit": "Hoàn tất đăng ký",
+          "placeholder": "Nhập số điện thoại (0912345678)",
+          "cancel": "Quay lại"
+        },
+        "role": {
+          "generalUser": {
+            "title": "Chủ thú cưng",
+            "description": "Tìm kiếm dịch vụ thú y và kết nối với bác sĩ thú y"
+          },
+          "hospitalAdmin": {
+            "title": "Quản lý bệnh viện thú y",
+            "description": "Quản lý bệnh viện và kết nối với chủ thú cưng"
+          }
+        }
     },
     "email": "Email",
     "password": "Mật khẩu",
@@ -146,6 +171,15 @@
       "passwordMismatch": "Mật khẩu xác nhận không khớp",
       "invalidEmail": "Chỉ chấp nhận email @mypetdoc.com",
       "registerFailed": "Đăng ký thất bại",
+      "signup": "Đăng ký thất bại. Vui lòng thử lại",
+      "backToHome": "Quay về trang chủ",
+      "authenticationError": "Lỗi xác thực",
+      "accountLocked": "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin để được hỗ trợ.",
+      "accountDisabled": "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ admin để được hỗ trợ.",
+      "accountInactive": "Tài khoản của bạn chưa được kích hoạt. Vui lòng kiểm tra email để kích hoạt tài khoản.",
+      "tryAgain": "Thử đăng nhập lại",
+      "resendActivationEmail": "Gửi lại email kích hoạt",
+      "contactSupport": "Liên hệ hỗ trợ",
       "roleRequired": "Vui lòng chọn vai trò của bạn",
       "nameRequired": "Vui lòng nhập họ và tên",
       "emailRequired": "Vui lòng nhập email",
@@ -155,7 +189,7 @@
     "roles": {
       "user": "Người dùng",
       "userDesc": "Tìm kiếm và đánh giá dịch vụ thú y",
-      "veterinarian": "Bác sĩ thú y",
+      "veterinarian": "Quản lý bệnh viện thú y",
       "veterinarianDesc": "Cung cấp dịch vụ và tư vấn cho thú cưng"
     }
   },

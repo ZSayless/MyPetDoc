@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { completeGoogleSignup } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 function SelectRole() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -15,7 +17,6 @@ function SelectRole() {
 
   useEffect(() => {
     if (!profile) {
-      console.log("No profile data, redirecting to home");
       navigate("/");
       return;
     }
@@ -32,12 +33,12 @@ function SelectRole() {
     const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
     
     if (!cleanPhone) {
-      setPhoneError("Số điện thoại không được để trống");
+      setPhoneError(t("auth.selectRole.phoneError.empty"));
       return false;
     }
     
     if (!phoneRegex.test(cleanPhone)) {
-      setPhoneError("Số điện thoại không đúng định dạng");
+      setPhoneError(t("auth.selectRole.phoneError.invalid"));
       return false;
     }
     
@@ -62,10 +63,7 @@ function SelectRole() {
         role: selectedRole,
       };
 
-      console.log("Sending complete signup data:", userData);
-
       const result = await completeGoogleSignup(userData);
-      console.log("Complete signup result:", result);
 
       if (result.success) {
         login(result.data);
@@ -73,7 +71,7 @@ function SelectRole() {
         localStorage.removeItem("returnTo");
         navigate(returnTo);
       } else {
-        throw new Error(result.error || "Đăng ký thất bại");
+        throw new Error(result.error || t("auth.selectRole.error.signup"));
       }
     } catch (error) {
       console.error("Role selection error:", error);
@@ -96,10 +94,10 @@ function SelectRole() {
         <div className="max-w-md w-full">
           <div className="text-center">
             <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
-              Nhập số điện thoại
+              {t("auth.selectRole.phoneInput.title")}
             </h2>
             <p className="text-gray-600 mb-8">
-              Vui lòng nhập số điện thoại của bạn để hoàn tất đăng ký
+              {t("auth.selectRole.phoneInput.subtitle")}
             </p>
           </div>
 
@@ -113,7 +111,7 @@ function SelectRole() {
                   if (phoneError) validatePhone(e.target.value);
                 }}
                 onBlur={(e) => validatePhone(e.target.value)}
-                placeholder="Nhập số điện thoại"
+                placeholder={t("auth.selectRole.phoneInput.placeholder")}
                 className={`w-full p-3 border rounded-lg focus:ring-[#98E9E9] focus:border-[#98E9E9] 
                   ${phoneError ? 'border-red-500' : 'border-gray-300'}`}
               />
@@ -126,7 +124,7 @@ function SelectRole() {
               className="w-full p-3 bg-[#98E9E9] text-white rounded-lg hover:bg-opacity-90 disabled:opacity-50"
               disabled={!!phoneError || !phone}
             >
-              Hoàn tất đăng ký
+              {t("auth.selectRole.phoneInput.submit")}
             </button>
             <button
               type="button"
@@ -137,7 +135,7 @@ function SelectRole() {
               }}
               className="w-full p-3 text-gray-600 hover:text-gray-800"
             >
-              Quay lại
+              {t("auth.selectRole.phoneInput.cancel")}
             </button>
           </form>
         </div>
@@ -150,10 +148,10 @@ function SelectRole() {
       <div className="max-w-md w-full">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
-            Chọn loại tài khoản
+            {t("auth.selectRole.title")}
           </h2>
           <p className="text-gray-600 mb-8">
-            Vui lòng chọn loại tài khoản bạn muốn đăng ký
+            {t("auth.selectRole.subtitle")}
           </p>
         </div>
 
@@ -165,10 +163,10 @@ function SelectRole() {
             <div className="flex items-center">
               <div className="flex-1 text-left">
                 <h3 className="font-semibold text-lg mb-1 group-hover:text-[#98E9E9]">
-                  Người dùng thông thường
+                  {t("auth.selectRole.role.generalUser.title")}
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Dành cho người dùng muốn tìm kiếm thông tin y tế
+                  {t("auth.selectRole.role.generalUser.description")}
                 </p>
               </div>
             </div>
@@ -181,10 +179,10 @@ function SelectRole() {
             <div className="flex items-center">
               <div className="flex-1 text-left">
                 <h3 className="font-semibold text-lg mb-1 group-hover:text-[#98E9E9]">
-                  Quản lý bệnh viện
+                  {t("auth.selectRole.role.hospitalAdmin.title")}
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Dành cho người quản lý thông tin bệnh viện
+                  {t("auth.selectRole.role.hospitalAdmin.description")}
                 </p>
               </div>
             </div>
@@ -195,7 +193,7 @@ function SelectRole() {
           onClick={() => navigate("/")}
           className="mt-8 w-full p-3 text-gray-600 hover:text-gray-800"
         >
-          Hủy
+          {t("auth.selectRole.cancel")}
         </button>
       </div>
     </div>
