@@ -87,6 +87,7 @@
         "phoneInvalid": "Số điện thoại không hợp lệ",
         "passwordInvalid": "Mật khẩu không hợp lệ",
         "passwordMismatch": "Mật khẩu xác nhận không khớp",
+        "petNotesRequired": "Ghi chú thú cưng là bắt buộc (10-300 ký tự)",
         "nameRequired": "Vui lòng nhập họ và tên",
         "registrationFailed": "Đăng ký thất bại",
         "emailInvalid": "Email không hợp lệ"

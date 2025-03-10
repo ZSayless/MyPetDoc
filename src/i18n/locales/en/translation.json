@@ -118,6 +118,7 @@
         "passwordInvalid": "Password is not valid",
         "passwordMismatch": "Passwords do not match",
         "nameRequired": "First name and last name are required",
+        "petNotesRequired": "Pet notes are required (10-300 characters)",
         "registrationFailed": "Registration failed. Please try again",
         "emailInvalid": "Email is not valid"
       },
