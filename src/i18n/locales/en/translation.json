@@ -1144,6 +1144,7 @@
   "hospitalDetail": {
     "status": "Status",
     "approved": "Approved",
+    "reviewCount": "reviews",
     "pending": "Pending",
     "approvedNote": "Your hospital has been approved and is now publicly visible.",
     "pendingNote": "Your hospital is pending approval. You will receive a notification when the approval process is complete.",

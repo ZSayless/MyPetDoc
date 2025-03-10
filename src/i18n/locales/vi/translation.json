@@ -1090,6 +1090,7 @@
   "hospitalDetail": {
     "status": "Trạng thái",
     "approved": "Đã được phê duyệt",
+    "reviewCount": "đánh giá",
     "pending": "Đang chờ phê duyệt",
     "approvedNote": "Bệnh viện của bạn đã được phê duyệt và hiển thị công khai.",
     "pendingNote": "Bệnh viện của bạn đang chờ quản trị viên phê duyệt. Bạn sẽ nhận được thông báo khi quá trình phê duyệt hoàn tất.",
