@@ -630,7 +630,6 @@ function Profile() {
                       <LazyLoadImage
                         src={hospital.thumbnail}
                         alt={hospital.name}
-                        effect="blur"
                         className="w-full h-48 object-cover"
                         placeholderSrc="/placeholder-hospital.jpg"
                       />
