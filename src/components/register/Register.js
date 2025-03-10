@@ -129,10 +129,13 @@ function Register({ onClose, onLoginClick }) {
     }
 
 
-    if (formData.petNotes.trim().length < 10 || formData.petNotes.trim().length > 300) {
-      setError(t("auth.register.errors.petNotesRequired"));
-      return false;
+    if (formData.petNotes) {
+      if (formData.petNotes.trim().length < 10 || formData.petNotes.trim().length > 300) {
+        setError(t("auth.register.errors.petNotesRequired"));
+        return false;
+      }
     }
+
     // Validate pet information if pet type is selected
     // if (userType === "general" && formData.petType) {
     //   if (!formData.petAge) {
