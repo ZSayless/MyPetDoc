@@ -20,16 +20,7 @@ const Lucete = () => {
 
   return (
     <>
-      <style>
-        {`
-          @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-          
-          .lucete-container {
-            font-family: 'Montserrat', sans-serif;
-          }
-        `}
-      </style>
-      <div className="w-full lucete-container">
+      <div className="w-full">
         {/* Hero Section */}
         <div className="relative h-[300px] sm:h-[400px] md:h-[500px] w-full overflow-hidden">
           <img
@@ -48,9 +39,6 @@ const Lucete = () => {
                   <p className="text-sm text-white/90 mb-4">
                     Transforming ashes into a lasting tribute.
                   </p>
-                  <button className="bg-blue-600 text-white px-4 py-2 text-sm rounded-md hover:bg-blue-700 transition duration-300">
-                    Learn More
-                  </button>
                 </div>
               </div>
 
@@ -63,9 +51,6 @@ const Lucete = () => {
                   <p className="text-base md:text-xl text-white/90 mb-4 sm:mb-6 md:mb-8 ml-24 sm:ml-36 md:ml-48 whitespace-nowrap">
                     Transforming ashes into a lasting tribute.
                   </p>
-                  <button className="bg-blue-600 text-white px-6 md:px-8 py-2 sm:py-3 text-base rounded-md hover:bg-blue-700 transition duration-300 ml-24 sm:ml-36 md:ml-48">
-                    Learn More
-                  </button>
                 </div>
               </div>
             </div>

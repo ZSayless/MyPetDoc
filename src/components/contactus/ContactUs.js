@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { contactMessageService } from "../../services/contactMessageService";
 import { useToast } from "../../context/ToastContext";
+import { getContactInfo } from "../../services/contactInformationService";
 
 const ContactUs = () => {
   const { t } = useTranslation();
@@ -11,6 +12,7 @@ const ContactUs = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [contact, setContact] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -21,7 +23,7 @@ const ContactUs = () => {
     name: "",
     email: "",
     phone: "",
-    message: ""
+    message: "",
   });
 
   // Kiểm tra đăng nhập và điền thông tin một lần khi component mount
@@ -31,7 +33,7 @@ const ContactUs = () => {
       setIsLoggedIn(true);
       try {
         const user = JSON.parse(userStr);
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           name: user.full_name || user.name || "",
           email: user.email || "",
@@ -41,6 +43,18 @@ const ContactUs = () => {
         console.error("Error parsing user data:", error);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const data = await getContactInfo();
+        setContact(data);
+      } catch (error) {
+        console.error("Error fetching contact info:", error);
+      }
+    };
+    fetchContactInfo();
   }, []);
 
   const handleChange = (e) => {
@@ -57,7 +71,7 @@ const ContactUs = () => {
       name: "",
       email: "",
       phone: "",
-      message: ""
+      message: "",
     };
 
     // Validate message
@@ -75,7 +89,7 @@ const ContactUs = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -89,13 +103,13 @@ const ContactUs = () => {
         message: formData.message,
       };
       await contactMessageService.sendMessage(payload);
-      
+
       addToast({
         type: "success",
         message: t("contact.form.success"),
       });
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         message: "", // Chỉ reset trường message
       }));
@@ -131,11 +145,7 @@ const ContactUs = () => {
             <h3 className="text-lg font-semibold mb-2">
               {t("contact.info.visit.title")}
             </h3>
-            <p className="text-gray-600">
-              123 Nguyen Van Linh Street
-              <br />
-              District 7, Ho Chi Minh City
-            </p>
+            <p className="text-gray-600">{contact.address || "Loading..."}</p>
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6 flex flex-col items-center text-center">
@@ -146,9 +156,15 @@ const ContactUs = () => {
               {t("contact.info.call.title")}
             </h3>
             <p className="text-gray-600">
-              Phone: +84 123 456 789
-              <br />
-              Hotline: +84 987 654 321
+              {contact.phone ? (
+                <>
+                  Phone: {contact.phone}
+                  <br />
+                  Support Hours: {contact.support_hours}
+                </>
+              ) : (
+                "Loading..."
+              )}
             </p>
           </div>
 
@@ -159,11 +175,7 @@ const ContactUs = () => {
             <h3 className="text-lg font-semibold mb-2">
               {t("contact.info.email.title")}
             </h3>
-            <p className="text-gray-600">
-              support@mypetdoc.com
-              <br />
-              info@mypetdoc.com
-            </p>
+            <p className="text-gray-600">{contact.email || "Loading..."}</p>
           </div>
         </div>
       </div>
@@ -189,9 +201,11 @@ const ContactUs = () => {
                       value={formData.name}
                       onChange={handleChange}
                       className={`w-full px-4 py-2 rounded-lg border ${
-                        errors.name ? 'border-red-500' : 'border-gray-200'
+                        errors.name ? "border-red-500" : "border-gray-200"
                       } focus:border-blue-500 focus:ring-blue-500 ${
-                        isLoggedIn && formData.name !== "" ? "bg-gray-50" : "bg-white"
+                        isLoggedIn && formData.name !== ""
+                          ? "bg-gray-50"
+                          : "bg-white"
                       }`}
                       disabled={isLoggedIn && formData.name !== ""}
                     />
@@ -209,14 +223,18 @@ const ContactUs = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       className={`w-full px-4 py-2 rounded-lg border ${
-                        errors.phone ? 'border-red-500' : 'border-gray-200'
+                        errors.phone ? "border-red-500" : "border-gray-200"
                       } focus:border-blue-500 focus:ring-blue-500 ${
-                        isLoggedIn && formData.phone !== "" ? "bg-gray-50" : "bg-white"
+                        isLoggedIn && formData.phone !== ""
+                          ? "bg-gray-50"
+                          : "bg-white"
                       }`}
                       disabled={isLoggedIn && formData.phone !== ""}
                     />
                     {errors.phone && (
-                      <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.phone}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -230,9 +248,11 @@ const ContactUs = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className={`w-full px-4 py-2 rounded-lg border ${
-                      errors.email ? 'border-red-500' : 'border-gray-200'
+                      errors.email ? "border-red-500" : "border-gray-200"
                     } focus:border-blue-500 focus:ring-blue-500 ${
-                      isLoggedIn && formData.email !== "" ? "bg-gray-50" : "bg-white"
+                      isLoggedIn && formData.email !== ""
+                        ? "bg-gray-50"
+                        : "bg-white"
                     }`}
                     disabled={isLoggedIn && formData.email !== ""}
                   />
@@ -250,11 +270,13 @@ const ContactUs = () => {
                     value={formData.message}
                     onChange={handleChange}
                     className={`w-full px-4 py-2 rounded-lg border ${
-                      errors.message ? 'border-red-500' : 'border-gray-200'
+                      errors.message ? "border-red-500" : "border-gray-200"
                     } focus:border-blue-500 focus:ring-blue-500`}
                   ></textarea>
                   {errors.message && (
-                    <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.message}
+                    </p>
                   )}
                 </div>
                 {isLoggedIn ? (
@@ -265,7 +287,9 @@ const ContactUs = () => {
                     }`}
                     disabled={loading}
                   >
-                    {loading ? t("contact.form.sending") : t("contact.form.send")}
+                    {loading
+                      ? t("contact.form.sending")
+                      : t("contact.form.send")}
                   </button>
                 ) : (
                   <button
