@@ -29,7 +29,12 @@ const HomeCity = () => {
   const navigate = useNavigate();
 
   const handleCityClick = (cityId) => {
-    navigate(`/find-hospital`, { state: { selectedCity: cityId } });
+    localStorage.setItem("selectedCity", cityId);
+    
+    navigate('/find-hospital', { 
+      state: { selectedCity: cityId },
+      replace: true 
+    });
   };
 
   return (
@@ -46,21 +51,26 @@ const HomeCity = () => {
           {CITIES.map((city) => (
             <div
               key={city.id}
-              className="relative rounded-lg overflow-hidden cursor-pointer group transform transition-transform group-hover:scale-105 will-change-transform"
+              className="relative rounded-lg overflow-hidden cursor-pointer group transform transition-transform hover:shadow-lg"
               onClick={() => handleCityClick(city.id)}
             >
-              <img
-                src={city.image}
-                alt={city.name}
-                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/20" />
+              <div className="aspect-w-16 aspect-h-9 overflow-hidden">
+                <img
+                  src={city.image}
+                  alt={city.name}
+                  className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/20 group-hover:from-black/70 transition-all duration-300" />
               <div className="absolute bottom-0 left-0 p-6 text-white">
                 <div className="flex items-center gap-2 mb-2">
                   <MapPin className="w-5 h-5" />
                   <h3 className="text-2xl font-bold">{city.name}</h3>
                 </div>
-                <p className="text-sm mb-3 opacity-90">{city.description}</p>
+                <p className="text-sm mb-3 opacity-90 group-hover:opacity-100">
+                  {city.description}
+                </p>
               </div>
             </div>
           ))}

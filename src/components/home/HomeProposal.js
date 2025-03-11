@@ -39,7 +39,7 @@ function HomeProposal() {
           }));
 
         // Nhân đôi danh sách để tạo hiệu ứng vô hạn
-        setHospitals([...formattedHospitals, ...formattedHospitals]);
+        setHospitals([...formattedHospitals]);
       } catch (error) {
         console.error("Error fetching hospitals:", error);
       } finally {
