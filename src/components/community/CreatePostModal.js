@@ -15,6 +15,7 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [postingStatus, setPostingStatus] = useState('idle');
 
   const resetForm = () => {
     setCaption("");
@@ -127,7 +128,6 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-      // Hiển thị toast cho lỗi đầu tiên
       const firstError = Object.values(formErrors)[0];
       addToast({
         type: "error",
@@ -138,6 +138,7 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
 
     try {
       setLoading(true);
+      setPostingStatus('uploading');
       const formData = new FormData();
       formData.append("caption", caption.trim());
       formData.append("description", description.trim());
@@ -147,17 +148,23 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
         formData.append("image", image);
       }
 
+      setPostingStatus('processing');
       const success = await onPost(formData);
       if (success) {
+        setPostingStatus('success');
         addToast({
           type: "success",
           message: t("community.post.createSuccess")
         });
-        resetForm();
-        onClose();
+        setTimeout(() => {
+          resetForm();
+          onClose();
+          setPostingStatus('idle');
+        }, 1500);
       }
     } catch (error) {
       console.error("Error creating post:", error);
+      setPostingStatus('error');
       addToast({
         type: "error",
         message: error.response?.data?.message || t("community.post.createError")
@@ -327,12 +334,12 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
               )}
             </div>
 
-            {previewUrl && (
+            {previewUrl ? (
               <div className="relative mt-4">
                 <img
                   src={previewUrl}
                   alt="Preview"
-                  className="w-full rounded-lg"
+                  className="w-full h-64 object-cover rounded-lg"
                 />
                 <button
                   type="button"
@@ -340,10 +347,42 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
                     setImage(null);
                     setPreviewUrl("");
                   }}
-                  className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md hover:bg-gray-100"
+                  className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5 text-gray-600" />
                 </button>
+              </div>
+            ) : (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("community.createPost.image")} <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    className="hidden"
+                    id="post-image-input"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    disabled={loading}
+                  />
+                  <label
+                    htmlFor="post-image-input"
+                    className="flex flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors duration-200 py-8"
+                  >
+                    <div className="flex flex-col items-center justify-center px-4">
+                      <div className="mb-3">
+                        <ImageIcon className="w-12 h-12 text-gray-400" />
+                      </div>
+                      <p className="mb-2 text-blue-600 font-medium">
+                        {t("community.createPost.uploadImage")}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        PNG, JPG ({t("community.createPost.maxSize")})
+                      </p>
+                    </div>
+                  </label>
+                </div>
               </div>
             )}
             {errors?.image && (
@@ -353,21 +392,6 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
         </div>
 
         <div className="p-4 border-t flex items-center justify-between bg-white">
-          <label className="cursor-pointer text-gray-600 hover:text-[#1A3C8E]">
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageChange}
-              disabled={loading}
-            />
-            <ImageIcon className="w-6 h-6" />
-          </label>
-          <span className="text-red-500">*</span>
-          <p className="text-sm text-gray-500 mt-1">
-            {t("community.createPost.imageAccept")}
-          </p>
-
           <button
             type="button"
             onClick={handleSubmit}
@@ -389,6 +413,19 @@ function CreatePostModal({ isOpen, onClose, onPost }) {
             )}
           </button>
         </div>
+
+        {postingStatus !== 'idle' && (
+          <div className={`px-4 py-2 text-sm ${
+            postingStatus === 'error' ? 'bg-red-50 text-red-700' :
+            postingStatus === 'success' ? 'bg-green-50 text-green-700' :
+            'bg-blue-50 text-blue-700'
+          }`}>
+            {postingStatus === 'uploading' && t("community.post.uploading")}
+            {postingStatus === 'processing' && t("community.post.processing")}
+            {postingStatus === 'success' && t("community.post.postSuccess")}
+            {postingStatus === 'error' && t("community.post.postError")}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -79,13 +79,13 @@ function HomeBanner() {
                   {banner.title}
                 </h2>
                 {banner.subtitle && (
-                  <h3 className="text-2xl md:text-3xl font-semibold text-center mb-2">
+                  <h3 className="text-2xl md:text-2xl font-semibold text-center mb-2">
                     {banner.subtitle}
                   </h3>
                 )}
-                <p className="text-xl md:text-2xl text-center">
+                <h3 className="text-xl md:text-2xl text-center">
                   {banner.description}
-                </p>
+                </h3>
                 {banner.link && (
                  <button
                     onClick={() => handleLinkClick(banner.link)}
