@@ -173,12 +173,67 @@ const FindHospital = () => {
             return (
               address.includes("hcmc") ||
               address.includes("ho chi minh") ||
-              address.includes("thu duc")
+              address.includes("hồ chí minh") ||
+              address.includes("hcm") ||
+              address.includes("Hồ Chí Minh") ||
+              address.includes("tp.hcm") ||
+              address.includes("Hồ Chí Minh city") ||
+              address.includes("tphcm") ||
+              address.includes("thành phố hồ chí minh") ||
+              address.includes("thu duc") ||
+              address.includes("thủ đức") ||
+              address.includes("quận 1") ||
+              address.includes("quận 2") ||
+              address.includes("quận 3") ||
+              address.includes("quận 4") ||
+              address.includes("quận 5") ||
+              address.includes("quận 6") ||
+              address.includes("quận 7") ||
+              address.includes("quận 8") ||
+              address.includes("quận 9") ||
+              address.includes("quận 10") ||
+              address.includes("quận 11") ||
+              address.includes("quận 12") ||
+              address.includes("tân bình") ||
+              address.includes("tân phú") ||
+              address.includes("bình tân") ||
+              address.includes("bình thạnh") ||
+              address.includes("gò vấp") ||
+              address.includes("phú nhuận")
             );
           case "hanoi":
-            return address.includes("hanoi") || address.includes("ha noi");
+            return (
+              address.includes("hanoi") ||
+              address.includes("ha noi") ||
+              address.includes("hanoi city") ||
+              address.includes("thành phố hà nội") ||
+              address.includes("hà nội") ||
+              address.includes("hoàn kiếm") ||
+              address.includes("đống đa") ||
+              address.includes("ba đình") ||
+              address.includes("hai bà trưng") ||
+              address.includes("hoàng mai") ||
+              address.includes("thanh xuân") ||
+              address.includes("long biên") ||
+              address.includes("nam từ liêm") ||
+              address.includes("bắc từ liêm") ||
+              address.includes("tây hồ") ||
+              address.includes("cầu giấy")
+            );
           case "danang":
-            return address.includes("danang") || address.includes("da nang");
+            return (
+              address.includes("danang") ||
+              address.includes("da nang") ||
+              address.includes("da nang city") ||
+              address.includes("thành phố đà nẵng") ||
+              address.includes("đà nẵng") ||
+              address.includes("hải châu") ||
+              address.includes("thanh khê") ||
+              address.includes("sơn trà") ||
+              address.includes("ngũ hành sơn") ||
+              address.includes("liên chiểu") ||
+              address.includes("cẩm lệ")
+            );
           default:
             return true;
         }
@@ -189,7 +244,7 @@ const FindHospital = () => {
     if (!selectedServices.includes("All Hospitals")) {
       results = results.filter((hospital) =>
         selectedServices.some((selectedService) =>
-          hospital.services.some(
+          hospital.services?.some(
             (hospitalService) =>
               hospitalService.toLowerCase() === selectedService.toLowerCase()
           )

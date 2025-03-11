@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import Header from "./components/layout/Header";
 import "./assets/css/style.css";
 import Footer from "./components/layout/Footer";
@@ -70,213 +70,215 @@ function MainLayout({ children }) {
 function App() {
   return (
     <Provider store={store}>
-      <AuthProvider>
-        <ToastProvider>
-          <Helmet>
-            <title>MyPetDoc - Nền tảng tìm kiếm phòng khám thú y</title>
-            <meta name="description" content="Tìm kiếm phòng khám thú y uy tín, đặt lịch khám và tư vấn trực tuyến cho thú cưng của bạn." />
-            <meta property="og:type" content="website" />
-            <meta property="og:site_name" content="MyPetDoc" />
-            <link rel="canonical" href="https://mypetdoc.vn" />
-          </Helmet>
-          <ScrollToTop />
-          <Routes>
-            {/* Admin Route */}
-            <Route path="/admin/*" element={<AdminDashboard />} />
+      <HelmetProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <Helmet>
+              <title>MyPetDoc - Nền tảng tìm kiếm phòng khám thú y</title>
+              <meta name="description" content="Tìm kiếm phòng khám thú y uy tín, đặt lịch khám và tư vấn trực tuyến cho thú cưng của bạn." />
+              <meta property="og:type" content="website" />
+              <meta property="og:site_name" content="MyPetDoc" />
+              <link rel="canonical" href="https://mypetdoc.vn" />
+            </Helmet>
+            <ScrollToTop />
+            <Routes>
+              {/* Admin Route */}
+              <Route path="/admin/*" element={<AdminDashboard />} />
 
-            {/* Main Routes */}
-            <Route
-              path="/"
-              element={
+              {/* Main Routes */}
+              <Route
+                path="/"
+                element={
+                  <MainLayout>
+                    <Home />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/contactus"
+                element={
+                  <MainLayout>
+                    <ContactUs />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/aboutus"
+                element={
+                  <MainLayout>
+                    <AboutUs />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/bloglist"
+                element={
+                  <MainLayout>
+                    <CommunityList />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/blog/:slug"
+                element={
+                  <MainLayout>
+                    <PostDetail />
+                  </MainLayout>
+                }
+              />
+              {/* <Route
+                path="/community"
+                element={
+                  <MainLayout>
+                    <CommunityList />
+                  </MainLayout>
+                }
+              /> */}
+              <Route
+                path="/community/post/:slug"
+                element={
+                  <MainLayout>
+                    <PostDetail />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/setting"
+                element={
+                  <MainLayout>
+                    <Setting />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/hospital/:slug"
+                element={
+                  <MainLayout>
+                    <HospitalDetail />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/manage-hospital"
+                element={
+                  <MainLayout>
+                    <ManageHospital />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/find-hospital"
+                element={
+                  <MainLayout>
+                    <FindHospital />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <MainLayout>
+                    <Profile />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/profile/reviews"
+                element={
+                  <MainLayout>
+                    <AllReviews />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/profile/favorites"
+                element={
+                  <MainLayout>
+                    <AllFavorites />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/bloglist"
+                element={
+                  <MainLayout>
+                    <CommunityList />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/bloglist/:id"
+                element={
+                  <MainLayout>
+                    <PostDetail />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/add-hospital"
+                element={
+                  <MainLayout>
+                    <AddHospital />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/terms"
+                element={
+                  <MainLayout>
+                    <Terms />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/reset-password/:token"
+                element={
+                  <MainLayout>
+                    <ResetPassword />
+                  </MainLayout>
+                }
+              />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/auth/error" element={
                 <MainLayout>
-                  <Home />
+                  <AuthError />
                 </MainLayout>
               }
-            />
-            <Route
-              path="/contactus"
-              element={
+              />
+              <Route
+                path="/auth/select-role"
+                element={
+                  <MainLayout>
+                    <SelectRole />
+                  </MainLayout>
+                }
+              />
+              <Route path="/auth/verify-email/:token" element={
                 <MainLayout>
-                  <ContactUs />
+                  <VerifyEmail />
                 </MainLayout>
-              }
-            />
-            <Route
-              path="/aboutus"
-              element={
-                <MainLayout>
-                  <AboutUs />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/bloglist"
-              element={
-                <MainLayout>
-                  <CommunityList />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/blog/:slug"
-              element={
-                <MainLayout>
-                  <PostDetail />
-                </MainLayout>
-              }
-            />
-            {/* <Route
-              path="/community"
-              element={
-                <MainLayout>
-                  <CommunityList />
-                </MainLayout>
-              }
-            /> */}
-            <Route
-              path="/community/post/:slug"
-              element={
-                <MainLayout>
-                  <PostDetail />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/setting"
-              element={
-                <MainLayout>
-                  <Setting />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/hospital/:slug"
-              element={
-                <MainLayout>
-                  <HospitalDetail />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/manage-hospital"
-              element={
-                <MainLayout>
-                  <ManageHospital />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/find-hospital"
-              element={
-                <MainLayout>
-                  <FindHospital />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <MainLayout>
-                  <Profile />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/profile/reviews"
-              element={
-                <MainLayout>
-                  <AllReviews />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/profile/favorites"
-              element={
-                <MainLayout>
-                  <AllFavorites />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/bloglist"
-              element={
-                <MainLayout>
-                  <CommunityList />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/bloglist/:id"
-              element={
-                <MainLayout>
-                  <PostDetail />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/add-hospital"
-              element={
-                <MainLayout>
-                  <AddHospital />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/terms"
-              element={
-                <MainLayout>
-                  <Terms />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/reset-password/:token"
-              element={
-                <MainLayout>
-                  <ResetPassword />
-                </MainLayout>
-              }
-            />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/auth/error" element={
-              <MainLayout>
-                <AuthError />
-              </MainLayout>
-            }
-            />
-            <Route
-              path="/auth/select-role"
-              element={
-                <MainLayout>
-                  <SelectRole />
-                </MainLayout>
-              }
-            />
-            <Route path="/auth/verify-email/:token" element={
-              <MainLayout>
-                <VerifyEmail />
-              </MainLayout>
-            } />
-            <Route
-              path="/contact-us"
-              element={
-                <MainLayout>
-                  <ContactUs />
-                </MainLayout>
-              }
-            />
-            <Route
-              path="/lucete"
-              element={
-                <MainLayout>
-                  <Lucete />
-                </MainLayout>
-              }
-            />
-          </Routes>
-          <FAQBubble />
-        </ToastProvider>
-      </AuthProvider>
+              } />
+              <Route
+                path="/contact-us"
+                element={
+                  <MainLayout>
+                    <ContactUs />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/lucete"
+                element={
+                  <MainLayout>
+                    <Lucete />
+                  </MainLayout>
+                }
+              />
+            </Routes>
+            <FAQBubble />
+          </ToastProvider>
+        </AuthProvider>
+      </HelmetProvider>
     </Provider>
   );
 }

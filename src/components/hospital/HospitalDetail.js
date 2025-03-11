@@ -762,13 +762,11 @@ const HospitalDetail = () => {
                 src={hospital.mapUrl}
                 width="100%"
                 height="100%"
-                className="rounded-lg"
-                style={{ border: 0 }}
+                style={{ border: "0" }}
                 allowFullScreen=""
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="hospital-location"
-                sandbox="allow-scripts allow-same-origin allow-popups"
+                className="w-full h-full"
               ></iframe>
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
