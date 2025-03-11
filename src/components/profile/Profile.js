@@ -9,6 +9,7 @@ import { getAllReviewsByAuth } from "../../services/reviewService";
 import { getHospitalFavorites } from "../../services/favoriteService";
 import { getUserInfoByEmail } from "../../services/userService";
 import { communityService } from "../../services/communityService";
+import CreatePetModal from "../setting/modals/CreatePetModal";
 
 function Profile() {
   const { user, updateUser } = useAuth();
@@ -23,7 +24,16 @@ function Profile() {
   const [postsError, setPostsError] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  const [isCreatePetModalOpen, setIsCreatePetModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  const handlePetCreated = (newPet) => {
+    // Cập nhật danh sách pets trong userDetails
+    setUserDetails((prev) => ({
+      ...prev,
+      pets: [...(prev.pets || []), newPet],
+    }));
+  };
 
   const fetchSomeReviews = async () => {
     try {
@@ -47,14 +57,8 @@ function Profile() {
       if (savedUser?.email) {
         const response = await getUserInfoByEmail(savedUser.email);
         if (response.status === "success") {
-          const {
-            full_name,
-            email,
-            phone_number,
-            avatar,
-            role,
-            pets,
-          } = response.data;
+          const { full_name, email, phone_number, avatar, role, pets } =
+            response.data;
 
           setUserDetails({
             full_name,
@@ -89,7 +93,7 @@ function Profile() {
   const fetchMyPosts = async () => {
     try {
       const response = await communityService.getMyPosts();
-      const postsData = Array.isArray(response.data.posts) 
+      const postsData = Array.isArray(response.data.posts)
         ? response.data.posts.filter((_, index) => index < 3)
         : [];
       setPosts(postsData);
@@ -132,7 +136,7 @@ function Profile() {
     try {
       await communityService.deletePost(postToDelete.id);
       addToast("success", t("profile.posts.deleteSuccess"));
-      setPosts(posts.filter(post => post.id !== postToDelete.id));
+      setPosts(posts.filter((post) => post.id !== postToDelete.id));
       setDeleteModalOpen(false);
       setPostToDelete(null);
     } catch (error) {
@@ -209,18 +213,19 @@ function Profile() {
                     <div className="flex justify-center">
                       <span
                         className={`inline-block px-2 py-0.5 text-sm font-medium rounded-lg w-fit
-                        ${userInfo.role === "HOSPITAL_ADMIN"
+                        ${
+                          userInfo.role === "HOSPITAL_ADMIN"
                             ? "bg-blue-50 text-blue-700"
                             : userInfo.role === "ADMIN"
-                              ? "bg-purple-50 text-purple-700"
-                              : "bg-green-50 text-green-700"
-                          }`}
+                            ? "bg-purple-50 text-purple-700"
+                            : "bg-green-50 text-green-700"
+                        }`}
                       >
                         {userInfo.role === "HOSPITAL_ADMIN"
                           ? t("profile.role.veterinarian")
                           : userInfo.role === "ADMIN"
-                            ? t("profile.role.admin")
-                            : t("profile.role.petOwner")}
+                          ? t("profile.role.admin")
+                          : t("profile.role.petOwner")}
                       </span>
                     </div>
                   </div>
@@ -238,7 +243,7 @@ function Profile() {
                   <div className="mt-6 flex flex-wrap gap-3 justify-center md:justify-start">
                     <Link
                       to="/setting"
-                      className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                      className="inline-flex items-center px-4 py-2 bg-[#FFCCFF] border border-[#FFCCFF] rounded-lg text-sm font-medium text-gray-700 hover:bg-[#FFB3FF] transition-colors"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -263,14 +268,14 @@ function Profile() {
                     </Link>
                     {(userInfo.role === "HOSPITAL_ADMIN" ||
                       userInfo.role === "ADMIN") && (
-                        <Link
-                          to="/manage-hospital"
-                          className="inline-flex items-center px-4 py-2 bg-[#98E9E9] rounded-lg text-sm font-medium text-gray-700 hover:bg-[#7CD5D5] transition-colors"
-                        >
-                          <Building className="h-5 w-5 mr-2" />
-                          {t("profile.actions.manageHospital")}
-                        </Link>
-                      )}
+                      <Link
+                        to="/manage-hospital"
+                        className="inline-flex items-center px-4 py-2 bg-[#98E9E9] rounded-lg text-sm font-medium text-gray-700 hover:bg-[#7CD5D5] transition-colors"
+                      >
+                        <Building className="h-5 w-5 mr-2" />
+                        {t("profile.actions.manageHospital")}
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
@@ -302,18 +307,40 @@ function Profile() {
                       </svg>
                       {t("profile.pet.title")}
                     </h2>
-                    <Link
-                      to="/setting"
-                      className="text-sm text-[#7CD5D5] hover:text-[#98E9E9] font-medium"
-                    >
-                      {t("profile.pet.viewAll")}
-                    </Link>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setIsCreatePetModalOpen(true)}
+                        className="text-sm bg-[#7CD5D5] text-white hover:bg-[#98E9E9] px-3 py-1 rounded-lg font-medium flex items-center"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 mr-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 4v16m8-8H4"
+                          />
+                        </svg>
+                        {t("setting.personal.pet.addNew")}
+                      </button>
+                      <Link
+                        to="/setting"
+                        className="text-sm text-[#7CD5D5] hover:text-[#98E9E9] font-medium"
+                      >
+                        {t("profile.pet.viewAll")}
+                      </Link>
+                    </div>
                   </div>
 
                   {userDetails?.pets && userDetails.pets.length > 0 ? (
                     <div className="grid gap-6 md:grid-cols-2">
                       {userDetails.pets.map((pet) => (
-                        <div 
+                        <div
                           key={pet.id}
                           className="bg-gray-50 rounded-xl p-4 border border-gray-100"
                         >
@@ -344,7 +371,9 @@ function Profile() {
                             )}
                             <div>
                               <h3 className="font-medium text-gray-900">
-                                {t(`profile.pet.types.${pet.type.toLowerCase()}`)}
+                                {t(
+                                  `profile.pet.types.${pet.type.toLowerCase()}`
+                                )}
                               </h3>
                               {pet.age && (
                                 <p className="text-sm text-gray-500">
@@ -495,7 +524,9 @@ function Profile() {
                                   {post.caption}
                                 </h3>
                                 <span className="text-sm text-gray-500">
-                                  {new Date(post.created_at).toLocaleDateString('vi-VN')}
+                                  {new Date(post.created_at).toLocaleDateString(
+                                    "vi-VN"
+                                  )}
                                 </span>
                               </div>
                               <button
@@ -536,7 +567,10 @@ function Profile() {
                                 >
                                   <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                                 </svg>
-                                <span>{post.likes_count || 0} {t("profile.posts.likes")}</span>
+                                <span>
+                                  {post.likes_count || 0}{" "}
+                                  {t("profile.posts.likes")}
+                                </span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <svg
@@ -551,7 +585,10 @@ function Profile() {
                                     clipRule="evenodd"
                                   />
                                 </svg>
-                                <span>{post.comments_count || 0} {t("profile.posts.comments")}</span>
+                                <span>
+                                  {post.comments_count || 0}{" "}
+                                  {t("profile.posts.comments")}
+                                </span>
                               </div>
                               {post.views_count !== undefined && (
                                 <div className="flex items-center gap-1">
@@ -568,15 +605,18 @@ function Profile() {
                                       clipRule="evenodd"
                                     />
                                   </svg>
-                                  <span>{post.views_count} {t("profile.posts.views")}</span>
+                                  <span>
+                                    {post.views_count}{" "}
+                                    {t("profile.posts.views")}
+                                  </span>
                                 </div>
                               )}
                             </div>
 
                             {/* Tags */}
-                            {post.tags && typeof post.tags === 'string' && (
+                            {post.tags && typeof post.tags === "string" && (
                               <div className="mt-3 flex flex-wrap gap-2">
-                                {post.tags.split(',').map((tag, index) => (
+                                {post.tags.split(",").map((tag, index) => (
                                   <span
                                     key={index}
                                     className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full"
@@ -665,8 +705,8 @@ function Profile() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             {/* Background overlay */}
-            <div 
-              className="fixed inset-0 transition-opacity" 
+            <div
+              className="fixed inset-0 transition-opacity"
               aria-hidden="true"
               onClick={handleDeleteCancel}
             >
@@ -678,18 +718,18 @@ function Profile() {
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div className="sm:flex sm:items-start">
                   <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <svg 
-                      className="h-6 w-6 text-red-600" 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
+                    <svg
+                      className="h-6 w-6 text-red-600"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
                       stroke="currentColor"
                     >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth="2" 
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                       />
                     </svg>
                   </div>
@@ -729,6 +769,15 @@ function Profile() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Create Pet Modal */}
+      {isCreatePetModalOpen && (
+        <CreatePetModal
+          isOpen={isCreatePetModalOpen}
+          onClose={() => setIsCreatePetModalOpen(false)}
+          onSuccess={handlePetCreated}
+        />
       )}
     </div>
   );

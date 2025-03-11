@@ -273,7 +273,7 @@ function Header() {
                   </li>
                   <li>
                     <a
-                      href="/contact-us"
+                      href="/aboutus"
                       className="text-gray-700 hover:text-blue-600"
                     >
                       {t("header.menu.contactUs")}
@@ -518,7 +518,7 @@ function Header() {
                       {t("header.menu.community")}
                     </Link> */}
                     <a
-                      href="/contact-us"
+                      href="/aboutus"
                       onClick={toggleMenu}
                       className="flex items-center gap-3 text-gray-700 hover:bg-[#98E9E9]/20 px-3 py-2 rounded-lg"
                     >

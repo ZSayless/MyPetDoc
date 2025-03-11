@@ -20,7 +20,7 @@ function AdminSidebar({ activeTab, setActiveTab }) {
     { id: "messages", name: "Contact Messages", icon: MessageSquare },
     { id: "faq", name: "FAQ Management", icon: HelpCircle },
     { id: "banner", name: "Banner Management", icon: Circle },
-    { id: "blogs", name: "Community Management", icon: Users },
+    { id: "blogs", name: "Blog Management", icon: Users },
     { id: "aboutus", name: "About Us Management", icon: Users },
     { id: "terms", name: "Terms Management", icon: Users },
     { id: "contact", name: "Contact Infomations Management", icon: Users },
