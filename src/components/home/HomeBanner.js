@@ -83,7 +83,7 @@ function HomeBanner() {
                     {banner.subtitle}
                   </h3>
                 )}
-                <h3 className="text-xl md:text-2xl text-center">
+                <h3 className="text-2xl md:text-2xl text-center">
                   {banner.description}
                 </h3>
                 {banner.link && (
