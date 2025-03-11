@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { HOSPITAL_SERVICES } from "../../constants/services";
 import { useToast } from "../../context/ToastContext";
 import ReviewListModal from "./ReviewListModal";
+import { translateMultipleTexts, translateText } from '../../services/translateService';
 
 const HospitalDetail = () => {
   const { slug } = useParams();
@@ -45,6 +46,9 @@ const HospitalDetail = () => {
     text: "",
     type: "",
   });
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [isTranslated, setIsTranslated] = useState(false);
+  const [translatedContent, setTranslatedContent] = useState({});
 
   // Fetch hospital data
   useEffect(() => {
@@ -415,6 +419,49 @@ const HospitalDetail = () => {
     setLoginSuccessCallback(null);
   };
 
+  const translateContent = async (targetLang) => {
+    try {
+      setIsTranslating(true);
+      
+      const sourceLang = targetLang === 'vi' ? 'en' : 'vi';
+      
+      const textsToTranslate = {
+        description: hospital.description,
+        department: hospital.department,
+        specialties: hospital.specialties,
+        staffDescription: hospital.staffDescription,
+        staffCredentials: hospital.staffCredentials,
+        workingHours: hospital.workingHours,
+        address: hospital.address
+      };
+
+      // Dịch nội dung chính
+      const translated = await translateMultipleTexts(textsToTranslate, targetLang, sourceLang);
+      
+      // Dịch services riêng vì là mảng
+      if (Array.isArray(hospital.services) && hospital.services.length > 0) {
+        translated.services = await translateText(hospital.services, targetLang, sourceLang);
+      } else {
+        translated.services = [];
+      }
+      
+      setTranslatedContent(translated);
+      
+      addToast({
+        type: 'success',
+        message: t('Content translated successfully'),
+      });
+    } catch (error) {
+      console.error('Translation error:', error);
+      addToast({
+        type: 'error',
+        message: t('Error translating content'),
+      });
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -507,33 +554,111 @@ const HospitalDetail = () => {
       <section className="py-8 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              {t("hospitalDetail.description.title")}
-            </h2>
-            <div className="prose prose-lg text-gray-600">
-              <p>{hospital?.description}</p>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {t("hospitalDetail.description.title")}
+              </h2>
+              
+              {/* Translation Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => translateContent('vi')}
+                  disabled={isTranslating}
+                  className={`flex items-center gap-2 px-4 py-2 ${
+                    isTranslating 
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-[#98E9E9] hover:bg-[#7CD5D5]'
+                  } text-gray-700 rounded-lg transition-colors`}
+                >
+                  {isTranslating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-700 border-t-transparent" />
+                      <span>{t('Translating...')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Globe className="w-4 h-4" />
+                      <span>Tiếng Việt</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => translateContent('en')}
+                  disabled={isTranslating}
+                  className={`flex items-center gap-2 px-4 py-2 ${
+                    isTranslating 
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-[#98E9E9] hover:bg-[#7CD5D5]'
+                  } text-gray-700 rounded-lg transition-colors`}
+                >
+                  {isTranslating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-700 border-t-transparent" />
+                      <span>{t('Translating...')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Globe className="w-4 h-4" />
+                      <span>English</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
+            {/* Rest of the content */}
+            <div className="prose prose-lg text-gray-600">
+              <p>{translatedContent.description || hospital?.description}</p>
+            </div>
+
+            {/* Staff Information */}
+            {(translatedContent.staffDescription || hospital?.staffDescription) && (
+              <div className="mt-8">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  {t("hospitalDetail.staff.title")}
+                </h3>
+                <p className="text-gray-600">
+                  {translatedContent.staffDescription || hospital?.staffDescription}
+                </p>
+              </div>
+            )}
+
+            {(translatedContent.staffCredentials || hospital?.staffCredentials) && (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                  {t("hospitalDetail.staff.credentials")}
+                </h3>
+                <p className="text-gray-600">
+                  {translatedContent.staffCredentials || hospital?.staffCredentials}
+                </p>
+              </div>
+            )}
+
             {/* Additional Information */}
-            {/* <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {hospital?.department && (
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {(translatedContent.department || hospital?.department) && (
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
-                    {t("Phòng khám")}
+                    {t("Department")}
                   </h3>
-                  <p className="text-gray-600">{hospital.department}</p>
+                  <p className="text-gray-600">
+                    {translatedContent.department || hospital?.department}
+                  </p>
                 </div>
               )}
 
-              {hospital?.specialties && (
+              {(translatedContent.specialties || hospital?.specialties) && (
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
-                    {t("Chuyên khoa")}
+                    {t("Specialties")}
                   </h3>
-                  <p className="text-gray-600">{hospital.specialties}</p>
+                  <p className="text-gray-600">
+                    {translatedContent.specialties || hospital?.specialties}
+                  </p>
                 </div>
               )}
-            </div> */}
+            </div>
           </div>
         </div>
       </section>
@@ -565,7 +690,7 @@ const HospitalDetail = () => {
                       {t("hospitalDetail.information.address")}
                     </h3>
                     <p className="text-sm md:text-base text-gray-600">
-                      {hospital.address}
+                      {translatedContent.address || hospital.address}
                     </p>
                   </div>
                   <div>
@@ -582,7 +707,7 @@ const HospitalDetail = () => {
                     {t("hospitalDetail.information.workingHours")}
                   </h3>
                   <div className="text-sm md:text-base text-gray-600">
-                    {hospital.workingHours}
+                    {translatedContent.workingHours || hospital.workingHours}
                   </div>
                 </div>
                 {hospital.link_website && (
@@ -609,11 +734,13 @@ const HospitalDetail = () => {
 
             {/* Services */}
             <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-              <h2 className="text-lg md:text-xl font-semibold mb-4">
-                {t("hospitalDetail.services.title")}
-              </h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg md:text-xl font-semibold">
+                  {t("hospitalDetail.services.title")}
+                </h2>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                {hospital?.services?.map((service, index) => (
+                {(translatedContent.services || hospital?.services)?.map((service, index) => (
                   <div
                     key={index}
                     className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg"

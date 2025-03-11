@@ -22,6 +22,7 @@ function CreatePetModal({ isOpen, onClose, onSuccess }) {
     { value: "FISH", label: t("setting.personal.pet.types.fish") },
     { value: "REPTILE", label: t("setting.personal.pet.types.reptile") },
     { value: "RABBIT", label: t("setting.personal.pet.types.rabbit") },
+    { value: "HAMSTER", label: t("setting.personal.pet.types.hamster") },
     { value: "OTHER", label: t("setting.personal.pet.types.other") },
   ];
 

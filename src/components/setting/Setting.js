@@ -467,7 +467,7 @@ function Setting() {
 
           {/* Title */}
           <h1 className="flex-1 text-lg md:text-xl font-semibold text-center">
-            Account Settings
+            {t("setting.title")}
           </h1>
 
           {/* Close button for desktop */}

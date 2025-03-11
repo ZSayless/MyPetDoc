@@ -35,7 +35,7 @@
   position: fixed;
   bottom: 140px;
   right: 24px;
-  width: 320px;
+  width: 380px;
   max-height: 500px;
   background: white;
   border-radius: 16px;
@@ -71,6 +71,22 @@
   border-radius: 3px;
 }
 
+/* Add styles for the "Show More" button */
+.faq-content button.show-more {
+  background: none;
+  border: none;
+  color: #1A3C8E;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.faq-content button.show-more:hover {
+  background: rgba(26, 60, 142, 0.05);
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -101,9 +117,9 @@
 
   .faq-popup {
     bottom: 140px;
-    right: 24px;
-    width: calc(100% - 32px);
-    max-width: 320px;
+    right: 12px;
+    width: calc(100% - 24px);
+    max-width: 380px;
     max-height: 70vh;
   }
 }

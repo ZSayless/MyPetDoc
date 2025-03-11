@@ -30,15 +30,15 @@ function AdminDashboard() {
         return <UsersManagement />;
       case "hospitals":
         return <HospitalsManagement />;
-      case "blogs":
-        return <BlogsManagement />;
+      // case "blogs":
+      //   return <BlogsManagement />;
       case "reports":
         return <ReportsManagement />;
       case "messages":
         return <ContactMessages />;
       case "faq":
         return <FAQManagement />;
-      case "community":
+      case "blogs":
         return <CommunityManagement />;
       case "banner":
         return <BannerManagement />;
