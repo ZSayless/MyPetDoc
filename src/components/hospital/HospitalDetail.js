@@ -527,7 +527,7 @@ const HospitalDetail = () => {
                     : t("hospitalDetail.actions.addFavorite")}
                 </span>
               </button>
-              <button
+              {/* <button
                 onClick={handleCall}
                 className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-8 py-2 md:py-3 bg-[#67009B] text-white rounded-lg hover:bg-[#53007c] transition-colors text-sm md:text-base"
               >
@@ -535,7 +535,7 @@ const HospitalDetail = () => {
                 <span className="text-center">
                   {t("hospitalDetail.actions.callNow")}
                 </span>
-              </button>
+              </button> */}
               <button
                 onClick={handleGetDirections}
                 className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-8 py-2 md:py-3 bg-[#98E9E9] text-gray-700 rounded-lg hover:bg-[#7CD5D5] transition-colors text-sm md:text-base"
