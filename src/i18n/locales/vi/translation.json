@@ -1371,10 +1371,10 @@
       "description": "Kim cương tưởng niệm LUCETE mang đến một cách đẹp đẽ và bền vững để tưởng nhớ và tôn vinh những người thân yêu của bạn. Hãy chọn LUCETE để tạo nên một kỷ vật vĩnh cửu giữ gìn ký ức về họ mãi mãi."
     },
     "contactUs": {
-      "title": "Contact us",
+      "title": "Liên hệ",
+      "description": "Liên hệ với chúng tôi tìm hiểu thêm",
       "button": {
-        "contact": "Contact us",
-        "learnMore": "자세히 알아보기"
+        "contact": "Liên hệ với chúng tôi"
       }
     }
   }

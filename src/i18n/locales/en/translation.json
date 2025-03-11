@@ -1385,9 +1385,9 @@
     },
     "contactUs": {
       "title": "Contact us",
+      "description": "Contact us 자세히 알아보기",
       "button": {
-        "contact": "Contact us",
-        "learnMore": "자세히 알아보기"
+        "contact": "Contact us"
       }
     }
   }

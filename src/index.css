@@ -2,16 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom styles for form inputs */
-[type="text"],
-[type="email"],
-[type="password"] {
-  @apply border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm;
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
 body {
   margin: 0;
-  font-family: "DM Sans", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -609,20 +609,16 @@ const Lucete = () => {
                 <h2 className="text-2xl sm:text-3xl md:text-4xl mb-2">
                   {t("lucete.contactUs.title")}
                 </h2>
-                <p className="text-gray-500">Contact us 자세히 알아보기</p>
+                <p className="text-gray-500">
+                  {t("lucete.contactUs.description")}
+                </p>
                 {isContactOpen && (
-                  <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-4">
+                  <div className="mt-6 sm:mt-8">
                     <a
                       href="/contact-us"
-                      className="w-full sm:w-auto text-center bg-[#7B91F7] text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-[#6A7FE5] transition duration-300"
+                      className="inline-block w-full sm:w-auto text-center bg-[#7B91F7] text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-[#6A7FE5] transition duration-300"
                     >
                       {t("lucete.contactUs.button.contact")}
-                    </a>
-                    <a
-                      href="/contact-us"
-                      className="w-full sm:w-auto text-center border border-[#7B91F7] text-[#7B91F7] px-6 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-gray-50 transition duration-300"
-                    >
-                      {t("lucete.contactUs.button.learnMore")}
                     </a>
                   </div>
                 )}
