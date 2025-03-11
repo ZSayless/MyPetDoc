@@ -1181,7 +1181,8 @@
     },
     "gallery": {
       "title": "Gallery",
-      "reviewCount": "reviews"
+      "reviewCount": "reviews",
+      "subtitle": "Value beyond luxury"
     },
     "reviews": {
       "title": "Customer Reviews",
@@ -1256,6 +1257,138 @@
       "admin": "Admin Dashboard",
       "settings": "Settings",
       "signOut": "Sign Out"
+    }
+  },
+  "lucete": {
+    "hero": {
+      "title": "LUCETE: Memorial Pet Jewelry",
+      "subtitle": "Transforming ashes into a lasting tribute"
+    },
+    "memorialGem": {
+      "title": {
+        "start": "LUCETE:",
+        "middle": "A Memorial Gem Created from",
+        "end": "Your Pet's Cremated Remains"
+      },
+      "description": {
+        "part1": "LUCETE",
+        "part2": "one-of-a-kind memorial diamond service that transforms your beloved pet's cremated remains into a beautiful gemstone.",
+        "part3": "With LUCETE, you can forever cherish the memory of your pet in a timeless and elegant form, keeping them close to your heart."
+      }
+    },
+    "whyChoose": {
+      "title": "Why Choose LUCETE?",
+      "reasons": {
+        "preservation": {
+          "title": "Eternal Preservation",
+          "description": "Unlike traditional cremation urns, LUCETE gemstones do not decay and can be kept forever."
+        },
+        "keepsake": {
+          "title": "A Personal Keepsake",
+          "description": "Crafted into jewelry such as rings or necklaces, allowing you to carry your pet's memory with you wherever you go."
+        },
+        "technology": {
+          "title": "Innovative Technology",
+          "description": "Using a unique low-temperature melting process, LUCETE retains 99.9% of the original remains while avoiding damage caused by high-temperature cremation methods."
+        },
+        "reversible": {
+          "title": "Reversible Process",
+          "description": "LUCETE is the only technology in the world that allows you to restore the gemstone back to ashes if needed."
+        }
+      }
+    },
+    "preservingMemories": {
+      "title": "Preserving Memories",
+      "unfadingBeauty": {
+        "title": "Unfading Beauty",
+        "description": "LUCETE memorial diamonds prevent the decay of cremated remains, ensuring they remain preserved for generations. Unlike traditional ashes, which can deteriorate over time, LUCETE diamonds offer permanent protection."
+      },
+      "alwaysTogether": {
+        "title": "Always Together",
+        "description": "Carry your loved one's memory wherever you go. LUCETE memorial diamonds can be incorporated into jewelry, allowing you to keep their essence close to your heart."
+      },
+      "process": {
+        "title": "The LUCETE Process",
+        "steps": {
+          "1": "The cremated remains are carefully measured and processed to remove impurities.",
+          "2": "The remains are mixed with a special material and placed in a drying chamber for controlled drying.",
+          "3": "The material is precisely ground into a fine powder, ready for the next stage.",
+          "4": "The powder is carefully inserted into molds and placed in a high-tech fusion furnace.",
+          "5": "The material is melted under controlled conditions, and the diamond crystallizes."
+        }
+      }
+    },
+    "powerOfTechnology": {
+      "title": "The Power of Technology",
+      "lowTemperature": {
+        "title": "Low-Temperature Melting",
+        "description": "LUCETE's unique low-temperature melting method ensures a 99.9% preservation rate of cremated remains, safeguarding their essence."
+      },
+      "advancedTechnology": {
+        "title": "Advanced Technology",
+        "description": "The process utilizes state-of-the-art equipment and techniques to transform ashes into diamonds."
+      },
+      "unwaverQuality": {
+        "title": "Unwavering Quality",
+        "description": "LUCETE diamonds are crafted with the highest precision and care, resulting in a beautiful and lasting tribute."
+      }
+    },
+    "gallery": {
+      "subtitle": "Value beyond luxury"
+    },
+    "orderProcess": {
+      "title": "Order Process",
+      "steps": {
+        "1": {
+          "title": "Consultation",
+          "description": "Initiate a consultation to discuss your vision for a LUCETE memorial diamond."
+        },
+        "2": {
+          "title": "Order Form",
+          "description": "Complete an order form outlining your preferences and payment information."
+        },
+        "3": {
+          "title": "Delivery",
+          "description": "Deliver the cremated remains, ensuring accurate measurement and accompanying documentation."
+        }
+      }
+    },
+    "lastingTribute": {
+      "title": "Creating a Lasting Tribute",
+      "personalizedJewelry": {
+        "title": "Personalized Jewelry",
+        "description": "Choose from a variety of jewelry designs to create a custom piece that honors your loved one's memory."
+      },
+      "meaningfulSymbol": {
+        "title": "Meaningful Symbol",
+        "description": "A LUCETE diamond is more than just a gemstone; it's a tangible expression of your love and connection."
+      }
+    },
+    "difference": {
+      "title": "The LUCETE Difference",
+      "enduringLegacy": {
+        "title": "Enduring Legacy",
+        "description": "LUCETE diamonds offer a timeless tribute that will endure for generations to come."
+      },
+      "uniqueTechnology": {
+        "title": "Unique Technology",
+        "description": "LUCETE's innovative process ensures the highest level of care and preservation."
+      },
+      "meaningfulGift": {
+        "title": "Meaningful Gift",
+        "description": "A LUCETE diamond is a cherished gift that honors the memory of a loved one."
+      }
+    },
+    "rememberingAndHonoring": {
+      "title": "Remembering and Honoring",
+      "description": "LUCETE memorial diamonds provide a beautiful and enduring way to remember and honor those you love. Choose LUCETE to create a lasting tribute that will keep their memory alive forever."
+    },
+    "contactUs": {
+      "title": "Contact us",
+      "button": {
+        "contact": "Contact us",
+        "learnMore": "자세히 알아보기"
+      }
     }
   }
 }

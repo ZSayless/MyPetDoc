@@ -139,29 +139,29 @@
         }
       },
       "phoneError": {
-          "empty": "Số điện thoại không được để trống",
-          "invalid": "Số điện thoại không đúng định dạng (10 số và bắt đầu bằng 03, 05, 07, 08, 09 ...)"
+        "empty": "Số điện thoại không được để trống",
+        "invalid": "Số điện thoại không đúng định dạng (10 số và bắt đầu bằng 03, 05, 07, 08, 09 ...)"
+      },
+      "error": {
+        "signup": "Đăng ký thất bại"
+      },
+      "phoneInput": {
+        "title": "Nhập số điện thoại",
+        "subtitle": "Vui lòng nhập số điện thoại của bạn để hoàn tất đăng ký",
+        "submit": "Hoàn tất đăng ký",
+        "placeholder": "Nhập số điện thoại (0912345678)",
+        "cancel": "Quay lại"
+      },
+      "role": {
+        "generalUser": {
+          "title": "Chủ thú cưng",
+          "description": "Tìm kiếm dịch vụ thú y và kết nối với bác sĩ thú y"
         },
-        "error": {
-          "signup": "Đăng ký thất bại"
-        },
-        "phoneInput": {
-          "title": "Nhập số điện thoại",
-          "subtitle": "Vui lòng nhập số điện thoại của bạn để hoàn tất đăng ký",
-          "submit": "Hoàn tất đăng ký",
-          "placeholder": "Nhập số điện thoại (0912345678)",
-          "cancel": "Quay lại"
-        },
-        "role": {
-          "generalUser": {
-            "title": "Chủ thú cưng",
-            "description": "Tìm kiếm dịch vụ thú y và kết nối với bác sĩ thú y"
-          },
-          "hospitalAdmin": {
-            "title": "Quản lý bệnh viện thú y",
-            "description": "Quản lý bệnh viện và kết nối với chủ thú cưng"
-          }
+        "hospitalAdmin": {
+          "title": "Quản lý bệnh viện thú y",
+          "description": "Quản lý bệnh viện và kết nối với chủ thú cưng"
         }
+      }
     },
     "email": "Email",
     "password": "Mật khẩu",
@@ -943,7 +943,7 @@
       }
     },
     "common": {
-     "delete": "Xóa",
+      "delete": "Xóa",
       "deleting": "Đang xóa...",
       "cancel": "Hủy"
     },
@@ -1245,5 +1245,137 @@
   "faq": {
     "title": "Hỗ trợ FAQ",
     "description": "Xin chào! 👋 Chúng tôi có thể giúp gì cho bạn?"
+  },
+  "lucete": {
+    "hero": {
+      "title": "LUCETE: Trang Sức Tưởng Niệm Thú Cưng",
+      "subtitle": "Biến tro cốt thành kỷ vật vĩnh cửu"
+    },
+    "memorialGem": {
+      "title": {
+        "start": "LUCETE:",
+        "middle": "Viên Đá Quý Tưởng Niệm Được Tạo Ra Từ",
+        "end": "Tro Cốt Của Thú Cưng"
+      },
+      "description": {
+        "part1": "LUCETE",
+        "part2": "dịch vụ kim cương tưởng niệm độc đáo biến tro cốt của thú cưng thành viên đá quý tuyệt đẹp.",
+        "part3": "Với LUCETE, bạn có thể gìn giữ kỷ niệm về thú cưng mãi mãi trong một hình thức vĩnh cửu và sang trọng, luôn bên cạnh trái tim bạn."
+      }
+    },
+    "whyChoose": {
+      "title": "Tại Sao Chọn LUCETE?",
+      "reasons": {
+        "preservation": {
+          "title": "Bảo Quản Vĩnh Cửu",
+          "description": "Khác với bình tro cốt truyền thống, đá quý LUCETE không bị hư hại và có thể giữ được mãi mãi."
+        },
+        "keepsake": {
+          "title": "Kỷ Vật Cá Nhân",
+          "description": "Được chế tác thành trang sức như nhẫn hoặc dây chuyền, cho phép bạn mang theo kỷ niệm về thú cưng bên mình mọi lúc mọi nơi."
+        },
+        "technology": {
+          "title": "Công Nghệ Tiên Tiến",
+          "description": "Sử dụng quy trình nấu chảy nhiệt độ thấp độc đáo, LUCETE giữ lại 99.9% tro cốt gốc trong khi tránh được thiệt hại do phương pháp hỏa táng nhiệt độ cao gây ra."
+        },
+        "reversible": {
+          "title": "Quy Trình Có Thể Đảo Ngược",
+          "description": "LUCETE là công nghệ duy nhất trên thế giới cho phép bạn khôi phục viên đá quý trở lại thành tro cốt nếu cần."
+        }
+      }
+    },
+    "preservingMemories": {
+      "title": "Lưu Giữ Kỷ Niệm",
+      "unfadingBeauty": {
+        "title": "Vẻ Đẹp Vĩnh Cửu",
+        "description": "Kim cương tưởng niệm LUCETE ngăn chặn sự phân hủy của tro cốt, đảm bảo chúng được bảo quản qua nhiều thế hệ. Khác với tro cốt truyền thống có thể bị hư hại theo thời gian, kim cương LUCETE mang lại sự bảo vệ vĩnh viễn."
+      },
+      "alwaysTogether": {
+        "title": "Luôn Bên Nhau",
+        "description": "Mang theo kỷ niệm về người thân yêu bên mình mọi lúc mọi nơi. Kim cương tưởng niệm LUCETE có thể được chế tác thành trang sức, cho phép bạn giữ họ luôn gần bên trái tim."
+      },
+      "process": {
+        "title": "Quy Trình LUCETE",
+        "steps": {
+          "1": "Tro cốt được đo lường cẩn thận và xử lý để loại bỏ tạp chất.",
+          "2": "Tro cốt được trộn với vật liệu đặc biệt và đặt trong buồng sấy để kiểm soát quá trình làm khô.",
+          "3": "Vật liệu được nghiền thành bột mịn một cách chính xác, sẵn sàng cho giai đoạn tiếp theo.",
+          "4": "Bột được đưa vào khuôn một cách cẩn thận và đặt trong lò nung nhiệt độ cao công nghệ cao.",
+          "5": "Vật liệu được nấu chảy trong điều kiện được kiểm soát, và kim cương kết tinh."
+        }
+      }
+    },
+    "powerOfTechnology": {
+      "title": "Sức Mạnh Công Nghệ",
+      "lowTemperature": {
+        "title": "Công Nghệ Nấu Chảy Nhiệt Độ Thấp",
+        "description": "Phương pháp nấu chảy nhiệt độ thấp độc đáo của LUCETE đảm bảo tỷ lệ bảo quản 99.9% tro cốt, bảo vệ tinh túy của chúng."
+      },
+      "advancedTechnology": {
+        "title": "Công Nghệ Tiên Tiến",
+        "description": "Quy trình sử dụng thiết bị và kỹ thuật tiên tiến nhất để biến tro cốt thành kim cương."
+      },
+      "unwaverQuality": {
+        "title": "Chất Lượng Vượt Trội",
+        "description": "Kim cương LUCETE được chế tác với độ chính xác và sự tỉ mỉ cao nhất, tạo nên một kỷ vật tưởng niệm đẹp và bền vững."
+      }
+    },
+    "gallery": {
+      "subtitle": "Giá trị vượt xa sự xa xỉ"
+    },
+    "orderProcess": {
+      "title": "Quy Trình Đặt Hàng",
+      "steps": {
+        "1": {
+          "title": "Tư Vấn",
+          "description": "Bắt đầu buổi tư vấn để thảo luận về ý tưởng kim cương tưởng niệm LUCETE của bạn."
+        },
+        "2": {
+          "title": "Đơn Đặt Hàng",
+          "description": "Hoàn thành đơn đặt hàng với các lựa chọn và thông tin thanh toán của bạn."
+        },
+        "3": {
+          "title": "Giao Nhận",
+          "description": "Gửi tro cốt, đảm bảo đo lường chính xác và đầy đủ giấy tờ kèm theo."
+        }
+      }
+    },
+    "lastingTribute": {
+      "title": "Tạo Nên Kỷ Vật Vĩnh Cửu",
+      "personalizedJewelry": {
+        "title": "Trang Sức Cá Nhân Hóa",
+        "description": "Lựa chọn từ nhiều thiết kế trang sức để tạo nên một món đồ độc đáo tôn vinh kỷ niệm về người thân yêu của bạn."
+      },
+      "meaningfulSymbol": {
+        "title": "Biểu Tượng Ý Nghĩa",
+        "description": "Kim cương LUCETE không chỉ là một viên đá quý; đó là biểu hiện hữu hình của tình yêu và sự gắn kết của bạn."
+      }
+    },
+    "difference": {
+      "title": "Sự Khác Biệt của LUCETE",
+      "enduringLegacy": {
+        "title": "Di Sản Bền Vững",
+        "description": "Kim cương LUCETE mang đến một kỷ vật vĩnh cửu sẽ tồn tại qua nhiều thế hệ."
+      },
+      "uniqueTechnology": {
+        "title": "Công Nghệ Độc Đáo",
+        "description": "Quy trình sáng tạo của LUCETE đảm bảo sự chăm sóc và bảo quản ở mức cao nhất."
+      },
+      "meaningfulGift": {
+        "title": "Món Quà Ý Nghĩa",
+        "description": "Kim cương LUCETE là món quà quý giá tôn vinh kỷ niệm về người thân yêu."
+      }
+    },
+    "rememberingAndHonoring": {
+      "title": "Tưởng Nhớ và Tôn Vinh",
+      "description": "Kim cương tưởng niệm LUCETE mang đến một cách đẹp đẽ và bền vững để tưởng nhớ và tôn vinh những người thân yêu của bạn. Hãy chọn LUCETE để tạo nên một kỷ vật vĩnh cửu giữ gìn ký ức về họ mãi mãi."
+    },
+    "contactUs": {
+      "title": "Contact us",
+      "button": {
+        "contact": "Contact us",
+        "learnMore": "자세히 알아보기"
+      }
+    }
   }
 }

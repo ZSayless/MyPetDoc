@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import rusedde from "../../assets/img/rusedde-ddoci-02.jpg";
 import ruseddeMoyang01 from "../../assets/img/rusedde-moyang-01.jpg";
 import ruseddeHaru01 from "../../assets/img/rusedde-haru-01.jpg";
@@ -16,6 +17,7 @@ import ruseddeBboggu01 from "../../assets/img/rusedde-bboggu-01.jpg";
 import ruseddeCici06 from "../../assets/img/rusedde-cici-06.jpg";
 
 const Lucete = () => {
+  const { t } = useTranslation();
   const [isContactOpen, setIsContactOpen] = useState(false);
 
   return (
@@ -34,10 +36,10 @@ const Lucete = () => {
               <div className="flex h-full items-center px-4 sm:hidden">
                 <div className="max-w-xl">
                   <h1 className="text-2xl font-serif mb-2 text-white">
-                    LUCETE: Memorial Pet Jewelry
+                    {t("lucete.hero.title")}
                   </h1>
                   <p className="text-sm text-white/90 mb-4">
-                    Transforming ashes into a lasting tribute.
+                    {t("lucete.hero.subtitle")}
                   </p>
                 </div>
               </div>
@@ -46,10 +48,10 @@ const Lucete = () => {
               <div className="hidden sm:flex h-full items-center px-8 md:px-16 lg:px-32">
                 <div className="max-w-xl">
                   <h1 className="text-3xl md:text-4xl lg:text-6xl font-serif mb-2 sm:mb-4 text-white whitespace-nowrap ml-24 sm:ml-36 md:ml-48">
-                    LUCETE: Memorial Pet Jewelry
+                    {t("lucete.hero.title")}
                   </h1>
                   <p className="text-base md:text-xl text-white/90 mb-4 sm:mb-6 md:mb-8 ml-24 sm:ml-36 md:ml-48 whitespace-nowrap">
-                    Transforming ashes into a lasting tribute.
+                    {t("lucete.hero.subtitle")}
                   </p>
                 </div>
               </div>
@@ -63,25 +65,25 @@ const Lucete = () => {
             <div className="max-w-4xl mx-auto">
               {/* First Section */}
               <h2 className="text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6">
-                <span className="font-bold">LUCETE:</span> A Memorial Gem
-                Created from{" "}
-                <span className="font-bold">Your Pet's Cremated Remains</span>
+                <span className="font-bold">
+                  {t("lucete.memorialGem.title.start")}
+                </span>{" "}
+                {t("lucete.memorialGem.title.middle")}{" "}
+                <span className="font-bold">
+                  {t("lucete.memorialGem.title.end")}
+                </span>
               </h2>
 
               <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-start mb-8 sm:mb-12">
                 <div className="md:w-1/2 pt-1">
                   <p className="text-gray-700 text-base sm:text-lg">
-                    <span className="font-bold">LUCETE</span> is a{" "}
                     <span className="font-bold">
-                      one-of-a-kind memorial diamond service that transforms
-                      your beloved pet's cremated remains into a beautiful
-                      gemstone.
-                    </span>
+                      {t("lucete.memorialGem.description.part1")}
+                    </span>{" "}
+                    {t("lucete.memorialGem.description.part2")}
                   </p>
                   <p className="text-gray-600 mt-2">
-                    With LUCETE, you can forever cherish the memory of your pet
-                    in a timeless and elegant form, keeping them close to your
-                    heart.
+                    {t("lucete.memorialGem.description.part3")}
                   </p>
                 </div>
                 <div className="md:w-1/2">
@@ -104,19 +106,19 @@ const Lucete = () => {
                 </div>
                 <div className="md:w-1/2">
                   <h2 className="text-xl sm:text-2xl md:text-3xl mb-4 sm:mb-6">
-                    Why Choose LUCETE?
+                    {t("lucete.whyChoose.title")}
                   </h2>
                   <div className="space-y-4">
                     <div className="flex gap-2 items-start">
                       <span className="text-blue-600 text-lg">✓</span>
                       <div>
                         <h3 className="text-lg font-bold mb-0.5">
-                          Eternal Preservation
+                          {t("lucete.whyChoose.reasons.preservation.title")}
                         </h3>
                         <p className="text-gray-700">
-                          Unlike traditional cremation urns,{" "}
-                          <span className="font-bold">LUCETE</span> gemstones do
-                          not decay and can be kept forever.
+                          {t(
+                            "lucete.whyChoose.reasons.preservation.description"
+                          )}
                         </p>
                       </div>
                     </div>
@@ -125,12 +127,10 @@ const Lucete = () => {
                       <span className="text-blue-600 text-lg">✓</span>
                       <div>
                         <h3 className="text-lg font-bold mb-0.5">
-                          A Personal Keepsake
+                          {t("lucete.whyChoose.reasons.keepsake.title")}
                         </h3>
                         <p className="text-gray-700">
-                          Crafted into jewelry such as rings or necklaces,
-                          allowing you to carry your pet's memory with you
-                          wherever you go.
+                          {t("lucete.whyChoose.reasons.keepsake.description")}
                         </p>
                       </div>
                     </div>
@@ -139,16 +139,10 @@ const Lucete = () => {
                       <span className="text-blue-600 text-lg">✓</span>
                       <div>
                         <h3 className="text-lg font-bold mb-0.5">
-                          Innovative Technology
+                          {t("lucete.whyChoose.reasons.technology.title")}
                         </h3>
                         <p className="text-gray-700">
-                          Using a unique{" "}
-                          <span className="font-bold">
-                            low-temperature melting process
-                          </span>
-                          , <span className="font-bold">LUCETE</span> retains
-                          99.9% of the original remains while avoiding damage
-                          caused by high-temperature cremation methods.
+                          {t("lucete.whyChoose.reasons.technology.description")}
                         </p>
                       </div>
                     </div>
@@ -157,15 +151,10 @@ const Lucete = () => {
                       <span className="text-blue-600 text-lg">✓</span>
                       <div>
                         <h3 className="text-lg font-bold mb-0.5">
-                          Reversible Process
+                          {t("lucete.whyChoose.reasons.reversible.title")}
                         </h3>
                         <p className="text-gray-700">
-                          <span className="font-bold">LUCETE</span> is the only
-                          technology in the world that allows you to{" "}
-                          <span className="font-bold">
-                            restore the gemstone back to ashes
-                          </span>{" "}
-                          if needed.
+                          {t("lucete.whyChoose.reasons.reversible.description")}
                         </p>
                       </div>
                     </div>
@@ -181,26 +170,25 @@ const Lucete = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl mb-12">
-                Preserving Memories
+                {t("lucete.preservingMemories.title")}
               </h2>
 
               <div className="flex flex-col md:flex-row gap-12">
                 <div className="md:w-1/2">
-                  <h3 className="text-2xl mb-4">Unfading Beauty</h3>
+                  <h3 className="text-2xl mb-4">
+                    {t("lucete.preservingMemories.unfadingBeauty.title")}
+                  </h3>
                   <p className="text-gray-700">
-                    LUCETE memorial diamonds prevent the decay of cremated
-                    remains, ensuring they remain preserved for generations.
-                    Unlike traditional ashes, which can deteriorate over time,
-                    LUCETE diamonds offer permanent protection.
+                    {t("lucete.preservingMemories.unfadingBeauty.description")}
                   </p>
                 </div>
 
                 <div className="md:w-1/2">
-                  <h3 className="text-2xl mb-4">Always Together</h3>
+                  <h3 className="text-2xl mb-4">
+                    {t("lucete.preservingMemories.alwaysTogether.title")}
+                  </h3>
                   <p className="text-gray-700">
-                    Carry your loved one's memory wherever you go. LUCETE
-                    memorial diamonds can be incorporated into jewelry, allowing
-                    you to keep their essence close to your heart.
+                    {t("lucete.preservingMemories.alwaysTogether.description")}
                   </p>
                 </div>
               </div>
@@ -212,7 +200,9 @@ const Lucete = () => {
         <div className="py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-4xl mb-16">The LUCETE Process</h2>
+              <h2 className="text-4xl mb-16">
+                {t("lucete.preservingMemories.process.title")}
+              </h2>
 
               <div className="relative">
                 {/* Vertical Line */}
@@ -224,8 +214,7 @@ const Lucete = () => {
                   <div className="relative flex items-center">
                     <div className="flex-1 text-right pr-12">
                       <p className="text-lg text-gray-600">
-                        The cremated remains are carefully measured and
-                        processed to remove impurities.
+                        {t("lucete.preservingMemories.process.steps.1")}
                       </p>
                     </div>
                     <div className="absolute left-1/2 transform -translate-x-1/2 w-8 h-8 bg-[#E5EAF5] rounded-lg flex items-center justify-center z-10">
@@ -242,8 +231,7 @@ const Lucete = () => {
                     </div>
                     <div className="flex-1 pl-12">
                       <p className="text-lg text-gray-600">
-                        The remains are mixed with a special material and placed
-                        in a drying chamber for controlled drying.
+                        {t("lucete.preservingMemories.process.steps.2")}
                       </p>
                     </div>
                   </div>
@@ -252,8 +240,7 @@ const Lucete = () => {
                   <div className="relative flex items-center">
                     <div className="flex-1 text-right pr-12">
                       <p className="text-lg text-gray-600">
-                        The material is precisely ground into a fine powder,
-                        ready for the next stage.
+                        {t("lucete.preservingMemories.process.steps.3")}
                       </p>
                     </div>
                     <div className="absolute left-1/2 transform -translate-x-1/2 w-8 h-8 bg-[#E5EAF5] rounded-lg flex items-center justify-center z-10">
@@ -270,8 +257,7 @@ const Lucete = () => {
                     </div>
                     <div className="flex-1 pl-12">
                       <p className="text-lg text-gray-600">
-                        The powder is carefully inserted into molds and placed
-                        in a high-tech fusion furnace.
+                        {t("lucete.preservingMemories.process.steps.4")}
                       </p>
                     </div>
                   </div>
@@ -280,8 +266,7 @@ const Lucete = () => {
                   <div className="relative flex items-center">
                     <div className="flex-1 text-right pr-12">
                       <p className="text-lg text-gray-600">
-                        The material is melted under controlled conditions, and
-                        the diamond crystallizes.
+                        {t("lucete.preservingMemories.process.steps.5")}
                       </p>
                     </div>
                     <div className="absolute left-1/2 transform -translate-x-1/2 w-8 h-8 bg-[#E5EAF5] rounded-lg flex items-center justify-center z-10">
@@ -303,7 +288,7 @@ const Lucete = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-2xl sm:text-3xl md:text-4xl mb-8 sm:mb-12 md:mb-16 text-center">
-                The Power of Technology
+                {t("lucete.powerOfTechnology.title")}
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 md:gap-12">
@@ -318,11 +303,11 @@ const Lucete = () => {
                       />
                     </div>
                   </div>
-                  <h3 className="text-2xl mb-4">Low-Temperature Melting</h3>
+                  <h3 className="text-2xl mb-4">
+                    {t("lucete.powerOfTechnology.lowTemperature.title")}
+                  </h3>
                   <p className="text-gray-600">
-                    LUCETE's unique low-temperature melting method ensures a
-                    99.9% preservation rate of cremated remains, safeguarding
-                    their essence.
+                    {t("lucete.powerOfTechnology.lowTemperature.description")}
                   </p>
                 </div>
 
@@ -337,10 +322,13 @@ const Lucete = () => {
                       />
                     </div>
                   </div>
-                  <h3 className="text-2xl mb-4">Advanced Technology</h3>
+                  <h3 className="text-2xl mb-4">
+                    {t("lucete.powerOfTechnology.advancedTechnology.title")}
+                  </h3>
                   <p className="text-gray-600">
-                    The process utilizes state-of-the-art equipment and
-                    techniques to transform ashes into diamonds.
+                    {t(
+                      "lucete.powerOfTechnology.advancedTechnology.description"
+                    )}
                   </p>
                 </div>
 
@@ -355,10 +343,11 @@ const Lucete = () => {
                       />
                     </div>
                   </div>
-                  <h3 className="text-2xl mb-4">Unwavering Quality</h3>
+                  <h3 className="text-2xl mb-4">
+                    {t("lucete.powerOfTechnology.unwaverQuality.title")}
+                  </h3>
                   <p className="text-gray-600">
-                    LUCETE diamonds are crafted with the highest precision and
-                    care, resulting in a beautiful and lasting tribute.
+                    {t("lucete.powerOfTechnology.unwaverQuality.description")}
                   </p>
                 </div>
               </div>
@@ -371,7 +360,7 @@ const Lucete = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto text-center mb-8 sm:mb-12 md:mb-16">
               <h2 className="text-xl sm:text-2xl mb-2 font-bold">LUCETE</h2>
-              <p className="text-gray-600">Value beyond luxury</p>
+              <p className="text-gray-600">{t("lucete.gallery.subtitle")}</p>
             </div>
 
             <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -426,7 +415,7 @@ const Lucete = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
               <h2 className="text-3xl sm:text-4xl md:text-6xl text-white mb-8 sm:mb-12 md:mb-20">
-                Order Process
+                {t("lucete.orderProcess.title")}
               </h2>
 
               <div className="relative">
@@ -443,11 +432,10 @@ const Lucete = () => {
                     </div>
                     <div className="pt-1 sm:pt-4">
                       <h3 className="text-xl sm:text-2xl text-white mb-1 sm:mb-2">
-                        Consultation
+                        {t("lucete.orderProcess.steps.1.title")}
                       </h3>
                       <p className="text-white/90 text-base sm:text-lg">
-                        Initiate a consultation to discuss your vision for a
-                        LUCETE memorial diamond.
+                        {t("lucete.orderProcess.steps.1.description")}
                       </p>
                     </div>
                   </div>
@@ -461,11 +449,10 @@ const Lucete = () => {
                     </div>
                     <div className="pt-1 sm:pt-4">
                       <h3 className="text-xl sm:text-2xl text-white mb-1 sm:mb-2">
-                        Order Form
+                        {t("lucete.orderProcess.steps.2.title")}
                       </h3>
                       <p className="text-white/90 text-base sm:text-lg">
-                        Complete an order form outlining your preferences and
-                        payment information.
+                        {t("lucete.orderProcess.steps.2.description")}
                       </p>
                     </div>
                   </div>
@@ -479,11 +466,10 @@ const Lucete = () => {
                     </div>
                     <div className="pt-1 sm:pt-4">
                       <h3 className="text-xl sm:text-2xl text-white mb-1 sm:mb-2">
-                        Delivery
+                        {t("lucete.orderProcess.steps.3.title")}
                       </h3>
                       <p className="text-white/90 text-base sm:text-lg">
-                        Deliver the cremated remains, ensuring accurate
-                        measurement and accompanying documentation.
+                        {t("lucete.orderProcess.steps.3.description")}
                       </p>
                     </div>
                   </div>
@@ -497,24 +483,28 @@ const Lucete = () => {
         <div className="py-24 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
-              <h2 className="text-5xl mb-16">Creating a Lasting Tribute</h2>
+              <h2 className="text-5xl mb-16">
+                {t("lucete.lastingTribute.title")}
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
                 {/* Personalized Jewelry */}
                 <div>
-                  <h3 className="text-3xl mb-4">Personalized Jewelry</h3>
+                  <h3 className="text-3xl mb-4">
+                    {t("lucete.lastingTribute.personalizedJewelry.title")}
+                  </h3>
                   <p className="text-gray-600 text-lg">
-                    Choose from a variety of jewelry designs to create a custom
-                    piece that honors your loved one's memory.
+                    {t("lucete.lastingTribute.personalizedJewelry.description")}
                   </p>
                 </div>
 
                 {/* Meaningful Symbol */}
                 <div>
-                  <h3 className="text-3xl mb-4">Meaningful Symbol</h3>
+                  <h3 className="text-3xl mb-4">
+                    {t("lucete.lastingTribute.meaningfulSymbol.title")}
+                  </h3>
                   <p className="text-gray-600 text-lg">
-                    A LUCETE diamond is more than just a gemstone; it's a
-                    tangible expression of your love and connection.
+                    {t("lucete.lastingTribute.meaningfulSymbol.description")}
                   </p>
                 </div>
               </div>
@@ -526,7 +516,7 @@ const Lucete = () => {
         <div className="py-24 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
-              <h2 className="text-5xl mb-16">The LUCETE Difference</h2>
+              <h2 className="text-5xl mb-16">{t("lucete.difference.title")}</h2>
 
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <div className="p-8 md:p-12 space-y-16">
@@ -540,10 +530,11 @@ const Lucete = () => {
                       />
                     </div>
                     <div className="md:w-1/2">
-                      <h3 className="text-3xl mb-4">Enduring Legacy</h3>
+                      <h3 className="text-3xl mb-4">
+                        {t("lucete.difference.enduringLegacy.title")}
+                      </h3>
                       <p className="text-gray-600 text-lg">
-                        LUCETE diamonds offer a timeless tribute that will
-                        endure for generations to come.
+                        {t("lucete.difference.enduringLegacy.description")}
                       </p>
                     </div>
                   </div>
@@ -558,10 +549,11 @@ const Lucete = () => {
                       />
                     </div>
                     <div className="md:w-1/2">
-                      <h3 className="text-3xl mb-4">Unique Technology</h3>
+                      <h3 className="text-3xl mb-4">
+                        {t("lucete.difference.uniqueTechnology.title")}
+                      </h3>
                       <p className="text-gray-600 text-lg">
-                        LUCETE's innovative process ensures the highest level of
-                        care and preservation.
+                        {t("lucete.difference.uniqueTechnology.description")}
                       </p>
                     </div>
                   </div>
@@ -576,10 +568,11 @@ const Lucete = () => {
                       />
                     </div>
                     <div className="md:w-1/2">
-                      <h3 className="text-3xl mb-4">Meaningful Gift</h3>
+                      <h3 className="text-3xl mb-4">
+                        {t("lucete.difference.meaningfulGift.title")}
+                      </h3>
                       <p className="text-gray-600 text-lg">
-                        A LUCETE diamond is a cherished gift that honors the
-                        memory of a loved one.
+                        {t("lucete.difference.meaningfulGift.description")}
                       </p>
                     </div>
                   </div>
@@ -595,12 +588,10 @@ const Lucete = () => {
             <div className="max-w-5xl mx-auto">
               <div className="bg-white/90 rounded-2xl p-8 md:p-12">
                 <h2 className="text-4xl md:text-5xl mb-6">
-                  Remembering and Honoring
+                  {t("lucete.rememberingAndHonoring.title")}
                 </h2>
                 <p className="text-gray-600 text-xl leading-relaxed">
-                  LUCETE memorial diamonds provide a beautiful and enduring way
-                  to remember and honor those you love. Choose LUCETE to create
-                  a lasting tribute that will keep their memory alive forever.
+                  {t("lucete.rememberingAndHonoring.description")}
                 </p>
               </div>
             </div>
@@ -616,7 +607,7 @@ const Lucete = () => {
                 onClick={() => setIsContactOpen(!isContactOpen)}
               >
                 <h2 className="text-2xl sm:text-3xl md:text-4xl mb-2">
-                  Contact us
+                  {t("lucete.contactUs.title")}
                 </h2>
                 <p className="text-gray-500">Contact us 자세히 알아보기</p>
                 {isContactOpen && (
@@ -625,13 +616,13 @@ const Lucete = () => {
                       href="/contact-us"
                       className="w-full sm:w-auto text-center bg-[#7B91F7] text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-[#6A7FE5] transition duration-300"
                     >
-                      Contact us
+                      {t("lucete.contactUs.button.contact")}
                     </a>
                     <a
                       href="/contact-us"
                       className="w-full sm:w-auto text-center border border-[#7B91F7] text-[#7B91F7] px-6 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-gray-50 transition duration-300"
                     >
-                      자세히 알아보기
+                      {t("lucete.contactUs.button.learnMore")}
                     </a>
                   </div>
                 )}
