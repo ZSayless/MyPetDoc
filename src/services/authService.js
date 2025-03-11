@@ -53,11 +53,11 @@ export const login = async (email, password) => {
 
 export const register = async (userData) => {
   try {
-    console.log("Register service - Request data:",
-      userData instanceof FormData
-        ? Object.fromEntries(userData.entries())
-        : userData
-    );
+    // console.log("Register service - Request data:",
+    //   userData instanceof FormData
+    //     ? Object.fromEntries(userData.entries())
+    //     : userData
+    // );
 
     const response = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
