@@ -1123,7 +1123,9 @@
       "workingHours": "Giờ Làm Việc",
       "website": "Trang Web",
       "rating": "Đánh Giá",
-      "reviews": "đánh giá"
+      "reviews": "đánh giá",
+      "department": "Khoa",
+      "specialties": "Chuyên Khoa"
     },
     "gallery": {
       "title": "Thư Viện Ảnh",
@@ -1134,7 +1136,21 @@
       "writeReview": "Viết Đánh Giá",
       "verified": "Đã Xác Thực",
       "viewAll": "Xem Tất Cả Đánh Giá",
-      "noReviews": "Chưa có đánh giá nào"
+      "noReviews": "Chưa có đánh giá nào",
+      "replyToReview": "Trả lời đánh giá này",
+      "seeMore": "Xem thêm đánh giá",
+      "posting": "Đang đăng...",
+      "postReply": "Đăng trả lời",
+      "cancel": "Hủy",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa đánh giá này?",
+      "deleteSuccess": "Xóa đánh giá thành công",
+      "deleteError": "Không thể xóa đánh giá",
+      "deletedMessage": "Đánh giá này đã bị xóa",
+      "delete": "Xóa",
+      "report": "Báo cáo",
+      "replyPlaceholder": "Nhập câu trả lời của bạn... ({{min}}-{{max}} ký tự)",
+      "allReviews": "Tất Cả Đánh Giá",
+      "loading": "Đang tải..."
     },
     "modal": {
       "writeReview": {
@@ -1372,7 +1388,7 @@
     },
     "contactUs": {
       "title": "Liên hệ",
-      "description": "Liên hệ với chúng tôi tìm hiểu thêm",
+      "description": "Liên hệ với chúng tôi để tìm hiểu thêm",
       "button": {
         "contact": "Liên hệ với chúng tôi"
       }

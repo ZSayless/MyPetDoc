@@ -26,12 +26,14 @@ const HospitalList = ({
         {hospitals.map((hospital) => (
           <div
             key={hospital.id}
-            className={`bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
+            className={`bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all ${
               selectedHospital?.id === hospital.id ? "ring-2 ring-blue-500" : ""
             }`}
-            onClick={() => onHospitalClick(hospital)}
+            onClick={() => {
+              onHospitalClick(hospital);
+            }}
           >
-            <div className="p-3 lg:p-4">
+            <div className="p-3 lg:p-4 cursor-pointer">
               <div className="flex gap-3 lg:gap-4">
                 <img
                   src={hospital.image}

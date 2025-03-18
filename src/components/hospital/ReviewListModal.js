@@ -40,7 +40,9 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
       <div className="bg-white w-full max-w-4xl mx-4 my-8 rounded-xl">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-semibold">{t("All Reviews")}</h2>
+          <h2 className="text-xl font-semibold">
+            {t("hospitalDetail.reviews.allReviews")}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
@@ -52,7 +54,9 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
         {/* Reviews List */}
         <div className="p-4 max-h-[70vh] overflow-y-auto">
           {loading ? (
-            <div className="text-center py-8">Loading...</div>
+            <div className="text-center py-8">
+              {t("hospitalDetail.reviews.loading")}
+            </div>
           ) : (
             <div className="space-y-6">
               {reviews.map((review) => (
@@ -68,7 +72,7 @@ const ReviewListModal = ({ isOpen, onClose, hospitalId }) => {
                         <h3 className="font-medium">{review.user_name}</h3>
                         {!review.is_reported && (
                           <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                            {t("Verified")}
+                            {t("hospitalDetail.reviews.verified")}
                           </span>
                         )}
                       </div>

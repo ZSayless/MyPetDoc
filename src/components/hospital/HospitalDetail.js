@@ -16,7 +16,10 @@ import { useTranslation } from "react-i18next";
 import { HOSPITAL_SERVICES } from "../../constants/services";
 import { useToast } from "../../context/ToastContext";
 import ReviewListModal from "./ReviewListModal";
-import { translateMultipleTexts, translateText } from '../../services/translateService';
+import {
+  translateMultipleTexts,
+  translateText,
+} from "../../services/translateService";
 
 const HospitalDetail = () => {
   const { slug } = useParams();
@@ -422,9 +425,9 @@ const HospitalDetail = () => {
   const translateContent = async (targetLang) => {
     try {
       setIsTranslating(true);
-      
-      const sourceLang = targetLang === 'vi' ? 'en' : 'vi';
-      
+
+      const sourceLang = targetLang === "vi" ? "en" : "vi";
+
       const textsToTranslate = {
         description: hospital.description,
         department: hospital.department,
@@ -432,30 +435,38 @@ const HospitalDetail = () => {
         staffDescription: hospital.staffDescription,
         staffCredentials: hospital.staffCredentials,
         workingHours: hospital.workingHours,
-        address: hospital.address
+        address: hospital.address,
       };
 
       // Dịch nội dung chính
-      const translated = await translateMultipleTexts(textsToTranslate, targetLang, sourceLang);
-      
+      const translated = await translateMultipleTexts(
+        textsToTranslate,
+        targetLang,
+        sourceLang
+      );
+
       // Dịch services riêng vì là mảng
       if (Array.isArray(hospital.services) && hospital.services.length > 0) {
-        translated.services = await translateText(hospital.services, targetLang, sourceLang);
+        translated.services = await translateText(
+          hospital.services,
+          targetLang,
+          sourceLang
+        );
       } else {
         translated.services = [];
       }
-      
+
       setTranslatedContent(translated);
-      
+
       addToast({
-        type: 'success',
-        message: t('Content translated successfully'),
+        type: "success",
+        message: t("Content translated successfully"),
       });
     } catch (error) {
-      console.error('Translation error:', error);
+      console.error("Translation error:", error);
       addToast({
-        type: 'error',
-        message: t('Error translating content'),
+        type: "error",
+        message: t("Error translating content"),
       });
     } finally {
       setIsTranslating(false);
@@ -558,22 +569,22 @@ const HospitalDetail = () => {
               <h2 className="text-2xl font-bold text-gray-900">
                 {t("hospitalDetail.description.title")}
               </h2>
-              
+
               {/* Translation Buttons */}
               <div className="flex gap-2">
                 <button
-                  onClick={() => translateContent('vi')}
+                  onClick={() => translateContent("vi")}
                   disabled={isTranslating}
                   className={`flex items-center gap-2 px-4 py-2 ${
-                    isTranslating 
-                      ? 'bg-gray-400 cursor-not-allowed' 
-                      : 'bg-[#98E9E9] hover:bg-[#7CD5D5]'
+                    isTranslating
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-[#98E9E9] hover:bg-[#7CD5D5]"
                   } text-gray-700 rounded-lg transition-colors`}
                 >
                   {isTranslating ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-700 border-t-transparent" />
-                      <span>{t('Translating...')}</span>
+                      <span>{t("Translating...")}</span>
                     </>
                   ) : (
                     <>
@@ -584,18 +595,18 @@ const HospitalDetail = () => {
                 </button>
 
                 <button
-                  onClick={() => translateContent('en')}
+                  onClick={() => translateContent("en")}
                   disabled={isTranslating}
                   className={`flex items-center gap-2 px-4 py-2 ${
-                    isTranslating 
-                      ? 'bg-gray-400 cursor-not-allowed' 
-                      : 'bg-[#98E9E9] hover:bg-[#7CD5D5]'
+                    isTranslating
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-[#98E9E9] hover:bg-[#7CD5D5]"
                   } text-gray-700 rounded-lg transition-colors`}
                 >
                   {isTranslating ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-700 border-t-transparent" />
-                      <span>{t('Translating...')}</span>
+                      <span>{t("Translating...")}</span>
                     </>
                   ) : (
                     <>
@@ -613,24 +624,28 @@ const HospitalDetail = () => {
             </div>
 
             {/* Staff Information */}
-            {(translatedContent.staffDescription || hospital?.staffDescription) && (
+            {(translatedContent.staffDescription ||
+              hospital?.staffDescription) && (
               <div className="mt-8">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">
                   {t("hospitalDetail.staff.title")}
                 </h3>
                 <p className="text-gray-600">
-                  {translatedContent.staffDescription || hospital?.staffDescription}
+                  {translatedContent.staffDescription ||
+                    hospital?.staffDescription}
                 </p>
               </div>
             )}
 
-            {(translatedContent.staffCredentials || hospital?.staffCredentials) && (
+            {(translatedContent.staffCredentials ||
+              hospital?.staffCredentials) && (
               <div className="mt-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">
                   {t("hospitalDetail.staff.credentials")}
                 </h3>
                 <p className="text-gray-600">
-                  {translatedContent.staffCredentials || hospital?.staffCredentials}
+                  {translatedContent.staffCredentials ||
+                    hospital?.staffCredentials}
                 </p>
               </div>
             )}
@@ -640,7 +655,7 @@ const HospitalDetail = () => {
               {(translatedContent.department || hospital?.department) && (
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
-                    {t("Department")}
+                    {t("hospitalDetail.information.department")}
                   </h3>
                   <p className="text-gray-600">
                     {translatedContent.department || hospital?.department}
@@ -651,7 +666,7 @@ const HospitalDetail = () => {
               {(translatedContent.specialties || hospital?.specialties) && (
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
-                    {t("Specialties")}
+                    {t("hospitalDetail.information.specialties")}
                   </h3>
                   <p className="text-gray-600">
                     {translatedContent.specialties || hospital?.specialties}
@@ -740,17 +755,19 @@ const HospitalDetail = () => {
                 </h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                {(translatedContent.services || hospital?.services)?.map((service, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg"
-                  >
-                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                    <span className="text-sm md:text-base text-gray-700">
-                      {service}
-                    </span>
-                  </div>
-                ))}
+                {(translatedContent.services || hospital?.services)?.map(
+                  (service, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg"
+                    >
+                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      <span className="text-sm md:text-base text-gray-700">
+                        {service}
+                      </span>
+                    </div>
+                  )
+                )}
               </div>
             </div>
           </div>

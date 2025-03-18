@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import { formatDistance } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { formatDistance } from "date-fns";
+import { vi } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
@@ -25,7 +25,7 @@ const BlogCard = ({ blog, onLike }) => {
     author_avatar,
     tags,
     likes_count,
-    comments_count
+    comments_count,
   } = blog;
 
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
@@ -36,12 +36,12 @@ const BlogCard = ({ blog, onLike }) => {
   const navigate = useNavigate();
 
   // Chuyển đổi tags từ string sang array
-  const tagsList = typeof tags === 'string' ? tags.split(',') : tags;
+  const tagsList = typeof tags === "string" ? tags.split(",") : tags;
 
   // Format date
   const formattedDate = formatDistance(new Date(created_at), new Date(), {
     addSuffix: true,
-    locale: vi
+    locale: vi,
   });
 
   // Only check like status once when component mounts and when blog.id or isAuthenticated changes
@@ -73,7 +73,7 @@ const BlogCard = ({ blog, onLike }) => {
     if (!isAuthenticated) {
       addToast({
         type: "error",
-        message: "Please login to perform this action"
+        message: "Please login to perform this action",
       });
       return;
     }
@@ -92,7 +92,7 @@ const BlogCard = ({ blog, onLike }) => {
           />
         </div>
       </Link>
-      
+
       <div className="p-4">
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-3">
@@ -114,9 +114,7 @@ const BlogCard = ({ blog, onLike }) => {
         </Link>
 
         {/* Summary */}
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-          {summary}
-        </p>
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2">{summary}</p>
 
         {/* Author Info & Stats */}
         <div className="flex items-center justify-between">
@@ -153,7 +151,7 @@ const BlogCard = ({ blog, onLike }) => {
       </div>
 
       {/* Comment Modal */}
-      <CommentModal 
+      <CommentModal
         isOpen={isCommentModalOpen}
         onClose={() => setIsCommentModalOpen(false)}
         post={blog}

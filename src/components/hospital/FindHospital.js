@@ -323,10 +323,6 @@ const FindHospital = () => {
 
   const handleHospitalClick = (hospital) => {
     setSelectedHospital(hospital);
-
-    if (hospital.slug) {
-      navigate(`/hospital/${hospital.slug}`);
-    }
   };
 
   return (
@@ -335,7 +331,7 @@ const FindHospital = () => {
       <div className="bg-gradient-to-br from-[#98E9E9] via-[#DBEAFE] to-[#EFF6FF]">
         <div className="container mx-auto px-4 py-6 md:py-8">
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6 text-center">
+            <h1 className="text-2xl font-bold text-gray-800 mb-6">
               {t("findHospital.title")}
             </h1>
 
@@ -459,40 +455,16 @@ const FindHospital = () => {
 
       {/* Main Content - Split View */}
       <div className="container mx-auto px-4 py-6">
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Hospital List */}
-          <div className="w-full lg:w-3/5">
-            <HospitalList
-              hospitals={currentHospitals}
-              loading={loading}
-              onHospitalClick={handleHospitalClick}
-              selectedHospital={selectedHospital}
-            />
-          </div>
-
-          {/* Map */}
-          <div className="w-full lg:w-2/5">
-            <div className="bg-white p-4 rounded-lg shadow-sm sticky top-24">
-              <div className="h-[calc(100vh-150px)] rounded-lg overflow-hidden">
-                {selectedHospital ? (
-                  <iframe
-                    src={selectedHospital.mapUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen=""
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="w-full h-full"
-                  ></iframe>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
-                    <p>{t("findHospital.map.selectHospital")}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <HospitalList
+            hospitals={currentHospitals}
+            selectedHospital={selectedHospital}
+            onHospitalClick={handleHospitalClick}
+          />
+          <HospitalMap
+            selectedHospital={selectedHospital}
+            selectedCity={selectedCity}
+          />
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React from "react";
 
-const HospitalMap = ({ selectedCity = "hcm" }) => {
+const HospitalMap = ({ selectedHospital, selectedCity = "hcm" }) => {
   // Map URLs for each city
   const mapUrls = {
     hcm: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125412.37141037266!2d106.6169242891195!3d10.800654291746905!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529292e8d3dd1%3A0xf15f5aad773c112b!2sHo%20Chi%20Minh%20City%2C%20Vietnam!5e0!3m2!1sen!2s!4v1710900646899!5m2!1sen!2s",
@@ -11,20 +11,34 @@ const HospitalMap = ({ selectedCity = "hcm" }) => {
     all: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4057814.6055167267!2d105.73291911791336!3d15.735737488499452!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31157a4d736a1e5f%3A0xb03bb0c9e2fe62be!2sVietnam!5e0!3m2!1sen!2s!4v1710900646899!5m2!1sen!2s",
   };
 
+  // Nếu có hospital được chọn, sử dụng tọa độ của hospital đó
+  const mapUrl = selectedHospital
+    ? selectedHospital.mapUrl // Sử dụng trực tiếp mapUrl từ hospital
+    : mapUrls[selectedCity] || mapUrls.all;
+
   return (
     <div
       className="bg-white rounded-lg shadow-sm overflow-hidden"
       style={{ height: "calc(100vh - 140px)" }}
     >
-      <iframe
-        src={mapUrls[selectedCity] || mapUrls.all}
-        width="100%"
-        height="100%"
-        style={{ border: 0 }}
-        allowFullScreen=""
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-      />
+      {!selectedHospital?.mapUrl && (
+        <div className="h-full flex items-center justify-center bg-gray-50">
+          <p className="text-gray-500 text-lg">
+            Select a hospital to view location
+          </p>
+        </div>
+      )}
+      {selectedHospital?.mapUrl && (
+        <iframe
+          src={mapUrl}
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      )}
     </div>
   );
 };
