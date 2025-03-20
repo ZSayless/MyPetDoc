@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { blogPostService } from '../../services/blogPostService';
+import { communityService } from '../../services/communityService';
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 
@@ -13,9 +13,20 @@ function HomeBlogs() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await blogPostService.getPosts();
+        const response = await communityService.getPosts(1, 3);
         if (response.success) {
-          setBlogs(response.data.posts);
+          const formattedBlogs = response.data.posts.map((post) => ({
+            id: post.id,
+            title: post.caption,
+            summary: post.description,
+            image: post.image_url,
+            author: post.user_name,
+            date: format(new Date(post.created_at), "MMM dd, yyyy"),
+            readTime: "5 min read",
+            tags: post.tags ? post.tags.split(",") : [],
+            slug: post.slug
+          }));
+          setRecentBlogs(formattedBlogs);
         }
       } catch (error) {
         console.error('Error fetching blogs:', error);
@@ -23,35 +34,6 @@ function HomeBlogs() {
     };
 
     fetchBlogs();
-  }, []);
-
-  useEffect(() => {
-    const fetchRecentBlogs = async () => {
-      try {
-        const response = await blogPostService.getPosts();
-        if (response.success && response.data.posts) {
-          const blogsData = response.data.posts;
-          setBlogs(blogsData);
-
-          const formattedBlogs = blogsData.slice(0, 3).map((blog) => ({
-            id: blog.id,
-            title: blog.title,
-            summary: blog.summary,
-            image: blog.featured_image,
-            author: blog.author_name,
-            date: format(new Date(blog.created_at), "MMM dd, yyyy"),
-            readTime: "5 min read",
-            tags: blog.tags ? blog.tags.split(",") : [],
-            slug: blog.slug,
-          }));
-          setRecentBlogs(formattedBlogs);
-        }
-      } catch (error) {
-        console.error("Error fetching blogs:", error);
-      }
-    };
-
-    fetchRecentBlogs();
   }, []);
 
   return (
@@ -62,9 +44,12 @@ function HomeBlogs() {
             <h2 className="text-3xl font-bold mb-4">{t("home.blogs.title")}</h2>
             <p className="text-gray-600">{t("home.blogs.subtitle")}</p>
           </div>
-          <button className="text-blue-600 hover:text-blue-700 font-medium">
-            {t("home.blogs.viewAll")} →
-          </button>
+          <Link 
+            to="/bloglist" 
+            className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2"
+          >
+            {t("home.blogs.viewAll")} <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

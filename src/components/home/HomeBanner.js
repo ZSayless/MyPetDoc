@@ -86,7 +86,7 @@ function HomeBanner() {
                       {banner.subtitle}
                     </h3>
                   )}
-                  <p className="text-sm sm:text-base md:text-lg text-white/80 max-w-3xl mx-auto">
+                  <p className="text-base sm:text-xl md:text-2xl font-medium mb-2 text-white/90">
                     {banner.description}
                   </p>
                 </div>
