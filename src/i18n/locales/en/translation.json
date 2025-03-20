@@ -383,8 +383,8 @@
       "hospitals": "Hospitals"
     },
     "places": {
-      "title": "Featured Hospitals",
-      "subtitle": "Discover our top-rated veterinary hospitals with experienced professionals",
+      "title": "Recommended Hospital",
+      "subtitle": "Hospitals with this badge are verified by mypetDoc.vn for quality care and trusted service.",
       "reviews": "verified reviews"
     },
     "blogs": {
@@ -1401,7 +1401,7 @@
     },
     "contactUs": {
       "title": "Contact us",
-      "description": "Contact us to learn more",
+      "description": "mypetDoc.vn is always dedicated to you and your beloved pets. If you have any service-related inquiries or suggestions, feel free to contact us through the Contact Us page!",
       "button": {
         "contact": "Contact us"
       }
