@@ -370,8 +370,8 @@
       "hospitals": "Bệnh viện"
     },
     "places": {
-      "title": " Bệnh viện Thú cưng Đề xuất bởi mypetdoc",
-      "subtitle": "Các bệnh viện có huy hiệu này đã được mypetDoc.vn xác minh về chất lượng dịch vụ và sự tin cậy.",
+      "title": " Bệnh Viện Nổi Bật",
+      "subtitle": "Khám phá các bệnh viện thú y chất lượng với đội ngũ bác sĩ giàu kinh nghiệm",
       "reviews": "đánh giá đã xác minh"
     },
     "blogs": {
@@ -380,10 +380,11 @@
       "viewAll": "Xem Tất Cả"
     },
     "proposal": {
-      "title": "Bệnh Viện Đề Xuất",
-      "subtitle": "Khám phá các bệnh viện thú y đề xuất mới nhất",
+      "title": "Bệnh viện Thú cưng Đề xuất bởi mypetdoc",
+      "subtitle": "Các bệnh viện có huy hiệu này đã được mypetDoc.vn xác minh về chất lượng dịch vụ và sự tin cậy",
       "viewAll": "Xem Tất Cả",
-      "reviews": "đánh giá"
+      "reviews": "đánh giá",
+      "trustedBadge": "Bệnh viện này là bệnh viện uy tín, được đánh giá trực tiếp bởi mypetDoc"
     }
   },
   "terms": {

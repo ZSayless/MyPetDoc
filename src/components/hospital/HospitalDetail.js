@@ -20,6 +20,7 @@ import {
   translateMultipleTexts,
   translateText,
 } from "../../services/translateService";
+import badgeImage from "../../assets/img/Badge2.jpg";
 
 const HospitalDetail = () => {
   const { slug } = useParams();
@@ -98,11 +99,15 @@ const HospitalDetail = () => {
             staffDescription: data.staff_description,
             staffCredentials: data.staff_credentials,
             department: data.department,
+            proposal: data.proposal,
           };
 
           setHospital(formattedHospital);
           setGalleryPhotos(formattedHospital.gallery);
           setReviews(data.recent_reviews || []);
+
+          // Debug để kiểm tra
+          console.log("Hospital proposal status:", data.proposal);
         }
       } catch (error) {
         console.error("Error fetching hospital:", error);
@@ -512,9 +517,25 @@ const HospitalDetail = () => {
         <div className="container mx-auto px-4 py-4 md:py-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex-1">
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900">
-                {hospital.name}
-              </h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                  {hospital.name}
+                </h1>
+                {hospital.proposal && (
+                  <div className="flex items-center gap-2">
+                    <div className="w-10 h-10">
+                      <img
+                        src={badgeImage}
+                        alt="Trusted Hospital Badge"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {t("home.proposal.trustedBadge")}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Action Buttons */}

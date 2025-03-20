@@ -383,8 +383,8 @@
       "hospitals": "Hospitals"
     },
     "places": {
-      "title": "Recommended Hospital",
-      "subtitle": "Hospitals with this badge are verified by mypetDoc.vn for quality care and trusted service.",
+      "title": "Featured Hospitals",
+      "subtitle": "Discover our top-rated veterinary hospitals with experienced professionals",
       "reviews": "verified reviews"
     },
     "blogs": {
@@ -393,10 +393,11 @@
       "viewAll": "View All"
     },
     "proposal": {
-      "title": "Proposal Hospitals",
-      "subtitle": "Discover the latest proposal hospitals",
+      "title": "Recommended Hospitals",
+      "subtitle": "Hospitals with this badge are verified by mypetDoc.vn for quality care and trusted service",
       "viewAll": "View All",
-      "reviews": "reviews"
+      "reviews": "reviews",
+      "trustedBadge": "This hospital is a trusted hospital, directly reviewed by mypetDoc"
     }
   },
   "terms": {

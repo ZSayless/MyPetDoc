@@ -20,10 +20,11 @@ function HomeProposal() {
         const response = await getHospitals();
 
         const formattedHospitals = response.hospitals
-          .filter(hospital => 
-            hospital.is_active === true && 
-            !hospital.is_deleted &&
-            hospital.proposal === true
+          .filter(
+            (hospital) =>
+              hospital.is_active === true &&
+              !hospital.is_deleted &&
+              hospital.proposal === true
           )
           .map((hospital) => ({
             id: hospital.id,
@@ -52,22 +53,22 @@ function HomeProposal() {
 
   useEffect(() => {
     let scrollInterval;
-    
+
     if (autoScroll && hospitals.length > 0) {
       scrollInterval = setInterval(() => {
         if (sliderRef.current) {
           const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
-          
+
           // Khi scroll gần đến giữa danh sách
           if (scrollLeft >= scrollWidth / 2 - clientWidth) {
             // Quay lại đầu mượt mà
             sliderRef.current.scrollTo({
               left: 0,
-              behavior: 'auto' // Thay đổi thành 'auto' để tránh hiệu ứng nhảy
+              behavior: "auto", // Thay đổi thành 'auto' để tránh hiệu ứng nhảy
             });
           }
-          
-          scroll('right');
+
+          scroll("right");
         }
       }, 2300); // Giảm thời gian để trượt mượt mà hơn
     }
@@ -187,6 +188,11 @@ function HomeProposal() {
                       <span className="text-sm">{hospital.location}</span>
                     </div>
 
+                    {/* Badge position - will be added later */}
+                    <div className="absolute top-2 left-2">
+                      {/* Badge image will be added here */}
+                    </div>
+
                     <div className="flex flex-wrap gap-1 mt-3">
                       {hospital.specialties.slice(0, 3).map((specialty, i) => (
                         <span
@@ -221,4 +227,4 @@ function HomeProposal() {
   );
 }
 
-export default HomeProposal; 
+export default HomeProposal;
