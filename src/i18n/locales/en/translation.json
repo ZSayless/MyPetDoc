@@ -1401,11 +1401,9 @@
       "description": "LUCETE memorial diamonds provide a beautiful and enduring way to remember and honor those you love. Choose LUCETE to create a lasting tribute that will keep their memory alive forever."
     },
     "contactUs": {
-      "title": "Contact us",
+      "title": "Contact Us",
       "description": "mypetDoc.vn is always dedicated to you and your beloved pets. If you have any service-related inquiries or suggestions, feel free to contact us through the Contact Us page!",
-      "button": {
-        "contact": "Contact us"
-      }
+      "button": "CONTACT US"
     }
   }
 }

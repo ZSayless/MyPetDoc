@@ -15,6 +15,7 @@ import gallery6 from "../../assets/img/6.jpg";
 import ruseddeRina01 from "../../assets/img/rusedde-rina-01.jpg";
 import ruseddeBboggu01 from "../../assets/img/rusedde-bboggu-01.jpg";
 import ruseddeCici06 from "../../assets/img/rusedde-cici-06.jpg";
+import contactus from "../../assets/img/contactus.jpg";
 
 const Lucete = () => {
   const { t } = useTranslation();
@@ -601,27 +602,31 @@ const Lucete = () => {
         {/* Contact Us Section */}
         <div className="py-8 sm:py-12 bg-white">
           <div className="container mx-auto px-4">
-            <div className="max-w-5xl mx-auto">
-              <div
-                className="bg-gray-100 rounded-lg p-4 sm:p-6 cursor-pointer"
-                onClick={() => setIsContactOpen(!isContactOpen)}
-              >
-                <h2 className="text-2xl sm:text-3xl md:text-4xl mb-2">
-                  {t("lucete.contactUs.title")}
-                </h2>
-                <p className="text-gray-500">
-                  {t("lucete.contactUs.description")}
-                </p>
-                {isContactOpen && (
-                  <div className="mt-6 sm:mt-8">
-                    <a
-                      href="/contact-us"
-                      className="inline-block w-full sm:w-auto text-center bg-[#7B91F7] text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-[#6A7FE5] transition duration-300"
-                    >
-                      {t("lucete.contactUs.button.contact")}
-                    </a>
-                  </div>
-                )}
+            <div className="max-w-6xl mx-auto">
+              <div className="bg-white rounded-xl overflow-hidden flex flex-col md:flex-row items-center">
+                {/* Left side - Content */}
+                <div className="md:w-1/2 p-8 md:p-12">
+                  <h2 className="text-3xl md:text-4xl font-bold text-[#2B3674] mb-4">
+                    {t("lucete.contactUs.title")}
+                  </h2>
+                  <p className="text-gray-600 mb-8">
+                    {t("lucete.contactUs.description")}
+                  </p>
+
+                  {/* Contact Us Button */}
+                  <button className="mt-8 px-6 py-3 bg-[#FF7A00] text-white rounded-lg hover:bg-[#ff8c1a] transition-colors duration-300">
+                    {t("lucete.contactUs.button")}
+                  </button>
+                </div>
+
+                {/* Right side - Illustration */}
+                <div className="md:w-1/2">
+                  <img
+                    src={contactus}
+                    alt="Contact illustration"
+                    className="w-full h-auto"
+                  />
+                </div>
               </div>
             </div>
           </div>
