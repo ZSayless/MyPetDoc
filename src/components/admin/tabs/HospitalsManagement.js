@@ -433,16 +433,10 @@ function HospitalsManagement() {
       errors.email = "Invalid email format";
     }
 
-    // Validate website (optional)
-    if (data.link_website) {
-      if (!/^https?:\/\//.test(data.link_website)) {
-        errors.link_website = "Link website must start with http:// or https://";
-      }
-    }
 
     // Validate map location (optional)
-    if (data.map_location && data.map_location.length > 500) {
-      errors.map_location = "Map location cannot exceed 500 characters";
+    if (data.map_location && data.map_location.length > 700) {
+      errors.map_location = "Map location cannot exceed 700 characters";
     }
 
     // Validate description

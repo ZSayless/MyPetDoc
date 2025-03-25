@@ -273,7 +273,7 @@ function Header() {
                   </li>
                   <li>
                     <a
-                      href="/aboutus"
+                      href="/contact-us"
                       className="text-gray-700 hover:text-blue-600"
                     >
                       {t("header.menu.contactUs")}
