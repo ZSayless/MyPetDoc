@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import rusedde from "../../assets/img/rusedde-ddoci-02.jpg";
 import ruseddeMoyang01 from "../../assets/img/rusedde-moyang-01.jpg";
 import ruseddeHaru01 from "../../assets/img/rusedde-haru-01.jpg";
@@ -19,6 +20,7 @@ import contactus from "../../assets/img/contactus.jpg";
 
 const Lucete = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isContactOpen, setIsContactOpen] = useState(false);
 
   return (
@@ -36,7 +38,7 @@ const Lucete = () => {
               {/* Mobile Version (Hidden on sm and above) */}
               <div className="flex h-full items-center px-4 sm:hidden">
                 <div className="max-w-xl">
-                  <h1 className="text-2xl font-serif mb-2 text-white">
+                  <h1 className="text-2xl mb-2 text-white">
                     {t("lucete.hero.title")}
                   </h1>
                   <p className="text-sm text-white/90 mb-4">
@@ -48,7 +50,7 @@ const Lucete = () => {
               {/* Desktop Version (Hidden on mobile) */}
               <div className="hidden sm:flex h-full items-center px-8 md:px-16 lg:px-32">
                 <div className="max-w-xl">
-                  <h1 className="text-3xl md:text-4xl lg:text-6xl font-serif mb-2 sm:mb-4 text-white whitespace-nowrap ml-24 sm:ml-36 md:ml-48">
+                  <h1 className="text-3xl md:text-4xl lg:text-6xl mb-2 sm:mb-4 text-white whitespace-nowrap ml-24 sm:ml-36 md:ml-48">
                     {t("lucete.hero.title")}
                   </h1>
                   <p className="text-base md:text-xl text-white/90 mb-4 sm:mb-6 md:mb-8 ml-24 sm:ml-36 md:ml-48 whitespace-nowrap">
@@ -614,7 +616,10 @@ const Lucete = () => {
                   </p>
 
                   {/* Contact Us Button */}
-                  <button className="mt-8 px-6 py-3 bg-[#FF7A00] text-white rounded-lg hover:bg-[#ff8c1a] transition-colors duration-300">
+                  <button
+                    onClick={() => navigate("/contact-us")}
+                    className="mt-8 px-6 py-3 bg-[#FF7A00] text-white rounded-lg hover:bg-[#ff8c1a] transition-colors duration-300"
+                  >
                     {t("lucete.contactUs.button")}
                   </button>
                 </div>

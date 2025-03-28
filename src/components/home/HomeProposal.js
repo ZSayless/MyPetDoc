@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useRef, useEffect, useState } from "react";
 import { getHospitals } from "../../services/hospitalService";
 import { useTranslation } from "react-i18next";
+import Badge2 from "../../assets/img/Badge2.jpg";
 
 function HomeProposal() {
   const { t } = useTranslation();
@@ -188,9 +189,13 @@ function HomeProposal() {
                       <span className="text-sm">{hospital.location}</span>
                     </div>
 
-                    {/* Badge position - will be added later */}
+                    {/* Badge position */}
                     <div className="absolute top-2 left-2">
-                      {/* Badge image will be added here */}
+                      <img
+                        src={Badge2}
+                        alt="Certified Badge"
+                        className="w-12 h-12 object-contain"
+                      />
                     </div>
 
                     <div className="flex flex-wrap gap-1 mt-3">

@@ -16,7 +16,7 @@ function Home() {
         className="will-change-transform"
         style={{ transform: "translate3d(0,0,0)" }}
       >
-        <HomeProposal />
+        <HomePlace />
       </div>
       <div
         className="will-change-transform"
@@ -34,7 +34,7 @@ function Home() {
         className="will-change-transform"
         style={{ transform: "translate3d(0,0,0)" }}
       >
-        <HomePlace />
+        <HomeProposal />
       </div>
       <div
         className="will-change-transform"

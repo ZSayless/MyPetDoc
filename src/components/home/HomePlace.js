@@ -26,9 +26,8 @@ function HomePlace() {
         const response = await getHospitals();
 
         const formattedHospitals = response.hospitals
-          .filter(hospital => 
-            hospital.is_active === true && 
-            !hospital.is_deleted 
+          .filter(
+            (hospital) => hospital.is_active === true && !hospital.is_deleted
           )
           .map((hospital) => ({
             id: hospital.id,
@@ -42,7 +41,7 @@ function HomePlace() {
             reviews: hospital.stats?.total_reviews || 0,
             slug: hospital.slug,
             isActive: hospital.is_active,
-            isDeleted: hospital.is_deleted
+            isDeleted: hospital.is_deleted,
           }));
 
         setHospitals(formattedHospitals);
