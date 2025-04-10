@@ -523,7 +523,7 @@ const HospitalDetail = () => {
                 </h1>
                 {hospital.proposal && (
                   <div className="flex items-center gap-2">
-                    <div className="w-10 h-10">
+                    <div className="w-10 h-10 sm:w-14 sm:h-14">
                       <img
                         src={badgeImage}
                         alt="Trusted Hospital Badge"
