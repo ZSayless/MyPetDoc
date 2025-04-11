@@ -12,6 +12,7 @@ import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { ToastProvider } from "./context/ToastContext";
 import FAQBubble from "./components/faq/FAQBubble";
+import GoogleTagManager from "./components/common/GoogleTagManager";
 
 // Import các components
 import Home from "./components/home/Home";
@@ -73,6 +74,7 @@ function App() {
       <HelmetProvider>
         <AuthProvider>
           <ToastProvider>
+            <GoogleTagManager />
             <Helmet>
               <title>MyPetDoc - Nền tảng tìm kiếm phòng khám thú y</title>
               <meta name="description" content="Tìm kiếm phòng khám thú y uy tín, đặt lịch khám và tư vấn trực tuyến cho thú cưng của bạn." />
